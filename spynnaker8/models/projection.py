@@ -39,17 +39,20 @@ class Projection(pynn_common.Projection, PyNNProjectionCommon):
         pynn_common.Projection.__init__(
             self, pre_synaptic_population, post_synaptic_population,
             connector, synapse_type, source, receptor_type, space, label)
+
+        if synapse_type is None:
+            synapse_type = self._static_synapse_class
+
         PyNNProjectionCommon.__init__(
-            self, connector=connector, synapse_dynamics_stdp,
-            synapse_type=synapse_type,
+            self, connector=connector, synapse_dynamics_stdp=synapse_type,
+            synapse_type=receptor_type, spinnaker_control=self._simulator,
             pre_synaptic_population=pre_synaptic_population,
-            post_synaptic_population=post_synaptic_population, rng,
+            post_synaptic_population=post_synaptic_population,
+            rng=connector.rng,
             machine_time_step=self._simulator.machine_time_step,
             user_max_delay=self._simulator.max_delay, label=label,
             time_scale_factor=self._simulator.time_scale_factor)
 
-        # Add projection to simulator
-        self._simulator.add_projection(self)
 
     def __len__(self):
         raise NotImplementedError

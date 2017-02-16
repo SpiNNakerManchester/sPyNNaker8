@@ -15,15 +15,14 @@ from spynnaker8.utilities.failed_state import FailedState
 from spynnaker8._version import __version__
 from spynnaker8.spinnaker import SpiNNaker
 from spynnaker8.models.projection import Projection as SpiNNakerProjection
+from spynnaker.pyNN import model_binaries
 
 # stuff that needs disappearing
-from spynnaker8 import standardmodels
 from spynnaker8.connectors import *
 from spynnaker8.populations import Population, PopulationView, Assembly
 from spynnaker8.random import NativeRNG
 from spynnaker8.standardmodels.cells import *
 from spynnaker8.standardmodels.synapses import *
-from spynnaker8 import standardmodels
 
 # common imports
 import atexit
@@ -106,7 +105,7 @@ def setup(timestep=pynn_control.DEFAULT_TIMESTEP,
     if executable_finder is None:
         executable_finder = ExecutableFinder()
         executable_finder.add_path(
-            os.path.join(os.path.dirname(standardmodels.__file__), "binaries"))
+            os.path.join(os.path.dirname(model_binaries.__file__)))
 
     if time_scale_factor is None:
         time_scale_factor = config_parser.getint("Machine", "timeScaleFactor")
