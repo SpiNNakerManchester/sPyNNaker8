@@ -4,23 +4,17 @@ from pyNN.common import control as pynn_control
 # spynnaker 8 imports
 from spynnaker8 import _version
 
-# common front end imports
-from spinn_front_end_common.interface.spinnaker_main_interface import \
-    SpinnakerMainInterface
+# spynnaker common
+from spynnaker.pyNN.spinnaker_common import SpiNNakerCommon
 
 # local stuff
-from collections import defaultdict
-from six import iteritems, itervalues
 import logging
-import itertools
-import numpy
 import math
-import os
 
 logger = logging.getLogger(__name__)
 
 
-class SpiNNaker(SpinnakerMainInterface, pynn_control.BaseState):
+class SpiNNaker(SpiNNakerCommon, pynn_control.BaseState):
     """ main interface for the stuff software for PyNN 0.8
 
     """
@@ -31,7 +25,7 @@ class SpiNNaker(SpinnakerMainInterface, pynn_control.BaseState):
             extra_mapping_algorithms, extra_pre_run_algorithms,
             extra_post_run_algorithms, extra_load_algorithms,
             time_scale_factor, min_delay, max_delay, graph_label,
-            n_chips_required, timestep=0.1):
+            n_chips_required, timestep=0.1, hostname=None):
 
         # timing parameters
         self._min_delay = min_delay
@@ -74,104 +68,18 @@ class SpiNNaker(SpinnakerMainInterface, pynn_control.BaseState):
                 built_in_extra_mapping_inputs)
 
         # spinnaker setup
-        SpinnakerMainInterface.__init__(
+        SpiNNakerCommon.__init__(
             self, config=config, executable_finder=executable_finder,
             database_socket_addresses=database_socket_addresses,
-            extra_algorithm_xml_paths=built_in_extra_xml_paths,
-            extra_mapping_inputs=built_in_extra_mapping_inputs,
+            user_extra_algorithm_xml_path=built_in_extra_xml_paths,
+            user_extra_mapping_inputs=built_in_extra_mapping_inputs,
             extra_mapping_algorithms=extra_mapping_algorithms,
-            extra_pre_run_algorithms=extra_pre_run_algorithms,
+            user_extra_algorithms_pre_run=extra_pre_run_algorithms,
             extra_post_run_algorithms=extra_post_run_algorithms,
             extra_load_algorithms=built_in_extra_load_algorithms,
-            graph_label=graph_label, n_chips_required=n_chips_required)
-
-        self._machine_time_step = timestep
-        self._time_scale_factor = time_scale_factor
-
-        # Pass hostname to frontend
-        self._set_up_timings(timestep, min_delay, max_delay)
-        self.set_up_machine_specifics(None)
-
-    def _set_up_timings(self, timestep, min_delay, max_delay):
-        self._machine_time_step = config.getint("Machine", "machineTimeStep")
-
-        # deal with params allowed via the setup options
-        if timestep is not None:
-            # convert into milliseconds from microseconds
-            timestep *= 1000
-            self._machine_time_step = timestep
-
-        if min_delay is not None and float(min_delay * 1000) < 1.0 * timestep:
-            raise common_exceptions.ConfigurationException(
-                "Pacman does not support min delays below {} ms with the "
-                "current machine time step"
-                    .format(constants.MIN_SUPPORTED_DELAY * timestep))
-
-        natively_supported_delay_for_models = \
-            constants.MAX_SUPPORTED_DELAY_TICS
-        delay_extension_max_supported_delay = \
-            constants.MAX_DELAY_BLOCKS \
-            * constants.MAX_TIMER_TICS_SUPPORTED_PER_BLOCK
-
-        max_delay_tics_supported = \
-            natively_supported_delay_for_models + \
-            delay_extension_max_supported_delay
-
-        if max_delay is not None \
-                and float(
-                            max_delay * 1000) > max_delay_tics_supported * timestep:
-            raise common_exceptions.ConfigurationException(
-                "Pacman does not support max delays above {} ms with the "
-                "current machine time step".format(0.144 * timestep))
-        if min_delay is not None:
-            self._min_supported_delay = min_delay
-        else:
-            self._min_supported_delay = timestep / 1000.0
-
-        if max_delay is not None:
-            self._max_supported_delay = max_delay
-        else:
-            self._max_supported_delay = (max_delay_tics_supported *
-                                         (timestep / 1000.0))
-
-        if (config.has_option("Machine", "timeScaleFactor") and
-                    config.get("Machine", "timeScaleFactor") != "None"):
-            self._time_scale_factor = \
-                config.getint("Machine", "timeScaleFactor")
-            if timestep * self._time_scale_factor < 1000:
-                if config.getboolean(
-                        "Mode", "violate_1ms_wall_clock_restriction"):
-                    logger.warn(
-                        "****************************************************")
-                    logger.warn(
-                        "*** The combination of simulation time step and  ***")
-                    logger.warn(
-                        "*** the machine time scale factor results in a   ***")
-                    logger.warn(
-                        "*** wall clock timer tick that is currently not  ***")
-                    logger.warn(
-                        "*** reliably supported by the spinnaker machine. ***")
-                    logger.warn(
-                        "****************************************************")
-                else:
-                    raise common_exceptions.ConfigurationException(
-                        "The combination of simulation time step and the"
-                        " machine time scale factor results in a wall clock "
-                        "timer tick that is currently not reliably supported "
-                        "by the spinnaker machine.  If you would like to "
-                        "override this behaviour (at your own risk), please "
-                        "add violate_1ms_wall_clock_restriction = True to the "
-                        "[Mode] section of your .spynnaker.cfg file")
-        else:
-            self._time_scale_factor = max(1,
-                                          math.ceil(1000.0 / float(timestep)))
-            if self._time_scale_factor > 1:
-                logger.warn("A timestep was entered that has forced sPyNNaker "
-                            "to automatically slow the simulation down from "
-                            "real time by a factor of {}. To remove this "
-                            "automatic behaviour, please enter a "
-                            "timescaleFactor value in your .spynnaker.cfg"
-                            .format(self._time_scale_factor))
+            graph_label=graph_label, n_chips_required=n_chips_required,
+            hostname=hostname, min_delay=min_delay, max_delay=max_delay,
+            timestep=timestep, time_scale_factor=time_scale_factor)
 
     def run(self, simtime):
         """ PyNN run simulation (enforced method and parameter name)
@@ -212,7 +120,7 @@ class SpiNNaker(SpinnakerMainInterface, pynn_control.BaseState):
 
         self._segment_counter = -1
 
-        SpinnakerMainInterface.reset(self)
+        SpiNNakerCommon.reset(self)
 
     def _run(self, duration_ms):
         """ main interface for the starting of stuff
@@ -234,7 +142,7 @@ class SpiNNaker(SpinnakerMainInterface, pynn_control.BaseState):
                     "using a hardware timestep of %uus",
                     duration_timesteps, self.dt, hardware_timestep_us)
 
-        SpinnakerMainInterface.run(self, duration_ms)
+        SpiNNakerCommon.run(self, duration_ms)
 
     @property
     def state(self):

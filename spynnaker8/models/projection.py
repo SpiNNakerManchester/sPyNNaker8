@@ -2,14 +2,24 @@ from pyNN import common as pynn_common
 from pyNN.space import Space as PyNNSpace
 
 from spynnaker8.utilities import globals_variables
+from spynnaker8._version import __version__
 
 from spynnaker.pyNN.models.neuron.synapse_dynamics. \
     synapse_dynamics_static import SynapseDynamicsStatic
 
 from spynnaker.pyNN.models.pynn_projection_common import PyNNProjectionCommon
 
+import deprecation
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 class Projection(pynn_common.Projection, PyNNProjectionCommon):
+    """ spynnaker 8 projection class
+
+    """
+
     _simulator = None
     _static_synapse_class = SynapseDynamicsStatic
 
@@ -17,6 +27,7 @@ class Projection(pynn_common.Projection, PyNNProjectionCommon):
             self, pre_synaptic_population, post_synaptic_population,
             connector, synapse_type=None, source=None, receptor_type=None,
             space=None, label=None):
+
         # set space object if not set
         if space is None:
             space = PyNNSpace()
@@ -28,7 +39,14 @@ class Projection(pynn_common.Projection, PyNNProjectionCommon):
         pynn_common.Projection.__init__(
             self, pre_synaptic_population, post_synaptic_population,
             connector, synapse_type, source, receptor_type, space, label)
-        PyNNProjectionCommon.__init__(self)
+        PyNNProjectionCommon.__init__(
+            self, connector=connector, synapse_dynamics_stdp,
+            synapse_type=synapse_type,
+            pre_synaptic_population=pre_synaptic_population,
+            post_synaptic_population=post_synaptic_population, rng,
+            machine_time_step=self._simulator.machine_time_step,
+            user_max_delay=self._simulator.max_delay, label=label,
+            time_scale_factor=self._simulator.time_scale_factor)
 
         # Add projection to simulator
         self._simulator.add_projection(self)
