@@ -1,13 +1,10 @@
 # pynn imports
 from pyNN.common import control as pynn_control
 
-# spynnaker 8 imports
-from spynnaker8 import _version
-
-# spynnaker common
 from spynnaker.pyNN.spinnaker_common import SpiNNakerCommon
 
-# local stuff
+from spynnaker8 import _version
+
 import logging
 import math
 
@@ -45,7 +42,7 @@ class SpiNNaker(SpiNNakerCommon, pynn_control.BaseState):
             _version.__version__, _version.__version_name__)
         self._recorders = set([])
 
-        # main pynn interface inhirtence
+        # main pynn interface inheritance
         pynn_control.BaseState.__init__(self)
 
         # handle the extra load algorithms and the built in ones

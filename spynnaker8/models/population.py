@@ -1,7 +1,8 @@
+from pacman.model.decorators.overrides import overrides
 from pyNN import common as pynn_common
+from pyNN.common.populations import Assembly as PyNNAssembly
 from pyNN.common.populations import PopulationView as PyNNPopulationView
 from pyNN.parameters import ParameterSpace as PyNNParameterSpace
-from pyNN.common.populations import Assembly as PyNNAssembly
 
 from spynnaker.pyNN.models.pynn_population_common import PyNNPopulationCommon
 from spynnaker.pyNN.utilities import utility_calls
@@ -43,15 +44,26 @@ class Population(pynn_common.Population, PyNNPopulationCommon):
             self, size, cellclass, cellparams, structure, initial_values,
             label)
 
+    @overrides(
+        pynn_common.Population._create_cells,
+        additional_comments=
+        "This method is implicit in pynn and is part of the hidden demands it"
+        " puts upon any back end (these should be abstract methods in pynn). "
+        "We bypass it due to building the vertices as they are created. ")
     def _create_cells(self):
         """ enforced upon us due to pynn. Would be helpful when using
          pop views and assemblers
 
         :return: None
         """
-
         pass
 
+    @overrides(
+        pynn_common.Population._set_initial_value_array,
+        additional_comments=
+        "This method is implicit in pynn and is part of the hidden demands it"
+        " puts upon any back end (these should be abstract methods in pynn). "
+        "We push this down to the vertex, as it handles parameter generation")
     def _set_initial_value_array(self, variable, initial_values):
         """ forced method from pynn. is used during pynns initialize
         functionality. so we should migrate this to the vertex till pop views
@@ -65,6 +77,12 @@ class Population(pynn_common.Population, PyNNPopulationCommon):
             variable, utility_calls.convert_param_to_numpy(
                 initial_values, self._vertex.n_atoms))
 
+    @overrides(
+        pynn_common.Population._get_view,
+        additional_comments=
+        "This method is implicit in pynn and is part of the hidden demands it"
+        " puts upon any back end (these should be abstract methods in pynn). "
+        "We just create a PyNN view for the moment.")
     def _get_view(self, selector, label=None):
         """ enforced from pynn. is used during get item and sample.
         generates a PopulationView object.
@@ -76,6 +94,12 @@ class Population(pynn_common.Population, PyNNPopulationCommon):
         """
         return PyNNPopulationView(self, selector, label)
 
+    @overrides(
+        pynn_common.Population._get_parameters,
+        additional_comments=
+        "This method is implicit in pynn and is part of the hidden demands it"
+        " puts upon any back end (these should be abstract methods in pynn). "
+        "We just iterate though the vertex for the parameter values")
     def _get_parameters(self, *names):
         """ enforced from pynn. is used during get and set(why set???!)
         return a ParameterSpace containing native parameters
@@ -84,8 +108,14 @@ class Population(pynn_common.Population, PyNNPopulationCommon):
         for parameter_name in names:
             parameter_dict[parameter_name] = \
                 self._vertex.get_value(parameter_name)
-        return PyNNParameterSpace(parameter_dict, shape=(self.local_size,))
+        return PyNNParameterSpace(parameter_dict, shape=self.local_size)
 
+    @overrides(
+        pynn_common.Population._get_parameters,
+        additional_comments=
+        "This method is implicit in pynn and is part of the hidden demands it"
+        " puts upon any back end (these should be abstract methods in pynn). "
+        "We just iterate though the vertex for the parameter setting")
     def _set_parameters(self, parameter_space):
         """ enforced by PyNN. is used during its set.
 
@@ -127,3 +157,18 @@ class Population(pynn_common.Population, PyNNPopulationCommon):
         if self._recorder is None:
             self._recorder = Recorder(population, output_file)
         return self._recorder
+
+    @overrides(
+        pynn_common.Population.can_record,
+        additional_comments=
+        "This method is explicit in pynn and is overloaded to allow us to "
+        "avoid using their neuron parameters data structure."
+        "We just ask the recorder if the pop is setup to record this variable")
+    def can_record(self, variable):
+        """ overridden call from PyNN. To avoid having to use their neuron
+        parameters data structure
+
+        :param variable:
+        :return:
+        """
+        return self._recorder.can_record(variable)

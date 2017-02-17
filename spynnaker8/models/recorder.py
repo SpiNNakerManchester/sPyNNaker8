@@ -1,5 +1,7 @@
 from pyNN import recording as pynn_recording
+
 from spynnaker.pyNN.models.recording_common import RecordingCommon
+
 from spynnaker8.utilities import globals_variables
 
 import logging

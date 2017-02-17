@@ -33,7 +33,7 @@ setup(
     # Requirements
     install_requires=[
         "pynn>=0.8", "SpiNNFrontEndCommon",
-        "PACMAN", "SpiNNMan",
+        "PACMAN", "SpiNNMan", "sPyNNaker",
         "spalloc >= 0.2.4",  # For machine allocation
         "deprecation >= 1.0, < 2.0.0",
         "six >=1.0.0, <= 1.6.1",
