@@ -6,12 +6,15 @@ from pyNN.common.populations import Assembly as PyNNAssembly
 from spynnaker.pyNN.models.pynn_population_common import PyNNPopulationCommon
 from spynnaker.pyNN.utilities import utility_calls
 
-from spinn_front_end_common.utilities import exceptions
-
+from spynnaker8.models.recorder import Recorder
 from spynnaker8.utilities import globals_variables
 
 
 class Population(pynn_common.Population, PyNNPopulationCommon):
+    """ pynn 0.8 population object
+
+    """
+
     __doc__ = pynn_common.Population.__doc__
     _simulator = None
     _recorder_class = None
@@ -26,7 +29,8 @@ class Population(pynn_common.Population, PyNNPopulationCommon):
 
         # fix pynn centric stuff
         self._simulator = globals_variables.get_simulator()
-        self._recorder_class = self._recorder
+        self._recorder_class = self._recorder_class_builder
+        self._recorder = None
         self._assembly_class = self._assembly_class_builder
 
         # build our initial objects
@@ -102,18 +106,24 @@ class Population(pynn_common.Population, PyNNPopulationCommon):
     def label(self, new_value):
         self._vertex.label = new_value
 
-    def _recorder(self):
-        """ method to support centralised functionality for recording
-
-        :return:
-        """
-
-        return self
-
     def _assembly_class_builder(self, other):
         """ enforced by pynn. this builds an assembly from a pop and something
+        using a indirect call to support extra params if needed
 
         :param other: a pop, pop view, or assembly.
-        :return: A assembly
+        :return: An assembly
         """
         return PyNNAssembly([self, other])
+
+    def _recorder_class_builder(self, population, output_file):
+        """ enforced by pynn. this builds a recorder for a population and uses
+        a indirect call to support extra params if needed
+
+        :param population: the population this recorder is for
+        :param output_file: the file to write data to or None if no file to
+         write to
+        :return: the recorder class
+        """
+        if self._recorder is None:
+            self._recorder = Recorder(population, output_file)
+        return self._recorder
