@@ -23,21 +23,40 @@ from spynnaker.pyNN import model_binaries
 from spynnaker.pyNN.utilities import globals_variables
 from spynnaker.pyNN.utilities.failed_state import FailedState
 
+# connections
+# noinspection PyUnresolvedReferences
+from spynnaker8.models.connectors.all_to_all_connector import \
+    AllToAllConnector
+# noinspection PyUnresolvedReferences
+from spynnaker8.models.connectors.distance_dependent_probability_connector \
+    import DistanceDependentProbabilityConnector
+
+
+
 # neuron stuff
+# noinspection PyUnresolvedReferences
 from spynnaker8.models.builds.if_cond_exp import IFCondExp as IF_cond_exp
+# noinspection PyUnresolvedReferences
 from spynnaker8.models.builds.if_curr_dual_exp import IFCurrDualExp as \
     IF_curr_duel_exp
+# noinspection PyUnresolvedReferences
 from spynnaker8.models.builds.if_curr_exp import IFCurrExp as IF_curr_exp
+# noinspection PyUnresolvedReferences
 from spynnaker8.models.builds.izk_cond_exp import IzkCondExp as \
     Izhikevich_cond
+# noinspection PyUnresolvedReferences
 from spynnaker8.models.builds.izk_curr_exp import IzkCurrExp as Izhikevich
 
 # pops
+# noinspection PyUnresolvedReferences
 from spynnaker8.models.populations.assembly import Assembly
+# noinspection PyUnresolvedReferences
 from spynnaker8.models.populations.population import Population
+# noinspection PyUnresolvedReferences
 from spynnaker8.models.populations.population_view import PopulationView
 
 # projection
+# noinspection PyUnresolvedReferences
 from spynnaker8.models.projection import Projection
 
 # big stuff
