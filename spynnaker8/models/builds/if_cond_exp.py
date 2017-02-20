@@ -1,9 +1,7 @@
 from pyNN.standardmodels.cells import IF_cond_exp as PyNNIfCondExp
-
 from spynnaker.pyNN.models.neuron.builds.if_cond_exp_base import IFCondExpBase
-
+from spynnaker.pyNN.utilities import globals_variables
 from spynnaker8.models.builds.build_common import BuildCommon
-from spynnaker8.utilities import globals_variables
 
 
 class IFCondExp(IFCondExpBase, PyNNIfCondExp, BuildCommon):

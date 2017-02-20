@@ -1,10 +1,8 @@
 from pyNN.standardmodels import StandardCellType as PyNNStandardCellType
-
 from spynnaker.pyNN.models.neuron.builds.if_curr_dual_exp_base import \
     IFCurrDualExpBase
-
+from spynnaker.pyNN.utilities import globals_variables
 from spynnaker8.models.builds.build_common import BuildCommon
-from spynnaker8.utilities import globals_variables
 
 
 class IFCurrDualExp(IFCurrDualExpBase, PyNNStandardCellType, BuildCommon):

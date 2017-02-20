@@ -2,6 +2,7 @@ from pyNN.standardmodels.cells import Izhikevich as PyNNIzhikevich
 
 from spynnaker.pyNN.models.neuron.builds.izk_curr_exp_base import \
     IzkCurrExpBase
+from spynnaker.pyNN.utilities import globals_variables
 
 from spynnaker8.models.builds.build_common import BuildCommon
 
@@ -26,6 +27,7 @@ class IzkCurrExp(IzkCurrExpBase, PyNNIzhikevich, BuildCommon):
             ring_buffer_sigma=ring_buffer_sigma, label=label, a=a, b=b, c=c,
             incoming_spike_buffer_size=incoming_spike_buffer_size, d=d,
             constraints=constraints, i_offset=i_offset, u_init=u_init,
-            v_init=v_init, tau_syn_E=tau_syn_E, tau_syn_I=tau_syn_I)
+            v_init=v_init, tau_syn_E=tau_syn_E, tau_syn_I=tau_syn_I,
+            config=globals_variables.get_simulator().config)
         PyNNIzhikevich.__init__(self)
         BuildCommon.__init__(self, self)

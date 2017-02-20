@@ -1,8 +1,7 @@
-from spynnaker.pyNN.models.neuron.builds.if_curr_exp_base import IFCurrExpBase
-
 from pyNN.standardmodels.cells import IF_cond_exp as PyNNIfCondExp
+from spynnaker.pyNN.models.neuron.builds.if_curr_exp_base import IFCurrExpBase
+from spynnaker.pyNN.utilities import globals_variables
 from spynnaker8.models.builds.build_common import BuildCommon
-from spynnaker8.utilities import globals_variables
 
 
 class IFCurrExp(IFCurrExpBase, PyNNIfCondExp, BuildCommon):

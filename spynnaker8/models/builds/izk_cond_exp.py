@@ -2,6 +2,7 @@ from pyNN.standardmodels import StandardCellType as PyNNStandardCellType
 
 from spynnaker.pyNN.models.neuron.builds.izk_cond_exp_base import \
     IzkCondExpBase
+from spynnaker.pyNN.utilities import globals_variables
 
 from spynnaker8.models.builds.build_common import BuildCommon
 
@@ -29,6 +30,7 @@ class IzkCondExp(IzkCondExpBase, PyNNStandardCellType, BuildCommon):
             incoming_spike_buffer_size=incoming_spike_buffer_size, d=d,
             constraints=constraints, i_offset=i_offset, u_init=u_init,
             v_init=v_init, tau_syn_E=tau_syn_E, tau_syn_I=tau_syn_I,
-            e_rev_I=e_rev_I, e_rev_E=e_rev_E)
+            e_rev_I=e_rev_I, e_rev_E=e_rev_E,
+            config=globals_variables.get_simulator().config)
         PyNNStandardCellType.__init__(self)
         BuildCommon.__init__(self, self)

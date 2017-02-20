@@ -1,15 +1,14 @@
 import logging
+
 import deprecation
 
 from pyNN import common as pynn_common
 from pyNN.space import Space as PyNNSpace
-
-from spynnaker.pyNN.models.pynn_projection_common import PyNNProjectionCommon
 from spynnaker.pyNN.models.neuron.synapse_dynamics. \
     synapse_dynamics_static import SynapseDynamicsStatic
-
+from spynnaker.pyNN.models.pynn_projection_common import PyNNProjectionCommon
+from spynnaker.pyNN.utilities import globals_variables
 from spynnaker8._version import __version__
-from spynnaker8.utilities import globals_variables
 
 logger = logging.getLogger(__name__)
 

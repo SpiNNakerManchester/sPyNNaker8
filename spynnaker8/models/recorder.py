@@ -1,11 +1,10 @@
-from pyNN import recording as pynn_recording
-
-from spynnaker.pyNN.models.recording_common import RecordingCommon
-
-from spynnaker8.utilities import globals_variables
-
 import logging
+
 import numpy
+
+from pyNN import recording as pynn_recording
+from spynnaker.pyNN.models.recording_common import RecordingCommon
+from spynnaker.pyNN.utilities import globals_variables
 
 logger = logging.getLogger(__name__)
 
