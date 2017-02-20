@@ -1,5 +1,4 @@
 import logging
-
 import deprecation
 
 from pyNN import common as pynn_common
@@ -64,38 +63,38 @@ class Projection(pynn_common.Projection, PyNNProjectionCommon):
         raise NotImplementedError
 
     @deprecation.deprecated(
-        deprecated_in="PyNN 8.0 version 1.0.0", current_version=__version__,
+        deprecated_in="1.0.0", current_version=__version__,
         details="Use get('weight', format, gather) function instead")
     def getWeights(self, format='list', gather=True):
         return self.get('weight', format, gather, with_address=False)
 
     @deprecation.deprecated(
-        deprecated_in="PyNN 8.0 version 1.0.0", current_version=__version__,
+        deprecated_in="1.0.0", current_version=__version__,
         details="Use get('delay', format, gather) function instead")
     def getDelays(self, format='list', gather=True):
         return self.get('delay', format, gather, with_address=False)
 
     @deprecation.deprecated(
-        deprecated_in="PyNN 8.0 version 1.0.0", current_version=__version__,
+        deprecated_in="1.0.0", current_version=__version__,
         details="Use get(parameter_name, format, gather) function instead")
     def getSynapseDynamics(self, parameter_name, format='list', gather=True):
         return self.get(parameter_name, format, gather, with_address=False)
 
     @deprecation.deprecated(
-        deprecated_in="PyNN 8.0 version 1.0.0", current_version=__version__,
+        deprecated_in="1.0.0", current_version=__version__,
         details="Use save('all', file, format='list', gather=gather) function"
                 " instead")
     def saveConnections(self, file, gather=True, compatible_output=True):
         self.save('all', file, format='list', gather=gather)
 
     @deprecation.deprecated(
-        deprecated_in="PyNN 8.0 version 1.0.0", current_version=__version__,
+        deprecated_in="1.0.0", current_version=__version__,
         details="Use save('weight', file, format, gather) function instead")
     def printWeights(self, file, format='list', gather=True):
         self.save('weight', file, format, gather)
 
     @deprecation.deprecated(
-        deprecated_in="PyNN 8.0 version 1.0.0", current_version=__version__,
+        deprecated_in="1.0.0", current_version=__version__,
         details="Use save('delay', file, format, gather) function instead")
     def printDelays(self, file, format='list', gather=True):
         """
@@ -105,7 +104,7 @@ class Projection(pynn_common.Projection, PyNNProjectionCommon):
         self.save('delay', file, format, gather)
 
     @deprecation.deprecated(
-        deprecated_in="PyNN 8.0 version 1.0.0", current_version=__version__,
+        deprecated_in="1.0.0", current_version=__version__,
         details="Use numpy.histogram() function instead")
     def weightHistogram(self, min=None, max=None, nbins=10):
         """
