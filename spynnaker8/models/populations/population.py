@@ -6,10 +6,10 @@ from pyNN.parameters import ParameterSpace as PyNNParameterSpace
 
 from spynnaker.pyNN.models.pynn_population_common import PyNNPopulationCommon
 from spynnaker.pyNN.utilities import utility_calls
-from spynnaker8.models.assembly import Assembly
+from spynnaker.pyNN.utilities import globals_variables
 
+from spynnaker8.models.populations.assembly import Assembly
 from spynnaker8.models.recorder import Recorder
-from spynnaker8.utilities import globals_variables
 
 
 class Population(pynn_common.Population, PyNNPopulationCommon):

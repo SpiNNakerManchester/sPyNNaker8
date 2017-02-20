@@ -1,10 +1,9 @@
-from spynnaker8.utilities import globals_variables
-from spynnaker8.models.assembly import Assembly
+import numpy
 
 from pyNN import common as pynn_common
 from pyNN.parameters import simplify, ParameterSpace
-
-import numpy
+from spynnaker.pyNN.utilities import globals_variables
+from spynnaker8.models.populations.assembly import Assembly
 
 
 class PopulationView(pynn_common.PopulationView):
