@@ -1,11 +1,12 @@
 from pacman.model.decorators.overrides import overrides
+
 from pyNN import common as pynn_common
-from pyNN.common.populations import Assembly as PyNNAssembly
 from pyNN.common.populations import PopulationView as PyNNPopulationView
 from pyNN.parameters import ParameterSpace as PyNNParameterSpace
 
 from spynnaker.pyNN.models.pynn_population_common import PyNNPopulationCommon
 from spynnaker.pyNN.utilities import utility_calls
+from spynnaker8.models.assembly import Assembly
 
 from spynnaker8.models.recorder import Recorder
 from spynnaker8.utilities import globals_variables
@@ -143,7 +144,7 @@ class Population(pynn_common.Population, PyNNPopulationCommon):
         :param other: a pop, pop view, or assembly.
         :return: An assembly
         """
-        return PyNNAssembly([self, other])
+        return Assembly([self, other])
 
     def _recorder_class_builder(self, population, output_file):
         """ enforced by pynn. this builds a recorder for a population and uses
