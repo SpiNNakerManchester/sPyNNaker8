@@ -2,26 +2,38 @@
 from pyNN import common as pynn_common
 from pyNN.common import control as pynn_control
 from pyNN.recording import *
+from pyNN.random import *
 from pyNN.standardmodels import StandardCellType
 
 # fec imports
 from spinn_front_end_common.utilities.utility_objs.executable_finder \
     import ExecutableFinder
 
-# spynnaker imports
+# spynnaker8 imports
 from spynnaker8.utilities import globals_variables
 from spynnaker8.utilities import config
 from spynnaker8.utilities.failed_state import FailedState
 from spynnaker8._version import __version__
 from spynnaker8.spinnaker import SpiNNaker
-from spynnaker8.models.projection import Projection as SpiNNakerProjection
+from spynnaker8.models.projection import Projection
+from spynnaker8.models.population import Population
+from spynnaker8.models.assembly import Assembly
+from spynnaker8.models.population_view import PopulationView
+
+# binary import
 from spynnaker.pyNN import model_binaries
+
+# model types imports for pynn 0.8
+from spynnaker8.models.builds.if_cond_exp import IFCondExp as IF_cond_exp
+from spynnaker8.models.builds.if_curr_exp import IFCurrExp as IF_curr_exp
+from spynnaker8.models.builds.if_curr_dual_exp import IFCurrDualExp as \
+    IF_curr_duel_exp
+from spynnaker8.models.builds.izk_curr_exp import IzkCurrExp as Izhikevich
+from spynnaker8.models.builds.izk_cond_exp import IzkCondExp as \
+    Izhikevich_cond
 
 # stuff that needs disappearing
 from spynnaker8.connectors import *
-from spynnaker8.populations import Population, PopulationView, Assembly
-from spynnaker8.random import NativeRNG
-from spynnaker8.standardmodels.cells import *
 from spynnaker8.standardmodels.synapses import *
 
 # common imports
