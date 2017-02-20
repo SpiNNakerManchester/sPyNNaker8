@@ -1,42 +1,31 @@
-class IzkCurrExpBase(AbstractPopulationVertex):
-    _model_based_max_atoms_per_core = 255
+from pyNN.standardmodels.cells import Izhikevich as PyNNIzhikevich
 
-    default_parameters = {
-        'a': 0.02, 'c': -65.0, 'b': 0.2, 'd': 2.0, 'i_offset': 0,
-        'u_init': -14.0, 'v_init': -70.0, 'tau_syn_E': 5.0, 'tau_syn_I': 5.0}
+from spynnaker.pyNN.models.neuron.builds.izk_curr_exp_base import \
+    IzkCurrExpBase
+
+from spynnaker8.models.builds.build_common import BuildCommon
+
+
+class IzkCurrExp(IzkCurrExpBase, PyNNIzhikevich, BuildCommon):
 
     # noinspection PyPep8Naming
     def __init__(
-            self, n_neurons, spikes_per_second=None, ring_buffer_sigma=None,
+            self, size, spikes_per_second=None, ring_buffer_sigma=None,
             incoming_spike_buffer_size=None, constraints=None, label=None,
-            a=default_parameters['a'], b=default_parameters['b'],
-            c=default_parameters['c'], d=default_parameters['d'],
-            i_offset=default_parameters['i_offset'],
-            u_init=default_parameters['u_init'],
-            v_init=default_parameters['v_init'],
-            tau_syn_E=default_parameters['tau_syn_E'],
-            tau_syn_I=default_parameters['tau_syn_I']):
-        neuron_model = NeuronModelIzh(
-            n_neurons, a, b, c, d, v_init, u_init, i_offset)
-        synapse_type = SynapseTypeExponential(
-            n_neurons, tau_syn_E, tau_syn_I)
-        input_type = InputTypeCurrent()
-        threshold_type = ThresholdTypeStatic(n_neurons, _IZK_THRESHOLD)
-
-        AbstractPopulationVertex.__init__(
-            self, n_neurons=n_neurons, binary="IZK_curr_exp.aplx", label=label,
-            max_atoms_per_core=IzkCurrExpBase._model_based_max_atoms_per_core,
-            spikes_per_second=spikes_per_second,
-            ring_buffer_sigma=ring_buffer_sigma,
-            incoming_spike_buffer_size=incoming_spike_buffer_size,
-            model_name="IZK_curr_exp", neuron_model=neuron_model,
-            input_type=input_type, synapse_type=synapse_type,
-            threshold_type=threshold_type, constraints=constraints)
-
-    @staticmethod
-    def set_model_max_atoms_per_core(new_value):
-        IzkCurrExpBase._model_based_max_atoms_per_core = new_value
-
-    @staticmethod
-    def get_max_atoms_per_core():
-        return IzkCurrExpBase._model_based_max_atoms_per_core
+            a=PyNNIzhikevich.default_parameters['a'],
+            b=PyNNIzhikevich.default_parameters['b'],
+            c=PyNNIzhikevich.default_parameters['c'],
+            d=PyNNIzhikevich.default_parameters['d'],
+            i_offset=PyNNIzhikevich.default_parameters['i_offset'],
+            u_init=PyNNIzhikevich.default_parameters['u_init'],
+            v_init=PyNNIzhikevich.default_parameters['v_init'],
+            tau_syn_E=PyNNIzhikevich.default_parameters['tau_syn_E'],
+            tau_syn_I=PyNNIzhikevich.default_parameters['tau_syn_I']):
+        IzkCurrExpBase.__init__(
+            self, n_neurons=size, spikes_per_second=spikes_per_second,
+            ring_buffer_sigma=ring_buffer_sigma, label=label, a=a, b=b, c=c,
+            incoming_spike_buffer_size=incoming_spike_buffer_size, d=d,
+            constraints=constraints, i_offset=i_offset, u_init=u_init,
+            v_init=v_init, tau_syn_E=tau_syn_E, tau_syn_I=tau_syn_I)
+        PyNNIzhikevich.__init__(self)
+        BuildCommon.__init__(self, self)

@@ -4,6 +4,7 @@ from spynnaker.pyNN.models.neuron.builds.if_curr_dual_exp_base import \
     IFCurrDualExpBase
 
 from spynnaker8.models.builds.build_common import BuildCommon
+from spynnaker8.utilities import globals_variables
 
 
 class IFCurrDualExp(IFCurrDualExpBase, PyNNStandardCellType, BuildCommon):
@@ -33,14 +34,7 @@ class IFCurrDualExp(IFCurrDualExpBase, PyNNStandardCellType, BuildCommon):
             constraints=constraints, tau_refrac=tau_refrac, tau_m=tau_m,
             tau_syn_E=tau_syn_E, cm=cm, v_rest=v_rest, v_reset=v_reset,
             v_thresh=v_thresh, tau_syn_E2=tau_syn_E2, tau_syn_I=tau_syn_I,
-            i_offset=i_offset, v_init=v_init)
+            i_offset=i_offset, v_init=v_init,
+            config=globals_variables.get_simulator().config)
         PyNNStandardCellType.__init__(self)
         BuildCommon.__init__(self, self)
-
-    @staticmethod
-    def set_model_max_atoms_per_core(new_value):
-        IFCurrDualExpBase._model_based_max_atoms_per_core = new_value
-
-    @staticmethod
-    def get_max_atoms_per_core():
-        return IFCurrDualExpBase._model_based_max_atoms_per_core
