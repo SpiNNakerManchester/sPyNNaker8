@@ -33,6 +33,9 @@ from spynnaker8.models.connectors.distance_dependent_probability_connector \
 # noinspection PyUnresolvedReferences
 from spynnaker8.models.connectors.fixed_number_post_connector import \
     FixedNumberPostConnector
+# noinspection PyUnresolvedReferences
+from spynnaker8.models.connectors.fixed_number_pre_connector import \
+    FixedNumberPreConnector
 
 
 # neuron stuff

@@ -23,6 +23,7 @@ class FixedNumberPostConnector(
         """
 
         :param n: number of random post-synaptic neurons connected to output
+        :type n: int
         :param weights:
             may either be a float, a !RandomDistribution object, a list/
             1D array with at least as many items as connections to be
