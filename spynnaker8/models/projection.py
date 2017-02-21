@@ -51,7 +51,6 @@ class Projection(pynn_common.Projection, PyNNProjectionCommon):
             user_max_delay=self._simulator.max_delay, label=label,
             time_scale_factor=self._simulator.time_scale_factor)
 
-
     def __len__(self):
         raise NotImplementedError
 
