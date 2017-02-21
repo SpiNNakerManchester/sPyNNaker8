@@ -36,6 +36,9 @@ from spynnaker8.models.connectors.fixed_number_post_connector import \
 # noinspection PyUnresolvedReferences
 from spynnaker8.models.connectors.fixed_number_pre_connector import \
     FixedNumberPreConnector
+# noinspection PyUnresolvedReferences
+from spynnaker8.models.connectors.fixed_probability_connector import \
+    FixedProbabilityConnector
 
 
 # neuron stuff
@@ -56,13 +59,14 @@ from spynnaker8.models.builds.izk_curr_exp import IzkCurrExp as Izhikevich
 # noinspection PyUnresolvedReferences
 from spynnaker8.models.populations.assembly import Assembly
 # noinspection PyUnresolvedReferences
-from spynnaker8.models.populations.population import Population
+from spynnaker8.models.populations.population import Population as \
+    SpiNNakerPopulation
 # noinspection PyUnresolvedReferences
 from spynnaker8.models.populations.population_view import PopulationView
 
 # projection
 # noinspection PyUnresolvedReferences
-from spynnaker8.models.projection import Projection
+from spynnaker8.models.projection import Projection as SpiNNakerProjection
 
 # big stuff
 from spynnaker8.spinnaker import SpiNNaker
@@ -221,7 +225,7 @@ def _create_overloaded_functions(spinnaker_simulator):
 
     reset = pynn_common.build_reset(spinnaker_simulator)
     initialize = pynn_common.initialize
-    create = pynn_common.build_create(Population)
+    create = pynn_common.build_create(SpiNNakerPopulation)
 
     connect = pynn_common.build_connect(
         Projection, FixedProbabilityConnector, StaticSynapse)
