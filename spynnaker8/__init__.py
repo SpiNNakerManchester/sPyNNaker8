@@ -30,7 +30,9 @@ from spynnaker8.models.connectors.all_to_all_connector import \
 # noinspection PyUnresolvedReferences
 from spynnaker8.models.connectors.distance_dependent_probability_connector \
     import DistanceDependentProbabilityConnector
-
+# noinspection PyUnresolvedReferences
+from spynnaker8.models.connectors.fixed_number_post_connector import \
+    FixedNumberPostConnector
 
 
 # neuron stuff
