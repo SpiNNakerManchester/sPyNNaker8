@@ -11,6 +11,11 @@ logger = logging.getLogger(__file__)
 
 class FixedNumberPostConnector(
     CommonFixedNumberPostConnector, PyNNFixedNumberPostConnector):
+    """ pynn connector that puts a fixed number of connections on each of the
+     post neurons
+
+    """
+
     def __init__(
             self, n, weights=0.0, delays=1, allow_self_connections=True,
             space=None, safe=True, verbose=False, with_replacement=False,
