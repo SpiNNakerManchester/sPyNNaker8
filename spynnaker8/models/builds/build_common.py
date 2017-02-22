@@ -15,37 +15,37 @@ class BuildCommon(object):
     def __init__(self, vertex):
         self._vertex = vertex
 
-    @overrides(
-        PyNNStandardCellType.conductance_based,
-        additional_comments=
-        "Overrides this explicit call from PyNN, so that we can use our neuron"
-        " parameter formats.")
     @property
+    # @overrides(
+    #    PyNNStandardCellType.conductance_based,
+    #    additional_comments=
+    #    "Overrides this explicit call from PyNN, so that we can use our neuron"
+    #    " parameter formats.")
     def conductance_based(self):
         return isinstance(self._vertex, InputTypeConductance)
 
-    @overrides(
-        PyNNStandardCellType.receptor_types,
-        additional_comments=
-        "Overrides this explicit call from PyNN, so that we can use our neuron"
-        " parameter formats.")
     @property
+    # @overrides(
+    #    PyNNStandardCellType.receptor_types,
+    #    additional_comments=
+    #    "Overrides this explicit call from PyNN, so that we can use our neuron"
+    #    " parameter formats.")
     def receptor_types(self):
         return self._vertex.synapse_type
 
-    @overrides(
-        PyNNStandardCellType._get_cell_initial_value,
-        additional_comments=
-        "Overrides this explicit call from PyNN, so that we can use our neuron"
-        " parameter formats.")
+    # @overrides(
+    #    PyNNStandardCellType._get_cell_initial_value,
+    #    additional_comments=
+    #    "Overrides this explicit call from PyNN, so that we can use our neuron"
+    #    " parameter formats.")
     def _get_cell_initial_value(self, id, variable):
         values = self._vertex.get_value(variable)
         return values[id]
 
-    @overrides(
-        PyNNStandardCellType._set_cell_initial_value,
-        additional_comments=
-        "Overrides this explicit call from PyNN, so that we can use our neuron"
-        " parameter formats.")
+    # @overrides(
+    #    PyNNStandardCellType._set_cell_initial_value,
+    #    additional_comments=
+    #    "Overrides this explicit call from PyNN, so that we can use our neuron"
+    #    " parameter formats.")
     def _set_cell_initial_value(self, id, variable, value):
         self._vertex.set_value_at_index(variable, value, id)
