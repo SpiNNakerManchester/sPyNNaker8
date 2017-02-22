@@ -1,5 +1,6 @@
 # common imports
 import atexit
+import inspect
 import logging
 import os
 import deprecation
@@ -12,8 +13,11 @@ from pyNN.recording import *
 from pyNN.standardmodels import StandardCellType
 
 # fec improts
+from spinn_front_end_common.utilities.notification_protocol. \
+    socket_address import SocketAddress
 from spinn_front_end_common.utilities.utility_objs.executable_finder \
     import ExecutableFinder
+from spinn_front_end_common.utilities import helpful_functions
 
 # spynnaker imports
 from spynnaker.pyNN import model_binaries
@@ -63,8 +67,7 @@ from spynnaker8.models.builds.izk_curr_exp import IzkCurrExp as Izhikevich
 # noinspection PyUnresolvedReferences
 from spynnaker8.models.populations.assembly import Assembly
 # noinspection PyUnresolvedReferences
-from spynnaker8.models.populations.population import Population as \
-    SpiNNakerPopulation
+from spynnaker8.models.populations.population import Population
 # noinspection PyUnresolvedReferences
 from spynnaker8.models.populations.population_view import PopulationView
 
@@ -155,7 +158,8 @@ def setup(timestep=pynn_control.DEFAULT_TIMESTEP,
             os.path.join(os.path.dirname(model_binaries.__file__)))
 
     if time_scale_factor is None:
-        time_scale_factor = config_parser.getint("Machine", "timeScaleFactor")
+        time_scale_factor = helpful_functions.read_config_int(
+            config_parser, "Machine", "timeScaleFactor")
 
     # create the main object for all stuff related software
     globals_variables.set_simulator(SpiNNaker(
@@ -229,7 +233,7 @@ def _create_overloaded_functions(spinnaker_simulator):
 
     reset = pynn_common.build_reset(spinnaker_simulator)
     initialize = pynn_common.initialize
-    create = pynn_common.build_create(SpiNNakerPopulation)
+    create = pynn_common.build_create(Population)
 
     connect = pynn_common.build_connect(
         Projection, FixedProbabilityConnector, StaticSynapse)
@@ -293,3 +297,35 @@ def _stop_on_spinnaker():
     if not isinstance(globals_variables.get_simulator(), FailedState):
         globals_variables.get_simulator().stop(
             extract_provenance_data=False, extract_iobuf=False)
+
+
+def set_number_of_neurons_per_core(neuron_type, max_permitted):
+    """ Sets a ceiling on the number of neurons of a given type that can be\
+        placed on a single core.
+    :param neuron_type:
+    :param max_permitted:
+    """
+    if not inspect.isclass(neuron_type):
+        if neuron_type in globals():
+            neuron_type = globals()[neuron_type]
+        else:
+            raise Exception("Unknown Vertex Type {}"
+                            .format(neuron_type))
+
+    if hasattr(neuron_type, "set_model_max_atoms_per_core"):
+        neuron_type.set_model_max_atoms_per_core(max_permitted)
+    else:
+        raise Exception("{} is not a Vertex type"
+                        .format(neuron_type))
+
+
+def register_database_notification_request(hostname, notify_port, ack_port):
+    """ Adds a socket system which is registered with the notification protocol
+
+    :param hostname:
+    :param notify_port:
+    :param ack_report:
+    :return:
+    """
+    globals_variables.get_simulator()._add_socket_address(
+        SocketAddress(hostname, notify_port, ack_port))
