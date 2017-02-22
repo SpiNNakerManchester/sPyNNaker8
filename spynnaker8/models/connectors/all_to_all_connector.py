@@ -16,7 +16,7 @@ class AllToAllConnector(CommonAllToAllConnector, PyNNAllToAllConnector):
     """
 
     def __init__(
-            self, weights=0.0, delays=1, allow_self_connections=True,
+            self, allow_self_connections=True,
             space=None, safe=True, verbose=None, callbacks=None):
         """
 
@@ -40,8 +40,8 @@ class AllToAllConnector(CommonAllToAllConnector, PyNNAllToAllConnector):
         :param callbacks:
     """
         CommonAllToAllConnector.__init__(
-            self, weights, delays, allow_self_connections, space, safe,
-            verbose)
+            self, allow_self_connections=allow_self_connections, space=space,
+            safe=safe, verbose=verbose)
         PyNNAllToAllConnector.__init__(
             self, allow_self_connections=allow_self_connections, safe=safe,
             callback=callbacks)

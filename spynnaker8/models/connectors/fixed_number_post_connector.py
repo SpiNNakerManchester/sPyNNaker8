@@ -17,20 +17,13 @@ class FixedNumberPostConnector(
     """
 
     def __init__(
-            self, n, weights=0.0, delays=1, allow_self_connections=True,
+            self, n, allow_self_connections=True,
             space=None, safe=True, verbose=False, with_replacement=False,
             rng=None, callback=None):
         """
 
         :param n: number of random post-synaptic neurons connected to output
         :type n: int
-        :param weights:
-            may either be a float, a !RandomDistribution object, a list/
-            1D array with at least as many items as connections to be
-            created. Units nA.
-        :param delays:
-            If `None`, all synaptic delays will be set
-            to the global minimum delay.
         :param allow_self_connections: ??????
         :param space: the space object for pynn
         :param safe: ??????????
@@ -42,9 +35,8 @@ class FixedNumberPostConnector(
         :param callback: list of callbacks to run
         """
         CommonFixedNumberPostConnector.__init__(
-            self, n=n, weights=weights, delays=delays, safe=safe,
-            allow_self_connections=allow_self_connections, space=space,
-            verbose=verbose)
+            self, n=n, safe=safe, verbose=verbose,
+            allow_self_connections=allow_self_connections, space=space)
         PyNNFixedNumberPostConnector.__init__(
             self, n=n, allow_self_connections=allow_self_connections,
             with_replacement=with_replacement, rng=rng, safe=safe,

@@ -45,12 +45,12 @@ class Population(pynn_common.Population, PyNNPopulationCommon):
             self, size, cellclass, cellparams, structure, initial_values,
             label)
 
-    @overrides(
-        pynn_common.Population._create_cells,
-        additional_comments=
-        "This method is implicit in pynn and is part of the hidden demands it"
-        " puts upon any back end (these should be abstract methods in pynn). "
-        "We bypass it due to building the vertices as they are created. ")
+    # @overrides(
+    #    pynn_common.Population._create_cells,
+    #    additional_comments=
+    #    "This method is implicit in pynn and is part of the hidden demands it"
+    #    " puts upon any back end (these should be abstract methods in pynn). "
+    #    "We bypass it due to building the vertices as they are created. ")
     def _create_cells(self):
         """ enforced upon us due to pynn. Would be helpful when using
          pop views and assemblers
@@ -59,12 +59,12 @@ class Population(pynn_common.Population, PyNNPopulationCommon):
         """
         pass
 
-    @overrides(
-        pynn_common.Population._set_initial_value_array,
-        additional_comments=
-        "This method is implicit in pynn and is part of the hidden demands it"
-        " puts upon any back end (these should be abstract methods in pynn). "
-        "We push this down to the vertex, as it handles parameter generation")
+    # @overrides(
+    #    pynn_common.Population._set_initial_value_array,
+    #    additional_comments=
+    #    "This method is implicit in pynn and is part of the hidden demands it"
+    #    " puts upon any back end (these should be abstract methods in pynn). "
+    #    "We push this down to the vertex, as it handles parameter generation")
     def _set_initial_value_array(self, variable, initial_values):
         """ forced method from pynn. is used during pynns initialize
         functionality. so we should migrate this to the vertex till pop views
@@ -78,12 +78,12 @@ class Population(pynn_common.Population, PyNNPopulationCommon):
             variable, utility_calls.convert_param_to_numpy(
                 initial_values, self._vertex.n_atoms))
 
-    @overrides(
-        pynn_common.Population._get_view,
-        additional_comments=
-        "This method is implicit in pynn and is part of the hidden demands it"
-        " puts upon any back end (these should be abstract methods in pynn). "
-        "We just create a PyNN view for the moment.")
+    # @overrides(
+    #    pynn_common.Population._get_view,
+    #    additional_comments=
+    #    "This method is implicit in pynn and is part of the hidden demands it"
+    #    " puts upon any back end (these should be abstract methods in pynn). "
+    #    "We just create a PyNN view for the moment.")
     def _get_view(self, selector, label=None):
         """ enforced from pynn. is used during get item and sample.
         generates a PopulationView object.
@@ -95,12 +95,12 @@ class Population(pynn_common.Population, PyNNPopulationCommon):
         """
         return PyNNPopulationView(self, selector, label)
 
-    @overrides(
-        pynn_common.Population._get_parameters,
-        additional_comments=
-        "This method is implicit in pynn and is part of the hidden demands it"
-        " puts upon any back end (these should be abstract methods in pynn). "
-        "We just iterate though the vertex for the parameter values")
+    # @overrides(
+    #    pynn_common.Population._get_parameters,
+    #    additional_comments=
+    #    "This method is implicit in pynn and is part of the hidden demands it"
+    #    " puts upon any back end (these should be abstract methods in pynn). "
+    #    "We just iterate though the vertex for the parameter values")
     def _get_parameters(self, *names):
         """ enforced from pynn. is used during get and set(why set???!)
         return a ParameterSpace containing native parameters
@@ -111,12 +111,12 @@ class Population(pynn_common.Population, PyNNPopulationCommon):
                 self._vertex.get_value(parameter_name)
         return PyNNParameterSpace(parameter_dict, shape=self.local_size)
 
-    @overrides(
-        pynn_common.Population._get_parameters,
-        additional_comments=
-        "This method is implicit in pynn and is part of the hidden demands it"
-        " puts upon any back end (these should be abstract methods in pynn). "
-        "We just iterate though the vertex for the parameter setting")
+    # @overrides(
+    #    pynn_common.Population._set_parameters,
+    #    additional_comments=
+    #    "This method is implicit in pynn and is part of the hidden demands it"
+    #    " puts upon any back end (these should be abstract methods in pynn). "
+    #    "We just iterate though the vertex for the parameter setting")
     def _set_parameters(self, parameter_space):
         """ enforced by PyNN. is used during its set.
 

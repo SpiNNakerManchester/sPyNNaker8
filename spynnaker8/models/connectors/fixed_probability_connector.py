@@ -33,7 +33,7 @@ class FixedProbabilityConnector(
             allow_self_connections=True, safe=True, space=None,
             verbose=False, rng=None, callback=None):
         CommonFixedProbabilityConnector.__init__(
-            self, p_connect=p_connect, weights=weights, delays=delays,
+            self, p_connect=p_connect,
             allow_self_connections=allow_self_connections, safe=safe,
             space=space, verbose=verbose)
         PyNNFixedProbabilityConnector.__init__(

@@ -46,9 +46,8 @@ class DistanceDependentProbabilityConnector(
 
         CommonDistanceDependentProbabilityConnector.__init__(
             self, d_expression=d_expression,
-            allow_self_connections=allow_self_connections, weights=weights,
-            delays=delays, space=space, safe=safe, verbose=verbose,
-            n_connections=n_connections)
+            allow_self_connections=allow_self_connections, space=space,
+            safe=safe, verbose=verbose, n_connections=n_connections)
         PyNNDistanceDepednentProbabilityConnector.__init__(
             self, d_expression=d_expression,
             allow_self_connections=allow_self_connections, rng=rng, safe=safe,

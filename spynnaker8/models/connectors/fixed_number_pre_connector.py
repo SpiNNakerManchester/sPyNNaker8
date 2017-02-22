@@ -44,7 +44,7 @@ class FixedNumberPreConnector(
         :param callback:
         """
         CommonFixedNumberPreConnector.__init__(
-            self, n=n, weights=weights, delays=delays, safe=safe,
+            self, n=n, safe=safe,
             allow_self_connections=allow_self_connections, space=space,
             verbose=verbose)
         PyNNFixedNumberPreConnector.__init__(
