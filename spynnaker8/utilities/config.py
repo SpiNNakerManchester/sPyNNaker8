@@ -7,6 +7,7 @@ import string
 import logging
 
 from spynnaker8.utilities import log
+from spynnaker8 import spinnaker
 
 
 def _add_section(parser, section_name, defaults):
@@ -30,12 +31,15 @@ def read_config(file_names=None):
     """
     parser = ConfigParser()
 
+    # turn off the lower case forcing of the parser
+    parser.optionxform = str
+
     # The application name to use in config file names
     _name = "spynnaker_8_0.cfg"
 
     # Standard config file names/locations
     default_params_cfg_file = os.path.join(
-        os.path.dirname(__file__), "spynnaker8.cfg")
+        os.path.dirname(spinnaker.__file__), "spynnaker8.cfg")
     system_config_cfg_file = os.path.join(
         appdirs.site_config_dir(), ".spynnaker8.cfg")
     user_config_cfg_file = os.path.join(
@@ -54,29 +58,23 @@ def read_config(file_names=None):
     if file_names is None:
         file_names = search_paths
 
-    _add_section(parser, "Stuff",
-                 {"realtime_proportion": 1.0,
-                  "convert_direct_connections": True,
-                  "generate_connections_on_chip": True,
-                  "stop_on_spinnaker": True,
-                  "stop_after_loader": False,
-                  "disable_software_watchdog": False,
-                  "allocation_fudge_factor": 1.6})
-
     # Attempt to read from each possible file location in turn
     for filename in file_names:
         try:
             with open(filename, "r") as f:
                 parser.readfp(f, filename)
+
+                if parser.has_option("Machine", "machine_spec_file"):
+                    machine_spec_file_path = parser.get("Machine",
+                                                        "machine_spec_file")
+                    if machine_spec_file_path != "None":
+                        with open(machine_spec_file_path,
+                                  "r") as extra_config_file:
+                            parser.readfp(extra_config_file)
+
         except (IOError, OSError):
             # File did not exist, keep trying
             pass
-
-    if parser.has_option("Machine", "machine_spec_file"):
-        machine_spec_file_path = parser.get("Machine", "machine_spec_file")
-        if machine_spec_file_path != "None":
-            with open(machine_spec_file_path, "r") as extra_config_file:
-                parser.readfp(extra_config_file)
 
     # Create the root logger with the given level
     # Create filters based on logging levels
