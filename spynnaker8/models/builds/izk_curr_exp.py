@@ -18,10 +18,10 @@ class IzkCurrExp(IzkCurrExpBase, PyNNIzhikevich, BuildCommon):
             c=PyNNIzhikevich.default_parameters['c'],
             d=PyNNIzhikevich.default_parameters['d'],
             i_offset=PyNNIzhikevich.default_parameters['i_offset'],
-            u_init=PyNNIzhikevich.default_parameters['u_init'],
-            v_init=PyNNIzhikevich.default_parameters['v_init'],
-            tau_syn_E=PyNNIzhikevich.default_parameters['tau_syn_E'],
-            tau_syn_I=PyNNIzhikevich.default_parameters['tau_syn_I']):
+            u_init=IzkCurrExpBase.default_parameters['u_init'],
+            v_init=IzkCurrExpBase.default_parameters['v_init'],
+            tau_syn_E=IzkCurrExpBase.default_parameters['tau_syn_E'],
+            tau_syn_I=IzkCurrExpBase.default_parameters['tau_syn_I']):
         IzkCurrExpBase.__init__(
             self, n_neurons=size, spikes_per_second=spikes_per_second,
             ring_buffer_sigma=ring_buffer_sigma, label=label, a=a, b=b, c=c,
