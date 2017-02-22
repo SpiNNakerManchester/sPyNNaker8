@@ -4,9 +4,6 @@ import logging
 import os
 import deprecation
 
-from spynnaker8.connectors import *
-from spynnaker8.standardmodels.synapses import *
-
 # pynn imports
 from pyNN import common as pynn_common
 from pyNN.common import control as pynn_control
@@ -39,7 +36,14 @@ from spynnaker8.models.connectors.fixed_number_pre_connector import \
 # noinspection PyUnresolvedReferences
 from spynnaker8.models.connectors.fixed_probability_connector import \
     FixedProbabilityConnector
+# noinspection PyUnresolvedReferences
+from spynnaker8.models.connectors.from_file_connector import FromFileConnector
+# noinspection PyUnresolvedReferences
+from spynnaker8.models.connectors.from_list_connector import FromListConnector
 
+# synapse structures
+from spynnaker8.models.synapse_dynamics.synapse_dynamics_static import \
+    SynapseDynamicsStatic as StaticSynapse
 
 # neuron stuff
 # noinspection PyUnresolvedReferences
@@ -249,7 +253,7 @@ def end(_=True):
 
 
 @deprecation.deprecated(
-    deprecated_in="PyNN 8.0 version 1.0.0", current_version=__version__,
+    deprecated_in="1.0.0", current_version=__version__,
     details="Use record('v') function instead")
 def record_v(source, filename):
     """ depreciated method for getting voltage
@@ -262,7 +266,7 @@ def record_v(source, filename):
 
 
 @deprecation.deprecated(
-    deprecated_in="PyNN 8.0 version 1.0.0", current_version=__version__,
+    deprecated_in="1.0.0", current_version=__version__,
     details="Use record('gsyn_exc', 'gsyn_inh') function instead")
 def record_gsyn(source, filename):
     """depreciated method for getting both types of gsyn
