@@ -51,17 +51,20 @@ from spynnaker8.models.synapse_dynamics.synapse_dynamics_static import \
 
 # neuron stuff
 # noinspection PyUnresolvedReferences
-from spynnaker8.models.builds.if_cond_exp import IFCondExp as IF_cond_exp
+from spynnaker8.models.neuron_data_holders.if_cond_exp_data_holder import \
+    IFCondExpDataHolder as IF_cond_exp
 # noinspection PyUnresolvedReferences
-from spynnaker8.models.builds.if_curr_dual_exp import IFCurrDualExp as \
-    IF_curr_duel_exp
+from spynnaker8.models.neuron_data_holders.if_curr_dual_exp_data_holder \
+    import IFCurrDualExpDataHolder as IF_curr_duel_exp
 # noinspection PyUnresolvedReferences
-from spynnaker8.models.builds.if_curr_exp import IFCurrExp as IF_curr_exp
+from spynnaker8.models.neuron_data_holders.if_curr_exp_data_holder import \
+    IFCurrExpDataHolder as IF_curr_exp
 # noinspection PyUnresolvedReferences
-from spynnaker8.models.builds.izk_cond_exp import IzkCondExp as \
-    Izhikevich_cond
+from spynnaker8.models.neuron_data_holders.izk_cond_exp_data_holder import \
+    IzkCondExpDataHolder as Izhikevich_cond
 # noinspection PyUnresolvedReferences
-from spynnaker8.models.builds.izk_curr_exp import IzkCurrExp as Izhikevich
+from spynnaker8.models.neuron_data_holders.izk_curr_exp_data_holder import \
+    IzkCurrExpDataHolder as Izhikevich
 
 # pops
 # noinspection PyUnresolvedReferences
@@ -305,15 +308,9 @@ def set_number_of_neurons_per_core(neuron_type, max_permitted):
     :param neuron_type:
     :param max_permitted:
     """
-    if not inspect.isclass(neuron_type):
-        if neuron_type in globals():
-            neuron_type = globals()[neuron_type]
-        else:
-            raise Exception("Unknown Vertex Type {}"
-                            .format(neuron_type))
 
-    if hasattr(neuron_type, "set_model_max_atoms_per_core"):
-        neuron_type.set_model_max_atoms_per_core(max_permitted)
+    if hasattr(neuron_type.build_model(), "set_model_max_atoms_per_core"):
+        neuron_type.build_model().set_model_max_atoms_per_core(max_permitted)
     else:
         raise Exception("{} is not a Vertex type"
                         .format(neuron_type))
