@@ -51,20 +51,23 @@ from spynnaker8.models.synapse_dynamics.synapse_dynamics_static import \
 
 # neuron stuff
 # noinspection PyUnresolvedReferences
-from spynnaker8.models.neuron_data_holders.if_cond_exp_data_holder import \
+from spynnaker8.models.model_data_holders.if_cond_exp_data_holder import \
     IFCondExpDataHolder as IF_cond_exp
 # noinspection PyUnresolvedReferences
-from spynnaker8.models.neuron_data_holders.if_curr_dual_exp_data_holder \
+from spynnaker8.models.model_data_holders.if_curr_dual_exp_data_holder \
     import IFCurrDualExpDataHolder as IF_curr_duel_exp
 # noinspection PyUnresolvedReferences
-from spynnaker8.models.neuron_data_holders.if_curr_exp_data_holder import \
+from spynnaker8.models.model_data_holders.if_curr_exp_data_holder import \
     IFCurrExpDataHolder as IF_curr_exp
 # noinspection PyUnresolvedReferences
-from spynnaker8.models.neuron_data_holders.izk_cond_exp_data_holder import \
+from spynnaker8.models.model_data_holders.izk_cond_exp_data_holder import \
     IzkCondExpDataHolder as Izhikevich_cond
 # noinspection PyUnresolvedReferences
-from spynnaker8.models.neuron_data_holders.izk_curr_exp_data_holder import \
+from spynnaker8.models.model_data_holders.izk_curr_exp_data_holder import \
     IzkCurrExpDataHolder as Izhikevich
+# noinspection PyUnresolvedReferences
+from spynnaker8.models.model_data_holders.spike_source_array_data_holder \
+    import SpikeSourceArrayDataHolder as SpikeSourceArray
 
 # pops
 # noinspection PyUnresolvedReferences

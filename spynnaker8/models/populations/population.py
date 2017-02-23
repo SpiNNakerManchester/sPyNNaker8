@@ -22,12 +22,12 @@ class Population(PyNNPopulationCommon, RecordingCommon):
             vertex_holder = cellclass
             vertex_holder.add_item(
                 'label', self.create_label(vertex_holder.data_items['label']))
-            vertex_holder.add_item('size', size)
+            vertex_holder.add_item('n_neurons', size)
             assert cellparams is None  # cellparams being retained for backwards compatibility, but use is deprecated
         elif issubclass(cellclass, DataHolder):
             internal_params = dict(cellparams)
             internal_params['label'] = self.create_label(label)
-            internal_params['size'] = size
+            internal_params['n_neurons'] = size
             vertex_holder = cellclass(**internal_params)
             # emit deprecation warning
         else:
