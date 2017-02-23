@@ -1,6 +1,5 @@
 from spynnaker8.utilities.data_holder import DataHolder
-from spynnaker8.models.builds.if_curr_exp import IFCurrExp
-
+from spynnaker.pyNN.models.neuron.builds.if_curr_exp_base import IFCurrExpBase
 
 class IFCurrExpDataHolder(DataHolder):
     def __init__(self, spikes_per_second=None, ring_buffer_sigma=None,
@@ -23,4 +22,4 @@ class IFCurrExpDataHolder(DataHolder):
 
     @staticmethod
     def build_model():
-        return IFCurrExp
+        return IFCurrExpBase
