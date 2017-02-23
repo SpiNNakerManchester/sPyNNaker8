@@ -13,7 +13,7 @@ from spynnaker8._version import __version__
 logger = logging.getLogger(__name__)
 
 
-class Projection(pynn_common.Projection, PyNNProjectionCommon):
+class Projection(PyNNProjectionCommon):
     """ spynnaker 8 projection class
 
     """
@@ -32,11 +32,6 @@ class Projection(pynn_common.Projection, PyNNProjectionCommon):
 
         # set the simulator object correctly.
         self._simulator = globals_variables.get_simulator()
-
-        # connect to pynn code
-        pynn_common.Projection.__init__(
-            self, pre_synaptic_population, post_synaptic_population,
-            connector, synapse_type, source, receptor_type, space, label)
 
         if synapse_type is None:
             synapse_type = self._static_synapse_class
