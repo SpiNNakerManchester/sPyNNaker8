@@ -1,10 +1,9 @@
 from pyNN.standardmodels.cells import IF_cond_exp as PyNNIfCondExp
 from spynnaker.pyNN.models.neuron.builds.if_cond_exp_base import IFCondExpBase
 from spynnaker.pyNN.utilities import globals_variables
-from spynnaker8.models.builds.build_common import BuildCommon
 
 
-class IFCondExp(IFCondExpBase, PyNNIfCondExp, BuildCommon):
+class IFCondExp(IFCondExpBase):
     """ Leaky integrate and fire neuron with an exponentially decaying \
         conductance input
     """
@@ -32,5 +31,3 @@ class IFCondExp(IFCondExpBase, PyNNIfCondExp, BuildCommon):
             tau_syn_E=tau_syn_E, tau_syn_I=tau_syn_I, i_offset=i_offset,
             e_rev_E=e_rev_E, e_rev_I=e_rev_I,
             config=globals_variables.get_simulator().config)
-        PyNNIfCondExp.__init__(self)
-        BuildCommon.__init__(self, self)

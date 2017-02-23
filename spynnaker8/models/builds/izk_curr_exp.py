@@ -4,10 +4,8 @@ from spynnaker.pyNN.models.neuron.builds.izk_curr_exp_base import \
     IzkCurrExpBase
 from spynnaker.pyNN.utilities import globals_variables
 
-from spynnaker8.models.builds.build_common import BuildCommon
 
-
-class IzkCurrExp(IzkCurrExpBase, PyNNIzhikevich, BuildCommon):
+class IzkCurrExp(IzkCurrExpBase):
 
     # noinspection PyPep8Naming
     def __init__(
@@ -29,5 +27,3 @@ class IzkCurrExp(IzkCurrExpBase, PyNNIzhikevich, BuildCommon):
             constraints=constraints, i_offset=i_offset, u_init=u_init,
             v_init=v_init, tau_syn_E=tau_syn_E, tau_syn_I=tau_syn_I,
             config=globals_variables.get_simulator().config)
-        PyNNIzhikevich.__init__(self)
-        BuildCommon.__init__(self, self)
