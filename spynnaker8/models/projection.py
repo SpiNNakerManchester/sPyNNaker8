@@ -4,8 +4,8 @@ import deprecation
 
 from pyNN import common as pynn_common
 from pyNN.space import Space as PyNNSpace
-from spynnaker.pyNN.models.neuron.synapse_dynamics. \
-    synapse_dynamics_static import SynapseDynamicsStatic
+from spynnaker8.models.synapse_dynamics.synapse_dynamics_static \
+    import SynapseDynamicsStatic
 from spynnaker.pyNN.models.pynn_projection_common import PyNNProjectionCommon
 from spynnaker.pyNN.utilities import globals_variables
 from spynnaker8._version import __version__
@@ -34,14 +34,22 @@ class Projection(PyNNProjectionCommon):
         self._simulator = globals_variables.get_simulator()
 
         if synapse_type is None:
-            synapse_type = self._static_synapse_class
+            synapse_type = SynapseDynamicsStatic()
+
+        # move weights and delays over to the connector to satisfy pynn 8
+        # and 7 compatibility
+        connector.weights = synapse_type.weight
+        connector.delays = synapse_type.delay
+
+        rng = None
+        if hasattr(connector, "rng"):
+            rng = connector.rng
 
         PyNNProjectionCommon.__init__(
             self, connector=connector, synapse_dynamics_stdp=synapse_type,
             synapse_type=receptor_type, spinnaker_control=self._simulator,
             pre_synaptic_population=pre_synaptic_population,
-            post_synaptic_population=post_synaptic_population,
-            rng=connector.rng,
+            post_synaptic_population=post_synaptic_population, rng=rng,
             machine_time_step=self._simulator.machine_time_step,
             user_max_delay=self._simulator.max_delay, label=label,
             time_scale_factor=self._simulator.time_scale_factor)
