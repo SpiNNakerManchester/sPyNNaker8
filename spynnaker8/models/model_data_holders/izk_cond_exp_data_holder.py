@@ -1,5 +1,6 @@
 from spynnaker8.utilities.data_holder import DataHolder
-from spynnaker8.models.builds.izk_cond_exp import IzkCondExp
+from spynnaker.pyNN.models.neuron.builds.izk_cond_exp_base import \
+    IzkCondExpBase
 
 
 class IzkCondExpDataHolder(DataHolder):
@@ -8,4 +9,4 @@ class IzkCondExpDataHolder(DataHolder):
 
     @staticmethod
     def build_model():
-        return IzkCondExp
+        return IzkCondExpBase

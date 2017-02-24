@@ -1,11 +1,11 @@
 from spynnaker8.utilities.data_holder import DataHolder
-from spynnaker8.models.builds.izk_curr_exp import IzkCurrExp
+from spynnaker.pyNN.models.neuron.builds.if_cond_exp_base import IFCondExpBase
 
 
-class IzkCurrExpDataHolder(DataHolder):
+class IFCondExpDataHolder(DataHolder):
     def __init__(self, data_items):
         DataHolder.__init__(self, data_items)
 
     @staticmethod
     def build_model():
-        return IzkCurrExp
+        return IFCondExpBase

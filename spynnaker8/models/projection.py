@@ -120,19 +120,5 @@ class Projection(PyNNProjectionCommon):
                     self.label)
         return self._get_synaptic_data(True, names)
 
-    def _get_attributes_as_arrays(self, names, multiple_synapses='sum'):
-        """ internally forced upon us call from pynn. is getting synaptic data
-
-        :param names: name of the attributes whose values are wanted, or a
-        list of such names. an example is ['delay', 'weight']
-        :param multiple_synapses: ????????
-
-        :return: a array of tuples, each containing the named data's per
-        connection
-        """
-        logger.info("Downloading synaptic matrices for projection %s",
-                    self.label)
-        return self._get_synaptic_data(False, names)
-
     def __repr__(self):
         return "projection {}".format(self._projection_edge.label)
