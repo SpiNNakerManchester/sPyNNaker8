@@ -1,0 +1,12 @@
+/.project
+/.pydevproject
+/.idea
+/.settings
+/doc/build
+*.pyc
+*reports/
+*application_generated_data_files/
+*build/
+*dist/
+*egg-info/
+MANIFEST
