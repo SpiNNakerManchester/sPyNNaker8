@@ -1,76 +1,102 @@
-from pyNN.random import RandomDistribution
 from spynnaker.pyNN.models.neural_projections.connectors. \
     from_list_connector import FromListConnector as CommonFromListConnector
-from pyNN.connectors import FromListConnector as PyNNFromListConnector
 import numpy
+from spynnaker8.utilities import exceptions
 
-class FromListConnector(CommonFromListConnector, PyNNFromListConnector):
+
+class FromListConnector(CommonFromListConnector):
     """ Make connections according to a list.
-
-    :param: conn_list:
-        a list of tuples, one tuple for each connection. Each
-        tuple should contain::
-
-         (pre_idx, post_idx, weight, delay)
-
-        where pre_idx is the index (i.e. order in the Population,
-        not the ID) of the presynaptic neuron, and post_idx is
-        the index of the postsynaptic neuron.
     """
 
     def __init__(
             self, conn_list, safe=True, verbose=False, column_names=None,
             callback=None):
+        """Creates a new FromListConnector.
+        :param: conn_list:
+            a list of tuples, one tuple for each connection. Each tuple
+            should contain: (pre_idx, post_idx, p1, p2, ..., pn) where pre_idx
+            is the index (i.e. order in the Population, not the ID) of the
+             presynaptic neuron, post_idx is the index of the postsynaptic
+             neuron, and p1, p2, etc. are the synaptic parameters (e.g.
+             weight, delay, plasticity parameters).
+        :param column_names:
+            the names of the parameters p1, p2, etc. If not provided, it is
+             assumed the parameters are weight, delay (for
+             backwards compatibility).
+        :param safe:
+            if True, check that weights and delays have valid values. If
+            False, this check is skipped.
+        :param callback:
+            if True, display a progress bar on the terminal.
         """
-        Creates a new FromListConnector.
-        """
+
+        temp_conn_list = numpy.array(conn_list)
+        extra_data = dict()
+
+        n_columns = 0
+        if len(temp_conn_list) > 0:
+            n_columns = temp_conn_list.shape[1]
+
+        if column_names is None:
+            if n_columns == 2:
+                new_conn_list = list()
+                for element in conn_list:
+                    new_conn_list.append((element[0], element[1], 0, 1))
+                conn_list = new_conn_list
+            elif n_columns != 4:
+                raise TypeError("Argument 'column_names' is required.")
+        else:
+            # separate conn list to pre, source, weight, delay and the
+            # other things
+            conn_list, extra_data = self._split_conn_list(
+                conn_list, column_names)
+
+        # store other data for future
+        self._extra_conn_data = extra_data
+
+        self._verify_extra_data_meets_constraints()
+
+        # build common from list
         CommonFromListConnector.__init__(
-            self, conn_list=None, safe=safe, verbose=verbose)
-        PyNNFromListConnector.__init__(
-            self, conn_list=conn_list, column_names=column_names, safe=safe,
-            callback=callback)
-        self._weight = None
-        self._delay = None
+            self, conn_list=conn_list, safe=safe, verbose=verbose)
 
-    def convert_into_numpy(self):
-        if self._conn_list is None or len(self._conn_list) == 0:
-            self._conn_list = numpy.zeros(0, dtype=self.CONN_LIST_DTYPE)
-        else:
-            weights = self._convert_parameter(self._weight)
-            delays = self._convert_parameter(self._delay)
-            temp_conn_list = list()
-            for index in range(0, len(self._conn_list)):
-                temp_conn_list.append(
-                    (self._conn_list[index][0], self._conn_list[index][1],
-                     weights[index], delays[index]))
-            self._conn_list = numpy.array(
-                temp_conn_list, dtype=self.CONN_LIST_DTYPE)
+    def _verify_extra_data_meets_constraints(self):
+        for data_key in self._extra_conn_data.keys():
+            first_data = None
+            for (_, _, data) in self._extra_conn_data[data_key]:
+                if first_data is None:
+                    first_data = data
+                elif data != first_data:
+                    raise exceptions.InvalidParameterType(
+                        "The parameter {} needs top have a consistent value"
+                            .format(data_key))
 
-    def _convert_parameter(self, param):
-        if isinstance(self._weight, RandomDistribution):
-            if len(self._conn_list) > 1:
-                params = param.next(n=len(self._conn_list))
-            else:
-                params = [param.next(n=len(self._conn_list))]
-        elif not hasattr(param, '__iter__'):
-            params = [
-                param for _ in range(0, len(self._conn_list))]
-        else:
-            params = param
-        return params
+    @staticmethod
+    def _split_conn_list(conn_list, column_names):
+        new_conn_list = list()
+        other_conn_list = dict()
 
-    @property
-    def weights(self):
-        return self._weight
+        # locate weights and delays
+        weight_index = column_names.index("weight") + 2
+        delay_index = column_names.index("delay") + 2
+        element_index = range(2, len(column_names) + 2)
 
-    @weights.setter
-    def weights(self, new_value):
-        self._weight = new_value
+        # figure out where other stuff is
+        element_index.remove(weight_index)
+        element_index.remove(delay_index)
 
-    @property
-    def delays(self):
-        return self._delay
+        # build new conn list
+        for element in conn_list:
+            new_conn_list.append(
+                (element[0], element[1], element[weight_index],
+                 element[delay_index]))
 
-    @delays.setter
-    def delays(self, new_value):
-        self._delay = new_value
+        # build other data conn list
+        for element in conn_list:
+            data_element = list()
+            for index in element_index:
+                other_conn_list[column_names[index - 2]] = list()
+                other_conn_list[column_names[index - 2]].append(
+                    (element[0], element[1], element[index]))
+
+        return new_conn_list, other_conn_list
