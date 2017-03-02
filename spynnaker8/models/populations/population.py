@@ -1,6 +1,6 @@
 from spynnaker.pyNN.models.pynn_population_common import PyNNPopulationCommon
-from spynnaker.pyNN.models.recording_common import RecordingCommon
 from spynnaker.pyNN.utilities import globals_variables
+from spynnaker8.models.recorder import Recorder
 from spynnaker8.utilities.data_holder import DataHolder
 
 import numpy
@@ -8,7 +8,7 @@ import numpy
 from spynnaker8.utilities.id import ID
 
 
-class Population(PyNNPopulationCommon, RecordingCommon):
+class Population(PyNNPopulationCommon, Recorder):
     """ pynn 0.8 population object
 
     """
@@ -45,7 +45,7 @@ class Population(PyNNPopulationCommon, RecordingCommon):
             self, spinnaker_control=globals_variables.get_simulator(),
             size=size, vertex=vertex,
             structure=structure, initial_values=initial_values)
-        RecordingCommon.__init__(self, population=self)
+        Recorder.__init__(self, population=self)
 
         # things for pynn demands
         self._all_ids = self.get_all_ids()
@@ -96,20 +96,42 @@ class Population(PyNNPopulationCommon, RecordingCommon):
         """
         if variables is None:  # reset the list of things to record
             # note that if record(None) is called, its a reset
-            RecordingCommon._reset(self)
+            Recorder._reset(self)
         else:
             for variable in variables:
                 self._record(
                     variable, self._all_ids, sampling_interval, to_file)
 
+    def write_data(self, io, variables='all', gather=True, clear=False,
+                   annotations=None):
+        """
+        Write recorded data to file, using one of the file formats supported by
+        Neo.
+
+        :param io: a Neo IO instance
+        :type io: neo instance or a string for where to put a neo instance
+        :param variables:
+            either a single variable name or a list of variable names.
+            Variables must have been previously recorded, otherwise an
+            Exception will be raised.
+        :type variables: string or list of string
+        :param gather: pointless in spynnaker
+        :param clear:
+        clears the storage data if set to true after reading it back
+        :param annotations: ???????????
+        """
+        if isinstance(io, basestring):
+            io = self._get_io(io)
+        data = self._get_data(variables, clear, annotations)
+        io.write(data)
+
+    def _get_data(self, variables, clear, ):
+
     def _end(self):
         """ Do final steps at the end of the simulation
         """
-        if self._write_to_files_indicators['spikes'] is not None:
-            self.write_data
-            self.printSpikes(self._record_spike_file)
-        if self._write_to_files_indicators['v'] is not None:
-            self.print_v(self._record_v_file)
-        if self._write_to_files_indicators['gsyn_exc'] is not None:
-            self.print_gsyn_exc(self._record_gsyn_file)
-        if self._write_to_files_indicators['gsyn_inh'] is not None:
+        for variable in self._write_to_files_indicators.keys():
+            if self._write_to_files_indicators[variable] is not None:
+                self.write_data(
+                    io=self._write_to_files_indicators[variable],
+                    variables=[variable])
