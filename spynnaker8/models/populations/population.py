@@ -1,3 +1,5 @@
+import neo
+
 from spynnaker.pyNN.models.pynn_population_common import PyNNPopulationCommon
 from spynnaker.pyNN.utilities import globals_variables
 from spynnaker8.models.recorder import Recorder
@@ -52,6 +54,9 @@ class Population(PyNNPopulationCommon, Recorder):
         self._first_id = self._all_ids[0]
         self._last_id = self._all_ids[-1]
 
+        # annotations used by neo objects
+        self._anno
+
     @property
     def label(self):
         return self._vertex.label
@@ -59,6 +64,9 @@ class Population(PyNNPopulationCommon, Recorder):
     @label.setter
     def label(self, new_value):
         self._vertex.label = new_value
+
+    def annotate(self, **annotations):
+        self._annotations.update(annotations)
 
     def id_to_index(self, id):
         """
@@ -120,11 +128,38 @@ class Population(PyNNPopulationCommon, Recorder):
         clears the storage data if set to true after reading it back
         :param annotations: ???????????
         """
+
         if isinstance(io, basestring):
             io = self._get_io(io)
+        data = neo.Block()
 
-        data = self._get_data(variables, clear, annotations)
+        data = self._vertex.get_data(variables, clear, annotations)
+
+        data.name = self.label
+        data.description = self.describe()
+        data.rec_datetime = data.segments[0].rec_datetime
+        data.annotate(**self.metadata)
+        if annotations:
+            data.annotate(**annotations)
+
         io.write(data)
+
+    @property
+    def metadata(self):
+        metadata = {
+            'size': self.size,
+            'first_index': 0,
+            'last_index': self.size,
+            'first_id': int(self._first_id),
+            'last_id': int(self._last_id),
+            'label': self.label,
+            'simulator': globals_variables.get_simulator().name,
+        }
+        metadata.update(self.annotations)
+        metadata[
+            'dt'] = self._simulator.state.dt  # note that this has to run on all nodes (at least for NEST)
+        metadata['mpi_processes'] = self._simulator.state.num_processes
+        return metadata
 
     def _get_data(self, variables, clear, annotations):
 
