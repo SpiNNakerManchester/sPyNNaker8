@@ -122,10 +122,12 @@ class Population(PyNNPopulationCommon, Recorder):
         """
         if isinstance(io, basestring):
             io = self._get_io(io)
+
         data = self._get_data(variables, clear, annotations)
         io.write(data)
 
-    def _get_data(self, variables, clear, ):
+    def _get_data(self, variables, clear, annotations):
+
 
     def _end(self):
         """ Do final steps at the end of the simulation
