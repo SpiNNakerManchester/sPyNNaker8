@@ -32,13 +32,16 @@ setup(
 
     # Requirements
     install_requires=[
-        "pynn>=0.8", "SpiNNFrontEndCommon",
+        "pynn>=0.8, <=0.9", "SpiNNFrontEndCommon",
         "PACMAN", "SpiNNMan", "sPyNNaker",
         "spalloc >= 0.2.4",  # For machine allocation
         "deprecation >= 1.0, < 2.0.0",
         "six >=1.0.0, <= 1.6.1",
         "numpy >= 1.9.0, <=1.9.1",
         "scipy >=0.16.0, <=0.16.0",
-        "bitarray", "quantities  >= 0.11.1"
+        "bitarray >=0.8.1, <=0.8.1",
+        "quantities  >= 0.11.1, <= 0.11.1",
+        'lazyarray >= 0.2.9, <= 0.2.9',
+        'appdirs >=1.4.2 , <=1.4.2'
     ],
 )
