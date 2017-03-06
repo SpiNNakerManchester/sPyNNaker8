@@ -9,6 +9,8 @@ import logging
 from spynnaker8.utilities import log
 from spynnaker8 import spinnaker
 
+from spinn_front_end_common.utilities import exceptions
+
 
 def _add_section(parser, section_name, defaults):
     parser.add_section(section_name)
@@ -54,6 +56,8 @@ def read_config(file_names=None):
         current_directory_cfg_file,
     ]
 
+    failed_to_read_paths = list()
+
     # handle default parameters
     if file_names is None:
         file_names = search_paths
@@ -74,7 +78,12 @@ def read_config(file_names=None):
 
         except (IOError, OSError):
             # File did not exist, keep trying
-            pass
+            failed_to_read_paths.append(filename)
+
+    if len(failed_to_read_paths) + 1 == len(search_paths):
+        raise exceptions.ConfigurationException(
+            "You need to have at least one spynnaker8.cfg file located in "
+            "one of the following locations: {}".format(failed_to_read_paths))
 
     # Create the root logger with the given level
     # Create filters based on logging levels
