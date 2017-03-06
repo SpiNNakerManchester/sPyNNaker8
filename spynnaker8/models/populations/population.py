@@ -1,13 +1,16 @@
-import neo
+import numpy
+import logging
 
 from spynnaker.pyNN.models.pynn_population_common import PyNNPopulationCommon
 from spynnaker.pyNN.utilities import globals_variables
+
 from spynnaker8.models.recorder import Recorder
 from spynnaker8.utilities.data_holder import DataHolder
-
-import numpy
-
 from spynnaker8.utilities.id import ID
+
+from pyNN import descriptions
+
+logger = logging.getLogger(__name__)
 
 
 class Population(PyNNPopulationCommon, Recorder):
@@ -27,7 +30,9 @@ class Population(PyNNPopulationCommon, Recorder):
             vertex_holder.add_item(
                 'label', self.create_label(vertex_holder.data_items['label']))
             vertex_holder.add_item('n_neurons', size)
-            assert cellparams is None  # cellparams being retained for backwards compatibility, but use is deprecated
+            assert cellparams is None
+            # cellparams being retained for backwards compatibility, but use
+            # is deprecated
         elif issubclass(cellclass, DataHolder):
             internal_params = dict(cellparams)
             internal_params['label'] = self.create_label(label)
@@ -50,12 +55,12 @@ class Population(PyNNPopulationCommon, Recorder):
         Recorder.__init__(self, population=self)
 
         # things for pynn demands
-        self._all_ids = self.get_all_ids()
+        self._all_ids = self._get_all_ids()
         self._first_id = self._all_ids[0]
         self._last_id = self._all_ids[-1]
 
         # annotations used by neo objects
-        self._anno
+        self._annotations = dict()
 
     @property
     def label(self):
@@ -80,7 +85,7 @@ class Population(PyNNPopulationCommon, Recorder):
                         self._first_id, self._last_id, id))
             return int(id - self._first_id)  # this assumes ids are consecutive
 
-    def get_all_ids(self):
+    def _get_all_ids(self):
         id_range = numpy.arange(
             globals_variables.get_simulator().id_counter,
             globals_variables.get_simulator().id_counter + self.size)
@@ -129,40 +134,45 @@ class Population(PyNNPopulationCommon, Recorder):
         :param annotations: ???????????
         """
 
+        if not gather:
+            logger.warn("Spinnaker only supports gather=True. We will run as "
+                        "if gather was set to True.")
+
         if isinstance(io, basestring):
             io = self._get_io(io)
-        data = neo.Block()
 
-        data = self._vertex.get_data(variables, clear, annotations)
-
-        data.name = self.label
-        data.description = self.describe()
-        data.rec_datetime = data.segments[0].rec_datetime
-        data.annotate(**self.metadata)
-        if annotations:
-            data.annotate(**annotations)
-
+        data = self._extract_data(variables, clear, annotations)
+        # write the neo block to the file
         io.write(data)
 
-    @property
-    def metadata(self):
-        metadata = {
-            'size': self.size,
-            'first_index': 0,
-            'last_index': self.size,
-            'first_id': int(self._first_id),
-            'last_id': int(self._last_id),
-            'label': self.label,
-            'simulator': globals_variables.get_simulator().name,
+    def describe(self, template='population_default.txt', engine='default'):
+        """
+        Returns a human-readable description of the population.
+
+        The output may be customized by specifying a different template
+        together with an associated template engine (
+        see :mod:`pyNN.descriptions`).
+
+        If template is None, then a dictionary containing the template context
+        will be returned.
+        """
+        context = {
+            "label": self.label,
+            "celltype": self._vertex.describe(template=None),
+            "structure": None,
+            "size": self.size,
+            "size_local": self.size,
+            "first_id": self._first_id,
+            "last_id": self._last_id,
         }
-        metadata.update(self.annotations)
-        metadata[
-            'dt'] = self._simulator.state.dt  # note that this has to run on all nodes (at least for NEST)
-        metadata['mpi_processes'] = self._simulator.state.num_processes
-        return metadata
-
-    def _get_data(self, variables, clear, annotations):
-
+        context.update(self._annotations)
+        if self.size > 0:
+            context.update({
+                "local_first_id": self._first_id,
+                "cell_parameters": {}})
+        if self._structure:
+            context["structure"] = self._structure.describe(template=None)
+        return descriptions.render(engine, template, context)
 
     def _end(self):
         """ Do final steps at the end of the simulation
@@ -172,3 +182,40 @@ class Population(PyNNPopulationCommon, Recorder):
                 self.write_data(
                     io=self._write_to_files_indicators[variable],
                     variables=[variable])
+
+    def get(self, parameter_names, gather=False, simplify=True):
+        if simplify is not True:
+            logger.warn(
+                "The simplify value is ignored if not set to true")
+        return PyNNPopulationCommon.get(self, parameter_names, gather)
+
+    def get_data(
+            self, variables='all', gather=True, clear=False, annotations=None):
+        """
+        Return a Neo `Block` containing the data (spikes, state variables)
+        recorded from the Assembly.
+
+        `variables` - either a single variable name or a list of variable names
+                      Variables must have been previously recorded, otherwise an
+                      Exception will be raised.
+
+        For parallel simulators, if `gather` is True, all data will be gathered
+        to all nodes and the Neo `Block` will contain data from all nodes.
+        Otherwise, the Neo `Block` will contain only data from the cells
+        simulated on the local node.
+
+        If `clear` is True, recorded data will be deleted from the `Assembly`.
+        """
+        if not gather:
+            logger.warn("Spinnaker only supports gather=True. We will run as "
+                        "if gather was set to True.")
+
+        return self._extract_data(variables, clear, annotations)
+
+    def find_units(self, variable):
+        """ supports getting the units of a variable
+
+        :param variable:
+        :return:
+        """
+        return self._get_variable_unit(variable)
