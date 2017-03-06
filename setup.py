@@ -39,6 +39,6 @@ setup(
         "six >=1.0.0, <= 1.6.1",
         "numpy >= 1.9.0, <=1.9.1",
         "scipy >=0.16.0, <=0.16.0",
-        "bitarray"
+        "bitarray", "quantities  >= 0.11.1"
     ],
 )
