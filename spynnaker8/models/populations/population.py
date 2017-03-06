@@ -156,9 +156,12 @@ class Population(PyNNPopulationCommon, Recorder):
         If template is None, then a dictionary containing the template context
         will be returned.
         """
+        vertex_context = self._vertex.describe()
+
         context = {
             "label": self.label,
-            "celltype": self._vertex.describe(template=None),
+            "celltype": descriptions.render(
+                engine, 'modeltype_default.txt', vertex_context),
             "structure": None,
             "size": self.size,
             "size_local": self.size,
