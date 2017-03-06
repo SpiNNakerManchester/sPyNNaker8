@@ -1,8 +1,5 @@
 # common imports
 import atexit
-import inspect
-import logging
-import os
 import deprecation
 
 # pynn imports

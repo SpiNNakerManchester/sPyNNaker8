@@ -177,7 +177,7 @@ class SpiNNaker(SpiNNakerCommon, pynn_control.BaseState):
 
     @num_processes.setter
     def num_processes(self, new_value):
-        """ pointless method in stuff
+        """ pointless method in stuff but needed for pynn interface
 
         :param new_value: pointless entry
         :return:
