@@ -11,6 +11,9 @@ from spynnaker8 import spinnaker
 
 from spinn_front_end_common.utilities import exceptions
 
+# Log which config files we read
+logger = None
+
 
 def _add_section(parser, section_name, defaults):
     parser.add_section(section_name)
@@ -68,15 +71,13 @@ def read_config(file_names=None):
             with open(filename, "r") as f:
                 parser.readfp(f, filename)
 
-                if parser.has_option("Machine", "machine_spec_file"):
-                    machine_spec_file_path = parser.get("Machine",
-                                                        "machine_spec_file")
-                    if machine_spec_file_path != "None":
-                        with open(machine_spec_file_path,
-                                  "r") as extra_config_file:
-                            parser.readfp(extra_config_file)
+                try_reading_machine_spec_file(
+                    parser, failed_to_read_paths, filename)
 
-        except (IOError, OSError):
+        except IOError as e:
+            # File did not exist, keep trying
+            failed_to_read_paths.append(filename)
+        except OSError as f:
             # File did not exist, keep trying
             failed_to_read_paths.append(filename)
 
@@ -99,8 +100,27 @@ def read_config(file_names=None):
     except ConfigParser.NoOptionError:
         pass
 
-    # Log which config files we read
     logger = logging.getLogger(__name__)
     logger.info("Read config files: %s" % string.join(search_paths, ", "))
 
     return parser
+
+
+def try_reading_machine_spec_file(parser, failed_to_read_paths, filename):
+    if parser.has_option("Machine", "machine_spec_file"):
+        machine_spec_file_path = parser.get("Machine",
+                                            "machine_spec_file")
+        if machine_spec_file_path != "None":
+            try:
+                with open(machine_spec_file_path,
+                          "r") as extra_config_file:
+                    parser.readfp(extra_config_file)
+            except IOError as e:
+                logger = logging.getLogger(__name__)
+                logger.warn("The machine spec file can not be read. Will "
+                            "carry on as if the file did not exist.")
+                # File did not exist, keep trying
+                failed_to_read_paths.append(filename)
+            except OSError as f:
+                # File did not exist, keep trying
+                failed_to_read_paths.append(filename)
