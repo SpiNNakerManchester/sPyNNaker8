@@ -1,15 +1,21 @@
 from spynnaker8.utilities.data_holder import DataHolder
 from spynnaker.pyNN.models.spike_source.spike_source_array \
     import SpikeSourceArray
+from spynnaker.pyNN.utilities import constants
 
 
 class SpikeSourceArrayDataHolder(DataHolder):
     def __init__(
             self, spike_times=None, port=None, tag=None, ip_address=None,
             board_address=None,
-            max_on_chip_memory_usage_for_spikes_in_bytes=None,
-            space_before_notification=None, constraints=None, label=None,
-            spike_recorder_buffer_size=None, buffer_size_before_receive=None):
+            max_on_chip_memory_usage_for_spikes_in_bytes=(
+                    constants.SPIKE_BUFFER_SIZE_BUFFERING_IN),
+            space_before_notification=640, constraints=None,
+            label="SpikeSourceArray",
+            spike_recorder_buffer_size=(
+                    constants.EIEIO_SPIKE_BUFFER_SIZE_BUFFERING_OUT),
+            buffer_size_before_receive=(
+                    constants.EIEIO_BUFFER_SIZE_BEFORE_RECEIVE)):
         DataHolder.__init__(
             self, {
                 'spike_times': spike_times, 'port': port, 'tag': tag,
