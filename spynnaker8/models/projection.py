@@ -23,7 +23,8 @@ class Projection(PyNNProjectionCommon):
 
     def __init__(
             self, pre_synaptic_population, post_synaptic_population,
-            connector, synapse_type=None, source=None, receptor_type=None,
+            connector, synapse_type=None, source=None,
+            receptor_type=None,
             space=None, label=None):
 
         # set space object if not set
@@ -47,7 +48,7 @@ class Projection(PyNNProjectionCommon):
 
         PyNNProjectionCommon.__init__(
             self, connector=connector, synapse_dynamics_stdp=synapse_type,
-            synapse_type=receptor_type, spinnaker_control=self._simulator,
+            target=receptor_type, spinnaker_control=self._simulator,
             pre_synaptic_population=pre_synaptic_population,
             post_synaptic_population=post_synaptic_population, rng=rng,
             machine_time_step=self._simulator.machine_time_step,

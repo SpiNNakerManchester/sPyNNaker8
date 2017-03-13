@@ -191,7 +191,7 @@ def setup(timestep=pynn_control.DEFAULT_TIMESTEP,
 
 def Projection(
         presynaptic_population, postsynaptic_population,
-        connector, synapse_type=None, source=None, receptor_type=None,
+        connector, synapse_type=None, source=None, receptor_type="excitatory",
         space=None, label=None):
     """ used to support pep 8 spelling correctly
 
