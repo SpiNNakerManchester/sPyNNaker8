@@ -44,7 +44,8 @@ class Population(PyNNPopulationCommon, Recorder):
                 "cellclass must be an instance or subclass of BaseCellType,"
                 " not a %s" % type(cellclass))
 
-        # convert between data holder and model
+        # convert between data holder and model (uses ** so that its taken
+        # the dictionary to be the parameters themselves)
         vertex = vertex_holder.build_model()(**vertex_holder.data_items)
 
         # build our initial objects
