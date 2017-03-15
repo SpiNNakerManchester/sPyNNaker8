@@ -189,6 +189,14 @@ def setup(timestep=pynn_control.DEFAULT_TIMESTEP,
     return rank()
 
 
+def name():
+    """ returns the name of the simulator
+
+    :return:
+    """
+    return globals_variables.get_simulator().name
+
+
 def Projection(
         presynaptic_population, postsynaptic_population,
         connector, synapse_type=None, source=None, receptor_type="excitatory",

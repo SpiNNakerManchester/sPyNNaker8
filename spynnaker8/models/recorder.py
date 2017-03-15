@@ -5,10 +5,20 @@ import numpy
 from datetime import datetime
 import quantities as pq
 
+from spynnaker.pyNN.models.common.abstract_gsyn_excitatory_recordable import \
+    AbstractGSynExcitatoryRecordable
+from spynnaker.pyNN.models.common.abstract_gsyn_inhibitory_recordable import \
+    AbstractGSynInhibitoryRecordable
+from spynnaker.pyNN.models.common.abstract_spike_recordable import \
+    AbstractSpikeRecordable
+from spynnaker.pyNN.models.common.abstract_v_recordable import \
+    AbstractVRecordable
 from spynnaker.pyNN.models.recording_common import RecordingCommon
 from spynnaker.pyNN.utilities import utility_calls
 from spynnaker.pyNN.utilities import globals_variables
 from spynnaker.pyNN import exceptions
+from spynnaker8.utilities.spynnaker8_neo_block import SpynnakerNeoBlock
+from spynnaker8.utilities.spynnaker8_neo_segment import SpynnakerNeoSegment
 
 logger = logging.getLogger(__name__)
 
@@ -17,7 +27,7 @@ class Recorder(RecordingCommon):
     def __init__(self, population):
         RecordingCommon.__init__(
             self, population,
-            globals_variables.get_simulator().machine_time_step)
+            globals_variables.get_simulator().machine_time_step / 1000.0)
         self._recording_start_time = globals_variables.get_simulator().t
 
     @staticmethod
@@ -27,8 +37,8 @@ class Recorder(RecordingCommon):
         suffix.
         """
         logger.debug("Creating Neo IO for filename %s" % filename)
-        dir = os.path.dirname(filename)
-        utility_calls.check_directory_exists_and_create_if_not(dir)
+        directory = os.path.dirname(filename)
+        utility_calls.check_directory_exists_and_create_if_not(directory)
         extension = os.path.splitext(filename)[1]
         if extension in ('.txt', '.ras', '.v', '.gsyn'):
             raise IOError(
@@ -52,21 +62,11 @@ class Recorder(RecordingCommon):
         :return: The neo block
         """
 
-        data = neo.Block()
-        # use really bad python to support pynn expectation that segments
-        # exist as a parameter of neo block
-        data.segments = list()
-
-        # build segment for the current data to be gathered in
-        segment = neo.Segment(
-            name="segment{}".format(
-                globals_variables.get_simulator().segment_counter),
-            description=self._population.describe(),
-            rec_datetime=datetime.now())
+        data = SpynnakerNeoBlock()
 
         # use really bad python because pynn expects it to be there.
         # add to the segments the new data
-        data.segments.append(self._get_data(variables, clear, segment))
+        data.segments.append(self._get_data(variables, clear))
 
         # add fluff to the neo block
         data.name = self._population.label
@@ -77,64 +77,120 @@ class Recorder(RecordingCommon):
             data.annotate(**annotations)
         return data
 
-    @staticmethod
-    def _filter_recorded(filter_ids):
+    def _filter_recorded(self, filter_ids):
         record_ids = list()
-        for id in range(0, len(filter_ids)):
-            if filter_ids[id]:
-                record_ids.append(id)
+        for neuron_id in range(0, len(filter_ids)):
+            if filter_ids[neuron_id]:
+                # add population first id to ensure all atoms have a unique
+                # identifier (pynn enforcement)
+                record_ids.append(neuron_id + self._population._first_id)
         return record_ids
 
-    def _get_data(self, variables, clear, segment):
+    def _get_data(self, variables, clear):
+
+        # build segment for the current data to be gathered in
+        segment = SpynnakerNeoSegment(
+            name="segment{}".format(
+                globals_variables.get_simulator().segment_counter),
+            description=self._population.describe(),
+            rec_datetime=datetime.now())
 
         # if all are needed to be extracted, extract each and plonk into the
         # neo block segment
         if variables == 'all':
-            variables = ['spikes', 'v', 'gsyn_exc', 'gsyn_inh']
+            variables = self._get_all_possible_recordable_variables()
+
+        # if variable is a base string, plonk into a array for ease of
+        # conversion
+        if isinstance(variables, basestring):
+            variables = [variables]
 
         for variable in variables:
             if variable == "spikes":
-                t_stop = globals_variables.get_simulator().t * pq.ms  #
-                # must run on all
-                # MPI nodes
                 spikes = self._get_recorded_variable('spikes')
-                segment.spiketrains = [
-                    neo.SpikeTrain(
-                        times=spikes[atom_id],
-                        t_start=self._recording_start_time,
-                        t_stop=t_stop,
-                        units='ms',
-                        source_population=self._population.label,
-                        source_id=int(atom_id),
-                        source_index=self._population.id_to_index(atom_id))
-                    for atom_id in sorted(self._filter_recorded(
-                        self._indices_to_record['spikes']))]
+                if len(spikes) != 0:
+                    self._read_in_spikes(spikes, segment)
             else:
-
                 ids = sorted(self._filter_recorded(
                     self._indices_to_record[variable]))
-
                 signal_array = self._get_recorded_variable(variable)
-                t_start = self._recording_start_time
-                sampling_period = self._sampling_interval * pq.ms
-                if signal_array.size > 0:
-                    channel_indices = numpy.array(
-                        [self._population.id_to_index(atom_id)
-                         for atom_id in ids])
-                    units = self._population.find_units(variable)
-                    source_ids = numpy.fromiter(ids, dtype=int)
-                    segment.analogsignalarrays.append(
-                        neo.AnalogSignalArray(
-                            signal_array,
-                            units=units,
-                            t_start=t_start,
-                            sampling_period=sampling_period,
-                            name=variable,
-                            source_population=self._population.label,
-                            channel_index=channel_indices,
-                            source_ids=source_ids))
+                self._read_in_signal(signal_array, segment, ids, variable)
         if clear:
             self._clear_recording(variables)
+        return segment
+
+    def _read_in_signal(self, signal_array, segment, ids, variable):
+        """ reads in a data item that's not spikes (likely v, gsyn e, gsyn i)
+
+        :param signal_array: the raw signal data
+        :param segment: the segment to put the data into
+        :param ids: the recorded ids
+        :param variable: the variable name
+        :return: None
+        """
+        t_start = self._recording_start_time * pq.ms
+        sampling_period = self._sampling_interval * pq.ms
+        if signal_array.size > 0:
+            channel_indices = numpy.array(
+                [self._population.id_to_index(atom_id)
+                 for atom_id in ids])
+            processed_data = \
+                self._convert_extracted_data_into_neo_expected_format(
+                    signal_array, channel_indices)
+            units = self._population.find_units(variable)
+            source_ids = numpy.fromiter(ids, dtype=int)
+            data_array = neo.AnalogSignalArray(
+                    processed_data,
+                    units=units,
+                    t_start=t_start,
+                    sampling_period=sampling_period,
+                    name=variable,
+                    source_population=self._population.label,
+                    channel_index=channel_indices,
+                    source_ids=source_ids)
+            data_array.shape = (
+                data_array.shape[0] * pq.ms, data_array.shape[1])
+            segment.analogsignalarrays.append(data_array)
+
+
+    @staticmethod
+    def _convert_extracted_data_into_neo_expected_format(
+            signal_array, channel_indices):
+        processed_data = [
+            signal_array[:, 2][signal_array[:, 0] == index]
+            for index in channel_indices]
+        processed_data = numpy.vstack(processed_data).T
+        return processed_data
+
+    def _read_in_spikes(self, spikes, segment):
+        t_stop = globals_variables.get_simulator().t * pq.ms
+
+        for atom_id in sorted(self._filter_recorded(
+                self._indices_to_record['spikes'])):
+            segment.spiketrains.append(
+                neo.SpikeTrain(
+                    times=spikes[atom_id - self._population._first_id],
+                    t_start=self._recording_start_time,
+                    t_stop=t_stop,
+                    units='ms',
+                    source_population=self._population.label,
+                    source_id=int(atom_id),
+                    source_index=
+                    self._population.id_to_index(atom_id)))
+
+    def _get_all_possible_recordable_variables(self):
+        variables = list()
+        if isinstance(self._population._vertex, AbstractSpikeRecordable):
+            variables.append('spikes')
+        if isinstance(self._population._vertex, AbstractVRecordable):
+            variables.append('v')
+        if isinstance(
+                self._population._vertex, AbstractGSynExcitatoryRecordable):
+            variables.append('gsyn_exc')
+        if isinstance(
+                self._population._vertex, AbstractGSynInhibitoryRecordable):
+            variables.append('gsyn_inh')
+        return variables
 
     def _metadata(self):
         metadata = {
@@ -146,7 +202,7 @@ class Recorder(RecordingCommon):
             'label': self._population.label,
             'simulator': globals_variables.get_simulator().name,
         }
-        metadata.update(self._population.annotations)
+        metadata.update(self._population._annotations)
         metadata['dt'] = globals_variables.get_simulator().dt
         metadata['mpi_processes'] = \
             globals_variables.get_simulator().num_processes
@@ -180,12 +236,12 @@ class Recorder(RecordingCommon):
                     buffer_manager.clear_recorded_data(
                         placement.x, placement.y, placement.p,
                         machine_vertex.
-                            get_gsyn_inhibitory_recording_region_id())
+                        get_gsyn_inhibitory_recording_region_id())
                 elif variable == "gsyn_exc":
                     buffer_manager.clear_recorded_data(
                         placement.x, placement.y, placement.p,
                         machine_vertex.
-                            get_gsyn_excitatory_recording_region_id())
+                        get_gsyn_excitatory_recording_region_id())
                 else:
                     raise exceptions.InvalidParameterType(
                         "The variable {} is not a recordable value".format(

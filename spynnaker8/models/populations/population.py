@@ -60,6 +60,10 @@ class Population(PyNNPopulationCommon, Recorder):
         self._first_id = self._all_ids[0]
         self._last_id = self._all_ids[-1]
 
+        # update the simulators id_counter for giving a unique id for every
+        # atom
+        globals_variables.get_simulator().id_counter += size
+
         # annotations used by neo objects
         self._annotations = dict()
 
@@ -71,8 +75,13 @@ class Population(PyNNPopulationCommon, Recorder):
     def label(self, new_value):
         self._vertex.label = new_value
 
-    def annotate(self, **annotations):
-        self._annotations.update(annotations)
+    @property
+    def annotations(self):
+        """ returns annotations given by the end user
+
+        :return:
+        """
+        return self._annotations
 
     def id_to_index(self, id):
         """

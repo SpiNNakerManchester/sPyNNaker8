@@ -50,6 +50,7 @@ def read_config(file_names=None):
     user_config_cfg_file = os.path.join(
         appdirs.user_config_dir(), ".spynnaker8.cfg")
     current_directory_cfg_file = os.path.join(os.curdir, ".{}".format(_name))
+    user_home_directory = os.path.expanduser("~/.spynnaker8.cfg")
 
     # Search path for config files (lowest to highest priority)
     search_paths = [
@@ -57,6 +58,7 @@ def read_config(file_names=None):
         system_config_cfg_file,
         user_config_cfg_file,
         current_directory_cfg_file,
+        user_home_directory,
     ]
 
     failed_to_read_paths = list()
