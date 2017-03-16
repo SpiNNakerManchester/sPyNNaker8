@@ -3,8 +3,10 @@ from spynnaker.pyNN.models.neural_projections.connectors. \
 import numpy
 from spynnaker8.utilities import exceptions
 
+from pyNN.connectors import Connector
 
-class FromListConnector(CommonFromListConnector):
+
+class FromListConnector(CommonFromListConnector, Connector):
     """ Make connections according to a list.
     """
 
@@ -30,73 +32,75 @@ class FromListConnector(CommonFromListConnector):
             if True, display a progress bar on the terminal.
         """
 
-        temp_conn_list = numpy.array(conn_list)
-        extra_data = dict()
+        if conn_list is None or len(conn_list) == 0:
+            raise exceptions.InvalidParameterType(
+                "The connection list for the FromListConnector must contain"
+                " at least a list of tuples, each of which should contain at "
+                "least: (pre_idx, post_idx)")
+
+        conn_list = numpy.array(conn_list)
 
         n_columns = 0
-        if len(temp_conn_list) > 0:
-            n_columns = temp_conn_list.shape[1]
+        if len(conn_list) > 0:
+            n_columns = conn_list.shape[1]
+
+        weights = None
+        delays = None
+        self._extra_conn_data = None
 
         if column_names is None:
-            if n_columns == 2:
-                new_conn_list = list()
-                for element in conn_list:
-                    new_conn_list.append((element[0], element[1], 0, 1))
-                conn_list = new_conn_list
-            elif n_columns != 4:
+            # if no column names, but more not the expected
+            if n_columns == 4:
+                column_names = ('pre_idx', 'post_idx', 'weight', 'delay')
+                conn_list, weights, delays, self._extra_conn_data = \
+                    CommonFromListConnector._split_conn_list(
+                        conn_list, column_names)
+            elif n_columns != 2:
                 raise TypeError("Argument 'column_names' is required.")
         else:
             # separate conn list to pre, source, weight, delay and the
             # other things
-            conn_list, extra_data = self._split_conn_list(
-                conn_list, column_names)
+            conn_list, weights, delays, self._extra_conn_data = \
+                CommonFromListConnector._split_conn_list(
+                    conn_list, column_names)
 
-        # store other data for future
-        self._extra_conn_data = extra_data
-
+        # verify that the rest of the parameters are constant, as we don't
+        # support synapse params changing per atom yet
         self._verify_extra_data_meets_constraints()
 
         # build common from list
         CommonFromListConnector.__init__(
             self, conn_list=conn_list, safe=safe, verbose=verbose)
+        Connector.__init__(self, safe=safe, callback=callback)
+
+        # set weights or / and delays if given
+        if weights is not None or delays is not None:
+            self._set_weights_and_delays(weights, delays)
+
+    def get_extra_parameters(self):
+        """ getter for the extra parameters
+
+        :return:
+        """
+        return self._extra_conn_data
+
+    def max_connections(self):
+        return len(self._conn_list)
 
     def _verify_extra_data_meets_constraints(self):
-        for data_key in self._extra_conn_data.keys():
-            first_data = None
-            for (_, _, data) in self._extra_conn_data[data_key]:
-                if first_data is None:
-                    first_data = data
-                elif data != first_data:
-                    raise exceptions.InvalidParameterType(
-                        "The parameter {} needs top have a consistent value"
-                            .format(data_key))
+        """ safety check for current impl, stops extra params to be
+        variable per atom
 
-    @staticmethod
-    def _split_conn_list(conn_list, column_names):
-        new_conn_list = list()
-        other_conn_list = dict()
-
-        # locate weights and delays
-        weight_index = column_names.index("weight") + 2
-        delay_index = column_names.index("delay") + 2
-        element_index = range(2, len(column_names) + 2)
-
-        # figure out where other stuff is
-        element_index.remove(weight_index)
-        element_index.remove(delay_index)
-
-        # build new conn list
-        for element in conn_list:
-            new_conn_list.append(
-                (element[0], element[1], element[weight_index],
-                 element[delay_index]))
-
-        # build other data conn list
-        for element in conn_list:
-            data_element = list()
-            for index in element_index:
-                other_conn_list[column_names[index - 2]] = list()
-                other_conn_list[column_names[index - 2]].append(
-                    (element[0], element[1], element[index]))
-
-        return new_conn_list, other_conn_list
+        :return:  None
+        :raises InvalidParameterType: when the parameters are not constant
+        """
+        if self._extra_conn_data is not None:
+            for data_key in self._extra_conn_data.keys():
+                first_data = None
+                for (_, _, data) in self._extra_conn_data[data_key]:
+                    if first_data is None:
+                        first_data = data
+                    elif data != first_data:
+                        raise exceptions.InvalidParameterType(
+                            "The parameter {} needs top have a consistent "
+                            "value".format(data_key))

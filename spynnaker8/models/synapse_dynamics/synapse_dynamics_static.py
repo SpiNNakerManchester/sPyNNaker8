@@ -1,15 +1,19 @@
 from spynnaker.pyNN.models.neuron.synapse_dynamics.synapse_dynamics_static \
     import SynapseDynamicsStatic as CommonSynapseDynamicsStatic
 from pyNN.standardmodels.synapses import StaticSynapse as PyNNStaticSynapse
+from spynnaker.pyNN.utilities import globals_variables
 
 
 class SynapseDynamicsStatic(CommonSynapseDynamicsStatic):
     def __init__(
             self, weight=PyNNStaticSynapse.default_parameters['weight'],
-            delay=PyNNStaticSynapse.default_parameters['delay']):
+            delay=None):
 
         CommonSynapseDynamicsStatic.__init__(self)
         self._weight = weight
+
+        if delay is None:
+            delay = globals_variables.get_simulator().min_delay
         self._delay = delay
 
     @property

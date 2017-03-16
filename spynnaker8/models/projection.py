@@ -4,6 +4,7 @@ import deprecation
 
 from pyNN import common as pynn_common
 from pyNN.space import Space as PyNNSpace
+from spynnaker.pyNN.utilities import utility_calls
 from spynnaker8.models.synapse_dynamics.synapse_dynamics_static \
     import SynapseDynamicsStatic
 from spynnaker.pyNN.models.pynn_projection_common import PyNNProjectionCommon
@@ -37,10 +38,13 @@ class Projection(PyNNProjectionCommon):
         if synapse_type is None:
             synapse_type = SynapseDynamicsStatic()
 
-        # move weights and delays over to the connector to satisfy pynn 8
+        # move weights and delays over to the connector to satisfy PyNN 8
         # and 7 compatibility
-        connector.weights = synapse_type.weight
-        connector.delays = synapse_type.delay
+        connector._set_weights_and_delays(
+            utility_calls.convert_param_to_numpy(
+                synapse_type.weight, connector.max_connections()),
+            utility_calls.convert_param_to_numpy(
+                synapse_type.delay, connector.max_connections()))
 
         rng = None
         if hasattr(connector, "rng"):
