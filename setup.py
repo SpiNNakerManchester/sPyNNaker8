@@ -1,8 +1,9 @@
 from setuptools import setup, find_packages
+from spynnaker8._version import __version__
 
 setup(
     name="sPyNNaker8",
-    version="1.0.0",
+    version=__version__,
     packages=find_packages(),
     package_data={'spynnaker8': ['model_binaries/*.aplx']},
 
