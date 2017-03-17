@@ -108,8 +108,7 @@ class Recorder(RecordingCommon):
         for variable in variables:
             if variable == "spikes":
                 spikes = self._get_recorded_variable('spikes')
-                if len(spikes) != 0:
-                    self._read_in_spikes(spikes, segment)
+                self._read_in_spikes(spikes, segment)
             else:
                 ids = sorted(self._filter_recorded(
                     self._indices_to_record[variable]))
@@ -167,9 +166,11 @@ class Recorder(RecordingCommon):
 
         for atom_id in sorted(self._filter_recorded(
                 self._indices_to_record['spikes'])):
+            # get times per atom
             segment.spiketrains.append(
                 neo.SpikeTrain(
-                    times=spikes[atom_id - self._population._first_id],
+                    times=spikes[spikes[:, 0] ==
+                                 atom_id - self._population._first_id][:, 1],
                     t_start=self._recording_start_time,
                     t_stop=t_stop,
                     units='ms',
