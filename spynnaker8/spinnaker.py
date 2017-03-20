@@ -4,9 +4,14 @@ from pyNN.common import control as pynn_control
 from spynnaker.pyNN.spinnaker_common import SpiNNakerCommon
 
 from spynnaker8 import _version
+from spynnaker8.utilities.random_stats.random_stats_scipy_impl import \
+    RandomStatsScipyImpl
+from spynnaker8.utilities.random_stats.random_stats_uniform_impl import \
+    RandomStatsUniformImpl
 
 import logging
 import math
+
 
 logger = logging.getLogger(__name__)
 
@@ -333,3 +338,16 @@ class SpiNNaker(SpiNNakerCommon, pynn_control.BaseState):
         :return:  None
         """
         self._recorders = new_value
+
+    @staticmethod
+    def get_distribution_to_stats():
+        return {
+            'binomial': RandomStatsScipyImpl("binom"),
+            'gamma': RandomStatsScipyImpl("gamma"),
+            'exponential': RandomStatsScipyImpl("expon"),
+            'lognormal': RandomStatsScipyImpl("lognorm"),
+            'normal': RandomStatsScipyImpl("norm"),
+            'poisson': RandomStatsScipyImpl("poisson"),
+            'uniform': RandomStatsUniformImpl(),
+            'randint': RandomStatsScipyImpl("randint"),
+            'vonmises': RandomStatsScipyImpl("vonmises")}
