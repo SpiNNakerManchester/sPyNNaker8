@@ -121,9 +121,14 @@ class Population(PyNNPopulationCommon, Recorder):
             # note that if record(None) is called, its a reset
             Recorder._reset(self)
         else:
-            for variable in variables:
+            # handle one element vs many elements
+            if isinstance(variables, basestring):
                 self._record(
-                    variable, self._all_ids, sampling_interval, to_file)
+                    variables, self._all_ids, sampling_interval, to_file)
+            else:
+                for variable in variables:
+                    self._record(
+                        variable, self._all_ids, sampling_interval, to_file)
 
     def write_data(self, io, variables='all', gather=True, clear=False,
                    annotations=None):
