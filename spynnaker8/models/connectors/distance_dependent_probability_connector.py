@@ -16,9 +16,10 @@ class DistanceDependentProbabilityConnector(
     """ Make connections using a distribution which varies with distance.
     """
 
-    def __init__(self, d_expression, allow_self_connections=True,
-                 weights=0.0, delays=1, space=Space(), safe=True,
-                 verbose=False, n_connections=None, rng=None, callback=None):
+    def __init__(
+            self, d_expression, allow_self_connections=True, space=Space(),
+            safe=True, verbose=False, n_connections=None, rng=None,
+            callback=None):
         """
 
         :param `string` d_expression:
@@ -31,17 +32,13 @@ class DistanceDependentProbabilityConnector(
             Population to itself, this flag determines whether a neuron is
             allowed to connect to itself, or only to other neurons in the
             Population.
-        :param `float` weights:
-            may either be a float, a !RandomDistribution object, a list/
-            1D array with at least as many items as connections to be
-            created, or a distance dependence as per a d_expression. Units nA.
-        :param `float` delays:  -- as `weights`. If `None`, all synaptic delays
-            will be set to the global minimum delay.
         :param `pyNN.Space` space:
             a Space object, needed if you wish to specify distance-
             dependent weights or delays
         :param `int` n_connections:
             The number of efferent synaptic connections per neuron.
+        :param safe: if True, check that weights and delays have valid values.
+         If False, this check is skipped.
         """
 
         CommonDistanceDependentProbabilityConnector.__init__(

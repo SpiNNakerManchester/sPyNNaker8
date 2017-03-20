@@ -25,8 +25,10 @@ class FixedNumberPostConnector(
         :param n: number of random post-synaptic neurons connected to output
         :type n: int
         :param allow_self_connections: ??????
-        :param space: the space object for pynn
-        :param safe: ??????????
+        :param space: a Space object, needed if you wish to specify distance-
+            dependent weights or delays
+        :param safe: if True, check that weights and delays have valid values.
+         If False, this check is skipped.
         :param verbose: ??????????
         :param with_replacement:
             boolean that flags if once a connection is made, if it cant be

@@ -16,7 +16,7 @@ class FixedNumberPreConnector(
     """
 
     def __init__(
-            self, n, weights=0.0, delays=1, allow_self_connections=True,
+            self, n, allow_self_connections=True,
             space=None, safe=True, verbose=False, with_replacement=False,
             rng=None, callback=None):
         """
@@ -27,17 +27,11 @@ class FixedNumberPreConnector(
             Population to itself, this flag determines whether a neuron is
             allowed to connect to itself, or only to other neurons in the
             Population.
-        :param weights:
-            may either be a float, a !RandomDistribution object, a list/
-            1D array with at least as many items as connections to be
-            created. Units nA.
-        :param delays:
-            If `None`, all synaptic delays will be set
-            to the global minimum delay.
         :param `pyNN.Space` space:
             a Space object, needed if you wish to specify distance-
             dependent weights or delays - not implemented
-        :param safe:
+        :param safe: if True, check that weights and delays have valid values.
+        If False, this check is skipped.
         :param verbose:
         :param with_replacement:
         :param rng:

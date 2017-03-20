@@ -16,8 +16,8 @@ class AllToAllConnector(CommonAllToAllConnector, PyNNAllToAllConnector):
     """
 
     def __init__(
-            self, allow_self_connections=True,
-            space=None, safe=True, verbose=None, callbacks=None):
+            self, allow_self_connections=True, space=None, safe=True,
+            verbose=None, callbacks=None):
         """
 
         :param allow_self_connections:
@@ -26,16 +26,10 @@ class AllToAllConnector(CommonAllToAllConnector, PyNNAllToAllConnector):
             allowed to connect to itself, or only to other neurons in the
             Population.
         :type allow_self_connections: bool
-        :param  weights:
-            may either be a float, a !RandomDistribution object, a list/
-            1D array with at least as many items as connections to be
-            created. Units nA.
-            :type weights: float
-        :param delays:  -- as `weights`. If `None`, all synaptic delays
-            will be set to the global minimum delay.
-        :type delays: float
-        :param space:
-        :param safe:
+        :param space: a Space object, needed if you wish to specify distance-
+            dependent weights or delays
+        :param safe: if True, check that weights and delays have valid values.
+         If False, this check is skipped.
         :param verbose:
         :param callbacks:
     """
