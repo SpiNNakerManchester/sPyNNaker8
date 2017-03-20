@@ -26,6 +26,10 @@ from spynnaker.pyNN.utilities.failed_state import FailedState
 from spynnaker8.models.connectors.all_to_all_connector import \
     AllToAllConnector
 # noinspection PyUnresolvedReferences
+from spynnaker8.models.connectors.array_connector import ArrayConnector
+# noinspection PyUnresolvedReferences
+from spynnaker8.models.connectors.csa_connector import CSAConnector
+# noinspection PyUnresolvedReferences
 from spynnaker8.models.connectors.distance_dependent_probability_connector \
     import DistanceDependentProbabilityConnector
 # noinspection PyUnresolvedReferences
@@ -41,6 +45,17 @@ from spynnaker8.models.connectors.fixed_probability_connector import \
 from spynnaker8.models.connectors.from_file_connector import FromFileConnector
 # noinspection PyUnresolvedReferences
 from spynnaker8.models.connectors.from_list_connector import FromListConnector
+# noinspection PyUnresolvedReferences
+from spynnaker8.models.connectors.index_based_probability_connector import\
+    IndexBasedProbabilityConnector
+# noinspection PyUnresolvedReferences
+from spynnaker8.models.connectors.multapse_connector import MultapseConnector
+# noinspection PyUnresolvedReferences
+from spynnaker8.models.connectors.one_to_one_connector import \
+    OneToOneConnector
+# noinspection PyUnresolvedReferences
+from spynnaker8.models.connectors.small_world_connector import \
+    SmallWorldConnector
 
 # synapse structures
 from spynnaker8.models.synapse_dynamics.synapse_dynamics_static import \
