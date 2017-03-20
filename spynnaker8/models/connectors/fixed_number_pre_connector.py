@@ -1,3 +1,5 @@
+from pyNN.space import Space
+
 from spynnaker.pyNN.models.neural_projections.connectors. \
     fixed_number_pre_connector import FixedNumberPreConnector as \
     CommonFixedNumberPreConnector
@@ -16,9 +18,8 @@ class FixedNumberPreConnector(
     """
 
     def __init__(
-            self, n, allow_self_connections=True,
-            space=None, safe=True, verbose=False, with_replacement=False,
-            rng=None, callback=None):
+            self, n, allow_self_connections=True, safe=True, verbose=False,
+            with_replacement=False, rng=None, callback=None):
         """
         :param n:
             number of random pre-synaptic neurons connected to output
@@ -39,8 +40,7 @@ class FixedNumberPreConnector(
         """
         CommonFixedNumberPreConnector.__init__(
             self, n=n, safe=safe,
-            allow_self_connections=allow_self_connections, space=space,
-            verbose=verbose)
+            allow_self_connections=allow_self_connections, verbose=verbose)
         PyNNFixedNumberPreConnector.__init__(
             self, n=n, allow_self_connections=allow_self_connections,
             with_replacement=with_replacement, rng=rng, safe=safe,
@@ -53,19 +53,3 @@ class FixedNumberPreConnector(
     @n.setter
     def n(self, new_value):
         self._n_pre = new_value
-
-    @property
-    def weights(self):
-        return self._weights
-
-    @weights.setter
-    def weights(self, new_value):
-        self._weights = new_value
-
-    @property
-    def delays(self):
-        return self._delays
-
-    @delays.setter
-    def delays(self, new_value):
-        self._delays = new_value

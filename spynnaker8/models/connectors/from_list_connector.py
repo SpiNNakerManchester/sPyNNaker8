@@ -84,9 +84,6 @@ class FromListConnector(CommonFromListConnector, Connector):
         """
         return self._extra_conn_data
 
-    def max_connections(self):
-        return len(self._conn_list)
-
     def _verify_extra_data_meets_constraints(self):
         """ safety check for current impl, stops extra params to be
         variable per atom

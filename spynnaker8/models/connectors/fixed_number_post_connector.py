@@ -1,5 +1,7 @@
 import logging
 
+from pyNN.space import Space
+
 from spynnaker.pyNN.models.neural_projections.connectors. \
     fixed_number_post_connector import FixedNumberPostConnector as \
     CommonFixedNumberPostConnector
@@ -17,16 +19,13 @@ class FixedNumberPostConnector(
     """
 
     def __init__(
-            self, n, allow_self_connections=True,
-            space=None, safe=True, verbose=False, with_replacement=False,
-            rng=None, callback=None):
+            self, n, allow_self_connections=True, safe=True, verbose=False,
+            with_replacement=False, rng=None, callback=None):
         """
 
         :param n: number of random post-synaptic neurons connected to output
         :type n: int
         :param allow_self_connections: ??????
-        :param space: a Space object, needed if you wish to specify distance-
-            dependent weights or delays
         :param safe: if True, check that weights and delays have valid values.
          If False, this check is skipped.
         :param verbose: ??????????
@@ -38,7 +37,7 @@ class FixedNumberPostConnector(
         """
         CommonFixedNumberPostConnector.__init__(
             self, n=n, safe=safe, verbose=verbose,
-            allow_self_connections=allow_self_connections, space=space)
+            allow_self_connections=allow_self_connections)
         PyNNFixedNumberPostConnector.__init__(
             self, n=n, allow_self_connections=allow_self_connections,
             with_replacement=with_replacement, rng=rng, safe=safe,

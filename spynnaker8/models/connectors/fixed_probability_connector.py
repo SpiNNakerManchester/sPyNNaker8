@@ -6,13 +6,12 @@ from pyNN.connectors import FixedProbabilityConnector as \
 
 
 class FixedProbabilityConnector(
-    CommonFixedProbabilityConnector, PyNNFixedProbabilityConnector):
+        CommonFixedProbabilityConnector, PyNNFixedProbabilityConnector):
     """
     """
 
     def __init__(
-            self, p_connect,
-            allow_self_connections=True, safe=True, space=None,
+            self, p_connect, allow_self_connections=True, safe=True,
             verbose=False, rng=None, callback=None):
         """ For each pair of pre-post cells, the connection probability is
          constant.
@@ -34,10 +33,15 @@ class FixedProbabilityConnector(
         CommonFixedProbabilityConnector.__init__(
             self, p_connect=p_connect,
             allow_self_connections=allow_self_connections, safe=safe,
-            space=space, verbose=verbose)
+            verbose=verbose)
         PyNNFixedProbabilityConnector.__init__(
             self, p_connect=p_connect, callback=callback,
             allow_self_connections=allow_self_connections, rng=rng, safe=safe)
+
+    def set_weights_and_delays(self, weights, delays):
+        self._weights = weights
+        self._delays = delays
+        self._check_parameters(weights, delays, allow_lists=False)
 
     @property
     def p_connect(self):

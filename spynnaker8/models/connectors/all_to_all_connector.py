@@ -1,4 +1,4 @@
-from pacman.model.decorators.overrides import overrides
+from pyNN.space import Space
 
 from pyNN.connectors import AllToAllConnector as PyNNAllToAllConnector
 
@@ -16,7 +16,7 @@ class AllToAllConnector(CommonAllToAllConnector, PyNNAllToAllConnector):
     """
 
     def __init__(
-            self, allow_self_connections=True, space=None, safe=True,
+            self, allow_self_connections=True, safe=True,
             verbose=None, callbacks=None):
         """
 
@@ -26,15 +26,13 @@ class AllToAllConnector(CommonAllToAllConnector, PyNNAllToAllConnector):
             allowed to connect to itself, or only to other neurons in the
             Population.
         :type allow_self_connections: bool
-        :param space: a Space object, needed if you wish to specify distance-
-            dependent weights or delays
         :param safe: if True, check that weights and delays have valid values.
          If False, this check is skipped.
         :param verbose:
         :param callbacks:
     """
         CommonAllToAllConnector.__init__(
-            self, allow_self_connections=allow_self_connections, space=space,
+            self, allow_self_connections=allow_self_connections,
             safe=safe, verbose=verbose)
         PyNNAllToAllConnector.__init__(
             self, allow_self_connections=allow_self_connections, safe=safe,
