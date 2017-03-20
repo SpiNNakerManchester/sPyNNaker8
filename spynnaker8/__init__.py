@@ -65,6 +65,9 @@ from spynnaker8.models.model_data_holders.izk_curr_exp_data_holder import \
 # noinspection PyUnresolvedReferences
 from spynnaker8.models.model_data_holders.spike_source_array_data_holder \
     import SpikeSourceArrayDataHolder as SpikeSourceArray
+# noinspection PyUnresolvedReferences
+from spynnaker8.models.model_data_holders.spike_source_poisson_data_holder \
+    import SpikeSourcePoissonDataHolder as SpikeSourcePoisson
 
 # pops
 # noinspection PyUnresolvedReferences
