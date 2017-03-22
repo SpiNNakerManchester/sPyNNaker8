@@ -4,6 +4,7 @@ import deprecation
 
 from pyNN import common as pynn_common
 from pyNN.space import Space as PyNNSpace
+from spynnaker8 import FromListConnector
 from spynnaker8.models.synapse_dynamics.synapse_dynamics_static \
     import SynapseDynamicsStatic
 from spynnaker.pyNN.models.pynn_projection_common import PyNNProjectionCommon
@@ -43,6 +44,16 @@ class Projection(PyNNProjectionCommon):
             synapse_type.weight, synapse_type.delay)
         connector.set_space(space)
 
+        # as a from list connector can have plastic parameters, grab those (
+        # if any and add them to the synapse dynamics object)
+        if isinstance(connector, FromListConnector):
+            synapse_plastic_parameters = connector.get_extra_parameters()
+            if synapse_plastic_parameters is not None:
+                for parameter in synapse_plastic_parameters.dtype.names:
+                    synapse_type.set(
+                        parameter, synapse_plastic_parameters[:, parameter])
+
+        # set rng if needed
         rng = None
         if hasattr(connector, "rng"):
             rng = connector.rng
