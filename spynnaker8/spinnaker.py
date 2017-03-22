@@ -1,5 +1,6 @@
 # pynn imports
 from pyNN.common import control as pynn_control
+from pyNN.random import RandomDistribution
 
 from spynnaker.pyNN.spinnaker_common import SpiNNakerCommon
 
@@ -351,3 +352,7 @@ class SpiNNaker(SpiNNakerCommon, pynn_control.BaseState):
             'uniform': RandomStatsUniformImpl(),
             'randint': RandomStatsScipyImpl("randint"),
             'vonmises': RandomStatsScipyImpl("vonmises")}
+
+    @staticmethod
+    def get_random_distribution():
+        return RandomDistribution
