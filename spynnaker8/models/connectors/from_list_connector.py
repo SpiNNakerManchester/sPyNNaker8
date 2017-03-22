@@ -75,7 +75,7 @@ class FromListConnector(CommonFromListConnector, Connector):
 
         # set weights or / and delays if given
         if weights is not None or delays is not None:
-            self._set_weights_and_delays(weights, delays)
+            self.set_weights_and_delays(weights, delays)
 
     def get_extra_parameters(self):
         """ getter for the extra parameters

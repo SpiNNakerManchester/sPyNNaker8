@@ -324,8 +324,7 @@ def list_standard_models():
 def _stop_on_spinnaker():
     # Stop SpiNNaker simulation
     if not isinstance(globals_variables.get_simulator(), FailedState):
-        globals_variables.get_simulator().stop(
-            extract_provenance_data=False, extract_iobuf=False)
+        globals_variables.get_simulator().stop()
 
 
 def set_number_of_neurons_per_core(neuron_type, max_permitted):

@@ -70,14 +70,6 @@ class Population(PyNNPopulationCommon, Recorder):
         self._annotations = dict()
 
     @property
-    def label(self):
-        return self._vertex.label
-
-    @label.setter
-    def label(self, new_value):
-        self._vertex.label = new_value
-
-    @property
     def annotations(self):
         """ returns annotations given by the end user
 
