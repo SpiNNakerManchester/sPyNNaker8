@@ -9,3 +9,4 @@ class CSAConnector(AbstractConnector, PyNNCSAConnector):
         AbstractConnector.__init__(self, safe=safe)
         PyNNCSAConnector.__init__(
             self, cset=cset, safe=safe, callback=callback)
+        raise NotImplementedError

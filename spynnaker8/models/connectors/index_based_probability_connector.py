@@ -14,3 +14,4 @@ class IndexBasedProbabilityConnector(
             self, index_expression=index_expression,
             allow_self_connections=allow_self_connections, rng=rng,
             safe=safe, callback=callback)
+        raise NotImplementedError

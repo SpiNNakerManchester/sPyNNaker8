@@ -10,3 +10,4 @@ class ArrayConnector(AbstractConnector, PyNNArrayConnector):
         AbstractConnector.__init__(self, safe=safe)
         PyNNArrayConnector.__init__(
             self, array=array, safe=safe, callback=callback)
+        raise NotImplementedError

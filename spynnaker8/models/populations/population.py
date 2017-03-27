@@ -195,12 +195,6 @@ class Population(PyNNPopulationCommon, Recorder):
                     io=self._write_to_files_indicators[variable],
                     variables=[variable])
 
-    def get(self, parameter_names, gather=False, simplify=True):
-        if simplify is not True:
-            logger.warn(
-                "The simplify value is ignored if not set to true")
-        return PyNNPopulationCommon.get(self, parameter_names, gather)
-
     def get_data(
             self, variables='all', gather=True, clear=False, annotations=None):
         """
@@ -238,3 +232,10 @@ class Population(PyNNPopulationCommon, Recorder):
             PyNNPopulationCommon.set(self, parameter, value)
         except InvalidParameterType:
             self.initialize(parameter, value)
+
+
+    def get(self, parameter_names, gather=False, simplify=True):
+        if simplify is not True:
+            logger.warn("The simplify value is ignored if not set to true")
+        return PyNNPopulationCommon.get(self, parameter_names, gather)
+
