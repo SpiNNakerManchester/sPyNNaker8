@@ -12,12 +12,9 @@ from pyNN.standardmodels import StandardCellType
 # fec improts
 from spinn_front_end_common.utilities.notification_protocol. \
     socket_address import SocketAddress
-from spinn_front_end_common.utilities.utility_objs.executable_finder \
-    import ExecutableFinder
 from spinn_front_end_common.utilities import helpful_functions
 
 # spynnaker imports
-from spynnaker.pyNN import model_binaries
 from spynnaker.pyNN.utilities import globals_variables
 from spynnaker.pyNN.utilities.failed_state import FailedState
 
@@ -61,6 +58,19 @@ from spynnaker8.models.connectors.small_world_connector import \
 from spynnaker8.models.synapse_dynamics.synapse_dynamics_static import \
     SynapseDynamicsStatic as StaticSynapse
 
+# plastic stuff
+from spynnaker8.models.synapse_dynamics.synapse_dynamics_stdp import \
+    SynapseDynamicsSTDP as STDPMechanism
+from spynnaker8.models.synapse_dynamics.weight_dependence\
+    .weight_dependence_additive import WeightDependenceAdditive as \
+    AdditiveWeightDependence
+from spynnaker8.models.synapse_dynamics.weight_dependence\
+    .weight_dependence_multiplicative import \
+    WeightDependenceMultiplicative as MultiplicativeWeightDependence
+from spynnaker8.models.synapse_dynamics.timing_dependence\
+    .timing_dependence_spike_pair import TimingDependenceSpikePair as \
+    SpikePairRule
+
 # neuron stuff
 # noinspection PyUnresolvedReferences
 from spynnaker8.models.model_data_holders.if_cond_exp_data_holder import \
@@ -101,6 +111,9 @@ from spynnaker8.spinnaker import SpiNNaker
 from spynnaker8.utilities import config
 from spynnaker8._version import __version__
 
+import logging
+import os
+
 logger = logging.getLogger(__name__)
 
 # static methods that are expected from the top level PyNN interface.
@@ -127,7 +140,7 @@ record = FailedState.record
 def setup(timestep=pynn_control.DEFAULT_TIMESTEP,
           min_delay=pynn_control.DEFAULT_MIN_DELAY,
           max_delay=pynn_control.DEFAULT_MAX_DELAY,
-          executable_finder=None, graph_label=None,
+          graph_label=None,
           database_socket_addresses=None, extra_algorithm_xml_paths=None,
           extra_mapping_inputs=None, extra_mapping_algorithms=None,
           extra_pre_run_algorithms=None, extra_post_run_algorithms=None,
@@ -138,7 +151,6 @@ def setup(timestep=pynn_control.DEFAULT_TIMESTEP,
     :param timestep:  the time step of the simulations
     :param min_delay: the min delay of the simulation
     :param max_delay: the max delay of the simulation
-    :param executable_finder: The locations of where binaries should be
     :param graph_label: the label for the graph
     :param database_socket_addresses: the sockets used by external devices
     for the database notification protocol
@@ -172,19 +184,13 @@ def setup(timestep=pynn_control.DEFAULT_TIMESTEP,
     if graph_label is None:
         graph_label = "PyNN0.8_graph"
 
-    # instantiate executable finder
-    if executable_finder is None:
-        executable_finder = ExecutableFinder()
-        executable_finder.add_path(
-            os.path.join(os.path.dirname(model_binaries.__file__)))
-
     if time_scale_factor is None:
         time_scale_factor = helpful_functions.read_config_int(
             config_parser, "Machine", "timeScaleFactor")
 
     # create the main object for all stuff related software
     globals_variables.set_simulator(SpiNNaker(
-        config=config_parser, executable_finder=executable_finder,
+        config=config_parser,
         database_socket_addresses=database_socket_addresses,
         extra_algorithm_xml_paths=extra_algorithm_xml_paths,
         extra_mapping_inputs=extra_mapping_inputs,
@@ -197,9 +203,9 @@ def setup(timestep=pynn_control.DEFAULT_TIMESTEP,
         n_chips_required=None))
 
     # warn about kwargs arguments
-    if len(extra_params) > 1:
-        logger.warn("Extra params has been applied to the setup command which "
-                    "we do not consider")
+    if len(extra_params) > 0:
+        logger.warn("Extra params {} have been applied to the setup "
+                    "command which we do not consider".format(extra_params))
 
     # get overloaded functions from PyNN in relation of our simulator object
     _create_overloaded_functions(globals_variables.get_simulator())

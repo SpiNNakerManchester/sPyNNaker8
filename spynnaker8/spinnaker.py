@@ -5,14 +5,30 @@ from pyNN.random import RandomDistribution
 from spynnaker.pyNN.spinnaker_common import SpiNNakerCommon
 
 from spynnaker8 import _version
-from spynnaker8.utilities.random_stats.random_stats_scipy_impl import \
-    RandomStatsScipyImpl
+from spynnaker8.utilities.random_stats.random_stats_exponential_impl import \
+    RandomStatsExponentialImpl
+from spynnaker8.utilities.random_stats.random_stats_gamma_impl import \
+    RandomStatsGammaImpl
+from spynnaker8.utilities.random_stats.random_stats_log_normal_impl import \
+    RandomStatsLogNormalImpl
+from spynnaker8.utilities.random_stats.random_stats_normal_clipped_impl \
+    import RandomStatsNormalClippedImpl
+from spynnaker8.utilities.random_stats.random_stats_normal_impl import \
+    RandomStatsNormalImpl
+from spynnaker8.utilities.random_stats.random_stats_poisson_impl import \
+    RandomStatsPoissonImpl
+from spynnaker8.utilities.random_stats.random_stats_randint_impl import \
+    RandomStatsRandIntImpl
 from spynnaker8.utilities.random_stats.random_stats_uniform_impl import \
     RandomStatsUniformImpl
 
 import logging
 import math
 
+from spynnaker8.utilities.random_stats.random_stats_vomises_impl import \
+    RandomStatsVonmisesImpl
+from spynnaker8.utilities.random_stats.rnadom_stats_binomial_impl import \
+    RandomStatsBinomialImpl
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +39,7 @@ class SpiNNaker(SpiNNakerCommon, pynn_control.BaseState):
     """
 
     def __init__(
-            self, config, executable_finder, database_socket_addresses,
+            self, config, database_socket_addresses,
             extra_algorithm_xml_paths, extra_mapping_inputs,
             extra_mapping_algorithms, extra_pre_run_algorithms,
             extra_post_run_algorithms, extra_load_algorithms,
@@ -72,7 +88,7 @@ class SpiNNaker(SpiNNakerCommon, pynn_control.BaseState):
 
         # spinnaker setup
         SpiNNakerCommon.__init__(
-            self, config=config, executable_finder=executable_finder,
+            self, config=config,
             database_socket_addresses=database_socket_addresses,
             user_extra_algorithm_xml_path=built_in_extra_xml_paths,
             user_extra_mapping_inputs=built_in_extra_mapping_inputs,
@@ -343,15 +359,16 @@ class SpiNNaker(SpiNNakerCommon, pynn_control.BaseState):
     @staticmethod
     def get_distribution_to_stats():
         return {
-            'binomial': RandomStatsScipyImpl("binom"),
-            'gamma': RandomStatsScipyImpl("gamma"),
-            'exponential': RandomStatsScipyImpl("expon"),
-            'lognormal': RandomStatsScipyImpl("lognorm"),
-            'normal': RandomStatsScipyImpl("norm"),
-            'poisson': RandomStatsScipyImpl("poisson"),
+            'binomial': RandomStatsBinomialImpl(),
+            'gamma': RandomStatsGammaImpl(),
+            'exponential': RandomStatsExponentialImpl(),
+            'lognormal': RandomStatsLogNormalImpl(),
+            'normal': RandomStatsNormalImpl(),
+            'normal_clipped': RandomStatsNormalClippedImpl(),
+            'poisson': RandomStatsPoissonImpl(),
             'uniform': RandomStatsUniformImpl(),
-            'randint': RandomStatsScipyImpl("randint"),
-            'vonmises': RandomStatsScipyImpl("vonmises")}
+            'randint': RandomStatsRandIntImpl(),
+            'vonmises': RandomStatsVonmisesImpl()}
 
     @staticmethod
     def get_random_distribution():

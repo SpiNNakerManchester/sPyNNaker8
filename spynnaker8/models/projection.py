@@ -1,15 +1,20 @@
 import logging
-
+import numpy
 import deprecation
 
 from pyNN import common as pynn_common
 from pyNN.space import Space as PyNNSpace
+
 from spynnaker8 import FromListConnector
 from spynnaker8.models.synapse_dynamics.synapse_dynamics_static \
     import SynapseDynamicsStatic
+from spynnaker8._version import __version__
+
 from spynnaker.pyNN.models.pynn_projection_common import PyNNProjectionCommon
 from spynnaker.pyNN.utilities import globals_variables
-from spynnaker8._version import __version__
+from spynnaker.pyNN import exceptions
+
+from spinn_front_end_common.utilities import exceptions as common_exceptions
 
 logger = logging.getLogger(__name__)
 
@@ -25,8 +30,12 @@ class Projection(PyNNProjectionCommon):
     def __init__(
             self, pre_synaptic_population, post_synaptic_population,
             connector, synapse_type=None, source=None,
-            receptor_type=None,
-            space=None, label=None):
+            receptor_type=None, space=None, label=None):
+
+        if source is not None:
+            raise exceptions.InvalidParameterType(
+                "spynnaker8 {} does not yet support multi-compartmental "
+                "cells.".format(__version__))
 
         # set space object if not set
         if space is None:
@@ -72,6 +81,37 @@ class Projection(PyNNProjectionCommon):
 
     def set(self, **attributes):
         raise NotImplementedError
+
+    def get(self, attribute_names, format, gather=True, with_address=False,
+            multiple_synapses='sum'):
+
+        if with_address:
+            raise common_exceptions.ConfigurationException(
+                "Spynnaker only recongises with_address=False")
+
+        # if only one, just get it and send it back.
+        if isinstance(attribute_names, basestring):
+            return PyNNProjectionCommon.get(
+                self, attribute_names, format, gather)
+
+        # gather all the attributes, but format of pynn is source,
+        # destination, attribute. so will need to delete source and dest
+        #  from each atrtibute after the first.
+
+        data_pile = None
+        first = True
+
+        for attribute in attribute_names:
+            data_pile = numpy.hstack((data_pile, PyNNProjectionCommon.get(
+                self, attribute, format, gather)))
+
+            # if first, then no columns will need deleting
+            if first:
+                first = False
+            else:
+                data_pile = numpy.delete(
+                    data_pile, [len(data_pile) - 1, len(data_pile) - 2], 1)
+        return data_pile
 
     def __iter__(self):
         raise NotImplementedError
