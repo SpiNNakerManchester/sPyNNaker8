@@ -34,11 +34,14 @@ class Population(PyNNPopulationCommon, Recorder):
                     vertex_holder.data_items['label'], label))
             vertex_holder.add_item('n_neurons', size)
             assert cellparams is None
-            # cellparams being retained for backwards compatibility, but use
-            # is deprecated
+        # cellparams being retained for backwards compatibility, but use
+        # is deprecated
         elif issubclass(cellclass, DataHolder):
             internal_params = dict(cellparams)
-            internal_params['label'] = self.create_label(label)
+            cell_label = None
+            if 'label' in internal_params:
+                cell_label = internal_params['label']
+            internal_params['label'] = self.create_label(cell_label, label)
             internal_params['n_neurons'] = size
             vertex_holder = cellclass(**internal_params)
             # emit deprecation warning
@@ -118,9 +121,27 @@ class Population(PyNNPopulationCommon, Recorder):
         else:
             # handle one element vs many elements
             if isinstance(variables, basestring):
-                self._record(
-                    variables, self._all_ids, sampling_interval, to_file)
-            else:
+
+                # handle special case of 'all'
+                if variables == "all":
+
+                    logger.warn(
+                        "This is not currently standard PyNN, and therefore "
+                        "may not work in other simulators.")
+
+                    # get all possible recordings for this vertex
+                    variables = self._get_all_possible_recordable_variables()
+
+                    # iterate though them
+                    for variable in variables:
+                        self._record(variable, self._all_ids,
+                                     sampling_interval, to_file)
+                else:
+                    # record variable
+                    self._record(
+                        variables, self._all_ids, sampling_interval, to_file)
+
+            else:  # list of variables, so just iterate though them
                 for variable in variables:
                     self._record(
                         variable, self._all_ids, sampling_interval, to_file)
@@ -218,6 +239,22 @@ class Population(PyNNPopulationCommon, Recorder):
                         "if gather was set to True.")
 
         return self._extract_data(variables, clear, annotations)
+
+    def spinnaker_get_data(self, variable):
+        """ public assessor for getting data as a numpy array, instead of
+        the neo based object
+
+        :param variable:
+        either a single variable name or a list of variable names
+        Variables must have been previously recorded, otherwise an
+        Exception will be raised.
+        :return: numpy array of the data
+        """
+        logger.warn(
+            "This call is not standard pynn and therefore will not be "
+            "compatible between simulators. Nor do we guarantee that this "
+            "function will exist in future releases.")
+        return self._get_recorded_variable(variable)
 
     def find_units(self, variable):
         """ supports getting the units of a variable
