@@ -30,7 +30,8 @@ class Population(PyNNPopulationCommon, Recorder):
         if isinstance(cellclass, DataHolder):
             vertex_holder = cellclass
             vertex_holder.add_item(
-                'label', self.create_label(vertex_holder.data_items['label']))
+                'label', self.create_label(
+                    vertex_holder.data_items['label'], label))
             vertex_holder.add_item('n_neurons', size)
             assert cellparams is None
             # cellparams being retained for backwards compatibility, but use
