@@ -102,8 +102,9 @@ class Projection(PyNNProjectionCommon):
         first = True
 
         for attribute in attribute_names:
-            data_pile = numpy.hstack((data_pile, PyNNProjectionCommon.get(
-                self, attribute, format, gather)))
+            data_pile = numpy.hstack((
+                data_pile,
+                PyNNProjectionCommon.get(self, attribute, format, gather)))
 
             # if first, then no columns will need deleting
             if first:

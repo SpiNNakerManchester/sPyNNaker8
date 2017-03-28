@@ -88,7 +88,7 @@ class SpiNNaker(SpiNNakerCommon, pynn_control.BaseState):
 
         # spinnaker setup
         SpiNNakerCommon.__init__(
-            self, config=config,
+            self, config=config, config_default_name="spynnaker8.cfg",
             database_socket_addresses=database_socket_addresses,
             user_extra_algorithm_xml_path=built_in_extra_xml_paths,
             user_extra_mapping_inputs=built_in_extra_mapping_inputs,
