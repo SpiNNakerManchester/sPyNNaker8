@@ -89,19 +89,19 @@ class Projection(PyNNProjectionCommon):
             raise common_exceptions.ConfigurationException(
                 "Spynnaker only recongises with_address=False")
 
-        # if only one, just get it and send it back.
+        # fix issue with 1 vs many
         if isinstance(attribute_names, basestring):
-            return PyNNProjectionCommon.get(
-                self, attribute_names, format, gather)
+            attribute_names = [attribute_names]
+
+        data_pile = list()
+
+        attribute_names.insert(0, 'source')
+        attribute_names.insert(1, 'target')
+
 
         # gather all the attributes, but format of pynn is source,
         # destination, attribute. so will need to delete source and dest
         #  from each atrtibute after the first.
-
-        data_pile = list()
-        attribute_names.insert(0, 'source')
-        attribute_names.insert(1, 'target')
-
         for attribute in attribute_names:
             data_pile.append(PyNNProjectionCommon.get(
                 self, attribute, format, gather))

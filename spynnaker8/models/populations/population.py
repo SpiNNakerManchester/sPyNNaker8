@@ -271,7 +271,6 @@ class Population(PyNNPopulationCommon, Recorder):
         except InvalidParameterType:
             self.initialize(parameter, value)
 
-
     def get(self, parameter_names, gather=False, simplify=True):
         if simplify is not True:
             logger.warn("The simplify value is ignored if not set to true")
