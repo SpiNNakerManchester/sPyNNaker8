@@ -98,21 +98,15 @@ class Projection(PyNNProjectionCommon):
         # destination, attribute. so will need to delete source and dest
         #  from each atrtibute after the first.
 
-        data_pile = None
-        first = True
+        data_pile = list()
+        attribute_names.insert(0, 'source')
+        attribute_names.insert(1, 'target')
 
         for attribute in attribute_names:
-            data_pile = numpy.hstack((
-                data_pile,
-                PyNNProjectionCommon.get(self, attribute, format, gather)))
+            data_pile.append(PyNNProjectionCommon.get(
+                self, attribute, format, gather))
 
-            # if first, then no columns will need deleting
-            if first:
-                first = False
-            else:
-                data_pile = numpy.delete(
-                    data_pile, [len(data_pile) - 1, len(data_pile) - 2], 1)
-        return data_pile
+        return numpy.dstack(data_pile)[0]
 
     def __iter__(self):
         raise NotImplementedError
