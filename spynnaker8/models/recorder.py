@@ -148,7 +148,7 @@ class Recorder(RecordingCommon):
                     channel_index=channel_indices,
                     source_ids=source_ids)
             data_array.shape = (
-                data_array.shape[0] * pq.ms, data_array.shape[1])
+                data_array.shape[0], data_array.shape[1])
             segment.analogsignalarrays.append(data_array)
 
 
@@ -210,40 +210,28 @@ class Recorder(RecordingCommon):
         return metadata
 
     def _clear_recording(self, variables):
-        # acquire buffer manager
-        buffer_manager = globals_variables.get_simulator().buffer_manager
-
-        # get machine vertices
-        application_vertex = self._population._vertex
-        machine_vertices = globals_variables.get_simulator().graph_mapper. \
-            get_machine_vertices(application_vertex)
-
-        # go through each machine vertex and clear recorded variables
-        for machine_vertex in machine_vertices:
-
-            # get placement
-            placement = globals_variables.get_simulator().placements. \
-                get_placement_of_vertex(machine_vertex)
-            for variable in variables:
-                if variable == 'spikes':
-                    buffer_manager.clear_recorded_data(
-                        placement.x, placement.y, placement.p,
-                        machine_vertex.get_spikes_recording_region_id())
-                elif variable == "v":
-                    buffer_manager.clear_recorded_data(
-                        placement.x, placement.y, placement.p,
-                        machine_vertex.get_v_recording_region_id())
-                elif variable == "gsyn_inh":
-                    buffer_manager.clear_recorded_data(
-                        placement.x, placement.y, placement.p,
-                        machine_vertex.
-                        get_gsyn_inhibitory_recording_region_id())
-                elif variable == "gsyn_exc":
-                    buffer_manager.clear_recorded_data(
-                        placement.x, placement.y, placement.p,
-                        machine_vertex.
-                        get_gsyn_excitatory_recording_region_id())
-                else:
-                    raise exceptions.InvalidParameterType(
-                        "The variable {} is not a recordable value".format(
-                            variable))
+        for variable in variables:
+            if variable == 'spikes':
+                self._population._vertex.clear_spike_recording(
+                    globals_variables.get_simulator().buffer_manager,
+                    globals_variables.get_simulator().placements,
+                    globals_variables.get_simulator().graph_mapper)
+            elif variable == "v":
+                self._population._vertex.clear_v_recording(
+                    globals_variables.get_simulator().buffer_manager,
+                    globals_variables.get_simulator().placements,
+                    globals_variables.get_simulator().graph_mapper)
+            elif variable == "gsyn_inh":
+                self._population._vertex.clear_gsyn_inhibitory_recording(
+                    globals_variables.get_simulator().buffer_manager,
+                    globals_variables.get_simulator().placements,
+                    globals_variables.get_simulator().graph_mapper)
+            elif variable == "gsyn_exc":
+                self._population._vertex.clear_gsyn_excitatory_recording(
+                    globals_variables.get_simulator().buffer_manager,
+                    globals_variables.get_simulator().placements,
+                    globals_variables.get_simulator().graph_mapper)
+            else:
+                raise exceptions.InvalidParameterType(
+                    "The variable {} is not a recordable value".format(
+                        variable))
