@@ -8,3 +8,7 @@ class DataHolder(object):
     @property
     def data_items(self):
         return self._data_items
+
+    @staticmethod
+    def build_model():
+        pass
