@@ -50,6 +50,10 @@ class SpiNNaker(SpiNNakerCommon, pynn_control.BaseState):
         self._min_delay = min_delay
         self._max_delay = max_delay
 
+        # change min delay auto to be the min delay supported by simulator
+        if self._min_delay == "auto":
+            self._min_delay = timestep
+
         # population and projection holders
         self._populations = list()
         self._projections = list()
@@ -97,8 +101,9 @@ class SpiNNaker(SpiNNakerCommon, pynn_control.BaseState):
             extra_post_run_algorithms=extra_post_run_algorithms,
             extra_load_algorithms=built_in_extra_load_algorithms,
             graph_label=graph_label, n_chips_required=n_chips_required,
-            hostname=hostname, min_delay=min_delay, max_delay=max_delay,
-            timestep=timestep, time_scale_factor=time_scale_factor)
+            hostname=hostname, min_delay=self._min_delay,
+            max_delay=self._max_delay, timestep=timestep,
+            time_scale_factor=time_scale_factor)
 
     def run(self, simtime):
         """ PyNN run simulation (enforced method and parameter name)
