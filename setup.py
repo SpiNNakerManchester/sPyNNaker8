@@ -6,25 +6,26 @@ exec(open("spynnaker8/_version.py").read())
 
 if os.environ.get('READTHEDOCS', None) == 'True':
     # scipy must be added in config.py as a mock
+    # neo must be capped as later versions do not work with pynn8
     install_requires = ['sPyNNaker >= 4.0.0, < 5.0.0',
                         'pynn>=0.8, <0.9',
-                        'deprecation >= 1.0, < 2.0.0',
-                        'six >=1.0.0, <= 1.6.1',
-                        'numpy >= 1.9.0, <=1.9.1',
-                        'quantities  >= 0.11.1, <= 0.11.1',
-                        'lazyarray >= 0.2.9, <= 0.2.9',
-                        'appdirs >=1.4.2 , <=1.4.2',
+                        'deprecation >= 1.0',
+                        'six >=1.0.0',
+                        'numpy >= 1.9.0',
+                        'quantities  >= 0.11.1',
+                        'lazyarray >= 0.2.9',
+                        'appdirs >=1.4.4',
                         'neo >= 0.3.0, <=0.4.1'],
 else:
     install_requires = ['sPyNNaker >= 4.0.0, < 5.0.0',
                         'pynn>=0.8, <0.9',
-                        'deprecation >= 1.0, < 2.0.0',
-                        'six >=1.0.0, <= 1.6.1',
-                        'numpy >= 1.9.0, <=1.9.1',
-                        'scipy >=0.16.0, <=0.16.0',
-                        'quantities  >= 0.11.1, <= 0.11.1',
-                        'lazyarray >= 0.2.9, <= 0.2.9',
-                        'appdirs >=1.4.2 , <=1.4.2',
+                        'deprecation >= 1.0',
+                        'six >=1.0.0',
+                        'numpy >= 1.9.0',
+                        'scipy >=0.16.0',
+                        'quantities  >= 0.11.1',
+                        'lazyarray >= 0.2.9',
+                        'appdirs >=1.4.2',
                         'neo >= 0.3.0, <=0.4.1'],
 
 # Build a list of all project modules, as well as supplementary files

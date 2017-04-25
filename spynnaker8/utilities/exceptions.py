@@ -4,7 +4,7 @@ from spinn_front_end_common.utilities import exceptions
 class Spynnaker8Exception(Exception):
     """ Superclass of all exceptions from the pynn module
     """
-    pass
+
 
 
 class MemReadException(Spynnaker8Exception):
