@@ -13,6 +13,6 @@ quantities  >= 0.11.1
 # tested with 0.29
 lazyarray >= 0.2.9
 # tested with 1.4.3
-appdirs >=1.4.2
+appdirs >=1.4.3
 # fails with late versions
 neo >= 0.3.0, <=0.4.1
