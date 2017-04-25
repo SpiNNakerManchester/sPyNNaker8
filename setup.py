@@ -14,7 +14,7 @@ if os.environ.get('READTHEDOCS', None) == 'True':
                         'numpy >= 1.9.0',
                         'quantities  >= 0.11.1',
                         'lazyarray >= 0.2.9',
-                        'appdirs >=1.4.4',
+                        'appdirs >=1.4.3',
                         'neo >= 0.3.0, <=0.4.1'],
 else:
     install_requires = ['sPyNNaker >= 4.0.0, < 5.0.0',
@@ -25,7 +25,7 @@ else:
                         'scipy >=0.16.0',
                         'quantities  >= 0.11.1',
                         'lazyarray >= 0.2.9',
-                        'appdirs >=1.4.2',
+                        'appdirs >=1.4.3',
                         'neo >= 0.3.0, <=0.4.1'],
 
 # Build a list of all project modules, as well as supplementary files
