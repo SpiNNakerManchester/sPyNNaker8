@@ -6,7 +6,7 @@ exec(open("spynnaker8/_version.py").read())
 
 if os.environ.get('READTHEDOCS', None) == 'True':
     # scipy must be added in config.py as a mock
-    install_requires = ['sPyNNaker == 1!4.0.0a1',
+    install_requires = ['sPyNNaker == 1!4.0.0a3',
                         'pynn>=0.8, <0.9',
                         'deprecation >= 1.0, < 2.0.0',
                         'six >=1.0.0, < 2.0.0',
@@ -16,7 +16,7 @@ if os.environ.get('READTHEDOCS', None) == 'True':
                         'appdirs >=1.4.2 , < 2.0.0',
                         'neo >= 0.3.0, <=0.4.1'],
 else:
-    install_requires = ['sPyNNaker == 1!4.0.0a1',
+    install_requires = ['sPyNNaker == 1!4.0.0a3',
                         'pynn>=0.8, <0.9',
                         'deprecation >= 1.0, < 2.0.0',
                         'six >=1.0.0, < 2.0.0',

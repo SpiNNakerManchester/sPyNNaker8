@@ -1,4 +1,4 @@
-sPyNNaker == 1!4.0.0a1
+sPyNNaker == 1!4.0.0a3
 pynn>=0.8, <0.9
 deprecation >= 1.0, < 2.0.0
 six >=1.0.0, < 2.0.0
