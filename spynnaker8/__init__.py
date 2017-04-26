@@ -291,9 +291,6 @@ def end(_=True):
     globals_variables.get_simulator().stop()
 
 
-@deprecation.deprecated(
-    deprecated_in="1.0.0", current_version=__version__,
-    details="Use record('v') function instead")
 def record_v(source, filename):
     """ depreciated method for getting voltage
     this is not documented in the public facing api
@@ -304,13 +301,10 @@ def record_v(source, filename):
     record(['v'], source, filename)
 
 
-@deprecation.deprecated(
-    deprecated_in="1.0.0", current_version=__version__,
-    details="Use record('gsyn_exc', 'gsyn_inh') function instead")
 def record_gsyn(source, filename):
     """depreciated method for getting both types of gsyn
     this is not documented in the public facing api
-    
+
     :param source: the population / view / assembly to record
     :param filename: the neo file to write to
     :return: None
