@@ -1,7 +1,5 @@
 import logging
 
-from pyNN.space import Space
-
 from spynnaker.pyNN.models.neural_projections.connectors. \
     fixed_number_post_connector import FixedNumberPostConnector as \
     CommonFixedNumberPostConnector
@@ -11,8 +9,8 @@ from pyNN.connectors import FixedNumberPostConnector as \
 logger = logging.getLogger(__file__)
 
 
-class FixedNumberPostConnector(
-    CommonFixedNumberPostConnector, PyNNFixedNumberPostConnector):
+class FixedNumberPostConnector(CommonFixedNumberPostConnector,
+                               PyNNFixedNumberPostConnector):
     """ pynn connector that puts a fixed number of connections on each of the
      post neurons
 

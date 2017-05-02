@@ -1,13 +1,10 @@
 from spynnaker.pyNN.models.neural_projections.connectors. \
     distance_dependent_probability_connector import \
     DistanceDependentProbabilityConnector as \
-        CommonDistanceDependentProbabilityConnector
+    CommonDistanceDependentProbabilityConnector
 
 from pyNN.connectors import DistanceDependentProbabilityConnector as \
     PyNNDistanceDepednentProbabilityConnector
-from pyNN.space import Space
-
-from pacman.model.decorators.overrides import overrides
 
 
 class DistanceDependentProbabilityConnector(

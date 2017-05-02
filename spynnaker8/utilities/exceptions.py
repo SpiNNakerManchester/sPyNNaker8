@@ -6,7 +6,6 @@ class Spynnaker8Exception(Exception):
     """
 
 
-
 class MemReadException(Spynnaker8Exception):
     """ Raised when the pynn front end fails to read a certain memory region
     """
@@ -40,7 +39,7 @@ class SynapticBlockReadException(exceptions.ConfigurationException):
 
 
 class SynapticMaxIncomingAtomsSupportException(
-    exceptions.ConfigurationException):
+        exceptions.ConfigurationException):
     """ Raised when a synaptic sublist exceeds the max atoms possible to be\
         supported
     """

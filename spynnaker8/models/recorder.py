@@ -151,7 +151,6 @@ class Recorder(RecordingCommon):
                 data_array.shape[0], data_array.shape[1])
             segment.analogsignalarrays.append(data_array)
 
-
     @staticmethod
     def _convert_extracted_data_into_neo_expected_format(
             signal_array, channel_indices):
@@ -176,8 +175,7 @@ class Recorder(RecordingCommon):
                     units='ms',
                     source_population=self._population.label,
                     source_id=int(atom_id),
-                    source_index=
-                    self._population.id_to_index(atom_id)))
+                    source_index=self._population.id_to_index(atom_id)))
 
     def _get_all_possible_recordable_variables(self):
         variables = list()

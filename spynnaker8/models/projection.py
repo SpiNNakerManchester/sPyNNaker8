@@ -1,6 +1,5 @@
 import logging
 import numpy
-import deprecation
 
 from pyNN import common as pynn_common
 from pyNN.space import Space as PyNNSpace
@@ -97,7 +96,6 @@ class Projection(PyNNProjectionCommon):
 
         attribute_names.insert(0, 'source')
         attribute_names.insert(1, 'target')
-
 
         # gather all the attributes, but format of pynn is source,
         # destination, attribute. so will need to delete source and dest

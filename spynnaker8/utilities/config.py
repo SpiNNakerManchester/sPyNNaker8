@@ -76,10 +76,10 @@ def read_config(file_names=None):
                 try_reading_machine_spec_file(
                     parser, failed_to_read_paths, filename)
 
-        except IOError as e:
+        except IOError:
             # File did not exist, keep trying
             failed_to_read_paths.append(filename)
-        except OSError as f:
+        except OSError:
             # File did not exist, keep trying
             failed_to_read_paths.append(filename)
 
@@ -117,12 +117,12 @@ def try_reading_machine_spec_file(parser, failed_to_read_paths, filename):
                 with open(machine_spec_file_path,
                           "r") as extra_config_file:
                     parser.readfp(extra_config_file)
-            except IOError as e:
+            except IOError:
                 logger = logging.getLogger(__name__)
                 logger.warn("The machine spec file can not be read. Will "
                             "carry on as if the file did not exist.")
                 # File did not exist, keep trying
                 failed_to_read_paths.append(filename)
-            except OSError as f:
+            except OSError:
                 # File did not exist, keep trying
                 failed_to_read_paths.append(filename)
