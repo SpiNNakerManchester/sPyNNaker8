@@ -34,12 +34,9 @@ before_script:
   - echo '[Buffers]' >> ~/.spynnaker.cfg
 
 script:
-  # Disabled until fixed on a branch
-  # - py.test unittests
-  # Disabled until fixed on a branch
-  # - flake8 spynnaker7 pyNN-spiNNaker-src
-  # Disabled until fixed on a branch
-  # - flake8 unittests
+  - py.test unittests
+  - flake8 spynnaker8
+  - flake8 unittests
   # DISABLED BECAUSE THEY'RE GOING TO BE MOVED!
   # - flake8 integration_tests
   - cd doc/source
