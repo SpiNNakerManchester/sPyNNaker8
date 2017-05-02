@@ -2,7 +2,7 @@ import os
 from setuptools import setup
 from collections import defaultdict
 
-exec(open("spynnaker8/_version.py").read())
+import spynnaker8._version as v
 
 if os.environ.get('READTHEDOCS', None) == 'True':
     # scipy must be added in config.py as a mock
@@ -54,7 +54,7 @@ for dirname, dirnames, filenames in os.walk(main_package_dir):
 
 setup(
     name="sPyNNaker8",
-    version=__version__,
+    version=v.__version__,
     description="Tools for simulating neural models generated using "
                 "PyNN 0.8 on the SpiNNaker platform",
     author="University of Manchester",
