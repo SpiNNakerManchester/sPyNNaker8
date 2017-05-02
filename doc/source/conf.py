@@ -364,9 +364,8 @@ for mod_name in MOCK_MODULES:
 sys.path.append(os.path.abspath('../..'))
 
 # Do the rst generation
-# Commented out until it can be fixed on a branch
-# for f in os.listdir("."):
-#    if (os.path.isfile(f) and f.endswith(
-#            ".rst") and f != "index.rst" and f != "modules.rst"):
-#        os.remove(f)
-# apidoc.main([None, '-o', ".", "../../spynnaker8"])
+for f in os.listdir("."):
+    if (os.path.isfile(f) and f.endswith(
+            ".rst") and f != "index.rst" and f != "modules.rst"):
+        os.remove(f)
+apidoc.main([None, '-o', ".", "../../spynnaker8"])
