@@ -5,8 +5,7 @@ import deprecation
 # pynn imports
 from pyNN import common as pynn_common
 from pyNN.common import control as pynn_control
-from pyNN.random import *
-from pyNN.recording import *
+from pyNN.recording import get_io
 from pyNN.standardmodels import StandardCellType
 
 # fec improts
@@ -112,9 +111,36 @@ from spynnaker8.utilities import config
 from spynnaker8._version import __version__
 
 import logging
-import os
 
 logger = logging.getLogger(__name__)
+
+__all__ = [
+    # connections
+    'AllToAllConnector', 'ArrayConnector', 'CSAConnector',
+    'DistanceDependentProbabilityConnector', 'FixedNumberPostConnector',
+    'FixedNumberPreConnector', 'FixedProbabilityConnector',
+    'FromFileConnector', 'FromListConnector', 'IndexBasedProbabilityConnector',
+    'MultapseConnector', 'OneToOneConnector', 'SmallWorldConnector',
+    # synapse structures
+    'StaticSynapse',
+    # plastic stuff
+    'STDPMechanism', 'AdditiveWeightDependence',
+    'MultiplicativeWeightDependence', 'SpikePairRule',
+    # neuron stuff
+    'IF_cond_exp', 'IF_curr_duel_exp', 'IF_curr_exp', 'Izhikevich_cond',
+    'Izhikevich', 'SpikeSourceArray', 'SpikeSourcePoisson',
+    # pops
+    'Assembly', 'Population', 'PopulationView',
+    # projection
+    'SpiNNakerProjection',
+
+    # Stuff that we define
+    'end', 'setup', 'run', 'run_until', 'run_for',
+    'num_processes', 'rank', 'reset', 'set_number_of_neurons_per_core',
+    'register_database_notification_request', 'Projection',
+    'get_current_time', 'create', 'connect', 'get_time_step',
+    'get_min_delay', 'get_max_delay', 'initialize', 'list_standard_models', 'name', 'num_processes', 'record',
+    'record_v', 'record_gsyn']
 
 # static methods that are expected from the top level PyNN interface.
 # as these are currently invalid till setup, they are encapsulated as failure
