@@ -110,18 +110,25 @@ class Projection(PyNNProjectionCommon):
         raise NotImplementedError
 
     def getWeights(self, format='list', gather=True):
+        logger.warn("getWeights is deprecated.  Use get('weight') instead")
         return self.get('weight', format, gather, with_address=False)
 
     def getDelays(self, format='list', gather=True):
+        logger.warn("getDelays is deprecated.  Use get('delay') instead")
         return self.get('delay', format, gather, with_address=False)
 
     def getSynapseDynamics(self, parameter_name, format='list', gather=True):
+        logger.warn(
+            "getSynapseDynamics is deprecated.  Use get(parameter_name)"
+            " instead")
         return self.get(parameter_name, format, gather, with_address=False)
 
     def saveConnections(self, file, gather=True, compatible_output=True):
+        logger.warn("saveConnections is deprecated.  Use save('all') instead")
         self.save('all', file, format='list', gather=gather)
 
     def printWeights(self, file, format='list', gather=True):
+        logger.warn("printWeights is deprecated.  Use save('weight') instead")
         self.save('weight', file, format, gather)
 
     def printDelays(self, file, format='list', gather=True):
@@ -129,6 +136,7 @@ class Projection(PyNNProjectionCommon):
         Print synaptic weights to file. In the array format, zeros are printed
         for non-existent connections.
         """
+        logger.warn("printDelays is deprecated.  Use save('delay') instead")
         self.save('delay', file, format, gather)
 
     def weightHistogram(self, min=None, max=None, nbins=10):
@@ -137,6 +145,9 @@ class Projection(PyNNProjectionCommon):
         If min and max are not given, the minimum and maximum weights are
         calculated automatically.
         """
+        logger.warn(
+            "weightHistogram is deprecated.  Use numpy.histogram function"
+            " instead")
         pynn_common.Projection.weightHistogram(min=min, max=max, nbins=nbins)
 
     def _get_attributes_as_list(self, names):

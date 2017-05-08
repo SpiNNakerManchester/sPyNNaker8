@@ -4,28 +4,6 @@ from collections import defaultdict
 
 import spynnaker8._version as v
 
-if os.environ.get('READTHEDOCS', None) == 'True':
-    # scipy must be added in config.py as a mock
-    install_requires = ['sPyNNaker == 1!4.0.0a3',
-                        'pynn>=0.8, <0.9',
-                        'deprecation >= 1.0, < 2.0.0',
-                        'six >=1.0.0, < 2.0.0',
-                        'numpy >= 1.9.0',
-                        'quantities  >= 0.11.1, <= 0.11.1',
-                        'lazyarray >= 0.2.9, <= 0.2.9',
-                        'appdirs >=1.4.2 , < 2.0.0',
-                        'neo >= 0.3.0, <=0.4.1'],
-else:
-    install_requires = ['sPyNNaker == 1!4.0.0a3',
-                        'pynn>=0.8, <0.9',
-                        'deprecation >= 1.0, < 2.0.0',
-                        'six >=1.0.0, < 2.0.0',
-                        'numpy >= 1.9.0',
-                        'scipy',
-                        'quantities >= 0.11.1, <= 0.11.1',
-                        'lazyarray >= 0.2.9, <= 0.2.9',
-                        'appdirs >=1.4.2 , < 2.0.0',
-                        'neo >= 0.3.0, <=0.4.1'],
 
 # Build a list of all project modules, as well as supplementary files
 main_package = "spynnaker8"
@@ -78,5 +56,11 @@ setup(
     url="https://github.com/SpiNNakerManchester/SpyNNaker8",
     packages=packages,
     package_data=package_data,
-    install_requires=install_requires
+    install_requires=[
+        'sPyNNaker >= 1!4.0.0a5, < 1!5.0.0',
+        'pynn >= 0.8, < 0.9',
+        'quantities  >= 0.11.1, <= 0.11.1',
+        'lazyarray >= 0.2.9, <= 0.2.9',
+        'appdirs >=1.4.2 , < 2.0.0',
+        'neo >= 0.3.0, <= 0.4.1']
 )

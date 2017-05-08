@@ -322,6 +322,8 @@ def record_v(source, filename):
     :param filename: the neo file to write to
     :return: None
     """
+    logger.warn(
+        "Using record_v is deprecated.  Use record('v') function instead")
     record(['v'], source, filename)
 
 
@@ -333,6 +335,10 @@ def record_gsyn(source, filename):
     :param filename: the neo file to write to
     :return: None
     """
+
+    logger.warn(
+        "Using record_gsyn is deprecated.  Use record('gsyn_exc') and/or"
+        " record('gsyn_inh') function instead")
     record(['gsyn_exc', 'gsyn_inh'], source, filename)
 
 
