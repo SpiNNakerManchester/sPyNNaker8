@@ -1,5 +1,3 @@
-from pyNN.space import Space
-
 from spynnaker.pyNN.models.neural_projections.connectors. \
     fixed_number_pre_connector import FixedNumberPreConnector as \
     CommonFixedNumberPreConnector
@@ -11,8 +9,8 @@ import logging
 logger = logging.getLogger(__file__)
 
 
-class FixedNumberPreConnector(
-    CommonFixedNumberPreConnector, PyNNFixedNumberPreConnector):
+class FixedNumberPreConnector(CommonFixedNumberPreConnector,
+                              PyNNFixedNumberPreConnector):
     """ Connects a fixed number of pre-synaptic neurons selected at random,
         to all post-synaptic neurons
     """

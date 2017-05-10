@@ -4,7 +4,6 @@ from spinn_front_end_common.utilities import exceptions
 class Spynnaker8Exception(Exception):
     """ Superclass of all exceptions from the pynn module
     """
-    pass
 
 
 class MemReadException(Spynnaker8Exception):
@@ -40,7 +39,7 @@ class SynapticBlockReadException(exceptions.ConfigurationException):
 
 
 class SynapticMaxIncomingAtomsSupportException(
-    exceptions.ConfigurationException):
+        exceptions.ConfigurationException):
     """ Raised when a synaptic sublist exceeds the max atoms possible to be\
         supported
     """

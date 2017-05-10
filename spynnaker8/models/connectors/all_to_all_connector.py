@@ -1,5 +1,3 @@
-from pyNN.space import Space
-
 from pyNN.connectors import AllToAllConnector as PyNNAllToAllConnector
 
 from spynnaker.pyNN.models.neural_projections.connectors. \

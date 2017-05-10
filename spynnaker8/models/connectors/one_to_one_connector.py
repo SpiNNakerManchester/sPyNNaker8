@@ -1,4 +1,3 @@
-from pyNN.space import Space
 from pyNN.random import RandomDistribution
 from pyNN.connectors import OneToOneConnector as PyNNOneToOneConnector
 
@@ -20,4 +19,3 @@ class OneToOneConnector(CommonOneToOneConnector, PyNNOneToOneConnector):
         CommonOneToOneConnector.__init__(
             self, safe=safe, random_number_class=RandomDistribution)
         PyNNOneToOneConnector.__init__(self, safe=safe, callback=callback)
-

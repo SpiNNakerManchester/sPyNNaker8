@@ -98,11 +98,11 @@ class TestRun(object):
         :type record_gsyn_exc: bool
         :param record_gsyn_inh: If True will aks for gsyn inh to be recorded
         :type record_gsyn_inh: bool
-        :param gsyn_path_exc: The path to print(write) the last gsyn exc 
-        data too
+        :param gsyn_path_exc: The path to print(write) the last gsyn exc
+            data too
         :type gsyn_path_exc: str or None
-        :param gsyn_path_inh: The path to print(write) the last gsyn inh 
-        data too
+        :param gsyn_path_inh: The path to print(write) the last gsyn in the
+            data too
         :type gsyn_path_inh: str or None
         :param get_weights: If True set will add a weight value to the return
         :type get_weights: bool
@@ -299,7 +299,6 @@ class TestRun(object):
             else:
                 self._recorded_gsyn_inh += output_population.get_gsyn(
                     compatible_output=True)
-
 
         if record:
             if self._recorded_spikes is None:

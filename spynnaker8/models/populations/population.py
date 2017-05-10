@@ -224,8 +224,8 @@ class Population(PyNNPopulationCommon, Recorder):
         recorded from the Assembly.
 
         `variables` - either a single variable name or a list of variable names
-                      Variables must have been previously recorded, otherwise an
-                      Exception will be raised.
+                      Variables must have been previously recorded,
+                      otherwise an Exception will be raised.
 
         For parallel simulators, if `gather` is True, all data will be gathered
         to all nodes and the Neo `Block` will contain data from all nodes.
@@ -275,4 +275,3 @@ class Population(PyNNPopulationCommon, Recorder):
         if simplify is not True:
             logger.warn("The simplify value is ignored if not set to true")
         return PyNNPopulationCommon.get(self, parameter_names, gather)
-

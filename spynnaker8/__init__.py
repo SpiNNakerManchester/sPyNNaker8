@@ -1,12 +1,10 @@
 # common imports
 import atexit
-import deprecation
 
 # pynn imports
 from pyNN import common as pynn_common
 from pyNN.common import control as pynn_control
-from pyNN.random import *
-from pyNN.recording import *
+from pyNN.recording import get_io
 from pyNN.standardmodels import StandardCellType
 
 # fec improts
@@ -109,12 +107,38 @@ from spynnaker8.models.projection import Projection as SpiNNakerProjection
 # big stuff
 from spynnaker8.spinnaker import SpiNNaker
 from spynnaker8.utilities import config
-from spynnaker8._version import __version__
 
 import logging
-import os
 
 logger = logging.getLogger(__name__)
+
+__all__ = [
+    # connections
+    'AllToAllConnector', 'ArrayConnector', 'CSAConnector',
+    'DistanceDependentProbabilityConnector', 'FixedNumberPostConnector',
+    'FixedNumberPreConnector', 'FixedProbabilityConnector',
+    'FromFileConnector', 'FromListConnector', 'IndexBasedProbabilityConnector',
+    'MultapseConnector', 'OneToOneConnector', 'SmallWorldConnector',
+    # synapse structures
+    'StaticSynapse',
+    # plastic stuff
+    'STDPMechanism', 'AdditiveWeightDependence',
+    'MultiplicativeWeightDependence', 'SpikePairRule',
+    # neuron stuff
+    'IF_cond_exp', 'IF_curr_duel_exp', 'IF_curr_exp', 'Izhikevich_cond',
+    'Izhikevich', 'SpikeSourceArray', 'SpikeSourcePoisson',
+    # pops
+    'Assembly', 'Population', 'PopulationView',
+    # projection
+    'SpiNNakerProjection',
+
+    # Stuff that we define
+    'end', 'setup', 'run', 'run_until', 'run_for', 'num_processes', 'rank',
+    'reset', 'set_number_of_neurons_per_core',
+    'register_database_notification_request', 'Projection',
+    'get_current_time', 'create', 'connect', 'get_time_step', 'get_min_delay',
+    'get_max_delay', 'initialize', 'list_standard_models', 'name',
+    'num_processes', 'record', 'record_v', 'record_gsyn']
 
 # static methods that are expected from the top level PyNN interface.
 # as these are currently invalid till setup, they are encapsulated as failure
@@ -262,9 +286,9 @@ def _create_overloaded_functions(spinnaker_simulator):
     run, run_until = pynn_common.build_run(spinnaker_simulator)
     run_for = run
 
+    tuple = pynn_common.build_state_queries(spinnaker_simulator)
     get_current_time, get_time_step, get_min_delay, get_max_delay, \
-    num_processes, rank = pynn_common.build_state_queries(
-        spinnaker_simulator)
+        num_processes, rank = tuple
 
     reset = pynn_common.build_reset(spinnaker_simulator)
     initialize = pynn_common.initialize
@@ -291,9 +315,6 @@ def end(_=True):
     globals_variables.get_simulator().stop()
 
 
-@deprecation.deprecated(
-    deprecated_in="1.0.0", current_version=__version__,
-    details="Use record('v') function instead")
 def record_v(source, filename):
     """ depreciated method for getting voltage
     this is not documented in the public facing api
@@ -301,20 +322,23 @@ def record_v(source, filename):
     :param filename: the neo file to write to
     :return: None
     """
+    logger.warn(
+        "Using record_v is deprecated.  Use record('v') function instead")
     record(['v'], source, filename)
 
 
-@deprecation.deprecated(
-    deprecated_in="1.0.0", current_version=__version__,
-    details="Use record('gsyn_exc', 'gsyn_inh') function instead")
 def record_gsyn(source, filename):
     """depreciated method for getting both types of gsyn
     this is not documented in the public facing api
-    
+
     :param source: the population / view / assembly to record
     :param filename: the neo file to write to
     :return: None
     """
+
+    logger.warn(
+        "Using record_gsyn is deprecated.  Use record('gsyn_exc') and/or"
+        " record('gsyn_inh') function instead")
     record(['gsyn_exc', 'gsyn_inh'], source, filename)
 
 

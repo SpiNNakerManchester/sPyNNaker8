@@ -3,6 +3,7 @@ from spynnaker.pyNN.models.neural_projections.connectors.\
 from pyNN.connectors import IndexBasedProbabilityConnector as \
     PyNNIndexBasedProbabilityConnector
 
+
 class IndexBasedProbabilityConnector(
         AbstractConnector, PyNNIndexBasedProbabilityConnector):
 

@@ -7,7 +7,6 @@ from spynnaker.pyNN.models.neuron.plasticity.stdp.timing_dependence.\
 logger = logging.getLogger(__name__)
 
 
-
 class TimingDependenceSpikePair(CommonTimingDependenceSpikePair):
 
     def __init__(

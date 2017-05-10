@@ -7,21 +7,23 @@ from spynnaker.pyNN.models.neuron.builds.if_curr_dual_exp_base import \
 
 class IFCurrDualExpDataHolder(DataHolder):
     def __init__(
-            self, spikes_per_second=
-            AbstractPopulationVertex.none_pynn_default_parameters[
-                'spikes_per_second'],
-            ring_buffer_sigma=
-            AbstractPopulationVertex.none_pynn_default_parameters[
-                'ring_buffer_sigma'],
-            incoming_spike_buffer_size=
-            AbstractPopulationVertex.none_pynn_default_parameters[
-                'incoming_spike_buffer_size'],
-            constraints=
-            AbstractPopulationVertex.none_pynn_default_parameters[
-                'constraints'],
-            label=
-            AbstractPopulationVertex.none_pynn_default_parameters[
+            self,
+
+            spikes_per_second=AbstractPopulationVertex.
+            none_pynn_default_parameters['spikes_per_second'],
+
+            ring_buffer_sigma=AbstractPopulationVertex.
+            none_pynn_default_parameters['ring_buffer_sigma'],
+
+            incoming_spike_buffer_size=AbstractPopulationVertex.
+            none_pynn_default_parameters['incoming_spike_buffer_size'],
+
+            constraints=AbstractPopulationVertex.
+            none_pynn_default_parameters['constraints'],
+
+            label=AbstractPopulationVertex.none_pynn_default_parameters[
                 'label'],
+
             tau_m=IFCurrDualExpBase.default_parameters['tau_m'],
             cm=IFCurrDualExpBase.default_parameters['cm'],
             v_rest=IFCurrDualExpBase.default_parameters['v_rest'],

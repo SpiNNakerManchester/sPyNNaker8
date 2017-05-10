@@ -1,6 +1,5 @@
 import logging
 import numpy
-import deprecation
 
 from pyNN import common as pynn_common
 from pyNN.space import Space as PyNNSpace
@@ -98,7 +97,6 @@ class Projection(PyNNProjectionCommon):
         attribute_names.insert(0, 'source')
         attribute_names.insert(1, 'target')
 
-
         # gather all the attributes, but format of pynn is source,
         # destination, attribute. so will need to delete source and dest
         #  from each atrtibute after the first.
@@ -111,56 +109,45 @@ class Projection(PyNNProjectionCommon):
     def __iter__(self):
         raise NotImplementedError
 
-    @deprecation.deprecated(
-        deprecated_in="1.0.0", current_version=__version__,
-        details="Use get('weight', format, gather) function instead")
     def getWeights(self, format='list', gather=True):
+        logger.warn("getWeights is deprecated.  Use get('weight') instead")
         return self.get('weight', format, gather, with_address=False)
 
-    @deprecation.deprecated(
-        deprecated_in="1.0.0", current_version=__version__,
-        details="Use get('delay', format, gather) function instead")
     def getDelays(self, format='list', gather=True):
+        logger.warn("getDelays is deprecated.  Use get('delay') instead")
         return self.get('delay', format, gather, with_address=False)
 
-    @deprecation.deprecated(
-        deprecated_in="1.0.0", current_version=__version__,
-        details="Use get(parameter_name, format, gather) function instead")
     def getSynapseDynamics(self, parameter_name, format='list', gather=True):
+        logger.warn(
+            "getSynapseDynamics is deprecated.  Use get(parameter_name)"
+            " instead")
         return self.get(parameter_name, format, gather, with_address=False)
 
-    @deprecation.deprecated(
-        deprecated_in="1.0.0", current_version=__version__,
-        details="Use save('all', file, format='list', gather=gather) function"
-                " instead")
     def saveConnections(self, file, gather=True, compatible_output=True):
+        logger.warn("saveConnections is deprecated.  Use save('all') instead")
         self.save('all', file, format='list', gather=gather)
 
-    @deprecation.deprecated(
-        deprecated_in="1.0.0", current_version=__version__,
-        details="Use save('weight', file, format, gather) function instead")
     def printWeights(self, file, format='list', gather=True):
+        logger.warn("printWeights is deprecated.  Use save('weight') instead")
         self.save('weight', file, format, gather)
 
-    @deprecation.deprecated(
-        deprecated_in="1.0.0", current_version=__version__,
-        details="Use save('delay', file, format, gather) function instead")
     def printDelays(self, file, format='list', gather=True):
         """
         Print synaptic weights to file. In the array format, zeros are printed
         for non-existent connections.
         """
+        logger.warn("printDelays is deprecated.  Use save('delay') instead")
         self.save('delay', file, format, gather)
 
-    @deprecation.deprecated(
-        deprecated_in="1.0.0", current_version=__version__,
-        details="Use numpy.histogram() function instead")
     def weightHistogram(self, min=None, max=None, nbins=10):
         """
         Return a histogram of synaptic weights.
         If min and max are not given, the minimum and maximum weights are
         calculated automatically.
         """
+        logger.warn(
+            "weightHistogram is deprecated.  Use numpy.histogram function"
+            " instead")
         pynn_common.Projection.weightHistogram(min=min, max=max, nbins=nbins)
 
     def _get_attributes_as_list(self, names):

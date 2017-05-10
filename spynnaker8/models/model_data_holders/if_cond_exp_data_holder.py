@@ -6,19 +6,23 @@ from spynnaker.pyNN.models.neuron.builds.if_cond_exp_base import IFCondExpBase
 
 class IFCondExpDataHolder(DataHolder):
     def __init__(
-            self, spikes_per_second=
-            AbstractPopulationVertex.none_pynn_default_parameters[
-                'spikes_per_second'],
-            ring_buffer_sigma=
-            AbstractPopulationVertex.none_pynn_default_parameters[
-                'ring_buffer_sigma'],
-            incoming_spike_buffer_size=
-            AbstractPopulationVertex.none_pynn_default_parameters[
-                'incoming_spike_buffer_size'],
+            self,
+
+            spikes_per_second=AbstractPopulationVertex.
+            none_pynn_default_parameters['spikes_per_second'],
+
+            ring_buffer_sigma=AbstractPopulationVertex.
+            none_pynn_default_parameters['ring_buffer_sigma'],
+
+            incoming_spike_buffer_size=AbstractPopulationVertex.
+            none_pynn_default_parameters['incoming_spike_buffer_size'],
+
             constraints=AbstractPopulationVertex.none_pynn_default_parameters[
                 'constraints'],
+
             label=AbstractPopulationVertex.none_pynn_default_parameters[
                 'label'],
+
             v_init=IFCondExpBase.none_pynn_default_parameters['v_init'],
             tau_m=IFCondExpBase.default_parameters['tau_m'],
             cm=IFCondExpBase.default_parameters['cm'],
