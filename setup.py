@@ -2,7 +2,9 @@ import os
 from setuptools import setup
 from collections import defaultdict
 
-import spynnaker8._version as v
+__version__ = None
+exec(open("spynnaker8/_version.py").read())
+assert __version__
 
 
 # Build a list of all project modules, as well as supplementary files
@@ -32,7 +34,7 @@ for dirname, dirnames, filenames in os.walk(main_package_dir):
 
 setup(
     name="sPyNNaker8",
-    version=v.__version__,
+    version=__version__,
     description="Tools for simulating neural models generated using "
                 "PyNN 0.8 on the SpiNNaker platform",
     author="University of Manchester",
