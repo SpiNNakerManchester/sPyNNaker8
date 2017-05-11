@@ -383,13 +383,14 @@ class SpiNNaker(SpiNNakerCommon, pynn_control.BaseState):
 
     @staticmethod
     def is_a_pynn_random(thing):
-        return isinstance(thing,RandomDistribution)
+        return isinstance(thing, RandomDistribution)
 
     @staticmethod
     def get_pynn_NumpyRNG():
         return NumpyRNG()
 
-    # These methods need to be declared but they are not used in sPyNNaker8 / pynn0.8
+    # These methods need to be declared but they are not used
+    # in sPyNNaker8 / pynn0.8
     def create_population(self):
         return 0
 
