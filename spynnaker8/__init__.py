@@ -364,11 +364,9 @@ def set_number_of_neurons_per_core(neuron_type, max_permitted):
     :param max_permitted:
     """
 
-    if hasattr(neuron_type.build_model(), "set_model_max_atoms_per_core"):
-        neuron_type.build_model().set_model_max_atoms_per_core(max_permitted)
-    else:
-        raise Exception("{} is not a Vertex type"
-                        .format(neuron_type))
+    simulator = globals_variables.get_simulator()
+    simulator.set_number_of_neurons_per_core(neuron_type.build_model(),
+                                             max_permitted)
 
 
 def register_database_notification_request(hostname, notify_port, ack_port):
