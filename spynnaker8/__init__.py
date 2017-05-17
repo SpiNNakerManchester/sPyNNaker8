@@ -10,7 +10,6 @@ from pyNN.standardmodels import StandardCellType
 # fec improts
 from spinn_front_end_common.utilities.notification_protocol. \
     socket_address import SocketAddress
-from spinn_front_end_common.utilities import helpful_functions
 
 # spynnaker imports
 from spynnaker.pyNN.utilities import globals_variables
@@ -106,7 +105,6 @@ from spynnaker8.models.projection import Projection as SpiNNakerProjection
 
 # big stuff
 from spynnaker8.spinnaker import SpiNNaker
-from spynnaker8.utilities import config
 
 import logging
 
@@ -201,20 +199,12 @@ def setup(timestep=pynn_control.DEFAULT_TIMESTEP,
                       FailedState):  # if already exists, kill and rebuild
         globals_variables.get_simulator().clear()
 
-    # Rad config file
-    config_parser = config.read_config()
-
     # add default label if needed
     if graph_label is None:
         graph_label = "PyNN0.8_graph"
 
-    if time_scale_factor is None:
-        time_scale_factor = helpful_functions.read_config_int(
-            config_parser, "Machine", "timeScaleFactor")
-
     # create the main object for all stuff related software
     globals_variables.set_simulator(SpiNNaker(
-        config=config_parser,
         database_socket_addresses=database_socket_addresses,
         extra_algorithm_xml_paths=extra_algorithm_xml_paths,
         extra_mapping_inputs=extra_mapping_inputs,

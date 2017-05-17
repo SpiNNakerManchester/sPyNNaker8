@@ -39,7 +39,7 @@ class SpiNNaker(SpiNNakerCommon, pynn_control.BaseState):
     """
 
     def __init__(
-            self, config, database_socket_addresses,
+            self, database_socket_addresses,
             extra_algorithm_xml_paths, extra_mapping_inputs,
             extra_mapping_algorithms, extra_pre_run_algorithms,
             extra_post_run_algorithms, extra_load_algorithms,
@@ -57,9 +57,6 @@ class SpiNNaker(SpiNNakerCommon, pynn_control.BaseState):
         # population and projection holders
         self._populations = list()
         self._projections = list()
-
-        # config object
-        self._config_parser = config
 
         # pynn demanded objects
         self._id_counter = 42
@@ -92,8 +89,7 @@ class SpiNNaker(SpiNNakerCommon, pynn_control.BaseState):
 
         # spinnaker setup
         SpiNNakerCommon.__init__(
-            self, config=config, config_default_name="spynnaker8.cfg",
-            database_socket_addresses=database_socket_addresses,
+            self, database_socket_addresses=database_socket_addresses,
             user_extra_algorithm_xml_path=built_in_extra_xml_paths,
             user_extra_mapping_inputs=built_in_extra_mapping_inputs,
             extra_mapping_algorithms=extra_mapping_algorithms,
