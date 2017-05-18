@@ -1,7 +1,7 @@
 # pynn imports
 from pyNN.common import control as pynn_control
 from pyNN.random import RandomDistribution, NumpyRNG
-
+from spinn_front_end_common.utilities import globals_variables
 from spynnaker.pyNN.spinnaker_common import SpiNNakerCommon
 
 from spynnaker8 import _version
@@ -21,6 +21,7 @@ from spynnaker8.utilities.random_stats.random_stats_randint_impl import \
     RandomStatsRandIntImpl
 from spynnaker8.utilities.random_stats.random_stats_uniform_impl import \
     RandomStatsUniformImpl
+from spynnaker8.utilities.spynnaker8_failed_state import Spynnaker8FailedState
 
 import logging
 import math
@@ -31,6 +32,9 @@ from spynnaker8.utilities.random_stats.rnadom_stats_binomial_impl import \
     RandomStatsBinomialImpl
 
 logger = logging.getLogger(__name__)
+
+# At import time change the default FailedState
+globals_variables.set_failed_state(Spynnaker8FailedState())
 
 
 class SpiNNaker(SpiNNakerCommon, pynn_control.BaseState):
@@ -385,10 +389,3 @@ class SpiNNaker(SpiNNakerCommon, pynn_control.BaseState):
     def get_pynn_NumpyRNG():
         return NumpyRNG()
 
-    # These methods need to be declared but they are not used
-    # in sPyNNaker8 / pynn0.8
-    def create_population(self):
-        return 0
-
-    def create_projection(self):
-        return 0

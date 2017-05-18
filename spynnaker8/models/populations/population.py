@@ -4,7 +4,7 @@ import logging
 from pacman.model.decorators.overrides import overrides
 from spynnaker.pyNN.exceptions import InvalidParameterType
 from spynnaker.pyNN.models.pynn_population_common import PyNNPopulationCommon
-from spynnaker.pyNN.utilities import globals_variables
+from spinn_front_end_common.utilities import globals_variables
 
 from spynnaker8.models.recorder import Recorder
 from spynnaker8.utilities.data_holder import DataHolder

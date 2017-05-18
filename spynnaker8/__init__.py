@@ -8,12 +8,11 @@ from pyNN.recording import get_io
 from pyNN.standardmodels import StandardCellType
 
 # fec improts
+from spinn_front_end_common.utilities import globals_variables
+from spinn_front_end_common.utilities.failed_state import FailedState
+from spynnaker8.utilities.spynnaker8_failed_state import Spynnaker8FailedState
 from spinn_front_end_common.utilities.notification_protocol. \
     socket_address import SocketAddress
-
-# spynnaker imports
-from spynnaker.pyNN.utilities import globals_variables
-from spynnaker.pyNN.utilities.failed_state import FailedState
 
 # connections
 # noinspection PyUnresolvedReferences
@@ -141,22 +140,22 @@ __all__ = [
 # static methods that are expected from the top level PyNN interface.
 # as these are currently invalid till setup, they are encapsulated as failure
 # functions
-run = FailedState.run
-run_until = FailedState.run_until
-run_for = FailedState.run_for
-get_current_time = FailedState.get_current_time
-get_time_step = FailedState.get_time_step
-get_min_delay = FailedState.get_min_delay
-get_max_delay = FailedState.get_max_delay
-num_processes = FailedState.num_processes
-rank = FailedState.rank
-initialize = FailedState.initialize
-reset = FailedState.reset
-create = FailedState.create
-connect = FailedState.connect
+run = Spynnaker8FailedState.run
+run_until = Spynnaker8FailedState.run_until
+run_for = Spynnaker8FailedState.run_for
+get_current_time = Spynnaker8FailedState.get_current_time
+get_time_step = Spynnaker8FailedState.get_time_step
+get_min_delay = Spynnaker8FailedState.get_min_delay
+get_max_delay = Spynnaker8FailedState.get_max_delay
+num_processes = Spynnaker8FailedState.num_processes
+rank = Spynnaker8FailedState.rank
+initialize = Spynnaker8FailedState.initialize
+reset = Spynnaker8FailedState.reset
+create = Spynnaker8FailedState.create
+connect = Spynnaker8FailedState.connect
 
 # this function is not documented in the public facing api
-record = FailedState.record
+record = Spynnaker8FailedState.record
 
 
 def setup(timestep=pynn_control.DEFAULT_TIMESTEP,

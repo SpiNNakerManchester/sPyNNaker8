@@ -2,7 +2,7 @@ import numpy
 
 from pyNN import common as pynn_common
 from pyNN.parameters import simplify, ParameterSpace
-from spynnaker.pyNN.utilities import globals_variables
+from spinn_front_end_common.utilities import globals_variables
 from spynnaker8.models.populations.assembly import Assembly
 
 
