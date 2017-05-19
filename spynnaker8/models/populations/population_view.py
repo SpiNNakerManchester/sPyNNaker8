@@ -8,7 +8,10 @@ from spynnaker8.models.populations.assembly import Assembly
 
 class PopulationView(pynn_common.PopulationView):
     _assembly_class = Assembly
-    _simulator = globals_variables.get_simulator()
+
+    @property
+    def _simulator(self):
+        return globals_variables.get_simulator()
 
     # --------------------------------------------------------------------------
     # Internal PyNN methods
