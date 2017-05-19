@@ -388,4 +388,3 @@ class SpiNNaker(SpiNNakerCommon, pynn_control.BaseState):
     @staticmethod
     def get_pynn_NumpyRNG():
         return NumpyRNG()
-
