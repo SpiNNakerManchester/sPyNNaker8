@@ -14,7 +14,7 @@ from spinn_front_end_common.utilities import helpful_functions
 
 # spynnaker imports
 from spynnaker.pyNN.utilities import globals_variables
-from spynnaker.pyNN.utilities.failed_state import FailedState
+from spynnaker8.utilities.failed_state import FailedState
 
 # connections
 # noinspection PyUnresolvedReferences
@@ -143,6 +143,11 @@ __all__ = [
 # static methods that are expected from the top level PyNN interface.
 # as these are currently invalid till setup, they are encapsulated as failure
 # functions
+
+# set spynnaker 8 failed state to its own special one
+globals_variables.set_simulator(FailedState())
+
+# pynn 8 requirements
 run = FailedState.run
 run_until = FailedState.run_until
 run_for = FailedState.run_for
@@ -313,6 +318,7 @@ def end(_=True):
         population.write_data(io, variables)
     globals_variables.get_simulator().write_on_end = []
     globals_variables.get_simulator().stop()
+    globals_variables.set_simulator(FailedState())
 
 
 def record_v(source, filename):
