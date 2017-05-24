@@ -1,0 +1,57 @@
+get_data(x) -> spynnaker8.utilities.spynnaker8_neo_block.SpynnakerNeoBlock
+
+
+SpynnakerNeoBlock (neo.block)
+	segments  = List[SpynnakerNeoSegment]
+
+
+SpynnakerNeoSegment
+	spiketrains = List[SpikeTrain]
+	filter(name=) = List[AnalogSignalArray (level 1)]
+
+
+SpikeTrain
+	Object can be indexed or iterated to get spike times
+	as_array(units=None) -> nparray
+	annotations['source_index'] -> neuron id
+
+
+AnalogSignalArray (level 1)
+    index or iterator overr AnalogSignalArray (level 2)
+    times.rescale(ms) -> times data recorded
+
+AnalogSignalArray (level 2)
+    index or iterator over List[Quantity]
+    times.rescale(ms) -> times data recorded
+
+
+https://github.com/NeuralEnsemble/python-neo/blob/master/neo/core/block.py
+	Segment = "a container for data sharing a common time basis"
+	(4.0) RecordingChannelGroup  (now) ChannelIndex ?
+
+
+https://github.com/NeuralEnsemble/python-neo/blob/master/neo/core/segment.py
+	AnalogSignal
+	AnalogSignalArray (4.0 only)
+	Epoch
+	EpochArray   (4.0 only)
+	Event
+	EventArray   (4.0 only)
+	IrregularlySampledSignal
+	Spike        (4.0 only)
+	SpikeTrain
+
+
+https://github.com/NeuralEnsemble/python-neo/blob/master/neo/core/spiketrain.py
+	"an array of spike times"
+
+
+https://github.com/NeuralEnsemble/python-neo/blob/0.4.0/neo/core/analogsignalarray.py
+	"an array of analog signals"
+	(now) replaced with List[AnalogSignal]
+
+
+https://github.com/NeuralEnsemble/python-neo/blob/master/neo/core/analogsignal.py
+
+
+https://pypi.python.org/pypi/quantities
