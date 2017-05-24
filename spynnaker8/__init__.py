@@ -9,7 +9,6 @@ from pyNN.standardmodels import StandardCellType
 
 # fec improts
 from spinn_front_end_common.utilities import globals_variables
-from spinn_front_end_common.utilities.failed_state import FailedState
 from spynnaker8.utilities.spynnaker8_failed_state import Spynnaker8FailedState
 from spinn_front_end_common.utilities.notification_protocol. \
     socket_address import SocketAddress
@@ -194,8 +193,7 @@ def setup(timestep=pynn_control.DEFAULT_TIMESTEP,
     pynn_common.setup(timestep, min_delay, max_delay, **extra_params)
 
     # create stuff simulator
-    if not isinstance(globals_variables.get_simulator(),
-                      FailedState):  # if already exists, kill and rebuild
+    if globals_variables.has_simulator():  # if already exists, kill and rebuild
         globals_variables.get_simulator().clear()
 
     # add default label if needed
@@ -342,7 +340,7 @@ def list_standard_models():
 @atexit.register
 def _stop_on_spinnaker():
     # Stop SpiNNaker simulation
-    if not isinstance(globals_variables.get_simulator(), FailedState):
+    if globals_variables.has_simulator():
         globals_variables.get_simulator().stop()
 
 

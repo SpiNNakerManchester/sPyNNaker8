@@ -2,7 +2,7 @@
 from pyNN.common import control as pynn_control
 from pyNN.random import RandomDistribution, NumpyRNG
 from spinn_front_end_common.utilities import globals_variables
-from spynnaker.pyNN.spinnaker_common import SpiNNakerCommon
+from spynnaker.pyNN.abstract_spinnaker_common import AbstractSpiNNakerCommon
 
 from spynnaker8 import _version
 from spynnaker8.utilities.random_stats.random_stats_exponential_impl import \
@@ -22,14 +22,14 @@ from spynnaker8.utilities.random_stats.random_stats_randint_impl import \
 from spynnaker8.utilities.random_stats.random_stats_uniform_impl import \
     RandomStatsUniformImpl
 from spynnaker8.utilities.spynnaker8_failed_state import Spynnaker8FailedState
-
-import logging
-import math
-
 from spynnaker8.utilities.random_stats.random_stats_vomises_impl import \
     RandomStatsVonmisesImpl
 from spynnaker8.utilities.random_stats.rnadom_stats_binomial_impl import \
     RandomStatsBinomialImpl
+
+import logging
+import math
+
 
 logger = logging.getLogger(__name__)
 
@@ -37,7 +37,7 @@ logger = logging.getLogger(__name__)
 globals_variables.set_failed_state(Spynnaker8FailedState())
 
 
-class SpiNNaker(SpiNNakerCommon, pynn_control.BaseState):
+class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState):
     """ main interface for the stuff software for PyNN 0.8
 
     """
@@ -92,7 +92,7 @@ class SpiNNaker(SpiNNakerCommon, pynn_control.BaseState):
                 built_in_extra_mapping_inputs)
 
         # spinnaker setup
-        SpiNNakerCommon.__init__(
+            AbstractSpiNNakerCommon.__init__(
             self, database_socket_addresses=database_socket_addresses,
             user_extra_algorithm_xml_path=built_in_extra_xml_paths,
             user_extra_mapping_inputs=built_in_extra_mapping_inputs,
@@ -144,7 +144,7 @@ class SpiNNaker(SpiNNakerCommon, pynn_control.BaseState):
 
         self._segment_counter = -1
 
-        SpiNNakerCommon.reset(self)
+        AbstractSpiNNakerCommon.reset(self)
 
     def _run(self, duration_ms):
         """ main interface for the starting of stuff
@@ -166,7 +166,7 @@ class SpiNNaker(SpiNNakerCommon, pynn_control.BaseState):
                     "using a hardware timestep of %uus",
                     duration_timesteps, self.dt, hardware_timestep_us)
 
-        SpiNNakerCommon.run(self, duration_ms)
+        AbstractSpiNNakerCommon.run(self, duration_ms)
 
     @property
     def state(self):
