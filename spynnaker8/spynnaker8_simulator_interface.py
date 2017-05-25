@@ -2,7 +2,7 @@ from six import add_metaclass
 
 from spinn_utilities.abstract_base import AbstractBase
 # from spinn_utilities.abstract_base import abstractproperty
-# from spinn_utilities.abstract_base import abstractmethod
+from spinn_utilities.abstract_base import abstractmethod
 
 from spynnaker.pyNN.spynnaker_simulator_interface \
     import SpynnakerSimulatorInterface
@@ -12,3 +12,8 @@ from spynnaker.pyNN.spynnaker_simulator_interface \
 class Spynnaker8SimulatorInterface(SpynnakerSimulatorInterface):
 
     __slots__ = ()
+
+
+    @abstractmethod
+    def run_until(self, tstop):
+        pass

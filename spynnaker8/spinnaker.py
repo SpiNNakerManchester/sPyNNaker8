@@ -361,8 +361,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState):
         """
         self._recorders = new_value
 
-    @staticmethod
-    def get_distribution_to_stats():
+    def get_distribution_to_stats(self):
         return {
             'binomial': RandomStatsBinomialImpl(),
             'gamma': RandomStatsGammaImpl(),
@@ -375,16 +374,11 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState):
             'randint': RandomStatsRandIntImpl(),
             'vonmises': RandomStatsVonmisesImpl()}
 
-    @staticmethod
-    def get_random_distribution():
+    def get_random_distribution(self):
         return RandomDistribution
 
-    # The following methods need to be declared in this class
-
-    @staticmethod
-    def is_a_pynn_random(thing):
+    def is_a_pynn_random(self, thing):
         return isinstance(thing, RandomDistribution)
 
-    @staticmethod
-    def get_pynn_NumpyRNG():
+    def get_pynn_NumpyRNG(self):
         return NumpyRNG()

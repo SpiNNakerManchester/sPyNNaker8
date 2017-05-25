@@ -366,5 +366,5 @@ def register_database_notification_request(hostname, notify_port, ack_port):
     :param ack_report:
     :return:
     """
-    globals_variables.get_simulator()._add_socket_address(
+    globals_variables.get_simulator().add_socket_address(
         SocketAddress(hostname, notify_port, ack_port))
