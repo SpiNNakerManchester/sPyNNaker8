@@ -448,11 +448,13 @@ def reset(annotations={}):
 def run(simtime, callbacks=None):
     global __pynn_run
     if globals_variables.has_simulator():
-        return __pynn_run(simtime, callbacks=None)
+        return __pynn_run(simtime, callbacks=callbacks)
     else:
         raise exceptions.ConfigurationException(FAILED_STATE_MSG)
 
 
+# left here becuase needs to be done, and no better place to put it
+# (ABS dont like it, but will put up with it)
 run_for = run
 
 

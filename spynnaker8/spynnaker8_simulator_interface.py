@@ -2,7 +2,6 @@ from six import add_metaclass
 
 from spinn_utilities.abstract_base import AbstractBase
 from spinn_utilities.abstract_base import abstractproperty
-# from spinn_utilities.abstract_base import abstractmethod
 
 from spynnaker.pyNN.spynnaker_simulator_interface \
     import SpynnakerSimulatorInterface
@@ -17,12 +16,6 @@ class Spynnaker8SimulatorInterface(SpynnakerSimulatorInterface):
     def dt(self):
         pass
 
-    # spynnaker_simulator_interface
-    # max_delay
-
-    # spynnaker_simulator_interface
-    # min_delay
-
     @abstractproperty
     def mpi_rank(self):
         pass
@@ -34,12 +27,6 @@ class Spynnaker8SimulatorInterface(SpynnakerSimulatorInterface):
     @abstractproperty
     def recorders(self):
         pass
-
-    # spynnaker_simulator_interface
-    # reset()
-
-    # spynnaker_simulator_interface
-    # run_until(next)
 
     @abstractproperty
     def t(self):
