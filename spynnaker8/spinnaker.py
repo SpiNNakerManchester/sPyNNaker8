@@ -53,8 +53,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
             time_scale_factor, min_delay, max_delay, graph_label,
             n_chips_required, timestep=0.1, hostname=None):
 
-        print "8 init"
-       # change min delay auto to be the min delay supported by simulator
+        # change min delay auto to be the min delay supported by simulator
         if min_delay == "auto":
             min_delay = timestep
 

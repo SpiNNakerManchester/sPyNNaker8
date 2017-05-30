@@ -162,7 +162,6 @@ class TestRun(object):
         self._weights = []
         self._delays = []
 
-
         if run_times is None:
             run_times = [1000]
 
@@ -391,6 +390,7 @@ class TestRun(object):
             else:
                 self._input_spikes_recorded += input_population.get_data(
                     ['spikes'])
+
 
 if __name__ == "__main__":
     """

@@ -2,7 +2,7 @@ from six import add_metaclass
 
 from spinn_utilities.abstract_base import AbstractBase
 from spinn_utilities.abstract_base import abstractproperty
-from spinn_utilities.abstract_base import abstractmethod
+# from spinn_utilities.abstract_base import abstractmethod
 
 from spynnaker.pyNN.spynnaker_simulator_interface \
     import SpynnakerSimulatorInterface
@@ -44,5 +44,3 @@ class Spynnaker8SimulatorInterface(SpynnakerSimulatorInterface):
     @abstractproperty
     def t(self):
         pass
-
-

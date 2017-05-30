@@ -11,7 +11,6 @@ from pyNN.standardmodels import StandardCellType
 from spinn_front_end_common.utilities import exceptions
 from spinn_front_end_common.utilities import globals_variables
 from spinn_front_end_common.utilities.failed_state import FAILED_STATE_MSG
-from spynnaker8.utilities.spynnaker8_failed_state import Spynnaker8FailedState
 from spinn_front_end_common.utilities.notification_protocol. \
     socket_address import SocketAddress
 
@@ -106,11 +105,6 @@ from spynnaker8.models.projection import Projection as SpiNNakerProjection
 # big stuff
 from spynnaker8.spinnaker import SpiNNaker
 
-
-
-
-
-
 import logging
 
 logger = logging.getLogger(__name__)
@@ -180,7 +174,8 @@ def setup(timestep=pynn_control.DEFAULT_TIMESTEP,
     pynn_common.setup(timestep, min_delay, max_delay, **extra_params)
 
     # create stuff simulator
-    if globals_variables.has_simulator():  # if already exists, kill and rebuild
+    if globals_variables.has_simulator():
+        # if already exists, kill and rebuild
         globals_variables.get_simulator().clear()
 
     # add default label if needed

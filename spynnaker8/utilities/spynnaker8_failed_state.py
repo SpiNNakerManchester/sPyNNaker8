@@ -1,6 +1,5 @@
 from spinn_front_end_common.utilities import exceptions
-from spinn_front_end_common.utilities.failed_state import FailedState, \
-    FAILED_STATE_MSG
+from spinn_front_end_common.utilities.failed_state import FAILED_STATE_MSG
 from spynnaker.pyNN.utilities.spynnaker_failed_state \
     import SpynnakerFailedState
 from spynnaker8.spynnaker8_simulator_interface \
