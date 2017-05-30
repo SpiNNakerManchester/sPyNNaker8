@@ -2,9 +2,6 @@ import os
 import sys
 import unittest
 
-import spynnaker8.utilities.conf as conf
-from spynnaker7.pyNN.spinnaker import Spinnaker as Spinnaker
-
 
 class BaseTestCase(unittest.TestCase):
 
@@ -12,8 +9,6 @@ class BaseTestCase(unittest.TestCase):
         class_file = sys.modules[self.__module__].__file__
         path = os.path.dirname(os.path.abspath(class_file))
         os.chdir(path)
-        config = conf.load_config()
-        Spinnaker._set_config(config)
 
     def assert_logs_error(self, log_records, sub_message):
         for record in log_records:

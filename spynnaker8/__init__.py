@@ -8,7 +8,9 @@ from pyNN.recording import get_io
 from pyNN.standardmodels import StandardCellType
 
 # fec improts
+from spinn_front_end_common.utilities import exceptions
 from spinn_front_end_common.utilities import globals_variables
+from spinn_front_end_common.utilities.failed_state import FAILED_STATE_MSG
 from spynnaker8.utilities.spynnaker8_failed_state import Spynnaker8FailedState
 from spinn_front_end_common.utilities.notification_protocol. \
     socket_address import SocketAddress
@@ -104,6 +106,11 @@ from spynnaker8.models.projection import Projection as SpiNNakerProjection
 # big stuff
 from spynnaker8.spinnaker import SpiNNaker
 
+
+
+
+
+
 import logging
 
 logger = logging.getLogger(__name__)
@@ -135,26 +142,6 @@ __all__ = [
     'get_current_time', 'create', 'connect', 'get_time_step', 'get_min_delay',
     'get_max_delay', 'initialize', 'list_standard_models', 'name',
     'num_processes', 'record', 'record_v', 'record_gsyn']
-
-# static methods that are expected from the top level PyNN interface.
-# as these are currently invalid till setup, they are encapsulated as failure
-# functions
-run = Spynnaker8FailedState.run
-run_until = Spynnaker8FailedState.run_until
-run_for = Spynnaker8FailedState.run_for
-get_current_time = Spynnaker8FailedState.get_current_time
-get_time_step = Spynnaker8FailedState.get_time_step
-get_min_delay = Spynnaker8FailedState.get_min_delay
-get_max_delay = Spynnaker8FailedState.get_max_delay
-num_processes = Spynnaker8FailedState.num_processes
-rank = Spynnaker8FailedState.rank
-initialize = Spynnaker8FailedState.initialize
-reset = Spynnaker8FailedState.reset
-create = Spynnaker8FailedState.create
-connect = Spynnaker8FailedState.connect
-
-# this function is not documented in the public facing api
-record = Spynnaker8FailedState.record
 
 
 def setup(timestep=pynn_control.DEFAULT_TIMESTEP,
@@ -201,7 +188,7 @@ def setup(timestep=pynn_control.DEFAULT_TIMESTEP,
         graph_label = "PyNN0.8_graph"
 
     # create the main object for all stuff related software
-    globals_variables.set_simulator(SpiNNaker(
+    SpiNNaker(
         database_socket_addresses=database_socket_addresses,
         extra_algorithm_xml_paths=extra_algorithm_xml_paths,
         extra_mapping_inputs=extra_mapping_inputs,
@@ -211,7 +198,7 @@ def setup(timestep=pynn_control.DEFAULT_TIMESTEP,
         extra_load_algorithms=extra_load_algorithms,
         time_scale_factor=time_scale_factor, timestep=timestep,
         min_delay=min_delay, max_delay=max_delay, graph_label=graph_label,
-        n_chips_required=None))
+        n_chips_required=None)
 
     # warn about kwargs arguments
     if len(extra_params) > 0:
@@ -264,27 +251,27 @@ def _create_overloaded_functions(spinnaker_simulator):
     """
 
     # get the global functions
-    global run, run_until, run_for, get_current_time, get_time_step, \
-        get_min_delay, get_max_delay, num_processes, rank, reset, \
-        initialize, create, connect, record
+    global __pynn_run, __pynn_run_until
+    global __pynn_get_current_time, __pynn_get_time_step, __pynn_get_min_delay
+    global __pynn_get_max_delay, __pynn_num_processes, __pynn_rank
+    global __pynn_reset, __pynn_initialize, __pynn_create, __pynn_connect
+    global __pynn_record
 
     # overload the failed ones with now valid ones, now that we're in setup
     # phase.
-    run, run_until = pynn_common.build_run(spinnaker_simulator)
-    run_for = run
+    __pynn_run, __pynn_run_until = pynn_common.build_run(spinnaker_simulator)
 
     tuple = pynn_common.build_state_queries(spinnaker_simulator)
-    get_current_time, get_time_step, get_min_delay, get_max_delay, \
-        num_processes, rank = tuple
+    __pynn_get_current_time, __pynn_get_time_step, __pynn_get_min_delay, \
+        __pynn_get_max_delay, __pynn_num_processes, __pynn_rank = tuple
 
-    reset = pynn_common.build_reset(spinnaker_simulator)
-    initialize = pynn_common.initialize
-    create = pynn_common.build_create(Population)
+    __pynn_reset = pynn_common.build_reset(spinnaker_simulator)
+    __pynn_create = pynn_common.build_create(Population)
 
-    connect = pynn_common.build_connect(
+    __pynn_connect = pynn_common.build_connect(
         Projection, FixedProbabilityConnector, StaticSynapse)
 
-    record = pynn_common.build_record(spinnaker_simulator)
+    __pynn_record = pynn_common.build_record(spinnaker_simulator)
 
 
 def end(_=True):
@@ -368,3 +355,115 @@ def register_database_notification_request(hostname, notify_port, ack_port):
     """
     globals_variables.get_simulator().add_socket_address(
         SocketAddress(hostname, notify_port, ack_port))
+
+
+# These methods will deffer to PyNN methods if a simulator exists
+
+
+def connect(pre, post, weight=0.0, delay=None, receptor_type=None, p=1,
+            rng=None):
+    global __pynn_connect
+    if globals_variables.has_simulator():
+        __pynn_connect(pre, post, weight, delay, receptor_type, p, rng)
+    else:
+        raise exceptions.ConfigurationException(FAILED_STATE_MSG)
+
+
+def create(cellclass, cellparams=None, n=1):
+    global __pynn_create
+    if globals_variables.has_simulator():
+        __pynn_create(cellclass, cellparams, n)
+    else:
+        raise exceptions.ConfigurationException(FAILED_STATE_MSG)
+
+
+def get_current_time():
+    global __pynn_get_current_time
+    if globals_variables.has_simulator():
+        return __pynn_get_current_time()
+    else:
+        raise exceptions.ConfigurationException(FAILED_STATE_MSG)
+
+
+def get_min_delay():
+    global __pynn_get_min_delay
+    if globals_variables.has_simulator():
+        return __pynn_get_min_delay()
+    else:
+        raise exceptions.ConfigurationException(FAILED_STATE_MSG)
+
+
+def get_max_delay():
+    global __pynn_get_max_delay
+    if globals_variables.has_simulator():
+        return __pynn_get_max_delay()
+    else:
+        raise exceptions.ConfigurationException(FAILED_STATE_MSG)
+
+
+def get_time_step():
+    global __pynn_get_time_step
+    if globals_variables.has_simulator():
+        return __pynn_get_time_step()
+    else:
+        raise exceptions.ConfigurationException(FAILED_STATE_MSG)
+
+
+def initialize(cells, **initial_values):
+    if globals_variables.has_simulator():
+        pynn_common.initialize(cells, **initial_values)
+    else:
+        raise exceptions.ConfigurationException(FAILED_STATE_MSG)
+
+
+def num_processes():
+    global __pynn_num_processes
+    if globals_variables.has_simulator():
+        return __pynn_num_processes()
+    else:
+        raise exceptions.ConfigurationException(FAILED_STATE_MSG)
+
+
+def rank():
+    global __pynn_rank
+    if globals_variables.has_simulator():
+        return __pynn_rank()
+    else:
+        raise exceptions.ConfigurationException(FAILED_STATE_MSG)
+
+
+def record(variables, source, filename, sampling_interval=None,
+           annotations=None):
+    global __pynn_record
+    if globals_variables.has_simulator():
+        return __pynn_record(variables, source, filename, sampling_interval,
+                             annotations)
+    else:
+        raise exceptions.ConfigurationException(FAILED_STATE_MSG)
+
+
+def reset(annotations={}):
+    global __pynn_reset
+    if globals_variables.has_simulator():
+        __pynn_reset(annotations)
+    else:
+        raise exceptions.ConfigurationException(FAILED_STATE_MSG)
+
+
+def run(simtime, callbacks=None):
+    global __pynn_run
+    if globals_variables.has_simulator():
+        return __pynn_run(simtime, callbacks=None)
+    else:
+        raise exceptions.ConfigurationException(FAILED_STATE_MSG)
+
+
+run_for = run
+
+
+def run_until(self, tstop):
+    global __pynn_run_until
+    if globals_variables.has_simulator():
+        return __pynn_run_until(tstop)
+    else:
+        raise exceptions.ConfigurationException(FAILED_STATE_MSG)

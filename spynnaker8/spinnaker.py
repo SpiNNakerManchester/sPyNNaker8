@@ -5,6 +5,8 @@ from spinn_front_end_common.utilities import globals_variables
 from spynnaker.pyNN.abstract_spinnaker_common import AbstractSpiNNakerCommon
 
 from spynnaker8 import _version
+from spynnaker8.spynnaker8_simulator_interface \
+    import Spynnaker8SimulatorInterface
 from spynnaker8.utilities.random_stats.random_stats_exponential_impl import \
     RandomStatsExponentialImpl
 from spynnaker8.utilities.random_stats.random_stats_gamma_impl import \
@@ -37,7 +39,8 @@ logger = logging.getLogger(__name__)
 globals_variables.set_failed_state(Spynnaker8FailedState())
 
 
-class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState):
+class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
+                Spynnaker8SimulatorInterface):
     """ main interface for the stuff software for PyNN 0.8
 
     """
@@ -50,13 +53,10 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState):
             time_scale_factor, min_delay, max_delay, graph_label,
             n_chips_required, timestep=0.1, hostname=None):
 
-        # timing parameters
-        self._min_delay = min_delay
-        self._max_delay = max_delay
-
-        # change min delay auto to be the min delay supported by simulator
-        if self._min_delay == "auto":
-            self._min_delay = timestep
+        print "8 init"
+       # change min delay auto to be the min delay supported by simulator
+        if min_delay == "auto":
+            min_delay = timestep
 
         # population and projection holders
         self._populations = list()
@@ -92,7 +92,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState):
                 built_in_extra_mapping_inputs)
 
         # spinnaker setup
-            AbstractSpiNNakerCommon.__init__(
+        AbstractSpiNNakerCommon.__init__(
             self, database_socket_addresses=database_socket_addresses,
             user_extra_algorithm_xml_path=built_in_extra_xml_paths,
             user_extra_mapping_inputs=built_in_extra_mapping_inputs,
@@ -101,8 +101,8 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState):
             extra_post_run_algorithms=extra_post_run_algorithms,
             extra_load_algorithms=built_in_extra_load_algorithms,
             graph_label=graph_label, n_chips_required=n_chips_required,
-            hostname=hostname, min_delay=self._min_delay,
-            max_delay=self._max_delay, timestep=timestep,
+            hostname=hostname, min_delay=min_delay,
+            max_delay=max_delay, timestep=timestep,
             time_scale_factor=time_scale_factor)
 
     def run(self, simtime):
@@ -262,24 +262,6 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState):
         :return: None
         """
         self._segment_counter = new_value
-
-    @property
-    def min_delay(self):
-        """ property for min delay, currently used by the synapse impl.
-        can likely be gotten rid of
-
-        :return:
-        """
-        return self._min_delay
-
-    @property
-    def max_delay(self):
-        """ property for max delay, currently used by the synapse impl.
-        can likely be gotten rid of
-
-        :return:
-        """
-        return self._max_delay
 
     @property
     def id_counter(self):
