@@ -10,7 +10,7 @@ from spynnaker.pyNN.models.neuron.threshold_types.threshold_type_static \
 from spynnaker.pyNN.models.neuron.abstract_population_vertex \
     import AbstractPopulationVertex
 
-from spynnaker.pyNN.spinnaker_common import SpiNNakerCommon
+from spynnaker.pyNN.abstract_spinnaker_common import AbstractSpiNNakerCommon
 import os
 
 
@@ -42,7 +42,7 @@ class FakeIFCurrExp(AbstractPopulationVertex):
         # add to the path the location of the dodgy binary
         # (if_cur_exp with the c_main bodged to result in it
         # running for twice as long as expected)
-        ex_finder = SpiNNakerCommon._EXECUTABLE_FINDER
+        ex_finder = AbstractSpiNNakerCommon._EXECUTABLE_FINDER
         ex_finder.add_path(os.path.dirname(__file__))
 
         neuron_model = NeuronModelLeakyIntegrateAndFire(

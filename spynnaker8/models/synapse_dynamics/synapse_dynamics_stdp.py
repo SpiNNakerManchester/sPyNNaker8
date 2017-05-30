@@ -1,7 +1,7 @@
 from spynnaker.pyNN.models.neuron.synapse_dynamics.\
     synapse_dynamics_stdp import SynapseDynamicsSTDP as \
     CommonSynapseDynamicsSTDP
-from spynnaker.pyNN.utilities import globals_variables
+from spinn_front_end_common.utilities import globals_variables
 
 TIME_STAMP_BYTES = 4
 
