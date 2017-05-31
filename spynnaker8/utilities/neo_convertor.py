@@ -1,4 +1,3 @@
-from neo import AnalogSignalArray, AnalogSignal, SpikeTrain
 from quantities import ms
 import numpy as np
 
@@ -30,8 +29,6 @@ def convert_data(data, name, run=0):
     :type int
     :return: nparray
     """
-    print name
-    print type(data)
     if len(data.segments) <= run:
         raise ValueError("Data only contains {} so unable to run {}. "
                          "Note run is the zero based index."
@@ -40,9 +37,6 @@ def convert_data(data, name, run=0):
         raise ValueError("Unable to convert all data in one go "
                          "as result would be comparing apples and oranges.")
     temp = data.segments[run].filter(name=name)
-    print type(temp)
-    print type(temp[0])
-    print len(temp)
     return convert_analog_signalarray(data.segments[run].filter(name=name)[0])
 
 
@@ -77,9 +71,6 @@ def convert_gsyn(gsyn_exc, gsyn_inh):
                 "".format(len(ids), len(ids2))
         raise ValueError(error)
     if (not np.allclose(ids, ids2)):
-        print ids
-        print "different to"
-        print ids2
         raise ValueError("ids in gsyn_exc and gsyn_inh do not match")
     times = exc.times.rescale(ms)
     times2 = inh.times.rescale(ms)
@@ -88,9 +79,6 @@ def convert_gsyn(gsyn_exc, gsyn_inh):
                 "".format(len(times), len(times))
         raise ValueError(error)
     if (not np.allclose(times, times2)):
-        print times
-        print "different to"
-        print times2
         raise ValueError("times in gsyn_exc and gsyn_inh do not match")
     all_times = np.tile(times, len(ids))
     neurons = np.repeat(ids, len(times))
@@ -100,9 +88,6 @@ def convert_gsyn(gsyn_exc, gsyn_inh):
 
 
 def convert_spiketrains(spiketrains):
-    print "spiketrain"
-    print type(spiketrains)
-    print type(spiketrains[0])
     neurons = np.concatenate(map(lambda x:
                                  np.full_like(x, x.annotations['source_index']),
                                  spiketrains))
