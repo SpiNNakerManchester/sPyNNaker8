@@ -1,11 +1,10 @@
 """
 Synfirechain-like example
 """
-
 import spynnaker8 as p
-
 from spynnaker8 import IF_curr_exp
 from spynnaker8 import SpikeSourceArray
+from spynnaker8.utilities import neo_convertor
 
 CELL_PARAMS_LIF = {'cm': 0.25, 'i_offset': 0.0, 'tau_m': 20.0,
                    'tau_refrac': 2.0, 'tau_syn_E': 5.0, 'tau_syn_I': 5.0,
@@ -406,8 +405,12 @@ class TestRun(object):
 
         return results
 
-    def get_output_pop_gsyn_exc(self):
+    def get_output_pop_gsyn_exc_neo(self):
         return self._recorded_gsyn_exc_list[0]
+
+    def get_output_pop_gsyn_exc_numpy(self):
+        gsyn_exc_neo = self._recorded_gsyn_exc_list[0]
+        return neo_convertor.convert_data(gsyn_exc_neo, "gsyn_exc")
 
     def get_output_pop_gsyn_exc_list(self):
         return self._recorded_gsyn_exc_list
@@ -418,8 +421,12 @@ class TestRun(object):
     def get_output_pop_gsyn_inh_list(self):
         return self._recorded_gsyn_inh_list
 
-    def get_output_pop_gsyn_inh(self):
+    def get_output_pop_gsyn_inh_neo(self):
         return self._recorded_gsyn_inh[0]
+
+    def get_output_pop_gsyn_inh_numpy(self):
+        gsyn_inh_neo = self._recorded_gsyn_inh_list[0]
+        return neo_convertor.convert_data(gsyn_inh_neo, "gsyn_exc")
 
     def get_output_pop_gsyn_inh_7(self):
         return self._recorded_gsyn_inh_7
@@ -427,8 +434,12 @@ class TestRun(object):
     def get_output_pop_voltage_list(self):
         return self._recorded_v_list
 
-    def get_output_pop_voltage(self):
+    def get_output_pop_voltage_neo(self):
         return self._recorded_v_list[0]
+
+    def get_output_pop_voltage_numpy(self):
+        v_neo = self._recorded_v_list[0]
+        return neo_convertor.convert_data(v_neo, "v")
 
     def get_output_pop_voltage_7(self):
         return self._recorded_v_7
@@ -436,8 +447,12 @@ class TestRun(object):
     def get_output_pop_spikes_list(self):
         return self._recorded_spikes_list
 
-    def get_output_pop_spikes(self):
+    def get_output_pop_spikes_neo(self):
         return self._recorded_spikes_list[0]
+
+    def get_output_pop_spikes_numpy(self):
+        spikes = self._recorded_spikes_list[0]
+        return neo_convertor.convert_spikes(spikes)
 
     def get_output_pop_spikes_7(self):
         return self._recorded_spikes_7
@@ -445,8 +460,12 @@ class TestRun(object):
     def get_spike_source_spikes_list(self):
         return self._input_spikes_recorded_list
 
-    def get_spike_source_spikes(self):
+    def get_spike_source_spikes_neo(self):
         return self._input_spikes_recorded[0]
+
+    def get_spike_source_spikes_numpy(self):
+        spikes = self._input_spikes_recorded[0]
+        return neo_convertor.convert_spikes(spikes)
 
     def get_spike_source_spikes_7(self):
         return self._input_spikes_recorded_7
