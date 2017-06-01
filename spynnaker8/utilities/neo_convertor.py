@@ -8,11 +8,14 @@ def convert_analog_signal(data):
 
 def convert_analog_signalarray(signal_array, time_unit=ms):
     ids = signal_array.channel_index
-    times = signal_array.times.rescale(time_unit)
+    if time_unit == ms:
+        times = signal_array.times.magnitude
+    else:
+        times = signal_array.times.rescale(time_unit).magnitude
     all_times = np.tile(times, len(ids))
     neurons = np.repeat(ids, len(times))
     # I am unsure of what happens if ids is not a contious list of integers
-    values = np.concatenate(map(lambda x: signal_array[:, x], ids))
+    values = np.concatenate(map(lambda x: signal_array[:, x].magnitude, ids))
     return np.column_stack((neurons, all_times, values))
 
 
@@ -89,9 +92,10 @@ def convert_gsyn(gsyn_exc, gsyn_inh):
 
 def convert_spiketrains(spiketrains):
     neurons = np.concatenate(map(lambda x:
-                                 np.full_like(x, x.annotations['source_index']),
+                                 np.repeat(x.annotations['source_index'],
+                                           len(x)),
                                  spiketrains))
-    spikes = np.concatenate(spiketrains, axis=0)
+    spikes = np.concatenate(map(lambda x: x.magnitude, spiketrains))
     return np.column_stack((neurons, spikes))
 
 
