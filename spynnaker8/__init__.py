@@ -80,6 +80,9 @@ from spynnaker8.models.model_data_holders.if_curr_dual_exp_data_holder \
 from spynnaker8.models.model_data_holders.if_curr_exp_data_holder import \
     IFCurrExpDataHolder as IF_curr_exp
 # noinspection PyUnresolvedReferences
+from spynnaker8.models.model_data_holders.if_curr_exp_semd_data_holder import \
+    IFCurrExpSEMDDataHolder as IF_curr_exp_sEMD
+# noinspection PyUnresolvedReferences
 from spynnaker8.models.model_data_holders.izk_cond_exp_data_holder import \
     IzkCondExpDataHolder as Izhikevich_cond
 # noinspection PyUnresolvedReferences
