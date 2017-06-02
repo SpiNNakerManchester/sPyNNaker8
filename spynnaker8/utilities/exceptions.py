@@ -56,3 +56,8 @@ class InvalidParameterType(Spynnaker8Exception):
     """ Raised when a parameter is not recognised
     """
     pass
+
+
+class PyNN7Exception(exceptions.ConfigurationException, Spynnaker8Exception):
+    """ Raised when Pynn7 syntax is detected"""
+    pass

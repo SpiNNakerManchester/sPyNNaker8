@@ -105,6 +105,9 @@ from spynnaker8.models.projection import Projection as SpiNNakerProjection
 # big stuff
 from spynnaker8.spinnaker import SpiNNaker
 
+# Exceptions
+from spynnaker8.utilities.exceptions import PyNN7Exception
+
 import logging
 
 logger = logging.getLogger(__name__)
@@ -332,10 +335,16 @@ def set_number_of_neurons_per_core(neuron_type, max_permitted):
     :param neuron_type:
     :param max_permitted:
     """
-
-    simulator = globals_variables.get_simulator()
-    simulator.set_number_of_neurons_per_core(neuron_type.build_model(),
-                                             max_permitted)
+    try:
+        simulator = globals_variables.get_simulator()
+        simulator.set_number_of_neurons_per_core(neuron_type.build_model(),
+                                                 max_permitted)
+    except AttributeError as ex:
+        if isinstance(neuron_type, str):
+            msg = "set_number_of_neurons_per_core call now expects " \
+                  "neuron_type as a class instead of as a str"
+            raise PyNN7Exception(msg)
+        raise ex
 
 
 def register_database_notification_request(hostname, notify_port, ack_port):
