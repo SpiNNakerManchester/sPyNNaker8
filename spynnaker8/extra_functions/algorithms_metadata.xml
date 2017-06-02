@@ -1,0 +1,23 @@
+
+<algorithms>
+    <algorithm name="SPYNNaker8NeoRecordingExtractor">
+        <python_module>spynnaker8.extra_functions.spynnaker8_neo_recording_extractor</python_module>
+        <python_class>SPYNNaker8NeoRecordingExtractor</python_class>
+        <input_definitions>
+            <parameter>
+                <param_name>populations</param_name>
+                <param_type>MemoryPopulations</param_type>
+            </parameter>
+            <parameter>
+                <param_name>read_buffer_token</param_name>
+                <param_type>ReadBuffersToken</param_type>
+            </parameter>
+        </input_definitions>
+        <required_inputs>
+            <param_name>populations</param_name>
+        </required_inputs>
+        <optional_inputs>
+            <param_name>read_buffer_token</param_name>
+        </optional_inputs>
+    </algorithm>
+</algorithms>
