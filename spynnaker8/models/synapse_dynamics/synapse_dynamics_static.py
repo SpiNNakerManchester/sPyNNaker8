@@ -1,7 +1,7 @@
 from spynnaker.pyNN.models.neuron.synapse_dynamics.synapse_dynamics_static \
     import SynapseDynamicsStatic as CommonSynapseDynamicsStatic
 from pyNN.standardmodels.synapses import StaticSynapse as PyNNStaticSynapse
-from spynnaker.pyNN.utilities import globals_variables
+from spinn_front_end_common.utilities import globals_variables
 
 
 class SynapseDynamicsStatic(CommonSynapseDynamicsStatic):

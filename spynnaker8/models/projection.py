@@ -10,7 +10,7 @@ from spynnaker8.models.synapse_dynamics.synapse_dynamics_static \
 from spynnaker8._version import __version__
 
 from spynnaker.pyNN.models.pynn_projection_common import PyNNProjectionCommon
-from spynnaker.pyNN.utilities import globals_variables
+from spinn_front_end_common.utilities import globals_variables
 from spynnaker.pyNN import exceptions
 
 from spinn_front_end_common.utilities import exceptions as common_exceptions

@@ -1,10 +1,12 @@
 # pynn imports
 from pyNN.common import control as pynn_control
 from pyNN.random import RandomDistribution, NumpyRNG
-
-from spynnaker.pyNN.spinnaker_common import SpiNNakerCommon
+from spinn_front_end_common.utilities import globals_variables
+from spynnaker.pyNN.abstract_spinnaker_common import AbstractSpiNNakerCommon
 
 from spynnaker8 import _version
+from spynnaker8.spynnaker8_simulator_interface \
+    import Spynnaker8SimulatorInterface
 from spynnaker8.utilities.random_stats.random_stats_exponential_impl import \
     RandomStatsExponentialImpl
 from spynnaker8.utilities.random_stats.random_stats_gamma_impl import \
@@ -21,45 +23,43 @@ from spynnaker8.utilities.random_stats.random_stats_randint_impl import \
     RandomStatsRandIntImpl
 from spynnaker8.utilities.random_stats.random_stats_uniform_impl import \
     RandomStatsUniformImpl
-
-import logging
-import math
-
+from spynnaker8.utilities.spynnaker8_failed_state import Spynnaker8FailedState
 from spynnaker8.utilities.random_stats.random_stats_vomises_impl import \
     RandomStatsVonmisesImpl
 from spynnaker8.utilities.random_stats.rnadom_stats_binomial_impl import \
     RandomStatsBinomialImpl
 
+import logging
+import math
+
+
 logger = logging.getLogger(__name__)
 
+# At import time change the default FailedState
+globals_variables.set_failed_state(Spynnaker8FailedState())
 
-class SpiNNaker(SpiNNakerCommon, pynn_control.BaseState):
+
+class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
+                Spynnaker8SimulatorInterface):
     """ main interface for the stuff software for PyNN 0.8
 
     """
 
     def __init__(
-            self, config, database_socket_addresses,
+            self, database_socket_addresses,
             extra_algorithm_xml_paths, extra_mapping_inputs,
             extra_mapping_algorithms, extra_pre_run_algorithms,
             extra_post_run_algorithms, extra_load_algorithms,
             time_scale_factor, min_delay, max_delay, graph_label,
             n_chips_required, timestep=0.1, hostname=None):
 
-        # timing parameters
-        self._min_delay = min_delay
-        self._max_delay = max_delay
-
         # change min delay auto to be the min delay supported by simulator
-        if self._min_delay == "auto":
-            self._min_delay = timestep
+        if min_delay == "auto":
+            min_delay = timestep
 
         # population and projection holders
         self._populations = list()
         self._projections = list()
-
-        # config object
-        self._config_parser = config
 
         # pynn demanded objects
         self._id_counter = 42
@@ -91,9 +91,8 @@ class SpiNNaker(SpiNNakerCommon, pynn_control.BaseState):
                 built_in_extra_mapping_inputs)
 
         # spinnaker setup
-        SpiNNakerCommon.__init__(
-            self, config=config, config_default_name="spynnaker8.cfg",
-            database_socket_addresses=database_socket_addresses,
+        AbstractSpiNNakerCommon.__init__(
+            self, database_socket_addresses=database_socket_addresses,
             user_extra_algorithm_xml_path=built_in_extra_xml_paths,
             user_extra_mapping_inputs=built_in_extra_mapping_inputs,
             extra_mapping_algorithms=extra_mapping_algorithms,
@@ -101,8 +100,8 @@ class SpiNNaker(SpiNNakerCommon, pynn_control.BaseState):
             extra_post_run_algorithms=extra_post_run_algorithms,
             extra_load_algorithms=built_in_extra_load_algorithms,
             graph_label=graph_label, n_chips_required=n_chips_required,
-            hostname=hostname, min_delay=self._min_delay,
-            max_delay=self._max_delay, timestep=timestep,
+            hostname=hostname, min_delay=min_delay,
+            max_delay=max_delay, timestep=timestep,
             time_scale_factor=time_scale_factor)
 
     def run(self, simtime):
@@ -144,7 +143,7 @@ class SpiNNaker(SpiNNakerCommon, pynn_control.BaseState):
 
         self._segment_counter = -1
 
-        SpiNNakerCommon.reset(self)
+        AbstractSpiNNakerCommon.reset(self)
 
     def _run(self, duration_ms):
         """ main interface for the starting of stuff
@@ -166,7 +165,7 @@ class SpiNNaker(SpiNNakerCommon, pynn_control.BaseState):
                     "using a hardware timestep of %uus",
                     duration_timesteps, self.dt, hardware_timestep_us)
 
-        SpiNNakerCommon.run(self, duration_ms)
+        AbstractSpiNNakerCommon.run(self, duration_ms)
 
     @property
     def state(self):
@@ -264,24 +263,6 @@ class SpiNNaker(SpiNNakerCommon, pynn_control.BaseState):
         self._segment_counter = new_value
 
     @property
-    def min_delay(self):
-        """ property for min delay, currently used by the synapse impl.
-        can likely be gotten rid of
-
-        :return:
-        """
-        return self._min_delay
-
-    @property
-    def max_delay(self):
-        """ property for max delay, currently used by the synapse impl.
-        can likely be gotten rid of
-
-        :return:
-        """
-        return self._max_delay
-
-    @property
     def id_counter(self):
         """ property for id_counter, currently used by the populations.
         (maybe it could live in the pop class???)
@@ -361,8 +342,7 @@ class SpiNNaker(SpiNNakerCommon, pynn_control.BaseState):
         """
         self._recorders = new_value
 
-    @staticmethod
-    def get_distribution_to_stats():
+    def get_distribution_to_stats(self):
         return {
             'binomial': RandomStatsBinomialImpl(),
             'gamma': RandomStatsGammaImpl(),
@@ -375,24 +355,11 @@ class SpiNNaker(SpiNNakerCommon, pynn_control.BaseState):
             'randint': RandomStatsRandIntImpl(),
             'vonmises': RandomStatsVonmisesImpl()}
 
-    @staticmethod
-    def get_random_distribution():
+    def get_random_distribution(self):
         return RandomDistribution
 
-    # The following methods need to be declared in this class
-
-    @staticmethod
-    def is_a_pynn_random(thing):
+    def is_a_pynn_random(self, thing):
         return isinstance(thing, RandomDistribution)
 
-    @staticmethod
-    def get_pynn_NumpyRNG():
+    def get_pynn_NumpyRNG(self):
         return NumpyRNG()
-
-    # These methods need to be declared but they are not used
-    # in sPyNNaker8 / pynn0.8
-    def create_population(self):
-        return 0
-
-    def create_projection(self):
-        return 0
