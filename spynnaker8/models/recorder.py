@@ -69,7 +69,7 @@ class Recorder(RecordingCommon):
 
     def reset_neo_recorded_trackers(self):
         """ resets recorder tracker for ease later.
-        
+
         :rtype: None
         """
         self._has_read_blocks_spikes = False
@@ -114,7 +114,7 @@ class Recorder(RecordingCommon):
 
     def _filter_recorded(self, filter_ids):
         """ create neo filter
-        
+
         :param filter_ids: the ids of the pop to filter.
         :return: the filter
         """
@@ -128,7 +128,7 @@ class Recorder(RecordingCommon):
 
     def _get_data(self, variables, neo_block):
         """ extract data and generate neo segments as needed
-        
+
         :param variables: variables to extract data from
         :param neo_block: The neo block to fill in
         :rtype: None
@@ -201,7 +201,7 @@ class Recorder(RecordingCommon):
     def _get_analog_signal(
             self, variable, record_call, clear_call, previous, ids, segment):
         """ get analog signal
-        
+
         :param variable: analog signal to extract
         :param clear_call: buffer manager clean data call
         :param previous: the previous data holder
@@ -223,7 +223,7 @@ class Recorder(RecordingCommon):
 
     def _build_segment(self, current_last_segment):
         """ builds or hands out a segment.
-        
+
         :param current_last_segment: None or a Segment
         :type current_last_segment: None or SpynnakerNeoSegment
         :return: a segment
@@ -242,7 +242,7 @@ class Recorder(RecordingCommon):
     def _create_segment(self, time_now):
         """ build segment for the current data to be gathered in store current\
           time
-        
+
         :param time_now: time to put in segment
         :return: segment object
         """
@@ -365,7 +365,7 @@ class Recorder(RecordingCommon):
 
         :param spikes: numpy spikes
         :param segment: neo segment.
-        :rtype: None 
+        :rtype: None
         """
         t_stop = globals_variables.get_simulator().t * pq.ms
 
@@ -425,7 +425,7 @@ class Recorder(RecordingCommon):
         """ goes through and clears all the recordings as needed
 
         :param variables: variables to clean
-        :rtype: None 
+        :rtype: None
         """
         self._previous_segment_data = list()
         self._runtime_to_segment_time_mapping = defaultdict(datetime.now)

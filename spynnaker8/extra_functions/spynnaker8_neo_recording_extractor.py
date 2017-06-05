@@ -12,8 +12,8 @@ class SPYNNaker8NeoRecordingExtractor(object):
 
             progress_bar = ProgressBar(
                 total_number_of_things_to_do=len(populations) * 4,
-                string_describing_what_being_progressed=
-                "extracting recorded data for Neo."
+                string_describing_what_being_progressed=(
+                    "extracting recorded data for Neo.")
             )
 
             # extract recordings for neo storage
