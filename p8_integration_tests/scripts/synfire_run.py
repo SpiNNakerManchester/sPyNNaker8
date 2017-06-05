@@ -292,7 +292,7 @@ class TestRun(object):
         if randomise_v_init:
             rng = p.NumpyRNG(seed=28375)
             v_init = p.RandomDistribution('uniform', [-60, -40], rng)
-            populations[0].randomInit(v_init)
+            populations[0].initialize("v", v_init)
 
         if constraint is not None:
             populations[0].set_constraint(constraint)
