@@ -6,6 +6,9 @@ from pyNN import common as pynn_common
 from pyNN.common import control as pynn_control
 from pyNN.recording import get_io
 from pyNN.standardmodels import StandardCellType
+from pyNN.random import NumpyRNG, RandomDistribution
+from pyNN.space import \
+    distance, Space, Line, Grid2D, Grid3D, Cuboid, Sphere, RandomStructure
 
 # fec improts
 from spinn_front_end_common.utilities import exceptions
@@ -113,6 +116,10 @@ import logging
 logger = logging.getLogger(__name__)
 
 __all__ = [
+    # PyNN imports
+    'Cuboid', 'distance', 'Grid2D', 'Grid3D', 'Line', 'NumpyRNG',
+    'RandomDistribution', 'RandomStructure', 'Space', 'Sphere',
+
     # connections
     'AllToAllConnector', 'ArrayConnector', 'CSAConnector',
     'DistanceDependentProbabilityConnector', 'FixedNumberPostConnector',
