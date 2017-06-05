@@ -1,4 +1,5 @@
-import unittest
+from unittest import SkipTest
+import os
 import spynnaker8 as p
 from p8_integration_tests.base_test_case import BaseTestCase
 
@@ -21,10 +22,12 @@ def do_run():
 
 class TestSpikeSourceArrayGetData(BaseTestCase):
 
-    @unittest.skip("BROKEN {}".format(__file__))
     def test_run(self):
+        if os.environ.get('CONTINUOUS_INTEGRATION', None) == 'True':
+            raise SkipTest("BROKEN {}".format(__file__))
         all1 = do_run()
-
+        print all1
 
 if __name__ == '__main__':
+
     all1 = do_run()
