@@ -44,7 +44,6 @@ class Recorder(RecordingCommon):
         self._has_read_blocks_gsyn_exc = False
         self._has_read_blocks_gsyn_inh = False
 
-
     @staticmethod
     def _get_io(filename):
         """
@@ -69,18 +68,21 @@ class Recorder(RecordingCommon):
             raise Exception("file extension %s not supported" % extension)
 
     def reset_neo_recorded_trackers(self):
+        """ resets recorder tracker for ease later.
+        
+        :rtype: None
+        """
         self._has_read_blocks_spikes = False
         self._has_read_blocks_v = False
         self._has_read_blocks_gsyn_exc = False
         self._has_read_blocks_gsyn_inh = False
 
-    def _extract_data(self, variables, clear, annotations, time=None):
+    def _extract_data(self, variables, clear, annotations):
         """ extracts data from the vertices and puts them into a neo block
 
         :param variables: the variables to extract
         :param clear: =if the variables should be cleared after reading
         :param annotations: annotations to put on the neo block
-        :param time: marker for the segment if needed
         :return: The neo block
         """
 
@@ -99,7 +101,7 @@ class Recorder(RecordingCommon):
         neo_block.description = self._population.describe()
 
         # iterate through variables adding to a new neo block for end user use
-        self._get_data(variables, neo_block, time)
+        self._get_data(variables, neo_block)
 
         # add fluff to the neo block
         neo_block.annotate(**self._metadata())
@@ -111,6 +113,11 @@ class Recorder(RecordingCommon):
         return neo_block
 
     def _filter_recorded(self, filter_ids):
+        """ create neo filter
+        
+        :param filter_ids: the ids of the pop to filter.
+        :return: the filter
+        """
         record_ids = list()
         for neuron_id in range(0, len(filter_ids)):
             if filter_ids[neuron_id]:
@@ -119,19 +126,24 @@ class Recorder(RecordingCommon):
                 record_ids.append(neuron_id + self._population._first_id)
         return record_ids
 
-    def _get_data(self, variables, neo_block, time_now):
+    def _get_data(self, variables, neo_block):
+        """ extract data and generate neo segments as needed
+        
+        :param variables: variables to extract data from
+        :param neo_block: The neo block to fill in
+        :rtype: None
+        """
 
         # insert previous data
-        self._insert_previous_segments(variables, neo_block)
+        segment = self._insert_previous_segments(variables, neo_block)
 
-        segment = None
         for variable in variables:
 
             if variable == "spikes":
                 if not self._has_read_blocks_spikes:
-                    # create segment if needed
-                    if segment is None:
-                        segment = self._build_segment(time_now)
+
+                    # create new segment if needed
+                    segment = self._build_segment(segment)
 
                     # get new spikes
                     spikes = self._get_recorded_variable('spikes')
@@ -164,7 +176,7 @@ class Recorder(RecordingCommon):
                         segment = self._get_analog_signal(
                             variable, self._get_recorded_variable,
                             vertex.clear_v_recording,
-                            self._previous_v, ids, time_now, segment)
+                            self._previous_v, ids, segment)
                         self._has_read_blocks_v = True
                         neo_block.segments.append(segment)
 
@@ -173,7 +185,7 @@ class Recorder(RecordingCommon):
                         segment = self._get_analog_signal(
                             variable, self._get_recorded_variable,
                             vertex.clear_gsyn_excitatory_recording,
-                            self._previous_gsyn_exc, ids, time_now, segment)
+                            self._previous_gsyn_exc, ids, segment)
                         self._has_read_blocks_gsyn_exc = True
                         neo_block.segments.append(segment)
 
@@ -182,24 +194,23 @@ class Recorder(RecordingCommon):
                         segment = self._get_analog_signal(
                             variable, self._get_recorded_variable,
                             vertex.clear_gsyn_inhibitory_recording,
-                            self._previous_gsyn_inh, ids, time_now, segment)
+                            self._previous_gsyn_inh, ids, segment)
                         self._has_read_blocks_gsyn_inh = True
                         neo_block.segments.append(segment)
 
     def _get_analog_signal(
-            self, variable, record_call, clear_call, previous, ids, time_now,
-            segment):
+            self, variable, record_call, clear_call, previous, ids, segment):
         """ get analog signal
         
-        :param variable: 
-        :param clear_call: 
-        :param previous: 
-        :param ids: 
-        :return: 
+        :param variable: analog signal to extract
+        :param clear_call: buffer manager clean data call
+        :param previous: the previous data holder
+        :param ids: the filter.
+        :return: the segment.
         """
 
-        if segment is None:
-            segment = self._build_segment(time_now)
+        # create new segment if needed
+        segment = self._build_segment(segment)
 
         signal_array = record_call(variable)
         clear_call(
@@ -210,12 +221,31 @@ class Recorder(RecordingCommon):
         self._read_in_signal(signal_array, segment, ids, variable)
         return segment
 
-    def _build_segment(self, time_now):
-        # build segment for the current data to be gathered in
-        # store current time
-        if time_now is None:
-            current_runtime = globals_variables.get_simulator().t
-            time_now = self._runtime_to_segment_time_mapping[current_runtime]
+    def _build_segment(self, current_last_segment):
+        """ builds or hands out a segment.
+        
+        :param current_last_segment: None or a Segment
+        :type current_last_segment: None or SpynnakerNeoSegment
+        :return: a segment
+        """
+
+        # locate current time for this segment
+        time_now = self._runtime_to_segment_time_mapping[
+            globals_variables.get_simulator().t]
+        if (current_last_segment is None or
+                (current_last_segment is not None and
+                 current_last_segment.rec_datetime != time_now)):
+            return self._create_segment(time_now)
+        else:
+            return current_last_segment
+
+    def _create_segment(self, time_now):
+        """ build segment for the current data to be gathered in store current\
+          time
+        
+        :param time_now: time to put in segment
+        :return: segment object
+        """
 
         segment_counter = globals_variables.get_simulator().segment_counter
 
@@ -232,21 +262,24 @@ class Recorder(RecordingCommon):
         return segment
 
     def _insert_previous_segments(self, variables, neo_block):
-        """
-        
-        :param variables: 
-        :param neo_block: 
-        :return: 
+        """ inserts data for previous segments that have been recorded
+
+        :param variables: the variables to get data from
+        :param neo_block: the neo block to put them in
+        :return: the last segment which has data.
         """
         position = 0
+        segment = None
         for segment_data in self._previous_segment_data:
             segment = SpynnakerNeoSegment(
                 name="segment{}".format(segment_data[1]),
                 description=self._population.describe(),
                 rec_datetime=segment_data[0])
+            wrote_data = False
             for variable in variables:
                 if variable == "spikes":
                     if len(self._previous_spikes) > position:
+                        wrote_data = True
                         self._read_in_spikes(
                             self._previous_spikes[position], segment)
 
@@ -256,25 +289,33 @@ class Recorder(RecordingCommon):
 
                 if variable == "v":
                     if len(self._previous_v) > position:
+                        wrote_data = True
                         self._read_in_signal(
                             self._previous_v[position], segment, ids, variable)
                 if variable == "gsyn_exc":
                     if len(self._previous_gsyn_exc) > position:
+                        wrote_data = True
                         self._read_in_signal(
                             self._previous_gsyn_exc[position], segment, ids,
                             variable)
                 if variable == "gsyn_inh":
                     if len(self._previous_gsyn_inh) > position:
+                        wrote_data = True
                         self._read_in_signal(
                             self._previous_gsyn_inh[position], segment, ids,
                             variable)
             position += 1
-            neo_block.segments.append(segment)
+
+            # to support others putting data in
+            if wrote_data:
+                neo_block.segments.append(segment)
+        return segment
 
     def _read_in_signal(self, signal_array, segment, ids, variable):
         """ reads in a data item that's not spikes (likely v, gsyn e, gsyn i)
 
         :param signal_array: the raw signal data
+        :type signal_array: iterable
         :param segment: the segment to put the data into
         :param ids: the recorded ids
         :param variable: the variable name
@@ -307,11 +348,11 @@ class Recorder(RecordingCommon):
     @staticmethod
     def _convert_extracted_data_into_neo_expected_format(
             signal_array, channel_indices):
-        """
-        
-        :param signal_array: 
-        :param channel_indices: 
-        :return: 
+        """  converts a none spikes data into neo format
+
+        :param signal_array: v, gsyn stuff
+        :param channel_indices: filter
+        :return: the neo friendly data
         """
         processed_data = [
             signal_array[:, 2][signal_array[:, 0] == index]
@@ -320,11 +361,11 @@ class Recorder(RecordingCommon):
         return processed_data
 
     def _read_in_spikes(self, spikes, segment):
-        """
-        
-        :param spikes: 
-        :param segment: 
-        :return: 
+        """ converts numpy spikes into neo spike and adds to segment.
+
+        :param spikes: numpy spikes
+        :param segment: neo segment.
+        :rtype: None 
         """
         t_stop = globals_variables.get_simulator().t * pq.ms
 
@@ -343,9 +384,9 @@ class Recorder(RecordingCommon):
                     source_index=self._population.id_to_index(atom_id)))
 
     def _get_all_possible_recordable_variables(self):
-        """
-        
-        :return: 
+        """ generates list of all recorders
+
+        :return: string list
         """
         variables = list()
         if isinstance(self._population._vertex, AbstractSpikeRecordable):
@@ -361,6 +402,10 @@ class Recorder(RecordingCommon):
         return variables
 
     def _metadata(self):
+        """ metadata thingy
+
+        :return: the metadata thingy
+        """
         metadata = {
             'size': self._population.size,
             'first_index': 0,
@@ -377,6 +422,11 @@ class Recorder(RecordingCommon):
         return metadata
 
     def _clear_recording(self, variables):
+        """ goes through and clears all the recordings as needed
+
+        :param variables: variables to clean
+        :rtype: None 
+        """
         self._previous_segment_data = list()
         self._runtime_to_segment_time_mapping = defaultdict(datetime.now)
         for variable in variables:

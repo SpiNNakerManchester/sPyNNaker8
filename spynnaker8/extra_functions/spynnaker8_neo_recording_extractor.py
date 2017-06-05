@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from spinn_utilities.progress_bar import ProgressBar
 from spynnaker.pyNN.models.common import AbstractGSynExcitatoryRecordable, \
     AbstractSpikeRecordable, AbstractGSynInhibitoryRecordable, \
@@ -19,31 +17,29 @@ class SPYNNaker8NeoRecordingExtractor(object):
             )
 
             # extract recordings for neo storage
-            time_now = datetime.now()
             for pop in populations:
                 if isinstance(pop._vertex, AbstractGSynExcitatoryRecordable):
                     if pop._vertex.is_recording_gsyn_excitatory():
                         pop._extract_data(
                             variables="gsyn_exc", clear=False,
-                            annotations=None, time=time_now)
+                            annotations=None)
                 progress_bar.update()
                 if isinstance(pop._vertex, AbstractSpikeRecordable):
                     if pop._vertex.is_recording_spikes():
                         pop._extract_data(
                             variables="spikes", clear=False,
-                            annotations=None, time=time_now)
+                            annotations=None)
                 progress_bar.update()
                 if isinstance(pop._vertex, AbstractGSynInhibitoryRecordable):
                     if pop._vertex.is_recording_gsyn_inhibitory():
                         pop._extract_data(
                             variables="gsyn_inh", clear=False,
-                            annotations=None, time=time_now)
+                            annotations=None)
                 progress_bar.update()
                 if isinstance(pop._vertex, AbstractVRecordable):
                     if pop._vertex.is_recording_v():
                         pop._extract_data(
-                            variables="v", clear=False, annotations=None,
-                            time=time_now)
+                            variables="v", clear=False, annotations=None)
                 progress_bar.update()
 
                 pop.reset_neo_recorded_trackers()
