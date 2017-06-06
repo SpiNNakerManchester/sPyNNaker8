@@ -1,5 +1,6 @@
 # common imports
 import atexit
+import numpy as __numpy
 
 # pynn imports
 from pyNN import common as pynn_common
@@ -144,7 +145,7 @@ __all__ = [
     'reset', 'set_number_of_neurons_per_core',
     'register_database_notification_request', 'Projection',
     'get_current_time', 'create', 'connect', 'get_time_step', 'get_min_delay',
-    'get_max_delay', 'initialize', 'list_standard_models', 'name',
+    'get_max_delay', 'initialize', 'list_standard_models', 'name', 'NativeRNG',
     'num_processes', 'record', 'record_v', 'record_gsyn']
 
 
@@ -384,6 +385,14 @@ def create(cellclass, cellparams=None, n=1):
         __pynn_create(cellclass, cellparams, n)
     else:
         raise exceptions.ConfigurationException(FAILED_STATE_MSG)
+
+
+def NativeRNG(seed_value):
+    """ Fixes the random number generator's seed
+    :param seed_value:
+    :return:
+    """
+    __numpy.random.seed(seed_value)
 
 
 def get_current_time():

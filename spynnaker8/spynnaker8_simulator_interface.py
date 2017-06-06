@@ -21,11 +21,19 @@ class Spynnaker8SimulatorInterface(SpynnakerSimulatorInterface):
         pass
 
     @abstractproperty
+    def name(self):
+        pass
+
+    @abstractproperty
     def num_processes(self):
         pass
 
     @abstractproperty
     def recorders(self):
+        pass
+
+    @abstractproperty
+    def segment_counter(self):
         pass
 
     @abstractproperty
