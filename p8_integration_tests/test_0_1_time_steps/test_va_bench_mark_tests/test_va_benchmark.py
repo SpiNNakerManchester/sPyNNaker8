@@ -95,9 +95,9 @@ class TestVABenchmarkSpikes(BaseTestCase):
 
             if simulator_name == 'spiNNaker':
                 # this will set 100 neurons per core
-                p.set_number_of_neurons_per_core('IF_curr_exp', 100)
+                p.set_number_of_neurons_per_core(p.IF_curr_exp, 100)
                 # this will set 50 neurons per core
-                p.set_number_of_neurons_per_core('IF_cond_exp', 50)
+                p.set_number_of_neurons_per_core(p.IF_cond_exp, 50)
 
             node_id = 1
             np = 1
@@ -130,24 +130,29 @@ class TestVABenchmarkSpikes(BaseTestCase):
             inh_cells.initialize('v', uniform_distr)
 
             print "%s Connecting populations..." % node_id
-            exc_conn = p.FixedProbabilityConnector(pconn, weights=w_exc,
-                                                   delays=delay)
-            inh_conn = p.FixedProbabilityConnector(pconn, weights=w_inh,
-                                                   delays=delay)
+            exc_conn = p.FixedProbabilityConnector(pconn)
+            synapse_exc = p.StaticSynapse(weight=w_exc, delay=delay)
+            inh_conn = p.FixedProbabilityConnector(pconn)
+            synapse_inh = p.StaticSynapse(weight=w_inh, delay=delay)
+
 
             connections = dict()
             connections['e2e'] = p.Projection(exc_cells, exc_cells, exc_conn,
+                                              synapse_type=synapse_exc,
                                               target='excitatory', rng=rng)
             connections['e2i'] = p.Projection(exc_cells, inh_cells, exc_conn,
+                                              synapse_type=synapse_exc,
                                               target='excitatory', rng=rng)
             connections['i2e'] = p.Projection(inh_cells, exc_cells, inh_conn,
+                                              synapse_type=synapse_inh,
                                               target='inhibitory', rng=rng)
             connections['i2i'] = p.Projection(inh_cells, inh_cells, inh_conn,
+                                              synapse_type=synapse_inh,
                                               target='inhibitory', rng=rng)
 
             # === Setup recording ==============================
             print "%s Setting up recording..." % node_id
-            exc_cells.record()
+            exc_cells.record("spikes")
 
             # === Run simulation ================================
             print "%d Running simulation..." % node_id
@@ -157,7 +162,7 @@ class TestVABenchmarkSpikes(BaseTestCase):
 
             p.run(tstop)
 
-            exc_spikes = exc_cells.getSpikes()
+            exc_spikes = exc_cells.get_data("spikes")
             print len(exc_spikes)
 
             p.end()
