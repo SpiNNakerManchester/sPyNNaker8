@@ -8,7 +8,7 @@ def do_run():
     p.setup(timestep=1, min_delay=1, max_delay=15)
 
     population = p.Population(1, p.SpikeSourceArray(spike_times=[[0]]),
-                            label='inputSSA_1')
+                              label='inputSSA_1')
 
     population.record("all")
 
@@ -27,6 +27,7 @@ class TestSpikeSourceArrayGetData(BaseTestCase):
             raise SkipTest("BROKEN {}".format(__file__))
         all1 = do_run()
         print all1
+
 
 if __name__ == '__main__':
 

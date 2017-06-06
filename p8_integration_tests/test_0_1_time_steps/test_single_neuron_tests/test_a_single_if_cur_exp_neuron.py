@@ -3,7 +3,6 @@ test that a single neuron of if cur exp works as expected
 """
 
 # general imports
-import unittest
 import os
 from unittest import SkipTest
 

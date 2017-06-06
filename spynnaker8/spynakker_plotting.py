@@ -1,11 +1,7 @@
-from neo import AnalogSignalArray, AnalogSignal, SpikeTrain
+from neo import AnalogSignal, SpikeTrain
 import matplotlib.pyplot as plt
 from pyNN.utility.plotting import repeat
 from neo import Block, Segment
-try:
-    from sys import maxint
-except ImportError:  # Py3
-    from sys import maxsize as maxint
 import numpy as np
 from quantities import ms
 
@@ -27,6 +23,7 @@ def handle_options(ax, options):
         ax.set_ylim(options.pop("ylim"))
     if "xlim" in options:
         ax.set_xlim(options.pop("xlim"))
+
 
 def plot_spikes(ax, spike_times, neurons, label='', **options):
     max_index = max(neurons)
@@ -124,6 +121,13 @@ class SpynakkerPanel(object):
     """
     Represents a single panel in a multi-panel figure.
 
+    Compatable with pyNN.utility.plotting's Frame and
+        can be mixed with pyNN.utility.plotting's Panel
+
+    Unlike pyNN.utility.plotting Panel
+        Spikes are plotted faster
+        other data is plotted as a heatmap
+
     A panel is a Matplotlib Axes or Subplot instance. A data item may be an
     AnalogSignal, AnalogSignalArray, or a list of SpikeTrains. The Panel will
     automatically choose an appropriate representation. Multiple data items may
@@ -137,6 +141,12 @@ class SpynakkerPanel(object):
         `line_properties`:
             a list of dicts containing Matplotlib formatting options, of the
             same length as the number of data items.
+
+
+    Whole Neo Objects can be passed in as long as they
+        contain a single Segment/run
+        and only contain one type of data
+    Whole Segments can be passed in only if they only contain one type of data
 
     """
 

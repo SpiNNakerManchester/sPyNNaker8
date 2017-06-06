@@ -14,7 +14,7 @@ neurons_per_core = None
 synfire_run = TestRun()
 record = False
 get_spikes = True
-record_v=False
+record_v = False
 get_gsyn_exc = False
 get_gsyn_inh = False
 
@@ -38,4 +38,3 @@ if __name__ == '__main__':
                        delay=delay, run_times=[runtime], record=record,
                        get_spikes=get_spikes, record_v=record_v,
                        get_gsyn_exc=get_gsyn_exc, get_gsyn_inh=get_gsyn_inh)
-

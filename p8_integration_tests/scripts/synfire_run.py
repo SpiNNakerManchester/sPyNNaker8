@@ -325,7 +325,7 @@ class TestRun(object):
         if record_v or record_v_7 or v_path:
             populations[0].record("v")
         if record_gsyn_exc or record_gsyn_exc_7 or gsyn_path_exc:
-             populations[0].record("gsyn_exc")
+            populations[0].record("gsyn_exc")
         if record_gsyn_inh or record_gsyn_inh_7 or gsyn_path_inh:
             populations[0].record("gsyn_inh")
         if record_input_spikes or record_input_spikes_7:
@@ -422,7 +422,7 @@ class TestRun(object):
         return self._recorded_gsyn_inh_list
 
     def get_output_pop_gsyn_inh_neo(self):
-        return self._recorded_gsyn_inh[0]
+        return self._recorded_gsyn_inh_list[0]
 
     def get_output_pop_gsyn_inh_numpy(self):
         gsyn_inh_neo = self._recorded_gsyn_inh_list[0]
@@ -461,17 +461,18 @@ class TestRun(object):
         return self._input_spikes_recorded_list
 
     def get_spike_source_spikes_neo(self):
-        return self._input_spikes_recorded[0]
+        return self._input_spikes_recorded_list[0]
 
     def get_spike_source_spikes_numpy(self):
-        spikes = self._input_spikes_recorded[0]
+        spikes = self._input_spikes_recorded_list[0]
         return neo_convertor.convert_spikes(spikes)
 
     def get_spike_source_spikes_7(self):
         return self._input_spikes_recorded_7
 
-    def _get_data(self, output_population, input_population, get_spikes, record_7,
-                  get_v, record_v_7, get_gsyn_exc, record_gsyn_exc_7,
+    def _get_data(self, output_population, input_population,
+                  get_spikes, record_7, get_v, record_v_7,
+                  get_gsyn_exc, record_gsyn_exc_7,
                   get_gsyn_inh, record_gysn_inh_7,
                   record_input_spikes, record_input_spikes_7):
 
@@ -528,6 +529,7 @@ class TestRun(object):
                 self._input_spikes_recorded_7 = spikes
             else:
                 self._input_spikes_recorded_7 += spikes
+
 
 if __name__ == "__main__":
     """

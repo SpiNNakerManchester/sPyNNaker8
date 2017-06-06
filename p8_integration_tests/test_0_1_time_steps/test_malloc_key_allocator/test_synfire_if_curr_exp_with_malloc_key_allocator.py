@@ -1,7 +1,6 @@
 """
 Synfirechain-like example
 """
-import numpy
 import os
 import pickle
 import unittest

@@ -6,7 +6,6 @@ import pickle
 import unittest
 from p8_integration_tests.base_test_case import BaseTestCase
 from p8_integration_tests.scripts.synfire_run import TestRun
-import spynnaker.pyNN.utilities.utility_calls as utility_calls
 from spynnaker8.utilities import neo_compare
 
 from spinnman.exceptions import SpinnmanTimeoutException

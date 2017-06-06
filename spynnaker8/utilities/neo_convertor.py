@@ -39,7 +39,6 @@ def convert_data(data, name, run=0):
     if name == "all":
         raise ValueError("Unable to convert all data in one go "
                          "as result would be comparing apples and oranges.")
-    temp = data.segments[run].filter(name=name)
     return convert_analog_signalarray(data.segments[run].filter(name=name)[0])
 
 
@@ -101,4 +100,3 @@ def convert_spiketrains(spiketrains):
 
 def convert_spikes(spikes):
     return convert_spiketrains(spikes.segments[0].spiketrains)
-
