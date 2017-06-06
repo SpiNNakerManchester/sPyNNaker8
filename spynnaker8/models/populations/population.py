@@ -42,8 +42,8 @@ class Population(PyNNPopulationCommon, Recorder):
             if 'label' in internal_params:
                 cell_label = internal_params['label']
             internal_params['label'] = self.create_label(cell_label, label)
-            internal_params['n_neurons'] = size
             vertex_holder = cellclass(**internal_params)
+            vertex_holder.add_item('n_neurons', size)
             # emit deprecation warning
         else:
             raise TypeError(
