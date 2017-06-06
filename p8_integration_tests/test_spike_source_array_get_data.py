@@ -23,8 +23,6 @@ def do_run():
 class TestSpikeSourceArrayGetData(BaseTestCase):
 
     def test_run(self):
-        if os.environ.get('CONTINUOUS_INTEGRATION', None) == 'True':
-            raise SkipTest("BROKEN {}".format(__file__))
         all1 = do_run()
         print all1
 
