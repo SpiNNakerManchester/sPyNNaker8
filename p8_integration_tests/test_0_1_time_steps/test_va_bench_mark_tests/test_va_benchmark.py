@@ -12,12 +12,17 @@ synapses (instantaneous rise, exponential decay).
 Andrew Davison, UNIC, CNRS
 August 2006
 
+Adapted to PyNN8 by Christian Brenninkmeijer
+
 $Id:VAbenchmarks.py 5 2007-04-16 15:01:24Z davison $
 """
+import os
+import pickle
 import socket
 import unittest
 from p8_integration_tests.base_test_case import BaseTestCase
 import spynnaker8 as p
+from spynnaker8.utilities import neo_compare
 from pyNN.random import NumpyRNG, RandomDistribution
 from pyNN.utility import Timer
 from spinnman.exceptions import SpinnmanTimeoutException
@@ -130,25 +135,24 @@ class TestVABenchmarkSpikes(BaseTestCase):
             inh_cells.initialize('v', uniform_distr)
 
             print "%s Connecting populations..." % node_id
-            exc_conn = p.FixedProbabilityConnector(pconn)
+            exc_conn = p.FixedProbabilityConnector(pconn, rng=rng)
             synapse_exc = p.StaticSynapse(weight=w_exc, delay=delay)
-            inh_conn = p.FixedProbabilityConnector(pconn)
+            inh_conn = p.FixedProbabilityConnector(pconn, rng=rng)
             synapse_inh = p.StaticSynapse(weight=w_inh, delay=delay)
-
 
             connections = dict()
             connections['e2e'] = p.Projection(exc_cells, exc_cells, exc_conn,
                                               synapse_type=synapse_exc,
-                                              target='excitatory', rng=rng)
+                                              receptor_type='excitatory')
             connections['e2i'] = p.Projection(exc_cells, inh_cells, exc_conn,
                                               synapse_type=synapse_exc,
-                                              target='excitatory', rng=rng)
+                                              receptor_type='excitatory')
             connections['i2e'] = p.Projection(inh_cells, exc_cells, inh_conn,
                                               synapse_type=synapse_inh,
-                                              target='inhibitory', rng=rng)
+                                              receptor_type='inhibitory')
             connections['i2i'] = p.Projection(inh_cells, inh_cells, inh_conn,
                                               synapse_type=synapse_inh,
-                                              target='inhibitory', rng=rng)
+                                              receptor_type='inhibitory')
 
             # === Setup recording ==============================
             print "%s Setting up recording..." % node_id
@@ -163,24 +167,18 @@ class TestVABenchmarkSpikes(BaseTestCase):
             p.run(tstop)
 
             exc_spikes = exc_cells.get_data("spikes")
-            print len(exc_spikes)
+            print len(exc_spikes.segments[0].spiketrains)
+
+            current_file_path = os.path.dirname(os.path.abspath(__file__))
+            neo_path = os.path.join(current_file_path, "spikes.pickle")
+            exc_cells.write_data(neo_path, "spikes")
+            with open(neo_path, "r") as neo_file:
+                recorded_spikes = pickle.load(neo_file)
+
+            neo_compare.compare_blocks(exc_spikes, recorded_spikes)
 
             p.end()
 
-            # current_file_path = os.path.dirname(os.path.abspath(__file__))
-            # current_file_path = os.path.join(current_file_path,
-            #                                  "spikes.data")
-            # exc_cells.printSpikes(current_file_path)
-            # pre_recorded_spikes = p.utility_calls.read_spikes_from_file(
-            #    current_file_path, 0, n_exc, 0, tstop)
-
-            print "Skipping spike read back as broken"
-            # for spike_element, read_element in zip(exc_spikes,
-            #                                        pre_recorded_spikes):
-            #        self.assertEqual(round(spike_element[0], 1),
-            #                         round(read_element[0], 1))
-            #        self.assertEqual(round(spike_element[1], 1),
-            #                         round(read_element[1], 1))
         # System intentional overload so may error
         except SpinnmanTimeoutException as ex:
             raise SkipTest(ex)
