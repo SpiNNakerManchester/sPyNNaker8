@@ -34,10 +34,10 @@ class IFCurrExpSEMDDataHolder(DataHolder):
             tau_syn_I=IFCurrExpSEMDBase.default_parameters['tau_syn_I'],
             tau_refrac=IFCurrExpSEMDBase.default_parameters['tau_refrac'],
             i_offset=IFCurrExpSEMDBase.default_parameters['i_offset'],
-            multiplicator=
-            IFCurrExpSEMDBase.default_parameters['multiplicator'],
-            inh_input_previous=
-            IFCurrExpSEMDBase.default_parameters['inh_input_previous']):
+            multiplicator=IFCurrExpSEMDBase.default_parameters[
+                'multiplicator'],
+            inh_input_previous=IFCurrExpSEMDBase.default_parameters[
+                'inh_input_previous']):
         DataHolder.__init__(
             self, {
                 'spikes_per_second': spikes_per_second,

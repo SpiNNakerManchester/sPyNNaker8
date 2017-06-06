@@ -125,8 +125,8 @@ __all__ = [
     'STDPMechanism', 'AdditiveWeightDependence',
     'MultiplicativeWeightDependence', 'SpikePairRule',
     # neuron stuff
-    'IF_cond_exp', 'IF_curr_duel_exp', 'IF_curr_exp', 'Izhikevich_cond',
-    'Izhikevich', 'SpikeSourceArray', 'SpikeSourcePoisson',
+    'IF_cond_exp', 'IF_curr_duel_exp', 'IF_curr_exp', 'IF_curr_exp_sEMD',
+    'Izhikevich_cond', 'Izhikevich', 'SpikeSourceArray', 'SpikeSourcePoisson',
     # pops
     'Assembly', 'Population', 'PopulationView',
     # projection
