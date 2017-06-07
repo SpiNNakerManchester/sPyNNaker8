@@ -11,6 +11,7 @@ import spynnaker.plot_utils as plot_utils
 
 from p8_integration_tests.scripts.synfire_run import TestRun
 from spynnaker8 import SpikeSourcePoisson
+from spynnaker8 import SpikeSourceArray
 
 cell_params = {'cm': 0.25,
                'i_offset': 0.0,
@@ -31,7 +32,7 @@ def do_run():
     # Simulate using both simulators
     synfire_run = TestRun()
     synfire_run.do_run(
-        n_neurons=1, input_class=SpikeSourcePoisson, rate=noise_rate,
+        n_neurons=1, input_class=SpikeSourceArray, rate=noise_rate,
         start_time=0, duration=simtime, use_spike_connections=False,
         cell_params=cell_params, run_times=[simtime], record=True,
         record_v=True, randomise_v_init=True, record_input_spikes=True,
@@ -51,6 +52,9 @@ class TestIfCurExpSingleNeuron(BaseTestCase):
     def test_single_neuron(self):
         if os.environ.get('CONTINUOUS_INTEGRATION', None) == 'True':
             raise SkipTest("BROKEN {}".format(__file__))
+        # DataSpecification/data_specification/data_specification_generator.py
+        # Expects a list but is getting a numpy array length 1
+        # See https://github.com/SpiNNakerManchester/sPyNNaker8/issues/13
         results = do_run()
         (noise_spike_times, s_pop_spikes, s_pop_voltages) = results
         try:
