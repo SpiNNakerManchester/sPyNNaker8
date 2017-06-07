@@ -127,9 +127,15 @@ def compare_segments(seg1, seg2, same_data=True):
         raise AssertionError(msg)
     for analogsignalarray1 in seg1.analogsignalarrays:
         name = analogsignalarray1.name
-        analogsignalarray2 = seg2.filter(name=name)[0]
-        compare_analogsignalarray(analogsignalarray1, analogsignalarray2,
-                                  same_data)
+        filtered = seg2.filter(name=name)
+        if len(filtered) == 0:
+            if same_data:
+                msg = "Segment1 has {} data while Segment2 does not" \
+                      "".format(name)
+                raise AssertionError(msg)
+        else:
+            analogsignalarray2 = seg2.filter(name=name)[0]
+            compare_analogsignalarray(analogsignalarray1, analogsignalarray2)
 
 
 def compare_blocks(neo1, neo2, same_runs=True, same_data=True):
