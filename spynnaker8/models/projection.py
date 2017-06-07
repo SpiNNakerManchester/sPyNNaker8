@@ -88,6 +88,10 @@ class Projection(PyNNProjectionCommon):
             raise common_exceptions.ConfigurationException(
                 "Spynnaker only recongises with_address=False")
 
+        if multiple_synapses != 'sum':
+            raise common_exceptions.ConfigurationException(
+                "Spynnaker only recongises multiple_synapses == sum")
+
         # fix issue with 1 vs many
         if isinstance(attribute_names, basestring):
             attribute_names = [attribute_names]
