@@ -1,9 +1,13 @@
 from neo import AnalogSignal, SpikeTrain
-import matplotlib.pyplot as plt
 from pyNN.utility.plotting import repeat
 from neo import Block, Segment
 import numpy as np
 from quantities import ms
+try:
+    import matplotlib.pyplot as plt
+    matplotlib_missing = False
+except Exception as e:
+    matplotlib_missing = True
 
 
 def handle_options(ax, options):
@@ -151,6 +155,8 @@ class SpynakkerPanel(object):
     """
 
     def __init__(self, *data, **options):
+        if matplotlib_missing:
+            raise Exception("No matplotlib module found")
         self.data = list(data)
         self.options = options
         self.data_labels = options.pop("data_labels", repeat(None))
