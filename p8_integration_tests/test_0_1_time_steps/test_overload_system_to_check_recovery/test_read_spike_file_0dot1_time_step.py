@@ -32,6 +32,7 @@ def do_run():
     :return:
     """
     p.setup(timestep=0.04, min_delay=1.0, max_delay=4.0)
+
     n_neurons = 128 * 128  # number of neurons in each population
     p.set_number_of_neurons_per_core(p.IF_cond_exp, 256)
 
@@ -71,7 +72,7 @@ def do_run():
 
     p.run(1000)
 
-    spikes = not populations[1].get_data('spikes')
+    spikes = populations[1].get_data("spikes")
 
     p.end()
 
