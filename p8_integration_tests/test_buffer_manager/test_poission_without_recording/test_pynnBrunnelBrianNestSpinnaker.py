@@ -9,6 +9,7 @@ record = False
 
 class PynnBrunnelBrianNestSpinnaker(BaseTestCase):
 
+
     def test_run(self):
         (esp, s, N_E) = script.do_run(Neurons, sim_time, record=record)
         self.assertIsNone(esp)

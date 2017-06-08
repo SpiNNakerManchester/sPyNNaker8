@@ -20,7 +20,7 @@ class TestGetGsyn(BaseTestCase):
                            run_times=runtimes,
                            extract_between_runs=extract_between_runs,
                            set_between_runs=set_between_runs)
-        spikes = synfire_run.get_output_pop_spikes()
+        spikes = synfire_run.get_output_pop_spikes_numpy()
         # Check spikes increase in second half by at least a factor of ten
         hist = numpy.histogram(spikes[:, 1], bins=[0, 5000, 10000])
         self.assertLess(hist[0][0] * 10, hist[0][1])
@@ -31,9 +31,9 @@ if __name__ == '__main__':
                        run_times=runtimes,
                        extract_between_runs=extract_between_runs,
                        set_between_runs=set_between_runs)
-    gsyn = synfire_run.get_output_pop_gsyn()
-    v = synfire_run.get_output_pop_voltage()
-    spikes = synfire_run.get_output_pop_spikes()
+    gsyn = synfire_run.get_output_pop_gsyn_exc_numpy()
+    v = synfire_run.get_output_pop_voltage_numpy()
+    spikes = synfire_run.get_output_pop_spikes_numpy()
     hist = numpy.histogram(spikes[:, 1], bins=[0, 5000, 10000])
     print hist[0][0], hist[0][1]
     plot_utils.plot_spikes(spikes)

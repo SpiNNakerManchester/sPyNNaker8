@@ -365,10 +365,8 @@ class TestRun(object):
                 populations[1].set("spike_times", spike_times_list[run_count])
 
             for (pop, name, value) in set_between_runs:
-                if pop == 0:
-                    populations[0].set(name=value)
-                else:
-                    populations[1].set(name=value)
+                new_values = {name: value}
+                populations[pop].set(**new_values)
 
             if reset:
                 p.reset()

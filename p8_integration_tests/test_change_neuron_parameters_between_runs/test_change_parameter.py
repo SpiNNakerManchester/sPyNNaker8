@@ -12,10 +12,11 @@ def do_run():
     inp = p.Population(100, p.SpikeSourcePoisson, {"rate": 100}, label="input")
     pop = p.Population(100, p.IF_curr_exp, {}, label="pop")
 
-    p.Projection(inp, pop, p.OneToOneConnector(weights=5.0))
+    p.Projection(inp, pop, p.OneToOneConnector(),
+                 synapse_type=p.StaticSynapse(weight=5))
 
-    pop.record()
-    inp.record()
+    pop.record("spikes")
+    inp.record("spikes")
 
     p.run(100)
 
@@ -25,8 +26,8 @@ def do_run():
 
     p.run(100)
 
-    pop_spikes1 = pop.getSpikes()
-    inp_spikes1 = inp.getSpikes()
+    pop_spikes1 = pop.spinnaker_get_data('spikes')
+    inp_spikes1 = inp.spinnaker_get_data('spikes')
 
     p.reset()
 
@@ -36,8 +37,8 @@ def do_run():
 
     p.run(100)
 
-    pop_spikes2 = pop.getSpikes()
-    inp_spikes2 = inp.getSpikes()
+    pop_spikes2 = pop.spinnaker_get_data('spikes')
+    inp_spikes2 = inp.spinnaker_get_data('spikes')
 
     p.end()
 
@@ -72,6 +73,8 @@ class TestChangeParameter(BaseTestCase):
             raise SkipTest(ex)
         self.assertEqual(0, len(inp_spikes2))
 
+
+    # TODO test splitting
 
 if __name__ == '__main__':
     (pop_spikes1, inp_spikes1, pop_spikes2, inp_spikes2) = do_run()
