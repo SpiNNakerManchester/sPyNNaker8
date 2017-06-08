@@ -264,12 +264,12 @@ class Population(PyNNPopulationCommon, Recorder):
         """
         return self._get_variable_unit(variable)
 
-    @overrides(PyNNPopulationCommon.set)
-    def set(self, parameter, value=None):
-        try:
-            PyNNPopulationCommon.set(self, parameter, value)
-        except InvalidParameterType:
-            self.initialize(parameter, value)
+    def set(self, **kwargs):
+        for parameter, value in kwargs.iteritems():
+            try:
+                PyNNPopulationCommon.set(self, parameter, value)
+            except InvalidParameterType:
+                self.initialize(parameter, value)
 
     def get(self, parameter_names, gather=False, simplify=True):
         if simplify is not True:
