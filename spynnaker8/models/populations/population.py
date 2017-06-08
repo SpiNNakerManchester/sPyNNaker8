@@ -1,7 +1,6 @@
 import numpy
 import logging
 
-from pacman.model.decorators.overrides import overrides
 from spynnaker.pyNN.exceptions import InvalidParameterType
 from spynnaker.pyNN.models.pynn_population_common import PyNNPopulationCommon
 from spinn_front_end_common.utilities import globals_variables
