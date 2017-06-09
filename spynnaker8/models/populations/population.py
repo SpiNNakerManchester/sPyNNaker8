@@ -1,7 +1,6 @@
 import numpy
 import logging
 
-from pacman.model.decorators.overrides import overrides
 from spynnaker.pyNN.exceptions import InvalidParameterType
 from spynnaker.pyNN.models.pynn_population_common import PyNNPopulationCommon
 from spinn_front_end_common.utilities import exceptions
@@ -271,12 +270,12 @@ class Population(PyNNPopulationCommon, Recorder):
         """
         return self._get_variable_unit(variable)
 
-    @overrides(PyNNPopulationCommon.set)
-    def set(self, parameter, value=None):
-        try:
-            PyNNPopulationCommon.set(self, parameter, value)
-        except InvalidParameterType:
-            self.initialize(parameter, value)
+    def set(self, **kwargs):
+        for parameter, value in kwargs.iteritems():
+            try:
+                PyNNPopulationCommon.set(self, parameter, value)
+            except InvalidParameterType:
+                self.initialize(parameter, value)
 
     def get(self, parameter_names, gather=False, simplify=True):
         if simplify is not True:
