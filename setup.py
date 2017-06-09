@@ -62,6 +62,7 @@ setup(
                       'tarball/master#egg=quantities'],
     install_requires=[
         'quantities',
+        'sPyNNaker >= 1!4.0.0a5, < 1!5.0.0',
         'pynn >= 0.8, < 0.9',
         'lazyarray >= 0.2.9, <= 0.2.9',
         'appdirs >=1.4.2 , < 2.0.0',
