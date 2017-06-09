@@ -58,10 +58,12 @@ setup(
     url="https://github.com/SpiNNakerManchester/SpyNNaker8",
     packages=packages,
     package_data=package_data,
+    dependency_links=['http://github.com/python-quantities/python-quantities/'
+                      'tarball/master#egg=quantities'],
     install_requires=[
+        'quantities',
         'sPyNNaker >= 1!4.0.0a5, < 1!5.0.0',
         'pynn >= 0.8, < 0.9',
-        'quantities  >= 0.11.1, <= 0.11.1',
         'lazyarray >= 0.2.9, <= 0.2.9',
         'appdirs >=1.4.2 , < 2.0.0',
         'neo >= 0.3.0, <= 0.4.1']
