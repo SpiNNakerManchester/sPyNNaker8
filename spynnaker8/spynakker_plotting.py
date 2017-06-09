@@ -1,9 +1,9 @@
 from neo import AnalogSignal, SpikeTrain
-from pyNN.utility.plotting import repeat
 from neo import Block, Segment
 import numpy as np
 from quantities import ms
 try:
+    from pyNN.utility.plotting import repeat
     import matplotlib.pyplot as plt
     matplotlib_missing = False
 except Exception as e:
