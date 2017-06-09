@@ -1,5 +1,3 @@
-from unittest import SkipTest
-import os
 import spynnaker8 as p
 from p8_integration_tests.base_test_case import BaseTestCase
 
