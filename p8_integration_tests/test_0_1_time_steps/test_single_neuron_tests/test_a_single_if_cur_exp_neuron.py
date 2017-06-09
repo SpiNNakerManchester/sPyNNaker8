@@ -10,7 +10,6 @@ from p8_integration_tests.base_test_case import BaseTestCase
 import spynnaker.plot_utils as plot_utils
 
 from p8_integration_tests.scripts.synfire_run import TestRun
-from spynnaker8 import SpikeSourcePoisson
 from spynnaker8 import SpikeSourceArray
 
 cell_params = {'cm': 0.25,

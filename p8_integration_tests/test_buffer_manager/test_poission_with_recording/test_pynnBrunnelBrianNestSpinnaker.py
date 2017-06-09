@@ -36,8 +36,8 @@ class PynnBrunnelBrianNestSpinnaker(BaseTestCase):
         try:
             self.assertLess(200, len(esp_numpy))
             self.assertGreater(300, len(esp_numpy))
-            self.assertLess(22000, len(s))
-            self.assertGreater(26000, len(s))
+            self.assertLess(22000, len(s_numpy))
+            self.assertGreater(26000, len(s_numpy))
             self.assertEquals(2400, N_E)
         except Exception as ex:
             # Just in case the range failed
