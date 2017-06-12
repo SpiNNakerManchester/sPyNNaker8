@@ -37,25 +37,25 @@ class TestMultipleStdpMechsOnSameNeuron(BaseTestCase):
         # Plastic Connection between pre_pop and post_pop
         stdp_model1 = p.STDPMechanism(
             timing_dependence=p.SpikePairRule(
-                tau_plus=16.7, tau_minus=33.7),
+                tau_plus=16.7, tau_minus=33.7, A_plus=0.005, A_minus=0.005),
             weight_dependence=p.AdditiveWeightDependence(
-                w_min=0.0, w_max=1.0, A_plus=0.005, A_minus=0.005),
+                w_min=0.0, w_max=1.0),
         )
 
         # Plastic Connection between pre_pop and post_pop
         stdp_model2 = p.STDPMechanism(
             timing_dependence=p.SpikePairRule(
-                tau_plus=16.7, tau_minus=33.7),
+                tau_plus=16.7, tau_minus=33.7, A_plus=0.005, A_minus=0.005),
             weight_dependence=p.AdditiveWeightDependence(
-                w_min=0.0, w_max=1.0, A_plus=0.005, A_minus=0.005),
+                w_min=0.0, w_max=1.0),
         )
 
         # Plastic Connection between pre_pop and post_pop
         stdp_model3 = p.STDPMechanism(
             timing_dependence=p.SpikePairRule(
-                tau_plus=16.7, tau_minus=33.7),
+                tau_plus=16.7, tau_minus=33.7, A_plus=0.005, A_minus=0.005),
             weight_dependence=p.MultiplicativeWeightDependence(
-                w_min=0.0, w_max=1.0, A_plus=0.005, A_minus=0.005),
+                w_min=0.0, w_max=1.0),
         )
 
         injectionConnection = [(0, 0, weight_to_spike, 1)]
@@ -92,22 +92,18 @@ class TestMultipleStdpMechsOnSameNeuron(BaseTestCase):
                                         p.FromListConnector(connections)))
         pop = p.Projection(populations[1], populations[0],
                            p.FromListConnector(injectionConnection))
-        projections.append(pop)
-        synapse_dynamics = p.SynapseDynamics(slow=stdp_model1)
         pop = p.Projection(populations[2], populations[0],
                            p.FromListConnector(injectionConnection),
-                           synapse_dynamics=synapse_dynamics)
+                           synapse_type=stdp_model1)
         projections.append(pop)
         # This is expected to raise a SynapticConfigurationException
-        synapse_dynamics = p.SynapseDynamics(slow=stdp_model2)
         pop = p.Projection(populations[3], populations[0],
                            p.FromListConnector(injectionConnection),
-                           synapse_dynamics=synapse_dynamics)
+                           synapse_type=stdp_model2)
         projections.append(pop)
-        synapse_dynamics = p.SynapseDynamics(slow=stdp_model3)
         pop = p.Projection(populations[4], populations[0],
                            p.FromListConnector(injectionConnection),
-                           synapse_dynamics=synapse_dynamics)
+                           synapse_type=stdp_model3)
         projections.append(pop)
 
     def test_test_multiple_stdp_mechs_on_same_neuron(self):
