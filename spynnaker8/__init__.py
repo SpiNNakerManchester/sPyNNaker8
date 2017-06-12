@@ -464,3 +464,11 @@ def run_until(self, tstop):
         return __pynn_run_until(tstop)
     else:
         raise exceptions.ConfigurationException(FAILED_STATE_MSG)
+
+
+def get_machine():
+    """ Get the spinnaker machine in use
+    """
+    if not globals_variables.has_simulator():
+        raise exceptions.ConfigurationException(FAILED_STATE_MSG)
+    return globals_variables.get_simulator().machine
