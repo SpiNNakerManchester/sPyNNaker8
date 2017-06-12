@@ -275,7 +275,11 @@ class Population(PyNNPopulationCommon, Recorder):
             try:
                 PyNNPopulationCommon.set(self, parameter, value)
             except InvalidParameterType:
-                self.initialize(parameter, value)
+                PyNNPopulationCommon.initialize(parameter, value)
+
+    def initialize2(self, **kwargs):
+        for parameter, value in kwargs.iteritems():
+            PyNNPopulationCommon.initialize(parameter, value)
 
     def get(self, parameter_names, gather=False, simplify=True):
         if simplify is not True:
