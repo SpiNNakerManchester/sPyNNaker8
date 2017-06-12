@@ -21,8 +21,9 @@ class Synfire120n10pc12cWithNoDelaysSpikeRecording(BaseTestCase):
         synfire_run.do_run(nNeurons, delay=delay,
                            neurons_per_core=neurons_per_core,
                            record_v=record_v,
-                           record_gsyn=record_gsyn)
-        spikes = synfire_run.get_output_pop_spikes()
+                           record_gsyn_exc=record_gsyn,
+                           record_gsyn_inh=record_gsyn)
+        spikes = synfire_run.get_output_pop_spikes_numpy()
 
         self.assertEquals(333, len(spikes))
         spike_checker.synfire_spike_checker(spikes, nNeurons)
@@ -31,8 +32,9 @@ class Synfire120n10pc12cWithNoDelaysSpikeRecording(BaseTestCase):
 if __name__ == '__main__':
     synfire_run.do_run(nNeurons, delay=delay,
                        neurons_per_core=neurons_per_core,
-                       record_v=record_v, record_gsyn=record_gsyn)
-    spikes = synfire_run.get_output_pop_spikes()
+                       record_v=record_v, record_gsyn_exc=record_gsyn,
+                       record_gsyn_inh=record_gsyn)
+    spikes = synfire_run.get_output_pop_spikes_numpy()
 
     print len(spikes)
     plot_utils.plot_spikes(spikes)
