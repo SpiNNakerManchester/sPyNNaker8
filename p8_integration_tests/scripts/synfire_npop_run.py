@@ -70,7 +70,7 @@ def do_run(nNeurons, n_pops, neurons_per_core, runtime=25000):
         synapse_type=p.StaticSynapse()))
 
     for pop_index in range(0, n_pops):
-        populations[pop_index].record()
+        populations[pop_index].record("spikes")
 
     p.run(runtime)
 
