@@ -145,7 +145,8 @@ def setup(timestep=pynn_control.DEFAULT_TIMESTEP,
           database_socket_addresses=None, extra_algorithm_xml_paths=None,
           extra_mapping_inputs=None, extra_mapping_algorithms=None,
           extra_pre_run_algorithms=None, extra_post_run_algorithms=None,
-          extra_load_algorithms=None, time_scale_factor=None, **extra_params):
+          extra_load_algorithms=None, time_scale_factor=None,
+          n_chips_required=None, **extra_params):
     """ main method needed to be called to make the PyNN 0.8 setup. Needs to
     be called before any other function
 
@@ -166,6 +167,7 @@ def setup(timestep=pynn_control.DEFAULT_TIMESTEP,
     phase
     :param time_scale_factor: multiplicative factor to the machine time step
     (does not affect the neuron models accuracy)
+    :param n_chips_required: The number of chips needed by the simulation
     :param extra_params:  other stuff
     :return: rank thing
     """
@@ -193,7 +195,7 @@ def setup(timestep=pynn_control.DEFAULT_TIMESTEP,
         extra_load_algorithms=extra_load_algorithms,
         time_scale_factor=time_scale_factor, timestep=timestep,
         min_delay=min_delay, max_delay=max_delay, graph_label=graph_label,
-        n_chips_required=None)
+        n_chips_required=n_chips_required)
 
     # warn about kwargs arguments
     if len(extra_params) > 0:
@@ -464,3 +466,11 @@ def run_until(self, tstop):
         return __pynn_run_until(tstop)
     else:
         raise exceptions.ConfigurationException(FAILED_STATE_MSG)
+
+
+def get_machine():
+    """ Get the spinnaker machine in use
+    """
+    if not globals_variables.has_simulator():
+        raise exceptions.ConfigurationException(FAILED_STATE_MSG)
+    return globals_variables.get_simulator().machine
