@@ -44,7 +44,7 @@ def convert_data(data, name, run=0):
 
 def convert_data_list(data, name, runs=None):
     """
-    Converts the data into a numpy array in the format id, time, value
+    Converts the data into a list of numpy arrays in the format id, time, value
 
     :param data: Data as returned by a getData() call
     :type data: SpynnakerNeoBlock
@@ -61,6 +61,39 @@ def convert_data_list(data, name, runs=None):
     for run in runs:
         results.append(convert_data(data, name, run=run))
     return results
+
+
+def convert_v_list(data):
+    """
+    Converts the voltage into a list numpy array one per segment (all runs)
+    in the format id, time, value
+
+    :type data: SpynnakerNeoBlock Must have v data
+    :return: [nparray]
+    """
+    return convert_data_list(data, "v", runs=None)
+
+
+def convert_gsyn_exc_list(data):
+    """
+    Converts the gsyn_exc into a list numpy array one per segment (all runs)
+    in the format id, time, value
+
+    :type data: SpynnakerNeoBlock Must have gsyn_exc data
+    :return: [nparray]
+    """
+    return convert_data_list(data, "gsyn_exc", runs=None)
+
+
+def convert_gsyn_inh_list(data):
+    """
+    Converts the gsyn_inh into a list numpy array one per segment (all runs)
+    in the format id, time, value
+
+    :type data: SpynnakerNeoBlock Must have gsyn_exc data
+    :return: [nparray]
+    """
+    return convert_data_list(data, "gsyn_inh", runs=None)
 
 
 def convert_gsyn(gsyn_exc, gsyn_inh):
