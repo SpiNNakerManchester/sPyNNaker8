@@ -20,7 +20,7 @@ class Synfire3RunNoSpikesInFirstExitNoExtractionIfCurrExp(BaseTestCase):
         synfire_run.do_run(nNeurons, spike_times=spike_times,
                            run_times=run_times, reset=reset,
                            extract_between_runs=extract_between_runs)
-        spikes = synfire_run.get_output_pop_spikes()
+        spikes = synfire_run.get_output_pop_spikes_numpy()
 
         self.assertEquals(145, len(spikes))
         spike_checker.synfire_multiple_lines_spike_checker(spikes, nNeurons, 2)
@@ -29,9 +29,9 @@ class Synfire3RunNoSpikesInFirstExitNoExtractionIfCurrExp(BaseTestCase):
 if __name__ == '__main__':
     synfire_run.do_run(nNeurons, spike_times=spike_times, run_times=run_times,
                        reset=reset, extract_between_runs=extract_between_runs)
-    gsyn = synfire_run.get_output_pop_gsyn()
-    v = synfire_run.get_output_pop_voltage()
-    spikes = synfire_run.get_output_pop_spikes()
+    gsyn = synfire_run.get_output_pop_gsyn_exc_numpy()
+    v = synfire_run.get_output_pop_voltage_numpy()
+    spikes = synfire_run.get_output_pop_spikes_numpy()
 
     print len(spikes)
     plot_utils.plot_spikes(spikes)

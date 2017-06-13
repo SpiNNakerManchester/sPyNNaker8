@@ -20,8 +20,7 @@ class Synfire1RunReset1RunLargertRuntimeNoExtraction(BaseTestCase):
         synfire_run.do_run(nNeurons, spike_times=spike_times, reset=reset,
                            run_times=runtimes,
                            neurons_per_core=neurons_per_core)
-        spikes = synfire_run.get_output_pop_spikes()
-
+        spikes = synfire_run.get_output_pop_spikes_list_numpy()
         self.assertEquals(53, len(spikes[0]))
         self.assertEquals(156, len(spikes[1]))
         spike_checker.synfire_spike_checker(spikes[0], nNeurons)
@@ -32,9 +31,9 @@ class Synfire1RunReset1RunLargertRuntimeNoExtraction(BaseTestCase):
 if __name__ == '__main__':
     synfire_run.do_run(nNeurons, spike_times=spike_times, reset=reset,
                        run_times=runtimes, neurons_per_core=neurons_per_core)
-    gsyn = synfire_run.get_output_pop_gsyn()
-    v = synfire_run.get_output_pop_voltage()
-    spikes = synfire_run.get_output_pop_spikes()
+    gsyn = synfire_run.get_output_pop_gsyn_exc_list_numpy()
+    v = synfire_run.get_output_pop_voltage_list_numpy()
+    spikes = synfire_run.get_output_pop_spikes_list_numpy()
     print len(spikes[0])
     print len(spikes[1])
     plot_utils.plot_spikes(spikes)
