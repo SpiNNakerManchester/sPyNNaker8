@@ -32,7 +32,7 @@ class MyTestCase(unittest.TestCase):
         projections.append(p.Projection(populations[1], populations[0],
                                         p.OneToOneConnector()))
 
-        populations[1].record()
+        populations[1].record("spikes")
 
         p.run(5000)
 
@@ -44,7 +44,7 @@ class MyTestCase(unittest.TestCase):
     def test_recording_poisson_large_spikes(self):
         p.setup(timestep=1.0, min_delay=1.0, max_delay=144.0)
         n_neurons = 2560  # number of neurons in each population
-        p.set_number_of_neurons_per_core("IF_curr_exp", n_neurons / 2)
+        p.set_number_of_neurons_per_core(p.IF_curr_exp, n_neurons / 2)
 
         cell_params_lif = {'cm': 0.25,
                            'i_offset': 0.0,
@@ -69,11 +69,11 @@ class MyTestCase(unittest.TestCase):
         projections.append(p.Projection(populations[1], populations[0],
                                         p.OneToOneConnector()))
 
-        populations[1].record()
+        populations[1].record("spikes")
 
         p.run(5000)
 
-        spikes = populations[1].getSpikes()
+        spikes = populations[1].get_data("spikes")
         print spikes
 
         p.end()
@@ -81,7 +81,7 @@ class MyTestCase(unittest.TestCase):
     def test_recording_poisson_spikes_rate_0(self):
         p.setup(timestep=1.0, min_delay=1.0, max_delay=144.0)
         n_neurons = 256  # number of neurons in each population
-        p.set_number_of_neurons_per_core("IF_curr_exp", n_neurons / 2)
+        p.set_number_of_neurons_per_core(p.IF_curr_exp, n_neurons / 2)
 
         cell_params_lif = {'cm': 0.25,
                            'i_offset': 0.0,
@@ -107,11 +107,11 @@ class MyTestCase(unittest.TestCase):
         projections.append(p.Projection(populations[1], populations[0],
                                         p.OneToOneConnector()))
 
-        populations[1].record()
+        populations[1].record("spikes")
 
         p.run(5000)
 
-        spikes = populations[1].getSpikes()
+        spikes = populations[1].get_data("spikes")
         print spikes
 
         p.end()
