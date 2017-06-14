@@ -117,7 +117,7 @@ class Population(PyNNPopulationCommon, Recorder):
         """
         if variables is None:  # reset the list of things to record
             # note that if record(None) is called, its a reset
-            Recorder._reset(self)
+            Recorder._turn_off_all_recording(self)
         else:
             # handle one element vs many elements
             if isinstance(variables, basestring):
