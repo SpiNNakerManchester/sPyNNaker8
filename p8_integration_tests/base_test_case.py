@@ -1,11 +1,23 @@
 import os
+import random
 import sys
 import unittest
+from unittest import SkipTest
+
+print os.environ.get('P8_INTEGRATION_FACTOR', "1")
+p8_integration_factor = float(os.environ.get('P8_INTEGRATION_FACTOR', "1"))
+random.seed(os.environ.get('P8_INTEGRATION_SEED', None))
 
 
 class BaseTestCase(unittest.TestCase):
 
     def setUp(self):
+        factor = random.random()
+        if factor > p8_integration_factor:
+            msg = "Test skipped by random number {} above " \
+                  "P8_INTEGRATION_FACTOR {}" \
+                  "".format(factor, p8_integration_factor)
+            raise SkipTest(msg)
         class_file = sys.modules[self.__module__].__file__
         path = os.path.dirname(os.path.abspath(class_file))
         os.chdir(path)
