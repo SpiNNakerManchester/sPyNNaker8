@@ -362,7 +362,7 @@ class TestRun(object):
                 projections.append(new_projection)
 
             if spike_times_list is not None:
-                populations[1].set("spike_times", spike_times_list[run_count])
+                populations[1].set(spike_times=spike_times_list[run_count])
 
             for (pop, name, value) in set_between_runs:
                 new_values = {name: value}
