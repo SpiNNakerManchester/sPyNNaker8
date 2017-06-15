@@ -7,13 +7,14 @@ import spynnaker8 as p
 import spynnaker.plot_utils as plot_utils
 
 from p8_integration_tests.base_test_case import BaseTestCase
+from spynnaker8.utilities import neo_convertor
 from unittest import SkipTest
 
 
 def do_run(nNeurons):
 
     p.setup(timestep=0.1, min_delay=1.0, max_delay=7.5)
-    p.set_number_of_neurons_per_core("IF_curr_exp", 100)
+    p.set_number_of_neurons_per_core(p.IF_curr_exp, 100)
 
     cell_params_lif = {'cm': 0.25, 'i_offset': 0.0, 'tau_m': 20.0,
                        'tau_refrac': 2.0, 'tau_syn_E': 6, 'tau_syn_I': 6,
@@ -34,19 +35,25 @@ def do_run(nNeurons):
     populations.append(p.Population(nNeurons, p.IF_curr_exp, cell_params_lif,
                                     label='pop_2'))
 
-    connector = p.AllToAllConnector(weights=weight_to_spike,
-                                    delays=injection_delay)
-    projections.append(p.Projection(populations[0], populations[1], connector))
-    connector = p.OneToOneConnector(weights=weight_to_spike, delays=delay)
-    projections.append(p.Projection(populations[1], populations[2], connector))
+    connector = p.AllToAllConnector()
+    synapse_type = p.StaticSynapse(weight=weight_to_spike,
+                                   delay=injection_delay)
+    projections.append(p.Projection(populations[0], populations[1], connector,
+                                    synapse_type=synapse_type))
+    connector = p.OneToOneConnector()
+    synapse_type = p.StaticSynapse(weight=weight_to_spike, delay=delay)
+    projections.append(p.Projection(populations[1], populations[2], connector,
+                                    synapse_type=synapse_type))
 
-    populations[1].record_v()
-    populations[1].record()
+    populations[1].record("v")
+    populations[1].record("spikes")
 
     p.run(100)
 
-    v = populations[1].get_v(compatible_output=True)
-    spikes = populations[1].getSpikes(compatible_output=True)
+    neo = populations[1].get_data(["v", "spikes"])
+
+    v = neo_convertor.convert_data(neo, name="v")
+    spikes = neo_convertor.convert_spikes(neo)
 
     p.end()
 
