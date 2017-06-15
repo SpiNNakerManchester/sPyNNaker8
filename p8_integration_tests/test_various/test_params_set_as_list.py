@@ -1,4 +1,5 @@
 import spynnaker8 as p
+from spynnaker8.utilities import neo_convertor
 
 from p8_integration_tests.base_test_case import BaseTestCase
 from pyNN.random import RandomDistribution, NumpyRNG
@@ -65,26 +66,28 @@ def do_run(nNeurons):
     populations.append(p.Population(1, p.SpikeSourceArray, spikeArray,
                                     label='inputSpikes_1'))
 
-    populations[0].set({'cm': 0.25})
-    populations[0].set('cm', cm)
-    populations[0].set({'tau_m': tau_m, 'v_thresh': v_thresh})
-    populations[0].set('i_offset', gbar_na_distr)
-    populations[0].set('i_offset', i_off)
+    populations[0].set(cm=0.25)
+    populations[0].set(cm=cm)
+    populations[0].set(tau_m=tau_m, v_thresh=v_thresh)
+    populations[0].set(i_offset=gbar_na_distr)
+    populations[0].set(i_offset=i_off)
 
     projections.append(p.Projection(populations[0], populations[0],
                                     p.FromListConnector(connections)))
     projections.append(p.Projection(populations[1], populations[0],
                                     p.FromListConnector(injectionConnection)))
 
-    populations[0].record_v()
-    populations[0].record_gsyn()
-    populations[0].record()
+    populations[0].record("v")
+    populations[0].record("gsyn_exc")
+    populations[0].record("spikes")
 
     p.run(100)
 
-    v = populations[0].get_v(compatible_output=True)
-    gsyn = populations[0].get_gsyn(compatible_output=True)
-    spikes = populations[0].getSpikes(compatible_output=True)
+    neo = populations[0].get_data(["v", "spikes", "gsyn_exc"])
+
+    v = neo_convertor.convert_data(neo, name="v")
+    gsyn = neo_convertor.convert_data(neo, name="gsyn_exc")
+    spikes = neo_convertor.convert_spikes(neo)
 
     p.end()
 
