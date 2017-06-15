@@ -4,6 +4,7 @@ from spynnaker8.utilities.data_holder import DataHolder
 from spynnaker.pyNN.models.neuron.builds.if_curr_exp_base import IFCurrExpBase
 from p8_integration_tests.scripts.fake_if_curr import FakeIFCurrExp
 
+
 class FakeIFCurrExpDataHolder(DataHolder):
     def __init__(
             self,

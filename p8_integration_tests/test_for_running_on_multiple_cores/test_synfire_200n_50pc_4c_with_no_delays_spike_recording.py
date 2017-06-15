@@ -29,7 +29,8 @@ class Synfire200n50pc4cWithNoDelaysSpikeRecording(BaseTestCase):
 
 
 if __name__ == '__main__':
-    synfire_run.do_run(nNeurons, delay=delay, neurons_per_core=neurons_per_core,
+    synfire_run.do_run(nNeurons, delay=delay,
+                       neurons_per_core=neurons_per_core,
                        record_v=False, record_gsyn_exc=record_gsyn,
                        record_gsyn_inh=record_gsyn)
     spikes = synfire_run.get_output_pop_spikes_numpy()

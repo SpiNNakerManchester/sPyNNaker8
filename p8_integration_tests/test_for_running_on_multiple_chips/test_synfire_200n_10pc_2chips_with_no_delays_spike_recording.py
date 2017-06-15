@@ -26,7 +26,8 @@ class Synfire200n10pc2chipsWithNoDelaysSpikeRecording(BaseTestCase):
 
 
 if __name__ == '__main__':
-    synfire_run.do_run(nNeurons, record_v=record_v, record_gsyn_exc=record_gsyn,
+    synfire_run.do_run(nNeurons, record_v=record_v,
+                       record_gsyn_exc=record_gsyn,
                        record_gsyn_inh=record_gsyn)
     spikes = synfire_run.get_output_pop_spikes_numpy()
 

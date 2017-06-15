@@ -14,7 +14,6 @@ def do_run(nNeurons):
     print spike_list
     p.setup(timestep=1.0, min_delay=1.0, max_delay=32.0)
 
-
     pop = p.Population(nNeurons, p.SpikeSourceArray, spike_list, label='input')
 
     pop.record()
