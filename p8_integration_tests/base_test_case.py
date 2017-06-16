@@ -4,7 +4,6 @@ import sys
 import unittest
 from unittest import SkipTest
 
-print os.environ.get('P8_INTEGRATION_FACTOR', "1")
 p8_integration_factor = float(os.environ.get('P8_INTEGRATION_FACTOR', "1"))
 random.seed(os.environ.get('P8_INTEGRATION_SEED', None))
 
