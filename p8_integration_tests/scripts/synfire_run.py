@@ -188,8 +188,8 @@ class TestRun(object):
         self._recorded_gsyn_inh_7 = None
         self._input_spikes_recorded_list = []
         self._input_spikes_recorded_7 = []
-        self._weights = None
-        self._delays = None
+        self._weights = []
+        self._delays = []
 
         if run_times is None:
             run_times = [1000]
@@ -345,10 +345,7 @@ class TestRun(object):
                                get_gsyn_exc, record_gsyn_exc_7,
                                get_gsyn_inh, record_gsyn_inh_7,
                                record_input_spikes, record_input_spikes_7)
-                if get_weights:
-                    results += (projections[0].get("weight"))
-                if get_delays:
-                    self._delays.append(projections[0].get("delay"))
+                self._get_weight_delay(projections[0], get_weights, get_delays)
 
             if new_pop:
                 populations.append(
@@ -378,11 +375,7 @@ class TestRun(object):
                        get_gsyn_inh, record_gsyn_inh_7, record_input_spikes,
                        record_input_spikes_7)
 
-        if get_weights:
-            results += (projections[0].get("weight"))
-
-        if get_delays:
-            self._delays.append(projections[0].get("delays"))
+        self._get_weight_delay(projections[0], get_weights, get_delays)
 
         if end_before_print:
             if v_path is not None or spike_path is not None or \
@@ -487,6 +480,34 @@ class TestRun(object):
     def get_spike_source_spikes_7(self):
         return self._input_spikes_recorded_7
 
+    def get_weights(self):
+        """
+
+        ;return if not recorded returns None
+            if recorded once returns a numpy array
+            if recorded more than once returns a list of numpy arrays
+        :rtype: None, nparray or list of nparray
+        """
+        if len(self._weights) == 0:
+            return None
+        if len(self._weights) == 1:
+            return self._weights[0]
+        return self._weights
+
+    def get_delay(self):
+        """
+
+        ;return if not recorded returns None
+            if recorded once returns a numpy array
+            if recorded more than once returns a list of numpy arrays
+        :rtype: None, nparray or list of nparray
+        """
+        if len(self._delays) == 0:
+            return None
+        if len(self._delays) == 1:
+            return self._delays[0]
+        return self._delays
+
     def _get_data(self, output_population, input_population,
                   get_spikes, record_7, get_v, record_v_7,
                   get_gsyn_exc, record_gsyn_exc_7,
@@ -546,6 +567,14 @@ class TestRun(object):
                 self._input_spikes_recorded_7 = spikes
             else:
                 self._input_spikes_recorded_7 += spikes
+
+    def _get_weight_delay(self, projection, get_weights, get_delays):
+        if get_weights:
+            weights = projection.get(attribute_names=["weight"], format="list")
+            self._weights.append(weights)
+        if get_delays:
+            delays = projection.get(attribute_names=["delay"], format="list")
+            self._delays.append(delays)
 
 
 if __name__ == "__main__":
