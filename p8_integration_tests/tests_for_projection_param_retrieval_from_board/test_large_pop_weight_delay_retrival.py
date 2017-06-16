@@ -38,17 +38,17 @@ def do_run():
 
     # before
     delays.append(projections[0].get(attribute_names=["delay"],
-                                     format="list"))
+                                     format="nparray"))
     weights.append(projections[0].get(attribute_names=["weight"],
-                                     format="list"))
+                                     format="array"))
 
     p.run(100)
 
     # after
     delays.append(projections[0].get(attribute_names=["delay"],
-                                     format="list"))
+                                     format="array"))
     weights.append(projections[0].get(attribute_names=["weight"],
-                                     format="list"))
+                                     format="array"))
 
     p.end()
 
