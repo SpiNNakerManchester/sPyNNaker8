@@ -40,7 +40,7 @@ def do_run():
     delays.append(projections[0].get(attribute_names=["delay"],
                                      format="nparray"))
     weights.append(projections[0].get(attribute_names=["weight"],
-                                     format="array"))
+                                      format="array"))
 
     p.run(100)
 
@@ -48,7 +48,7 @@ def do_run():
     delays.append(projections[0].get(attribute_names=["delay"],
                                      format="array"))
     weights.append(projections[0].get(attribute_names=["weight"],
-                                     format="array"))
+                                      format="array"))
 
     p.end()
 
