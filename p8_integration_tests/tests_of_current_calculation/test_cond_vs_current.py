@@ -3,12 +3,13 @@ Synfirechain-like example
 """
 import spynnaker8 as p
 from p8_integration_tests.base_test_case import BaseTestCase
+from spynnaker8.utilities import neo_convertor
 
 
 def do_run(nNeurons):
     p.setup(timestep=1.0, min_delay=1.0, max_delay=144.0)
 
-    p.set_number_of_neurons_per_core("IF_curr_exp", nNeurons / 2)
+    p.set_number_of_neurons_per_core(p.IF_curr_exp, nNeurons / 2)
 
     cell_params_lif = {'cm': 0.25,
                        'i_offset': 0.0,
@@ -21,7 +22,7 @@ def do_run(nNeurons):
                        'v_thresh': -50.0
                        }
 
-    p.set_number_of_neurons_per_core("IF_cond_exp", nNeurons / 2)
+    p.set_number_of_neurons_per_core(p.IF_cond_exp, nNeurons / 2)
 
     cell_params_cond = {'cm': 0.25,
                         'i_offset': 0.0,
@@ -68,23 +69,27 @@ def do_run(nNeurons):
                                     p.FromListConnector(sinkConnection)))
     projections.append(p.Projection(populations[2], populations[4],
                                     p.FromListConnector(sinkConnection)))
-    populations[0].record_v()
-    populations[0].record_gsyn()
-    populations[0].record()
+    populations[0].record("v")
+    populations[0].record("gsyn_exc")
+    populations[0].record("spikes")
 
-    populations[2].record_v()
-    populations[2].record_gsyn()
-    populations[2].record()
+    populations[2].record("v")
+    populations[2].record("gsyn_exc")
+    populations[2].record("spikes")
 
     p.run(500)
 
-    cond_v = populations[0].get_v(compatible_output=True)
-    cond_gsyn = populations[0].get_gsyn(compatible_output=True)
-    cond_spikes = populations[0].getSpikes(compatible_output=True)
+    neo = populations[0].get_data(["v", "spikes", "gsyn_exc"])
 
-    curr_v = populations[2].get_v(compatible_output=True)
-    curr_gsyn = populations[2].get_gsyn(compatible_output=True)
-    curr_spikes = populations[2].getSpikes(compatible_output=True)
+    cond_v = neo_convertor.convert_data(neo, name="v")
+    cond_gsyn = neo_convertor.convert_data(neo, name="gsyn_exc")
+    cond_spikes = neo_convertor.convert_spikes(neo)
+
+    neo = populations[2].get_data(["v", "spikes", "gsyn_exc"])
+
+    curr_v = neo_convertor.convert_data(neo, name="v")
+    curr_gsyn = neo_convertor.convert_data(neo, name="gsyn_exc")
+    curr_spikes = neo_convertor.convert_spikes(neo)
 
     p.end()
 
