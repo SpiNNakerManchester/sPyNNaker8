@@ -19,7 +19,7 @@ class SynfireIfCurrExp(BaseTestCase):
     def test_run(self):
         synfire_run.do_run(n_neurons, neurons_per_core=neurons_per_core,
                            run_times=[runtime])
-        spikes = synfire_run.get_output_pop_spikes()
+        spikes = synfire_run.get_output_pop_spikes_numpy()
         spike_checker.synfire_spike_checker(spikes, n_neurons)
         try:
             self.assertLess(240, len(spikes))
@@ -32,9 +32,9 @@ class SynfireIfCurrExp(BaseTestCase):
 if __name__ == '__main__':
     results = synfire_run.do_run(n_neurons, neurons_per_core=neurons_per_core,
                                  run_times=[runtime])
-    spikes = synfire_run.get_output_pop_spikes()
-    v = synfire_run.get_output_pop_voltage()
-    gsyn = synfire_run.get_output_pop_gsyn()
+    spikes = synfire_run.get_output_pop_spikes_numpy()
+    v = synfire_run.get_output_pop_voltage_numpy()
+    gsyn = synfire_run.get_output_pop_gsyn_numpy()
 
     print len(spikes)
     plot_utils.plot_spikes(spikes)
