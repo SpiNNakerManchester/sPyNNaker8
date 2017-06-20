@@ -5,14 +5,7 @@ import numpy
 from datetime import datetime
 import quantities as pq
 
-from spynnaker.pyNN.models.common.abstract_gsyn_excitatory_recordable import \
-    AbstractGSynExcitatoryRecordable
-from spynnaker.pyNN.models.common.abstract_gsyn_inhibitory_recordable import \
-    AbstractGSynInhibitoryRecordable
-from spynnaker.pyNN.models.common.abstract_spike_recordable import \
-    AbstractSpikeRecordable
-from spynnaker.pyNN.models.common.abstract_v_recordable import \
-    AbstractVRecordable
+from spynnaker.pyNN.models.common.recordable import Recordable
 from spynnaker.pyNN.models.recording_common import RecordingCommon
 from spynnaker.pyNN.utilities import utility_calls
 from spinn_front_end_common.utilities import globals_variables
@@ -178,18 +171,8 @@ class Recorder(RecordingCommon):
                     source_index=self._population.id_to_index(atom_id)))
 
     def _get_all_possible_recordable_variables(self):
-        variables = list()
-        if isinstance(self._population._vertex, AbstractSpikeRecordable):
-            variables.append('spikes')
-        if isinstance(self._population._vertex, AbstractVRecordable):
-            variables.append('v')
-        if isinstance(
-                self._population._vertex, AbstractGSynExcitatoryRecordable):
-            variables.append('gsyn_exc')
-        if isinstance(
-                self._population._vertex, AbstractGSynInhibitoryRecordable):
-            variables.append('gsyn_inh')
-        return variables
+        return Recordable.get_all_possible_recordable_variables(
+            self._population._vertex)
 
     def _metadata(self):
         metadata = {
