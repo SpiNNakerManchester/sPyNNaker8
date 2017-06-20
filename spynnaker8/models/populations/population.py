@@ -278,3 +278,11 @@ class Population(PyNNPopulationCommon, Recorder):
         if simplify is not True:
             logger.warn("The simplify value is ignored if not set to true")
         return PyNNPopulationCommon.get(self, parameter_names, gather)
+
+    @property
+    def celltype(self):
+        """
+        Implements the pynn expected celltype propery
+        :return: The celltype this property has been set to
+        """
+        return self._vertex
