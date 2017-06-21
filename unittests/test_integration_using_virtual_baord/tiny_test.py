@@ -1,6 +1,7 @@
 import p8_integration_tests.test_various.tiny_test as tiny_test
 from p8_integration_tests.base_test_case import BaseTestCase
 
+
 class TinyTest(BaseTestCase):
 
     def test_run(self):
