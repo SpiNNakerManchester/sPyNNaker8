@@ -8,11 +8,11 @@ from pyNN.recording import get_io
 from pyNN.standardmodels import StandardCellType
 
 # fec improts
-from spinn_front_end_common.utilities import exceptions
+from spinn_front_end_common.utilities.exceptions import ConfigurationException
 from spinn_front_end_common.utilities import globals_variables
 from spinn_front_end_common.utilities.failed_state import FAILED_STATE_MSG
-from spinn_front_end_common.utilities.notification_protocol. \
-    socket_address import SocketAddress
+from spinn_front_end_common.utilities.notification_protocol \
+    import SocketAddress
 
 # connections
 # noinspection PyUnresolvedReferences
@@ -338,8 +338,7 @@ def set_number_of_neurons_per_core(neuron_type, max_permitted):
     if hasattr(neuron_type.build_model(), "set_model_max_atoms_per_core"):
         neuron_type.build_model().set_model_max_atoms_per_core(max_permitted)
     else:
-        raise Exception("{} is not a Vertex type"
-                        .format(neuron_type))
+        raise Exception("{} is not a Vertex type".format(neuron_type))
 
 
 def register_database_notification_request(hostname, notify_port, ack_port):
@@ -360,99 +359,87 @@ def register_database_notification_request(hostname, notify_port, ack_port):
 def connect(pre, post, weight=0.0, delay=None, receptor_type=None, p=1,
             rng=None):
     global __pynn_connect
-    if globals_variables.has_simulator():
-        __pynn_connect(pre, post, weight, delay, receptor_type, p, rng)
-    else:
-        raise exceptions.ConfigurationException(FAILED_STATE_MSG)
+    if not globals_variables.has_simulator():
+        raise ConfigurationException(FAILED_STATE_MSG)
+    __pynn_connect(pre, post, weight, delay, receptor_type, p, rng)
 
 
 def create(cellclass, cellparams=None, n=1):
     global __pynn_create
-    if globals_variables.has_simulator():
-        __pynn_create(cellclass, cellparams, n)
-    else:
-        raise exceptions.ConfigurationException(FAILED_STATE_MSG)
+    if not globals_variables.has_simulator():
+        raise ConfigurationException(FAILED_STATE_MSG)
+    __pynn_create(cellclass, cellparams, n)
 
 
 def get_current_time():
     global __pynn_get_current_time
-    if globals_variables.has_simulator():
-        return __pynn_get_current_time()
-    else:
-        raise exceptions.ConfigurationException(FAILED_STATE_MSG)
+    if not globals_variables.has_simulator():
+        raise ConfigurationException(FAILED_STATE_MSG)
+    return __pynn_get_current_time()
 
 
 def get_min_delay():
     global __pynn_get_min_delay
-    if globals_variables.has_simulator():
-        return __pynn_get_min_delay()
-    else:
-        raise exceptions.ConfigurationException(FAILED_STATE_MSG)
+    if not globals_variables.has_simulator():
+        raise ConfigurationException(FAILED_STATE_MSG)
+    return __pynn_get_min_delay()
 
 
 def get_max_delay():
     global __pynn_get_max_delay
-    if globals_variables.has_simulator():
-        return __pynn_get_max_delay()
-    else:
-        raise exceptions.ConfigurationException(FAILED_STATE_MSG)
+    if not globals_variables.has_simulator():
+        raise ConfigurationException(FAILED_STATE_MSG)
+    return __pynn_get_max_delay()
 
 
 def get_time_step():
     global __pynn_get_time_step
-    if globals_variables.has_simulator():
-        return __pynn_get_time_step()
-    else:
-        raise exceptions.ConfigurationException(FAILED_STATE_MSG)
+    if not globals_variables.has_simulator():
+        raise ConfigurationException(FAILED_STATE_MSG)
+    return __pynn_get_time_step()
 
 
 def initialize(cells, **initial_values):
-    if globals_variables.has_simulator():
-        pynn_common.initialize(cells, **initial_values)
-    else:
-        raise exceptions.ConfigurationException(FAILED_STATE_MSG)
+    if not globals_variables.has_simulator():
+        raise ConfigurationException(FAILED_STATE_MSG)
+    pynn_common.initialize(cells, **initial_values)
 
 
 def num_processes():
     global __pynn_num_processes
-    if globals_variables.has_simulator():
-        return __pynn_num_processes()
-    else:
-        raise exceptions.ConfigurationException(FAILED_STATE_MSG)
+    if not globals_variables.has_simulator():
+        raise ConfigurationException(FAILED_STATE_MSG)
+    return __pynn_num_processes()
 
 
 def rank():
     global __pynn_rank
-    if globals_variables.has_simulator():
-        return __pynn_rank()
-    else:
-        raise exceptions.ConfigurationException(FAILED_STATE_MSG)
+    if not globals_variables.has_simulator():
+        raise ConfigurationException(FAILED_STATE_MSG)
+    return __pynn_rank()
 
 
 def record(variables, source, filename, sampling_interval=None,
            annotations=None):
     global __pynn_record
-    if globals_variables.has_simulator():
-        return __pynn_record(variables, source, filename, sampling_interval,
-                             annotations)
-    else:
-        raise exceptions.ConfigurationException(FAILED_STATE_MSG)
+    if not globals_variables.has_simulator():
+        raise ConfigurationException(FAILED_STATE_MSG)
+    return __pynn_record(variables, source, filename, sampling_interval,
+                         annotations)
 
 
 def reset(annotations={}):
     global __pynn_reset
-    if globals_variables.has_simulator():
-        __pynn_reset(annotations)
-    else:
-        raise exceptions.ConfigurationException(FAILED_STATE_MSG)
+    if not globals_variables.has_simulator():
+        raise ConfigurationException(FAILED_STATE_MSG)
+    __pynn_reset(annotations)
 
 
 def run(simtime, callbacks=None):
     global __pynn_run
-    if globals_variables.has_simulator():
-        return __pynn_run(simtime, callbacks=callbacks)
-    else:
-        raise exceptions.ConfigurationException(FAILED_STATE_MSG)
+    if not globals_variables.has_simulator():
+        raise ConfigurationException(FAILED_STATE_MSG)
+    return __pynn_run(simtime, callbacks=callbacks)
 
 
 # left here becuase needs to be done, and no better place to put it
@@ -462,10 +449,9 @@ run_for = run
 
 def run_until(self, tstop):
     global __pynn_run_until
-    if globals_variables.has_simulator():
-        return __pynn_run_until(tstop)
-    else:
+    if not globals_variables.has_simulator():
         raise exceptions.ConfigurationException(FAILED_STATE_MSG)
+    return __pynn_run_until(tstop)
 
 
 def get_machine():

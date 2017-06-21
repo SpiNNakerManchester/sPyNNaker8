@@ -13,7 +13,7 @@ from spynnaker.pyNN.models.pynn_projection_common import PyNNProjectionCommon
 from spinn_front_end_common.utilities import globals_variables
 from spynnaker.pyNN import exceptions
 
-from spinn_front_end_common.utilities import exceptions as common_exceptions
+from spinn_front_end_common.utilities.exceptions import ConfigurationException
 
 logger = logging.getLogger(__name__)
 
@@ -83,9 +83,8 @@ class Projection(PyNNProjectionCommon):
 
     def get(self, attribute_names, format, gather=True, with_address=False,
             multiple_synapses='sum'):
-
         if with_address:
-            raise common_exceptions.ConfigurationException(
+            raise ConfigurationException(
                 "Spynnaker only recongises with_address=False")
 
         if multiple_synapses != 'sum':
