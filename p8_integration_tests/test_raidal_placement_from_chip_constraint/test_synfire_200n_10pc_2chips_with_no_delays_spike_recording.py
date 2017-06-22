@@ -5,8 +5,7 @@ Synfirechain-like example
 
 from p8_integration_tests.base_test_case import BaseTestCase
 from p8_integration_tests.scripts.synfire_run import TestRun
-from pacman.model.constraints.placer_constraints\
-    .placer_radial_placement_from_chip_constraint \
+from pacman.model.constraints.placer_constraints \
     import PlacerRadialPlacementFromChipConstraint
 
 import spynnaker.plot_utils as plot_utils
