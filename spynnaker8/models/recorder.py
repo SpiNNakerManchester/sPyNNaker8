@@ -5,14 +5,8 @@ import numpy
 from datetime import datetime
 import quantities as pq
 
-from spynnaker.pyNN.models.common.abstract_gsyn_excitatory_recordable import \
-    AbstractGSynExcitatoryRecordable
-from spynnaker.pyNN.models.common.abstract_gsyn_inhibitory_recordable import \
-    AbstractGSynInhibitoryRecordable
-from spynnaker.pyNN.models.common.abstract_spike_recordable import \
-    AbstractSpikeRecordable
-from spynnaker.pyNN.models.common.abstract_v_recordable import \
-    AbstractVRecordable
+from spinn_front_end_common.utilities import exceptions as fec_excceptions
+from spynnaker.pyNN.models.common.recordable import Recordable
 from spynnaker.pyNN.models.recording_common import RecordingCommon
 from spynnaker.pyNN.utilities import utility_calls
 from spinn_front_end_common.utilities import globals_variables
@@ -98,7 +92,7 @@ class Recorder(RecordingCommon):
         # if all are needed to be extracted, extract each and plonk into the
         # neo block segment
         if variables == 'all':
-            variables = self._get_all_possible_recordable_variables()
+            variables = self._get_all_recording_variables()
 
         # if variable is a base string, plonk into a array for ease of
         # conversion
@@ -178,18 +172,38 @@ class Recorder(RecordingCommon):
                     source_index=self._population.id_to_index(atom_id)))
 
     def _get_all_possible_recordable_variables(self):
-        variables = list()
-        if isinstance(self._population._vertex, AbstractSpikeRecordable):
-            variables.append('spikes')
-        if isinstance(self._population._vertex, AbstractVRecordable):
-            variables.append('v')
-        if isinstance(
-                self._population._vertex, AbstractGSynExcitatoryRecordable):
-            variables.append('gsyn_exc')
-        if isinstance(
-                self._population._vertex, AbstractGSynInhibitoryRecordable):
-            variables.append('gsyn_inh')
-        return variables
+        return Recordable.get_all_possible_recordable_variables(
+            self._population._vertex)
+
+    def _get_all_recording_variables(self):
+        variables = self._get_all_possible_recordable_variables()
+        recording = list()
+        for variable in variables:
+            if self._is_recording(variable):
+                recording.append(variable)
+        return recording
+
+    def _is_recording(self, variable):
+        try:
+            if variable == "gsyn_exc":
+                return self._population._vertex.is_recording_gsyn_excitatory()
+            elif variable == "gsyn_inh":
+                return  self._population._vertex.is_recording_gsyn_inhibitory()
+            elif variable == "v":
+                return self._population._vertex.is_recording_v()
+            elif variable == "spikes":
+                return self._population._vertex.is_recording_spikes()
+            else:
+                raise fec_excceptions.ConfigurationException(
+                    "The variable {} is not supported by the get method. "
+                    "Currently supported variables are: "
+                    "'gsyn_exc', 'gsyn_inh', 'v', 'spikes'".format(variable))
+        except:
+            raise fec_excceptions.ConfigurationException(
+                "The variable {} is not supported by {}. "
+                "Currently supported variables are: {}"
+                "".format(variable, type(self._population._vertex),
+                          self._get_all_possible_recordable_variables()))
 
     def _metadata(self):
         metadata = {
