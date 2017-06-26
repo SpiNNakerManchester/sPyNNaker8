@@ -1,5 +1,4 @@
-from spynnaker.pyNN.models.neural_projections.connectors. \
-    distance_dependent_probability_connector import \
+from spynnaker.pyNN.models.neural_projections.connectors import \
     DistanceDependentProbabilityConnector as \
     CommonDistanceDependentProbabilityConnector
 

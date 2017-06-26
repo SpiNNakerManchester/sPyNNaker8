@@ -5,18 +5,14 @@ import numpy
 from datetime import datetime
 import quantities as pq
 
-from spynnaker.pyNN.models.common.abstract_gsyn_excitatory_recordable import \
-    AbstractGSynExcitatoryRecordable
-from spynnaker.pyNN.models.common.abstract_gsyn_inhibitory_recordable import \
-    AbstractGSynInhibitoryRecordable
-from spynnaker.pyNN.models.common.abstract_spike_recordable import \
-    AbstractSpikeRecordable
-from spynnaker.pyNN.models.common.abstract_v_recordable import \
-    AbstractVRecordable
+from spynnaker.pyNN.models.common import AbstractGSynExcitatoryRecordable
+from spynnaker.pyNN.models.common import AbstractGSynInhibitoryRecordable
+from spynnaker.pyNN.models.common import AbstractSpikeRecordable
+from spynnaker.pyNN.models.common import AbstractVRecordable
 from spynnaker.pyNN.models.recording_common import RecordingCommon
 from spynnaker.pyNN.utilities import utility_calls
 from spinn_front_end_common.utilities import globals_variables
-from spynnaker.pyNN import exceptions
+from spynnaker.pyNN.exceptions import InvalidParameterType
 from spynnaker8.utilities.spynnaker8_neo_block import SpynnakerNeoBlock
 from spynnaker8.utilities.spynnaker8_neo_segment import SpynnakerNeoSegment
 
@@ -230,6 +226,6 @@ class Recorder(RecordingCommon):
                     globals_variables.get_simulator().placements,
                     globals_variables.get_simulator().graph_mapper)
             else:
-                raise exceptions.InvalidParameterType(
+                raise InvalidParameterType(
                     "The variable {} is not a recordable value".format(
                         variable))

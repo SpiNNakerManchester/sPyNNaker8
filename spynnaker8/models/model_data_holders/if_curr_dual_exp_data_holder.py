@@ -1,6 +1,5 @@
-from spynnaker.pyNN.models.neuron.abstract_population_vertex import \
-    AbstractPopulationVertex
-from spynnaker8.utilities.data_holder import DataHolder
+from spynnaker.pyNN.models.neuron import AbstractPopulationVertex
+from spynnaker8.utilities import DataHolder
 from spynnaker.pyNN.models.neuron.builds.if_curr_dual_exp_base import \
     IFCurrDualExpBase
 

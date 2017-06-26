@@ -1,7 +1,7 @@
-from spynnaker.pyNN.models.neural_projections.connectors. \
-    from_list_connector import FromListConnector as CommonFromListConnector
+from spynnaker.pyNN.models.neural_projections.connectors \
+    import FromListConnector as CommonFromListConnector
 import numpy
-from spynnaker8.utilities import exceptions
+from spynnaker8.utilities.exceptions import InvalidParameterType
 
 from pyNN.connectors import Connector
 
@@ -33,7 +33,7 @@ class FromListConnector(CommonFromListConnector, Connector):
         """
 
         if conn_list is None or len(conn_list) == 0:
-            raise exceptions.InvalidParameterType(
+            raise InvalidParameterType(
                 "The connection list for the FromListConnector must contain"
                 " at least a list of tuples, each of which should contain at "
                 "least: (pre_idx, post_idx)")
@@ -98,6 +98,6 @@ class FromListConnector(CommonFromListConnector, Connector):
                     if first_data is None:
                         first_data = data
                     elif data != first_data:
-                        raise exceptions.InvalidParameterType(
+                        raise InvalidParameterType(
                             "The parameter {} needs top have a consistent "
                             "value".format(data_key))

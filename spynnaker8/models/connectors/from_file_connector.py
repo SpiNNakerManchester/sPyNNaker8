@@ -1,4 +1,4 @@
-from spynnaker.pyNN.models.neural_projections.connectors.from_file_connector \
+from spynnaker.pyNN.models.neural_projections.connectors \
     import FromFileConnector as CommonFromFileConnector
 
 from pyNN.connectors import FromFileConnector as PyNNFromFileConnector

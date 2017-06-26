@@ -1,8 +1,7 @@
 from pyNN.space import Space
 
-from spynnaker.pyNN.models.neural_projections.connectors\
-    .small_world_connector import SmallWorldConnector as \
-    CommonSmallWorldConnector
+from spynnaker.pyNN.models.neural_projections.connectors \
+    import SmallWorldConnector as CommonSmallWorldConnector
 
 
 class SmallWorldConnector(CommonSmallWorldConnector):

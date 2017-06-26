@@ -11,7 +11,7 @@ from spynnaker8._version import __version__
 
 from spynnaker.pyNN.models.pynn_projection_common import PyNNProjectionCommon
 from spinn_front_end_common.utilities import globals_variables
-from spynnaker.pyNN import exceptions
+from spynnaker.pyNN.exceptions import InvalidParameterType
 
 from spinn_front_end_common.utilities.exceptions import ConfigurationException
 
@@ -32,7 +32,7 @@ class Projection(PyNNProjectionCommon):
             receptor_type=None, space=None, label=None):
 
         if source is not None:
-            raise exceptions.InvalidParameterType(
+            raise InvalidParameterType(
                 "spynnaker8 {} does not yet support multi-compartmental "
                 "cells.".format(__version__))
 

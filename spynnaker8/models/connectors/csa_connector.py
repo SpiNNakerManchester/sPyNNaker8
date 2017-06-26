@@ -1,5 +1,5 @@
-from spynnaker.pyNN.models.neural_projections.connectors.\
-    abstract_connector import AbstractConnector
+from spynnaker.pyNN.models.neural_projections.connectors \
+    import AbstractConnector
 from pyNN.connectors import CSAConnector as PyNNCSAConnector
 
 
