@@ -81,6 +81,14 @@ class Population(PyNNPopulationCommon, Recorder):
         """
         return self._annotations
 
+    @property
+    def celltype(self):
+        """
+        Implements the pynn expected celltype propery
+        :return: The celltype this property has been set to
+        """
+        return self._vertex
+
     def id_to_index(self, id):
         """
         Given the ID(s) of cell(s) in the Population, return its (their) index
