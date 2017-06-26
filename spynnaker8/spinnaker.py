@@ -7,27 +7,17 @@ from spynnaker.pyNN.abstract_spinnaker_common import AbstractSpiNNakerCommon
 from spynnaker8 import _version
 from spynnaker8.spynnaker8_simulator_interface \
     import Spynnaker8SimulatorInterface
-from spynnaker8.utilities.random_stats.random_stats_exponential_impl import \
-    RandomStatsExponentialImpl
-from spynnaker8.utilities.random_stats.random_stats_gamma_impl import \
-    RandomStatsGammaImpl
-from spynnaker8.utilities.random_stats.random_stats_log_normal_impl import \
-    RandomStatsLogNormalImpl
-from spynnaker8.utilities.random_stats.random_stats_normal_clipped_impl \
-    import RandomStatsNormalClippedImpl
-from spynnaker8.utilities.random_stats.random_stats_normal_impl import \
-    RandomStatsNormalImpl
-from spynnaker8.utilities.random_stats.random_stats_poisson_impl import \
-    RandomStatsPoissonImpl
-from spynnaker8.utilities.random_stats.random_stats_randint_impl import \
-    RandomStatsRandIntImpl
-from spynnaker8.utilities.random_stats.random_stats_uniform_impl import \
-    RandomStatsUniformImpl
 from spynnaker8.utilities.spynnaker8_failed_state import Spynnaker8FailedState
-from spynnaker8.utilities.random_stats.random_stats_vomises_impl import \
-    RandomStatsVonmisesImpl
-from spynnaker8.utilities.random_stats.rnadom_stats_binomial_impl import \
-    RandomStatsBinomialImpl
+from spynnaker8.utilities.random_stats import RandomStatsExponentialImpl
+from spynnaker8.utilities.random_stats import RandomStatsGammaImpl
+from spynnaker8.utilities.random_stats import RandomStatsLogNormalImpl
+from spynnaker8.utilities.random_stats import RandomStatsNormalClippedImpl
+from spynnaker8.utilities.random_stats import RandomStatsNormalImpl
+from spynnaker8.utilities.random_stats import RandomStatsPoissonImpl
+from spynnaker8.utilities.random_stats import RandomStatsRandIntImpl
+from spynnaker8.utilities.random_stats import RandomStatsUniformImpl
+from spynnaker8.utilities.random_stats import RandomStatsVonmisesImpl
+from spynnaker8.utilities.random_stats import RandomStatsBinomialImpl
 
 import logging
 import math
