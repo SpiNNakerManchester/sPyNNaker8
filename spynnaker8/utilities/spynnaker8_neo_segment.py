@@ -15,6 +15,15 @@ class SpynnakerNeoSegment(Segment):
                          rec_datetime, index, **annotations)
         self._spike_trains = list()
         self._analog_signal_arrays = list()
+        self._rec_datetime = rec_datetime
+
+    @property
+    def rec_datetime(self):
+        return self._rec_datetime
+
+    @rec_datetime.setter
+    def rec_datetime(self, new_value):
+        self._rec_datetime = new_value
 
     @property
     def spiketrains(self):

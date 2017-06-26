@@ -5,6 +5,7 @@ from spinn_front_end_common.utilities import globals_variables
 from spynnaker.pyNN.abstract_spinnaker_common import AbstractSpiNNakerCommon
 
 from spynnaker8 import _version
+from spynnaker8 import extra_functions
 from spynnaker8.spynnaker8_simulator_interface \
     import Spynnaker8SimulatorInterface
 from spynnaker8.utilities.random_stats.random_stats_exponential_impl import \
@@ -31,6 +32,7 @@ from spynnaker8.utilities.random_stats.rnadom_stats_binomial_impl import \
 
 import logging
 import math
+import os
 
 
 logger = logging.getLogger(__name__)
@@ -79,6 +81,9 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 
         # handle extra xmls and the ones needed by default
         built_in_extra_xml_paths = list()
+        built_in_extra_xml_paths.append(os.path.join(
+            os.path.dirname(extra_functions.__file__),
+            "algorithms_metadata.xml"))
 
         if extra_algorithm_xml_paths is not None:
             built_in_extra_xml_paths.extend(extra_algorithm_xml_paths)
@@ -90,13 +95,20 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
             built_in_extra_mapping_inputs.update(
                 built_in_extra_mapping_inputs)
 
+        built_in_extra_pre_run_algorithms = list()
+        built_in_extra_pre_run_algorithms.append(
+            "SPYNNaker8NeoRecordingExtractor")
+        if extra_pre_run_algorithms is not None:
+            built_in_extra_pre_run_algorithms.extend(
+                extra_pre_run_algorithms)
+
         # spinnaker setup
         AbstractSpiNNakerCommon.__init__(
             self, database_socket_addresses=database_socket_addresses,
             user_extra_algorithm_xml_path=built_in_extra_xml_paths,
             user_extra_mapping_inputs=built_in_extra_mapping_inputs,
             extra_mapping_algorithms=extra_mapping_algorithms,
-            user_extra_algorithms_pre_run=extra_pre_run_algorithms,
+            user_extra_algorithms_pre_run=built_in_extra_pre_run_algorithms,
             extra_post_run_algorithms=extra_post_run_algorithms,
             extra_load_algorithms=built_in_extra_load_algorithms,
             graph_label=graph_label, n_chips_required=n_chips_required,
@@ -164,6 +176,13 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
         logger.info("Simulating for %u %fms timesteps "
                     "using a hardware timestep of %uus",
                     duration_timesteps, self.dt, hardware_timestep_us)
+
+        # update recorders that they need to extract more
+        for pop in self._populations:
+            pop.reset_neo_recorded_trackers()
+
+        # update segment counter per run
+        self._segment_counter += 1
 
         AbstractSpiNNakerCommon.run(self, duration_ms)
 
