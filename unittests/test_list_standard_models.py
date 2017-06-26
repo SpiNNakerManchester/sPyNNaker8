@@ -1,6 +1,7 @@
 import unittest
 import spynnaker8 as sim
 
+
 class TestListStandardModules(unittest.TestCase):
 
     def test_check_list(self):

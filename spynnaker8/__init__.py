@@ -5,7 +5,6 @@ import atexit
 from pyNN import common as pynn_common
 from pyNN.common import control as pynn_control
 from pyNN.recording import get_io
-from pyNN.standardmodels import StandardCellType
 
 # fec improts
 from spinn_front_end_common.utilities import exceptions
