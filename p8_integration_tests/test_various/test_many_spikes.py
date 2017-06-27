@@ -42,8 +42,8 @@ class BigManySpikes(BaseTestCase):
             # Just in case the range failed
             raise SkipTest(ex)
 
-    #@unittest.skip("https://github.com/SpiNNakerManchester/sPyNNaker/issues/"
-    #               "335")
+    @unittest.skip("https://github.com/SpiNNakerManchester/sPyNNaker/issues/"
+                   "335")
     def test_sixty_nine(self):
         nNeurons = 600  # number of neurons in each population
         neo = do_run(nNeurons, 69)
