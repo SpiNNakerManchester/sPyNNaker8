@@ -131,8 +131,8 @@ class TestVABenchmarkSpikes(BaseTestCase):
             rng = NumpyRNG(seed=rngseed, parallel_safe=parallel_safe)
             uniform_distr = RandomDistribution('uniform', [v_reset, v_thresh],
                                                rng=rng)
-            exc_cells.initialize('v', uniform_distr)
-            inh_cells.initialize('v', uniform_distr)
+            exc_cells.initialize(v=uniform_distr)
+            inh_cells.initialize(v=uniform_distr)
 
             print "%s Connecting populations..." % node_id
             exc_conn = p.FixedProbabilityConnector(pconn, rng=rng)
