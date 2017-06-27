@@ -18,7 +18,7 @@ $Id:VAbenchmarks.py 5 2007-04-16 15:01:24Z davison $
 """
 import os
 import pickle
-import socket
+# import socket
 import unittest
 from p8_integration_tests.base_test_case import BaseTestCase
 import spynnaker8 as p
@@ -100,10 +100,10 @@ def do_run():
         # this will set 50 neurons per core
         p.set_number_of_neurons_per_core(p.IF_cond_exp, 50)
 
-    node_id = 1
-    np = 1
+    # node_id = 1
+    # np = 1
 
-    host_name = socket.gethostname()
+    # host_name = socket.gethostname()
 
     cell_params = {'tau_m': tau_m, 'tau_syn_E': tau_exc, 'tau_syn_I': tau_inh,
                    'v_rest': e_leak, 'v_reset': v_reset, 'v_thresh': v_thresh,
@@ -169,7 +169,8 @@ class TestVABenchmarkSpikes(BaseTestCase):
         except SpinnmanTimeoutException as ex:
             raise SkipTest(ex)
         spike_count = neo_convertor.count_spikes(exc_spikes)
-        self.assertEqual(2175, spike_count)
+        self.assertLess(1900, spike_count)
+        self.assertGreater(2700, spike_count)
         with open(neo_path, "r") as neo_file:
             recorded_spikes = pickle.load(neo_file)
         neo_compare.compare_blocks(exc_spikes, recorded_spikes)
