@@ -13,8 +13,7 @@ from spynnaker.pyNN.models.recording_common import RecordingCommon
 from spynnaker.pyNN.utilities import utility_calls
 from spinn_front_end_common.utilities import globals_variables
 from spynnaker.pyNN.exceptions import InvalidParameterType
-from spynnaker8.utilities.spynnaker8_neo_block import SpynnakerNeoBlock
-from spynnaker8.utilities.spynnaker8_neo_segment import SpynnakerNeoSegment
+from spynnaker8.utilities import SpynnakerNeoBlock, SpynnakerNeoSegment
 
 logger = logging.getLogger(__name__)
 

@@ -6,8 +6,7 @@ from spynnaker.pyNN.models.pynn_population_common import PyNNPopulationCommon
 from spinn_front_end_common.utilities import globals_variables
 
 from spynnaker8.models.recorder import Recorder
-from spynnaker8.utilities import DataHolder
-from spynnaker8.utilities.id import ID
+from spynnaker8.utilities import DataHolder, ID
 
 from pyNN import descriptions
 
