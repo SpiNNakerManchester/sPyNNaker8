@@ -6,7 +6,6 @@ import numpy as __numpy
 from pyNN import common as pynn_common
 from pyNN.common import control as pynn_control
 from pyNN.recording import get_io
-from pyNN.standardmodels import StandardCellType
 from pyNN.random import NumpyRNG, RandomDistribution
 from pyNN.space import \
     distance, Space, Line, Grid2D, Grid3D, Cuboid, Sphere, RandomStructure
