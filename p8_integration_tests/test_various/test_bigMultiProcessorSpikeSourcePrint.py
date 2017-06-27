@@ -7,6 +7,7 @@ from spynnaker8.utilities import neo_convertor
 from p8_integration_tests.base_test_case import BaseTestCase
 import spynnaker.plot_utils as plot_utils
 
+import unittest
 from unittest import SkipTest
 
 
@@ -61,6 +62,8 @@ class BigMultiProcessorSpikeSourcePrint(BaseTestCase):
             # Just in case the range failed
             raise SkipTest(ex)
 
+    @unittest.skip("https://github.com/SpiNNakerManchester/sPyNNaker/issues/"
+                   "335")
     def test_seventy(self):
         nNeurons = 600  # number of neurons in each population
         neo = do_run(nNeurons, 70)
