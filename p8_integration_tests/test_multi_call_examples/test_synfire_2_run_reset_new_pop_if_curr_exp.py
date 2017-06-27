@@ -19,7 +19,7 @@ synfire_run = TestRun()
 
 class Synfire2RunResetFileWriteIssue(BaseTestCase):
     @unittest.skip("https://github.com/SpiNNakerManchester/"
-                     "SpiNNFrontEndCommon/issues/150")
+                   "SpiNNFrontEndCommon/issues/150")
     def test_run(self):
         synfire_run.do_run(nNeurons, spike_times=spike_times,
                            run_times=run_times,

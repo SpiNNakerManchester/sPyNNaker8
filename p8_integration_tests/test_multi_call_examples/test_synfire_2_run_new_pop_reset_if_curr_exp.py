@@ -18,7 +18,7 @@ synfire_run = TestRun()
 
 class Synfire1RunReset1RunNo_extraction_if_curr_exp(BaseTestCase):
     @unittest.skip("https://github.com/SpiNNakerManchester/"
-                     "SpiNNFrontEndCommon/issues/150")
+                   "SpiNNFrontEndCommon/issues/150")
     def test_run(self):
         synfire_run.do_run(nNeurons, spike_times=spike_times,
                            run_times=run_times, reset=reset, new_pop=new_pop)
