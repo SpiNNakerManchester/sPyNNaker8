@@ -131,5 +131,13 @@ def convert_spiketrains(spiketrains):
     return np.column_stack((neurons, spikes))
 
 
-def convert_spikes(spikes):
-    return convert_spiketrains(spikes.segments[0].spiketrains)
+def convert_spikes(neo):
+    return convert_spiketrains(neo.segments[0].spiketrains)
+
+
+def count_spiketrains(spiketrains):
+    return sum(map(len, spiketrains))
+
+
+def count_spikes(neo):
+    return count_spiketrains(neo.segments[0].spiketrains)
