@@ -1,7 +1,6 @@
 from p8_integration_tests.base_test_case import BaseTestCase
 from p8_integration_tests.scripts.synfire_run import TestRun
 import spynnaker8 as p
-import unittest
 
 n_neurons = 200  # number of neurons in each population
 neurons_per_core = n_neurons / 2
@@ -24,7 +23,6 @@ class TestSynfirePossonIfCurrExpParameterTestSecondNone(BaseTestCase):
     """
     tests the printing of get gsyn given a simulation
     """
-    @unittest.skip("https://github.com/SpiNNakerManchester/sPyNNaker8/issues/27")
     def test_synfire_posson_if_curr_exp_parameter_test_second_none(self):
         synfire_run.do_run(n_neurons, neurons_per_core=neurons_per_core,
                            run_times=run_times,
