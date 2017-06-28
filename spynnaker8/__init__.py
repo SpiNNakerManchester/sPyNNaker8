@@ -5,7 +5,6 @@ import atexit
 from pyNN import common as pynn_common
 from pyNN.common import control as pynn_control
 from pyNN.recording import get_io
-from pyNN.standardmodels import StandardCellType
 
 # fec improts
 from spinn_front_end_common.utilities.exceptions import ConfigurationException
@@ -69,6 +68,7 @@ from spynnaker8.models.synapse_dynamics.timing_dependence\
 
 # neuron stuff
 # noinspection PyUnresolvedReferences
+from spynnaker8.utilities.data_holder import DataHolder
 from spynnaker8.models.model_data_holders.if_cond_exp_data_holder import \
     IFCondExpDataHolder as IF_cond_exp
 # noinspection PyUnresolvedReferences
@@ -316,9 +316,12 @@ def record_gsyn(source, filename):
 def list_standard_models():
     """Return a list of all the StandardCellType
     classes available for this simulator."""
-    return [obj.__name__
-            for obj in globals().values()
-            if isinstance(obj, type) and issubclass(obj, StandardCellType)]
+    results = list()
+    for (key, obj) in globals().iteritems():
+        if isinstance(obj, type) and issubclass(obj, DataHolder)  \
+                and not obj == DataHolder:
+            results.append(key)
+    return results
 
 
 @atexit.register
