@@ -15,7 +15,7 @@ class MyTestCase(unittest.TestCase):
         cell_params_lif = {'cm': 0.25,
                            'i_offset': 0.0,
                            'tau_m': 20.0,
-                           'tau_refrac': flake82.0,
+                           'tau_refrac': 2.0,
                            'tau_syn_E': 5.0,
                            'tau_syn_I': 5.0,
                            'v_reset': -70.0,
