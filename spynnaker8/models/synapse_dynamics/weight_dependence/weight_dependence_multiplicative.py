@@ -1,6 +1,6 @@
 from spynnaker.pyNN.models.neuron.plasticity.stdp.weight_dependence.\
-    weight_dependence_multiplicative import \
-    WeightDependenceMultiplicative as CommonWeightDependenceMultiplicative
+    common_weight_dependence_multiplicative import \
+    CommonWeightDependenceMultiplicative
 
 
 class WeightDependenceMultiplicative(CommonWeightDependenceMultiplicative):
