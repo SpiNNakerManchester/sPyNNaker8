@@ -5,8 +5,7 @@ from pyNN import common as pynn_common
 from pyNN.space import Space as PyNNSpace
 
 from spynnaker8 import FromListConnector
-from spynnaker8.models.synapse_dynamics.synapse_dynamics_static \
-    import SynapseDynamicsStatic
+from spynnaker8.models.synapse_dynamics import SynapseDynamicsStatic
 from spynnaker8._version import __version__
 
 from spynnaker.pyNN.models.pynn_projection_common import PyNNProjectionCommon
