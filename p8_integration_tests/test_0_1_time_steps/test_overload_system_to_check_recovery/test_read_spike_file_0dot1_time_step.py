@@ -32,8 +32,9 @@ def do_run():
     :return:
     """
     p.setup(timestep=0.04, min_delay=1.0, max_delay=4.0)
+
     n_neurons = 128 * 128  # number of neurons in each population
-    p.set_number_of_neurons_per_core("IF_cond_exp", 256)
+    p.set_number_of_neurons_per_core(p.IF_cond_exp, 256)
 
     cell_params_lif = {'cm': 0.25,
                        'i_offset': 0.0,
@@ -61,18 +62,18 @@ def do_run():
     spike_array = {'spike_times': spikes}
 
     populations.append(p.Population(
-        n_neurons, p.SpikeSourceArray, spike_array,
+        n_neurons, p.SpikeSourceArray(**spike_array),
         label='inputSpikes_1'))
     populations.append(p.Population(
-        n_neurons, p.IF_cond_exp, cell_params_lif, label='pop_1'))
+        n_neurons, p.IF_cond_exp(**cell_params_lif), label='pop_1'))
     projections.append(p.Projection(
-        populations[0], populations[1], p.OneToOneConnector(
-            weights=weight_to_spike, delays=delay)))
-    populations[1].record()
+        populations[0], populations[1], p.OneToOneConnector(),
+        synapse_type=p.StaticSynapse(weight=weight_to_spike, delay=delay)))
+    populations[1].record("spikes")
 
     p.run(1000)
 
-    spikes = populations[1].getSpikes(compatible_output=True)
+    spikes = populations[1].get_data("spikes")
 
     p.end()
 

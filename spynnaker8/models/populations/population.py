@@ -1,7 +1,6 @@
 import numpy
 import logging
 
-from pacman.model.decorators.overrides import overrides
 from spynnaker.pyNN.exceptions import InvalidParameterType
 from spynnaker.pyNN.models.pynn_population_common import PyNNPopulationCommon
 from spinn_front_end_common.utilities import globals_variables
@@ -42,8 +41,8 @@ class Population(PyNNPopulationCommon, Recorder):
             if 'label' in internal_params:
                 cell_label = internal_params['label']
             internal_params['label'] = self.create_label(cell_label, label)
-            internal_params['n_neurons'] = size
             vertex_holder = cellclass(**internal_params)
+            vertex_holder.add_item('n_neurons', size)
             # emit deprecation warning
         else:
             raise TypeError(
@@ -81,6 +80,14 @@ class Population(PyNNPopulationCommon, Recorder):
         """
         return self._annotations
 
+    @property
+    def celltype(self):
+        """
+        Implements the pynn expected celltype propery
+        :return: The celltype this property has been set to
+        """
+        return self._vertex
+
     def id_to_index(self, id):
         """
         Given the ID(s) of cell(s) in the Population, return its (their) index
@@ -117,7 +124,7 @@ class Population(PyNNPopulationCommon, Recorder):
         """
         if variables is None:  # reset the list of things to record
             # note that if record(None) is called, its a reset
-            Recorder._reset(self)
+            Recorder._turn_off_all_recording(self)
         else:
             # handle one element vs many elements
             if isinstance(variables, basestring):
@@ -264,12 +271,16 @@ class Population(PyNNPopulationCommon, Recorder):
         """
         return self._get_variable_unit(variable)
 
-    @overrides(PyNNPopulationCommon.set)
-    def set(self, parameter, value=None):
-        try:
-            PyNNPopulationCommon.set(self, parameter, value)
-        except InvalidParameterType:
-            self.initialize(parameter, value)
+    def set(self, **kwargs):
+        for parameter, value in kwargs.iteritems():
+            try:
+                PyNNPopulationCommon.set(self, parameter, value)
+            except InvalidParameterType:
+                PyNNPopulationCommon.initialize(self, parameter, value)
+
+    def initialize(self, **kwargs):
+        for parameter, value in kwargs.iteritems():
+            PyNNPopulationCommon.initialize(self, parameter, value)
 
     def get(self, parameter_names, gather=False, simplify=True):
         if simplify is not True:

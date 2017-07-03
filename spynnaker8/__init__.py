@@ -5,7 +5,6 @@ import atexit
 from pyNN import common as pynn_common
 from pyNN.common import control as pynn_control
 from pyNN.recording import get_io
-from pyNN.standardmodels import StandardCellType
 
 # fec improts
 from spinn_front_end_common.utilities import exceptions
@@ -69,6 +68,7 @@ from spynnaker8.models.synapse_dynamics.timing_dependence\
 
 # neuron stuff
 # noinspection PyUnresolvedReferences
+from spynnaker8.utilities.data_holder import DataHolder
 from spynnaker8.models.model_data_holders.if_cond_exp_data_holder import \
     IFCondExpDataHolder as IF_cond_exp
 # noinspection PyUnresolvedReferences
@@ -148,7 +148,8 @@ def setup(timestep=pynn_control.DEFAULT_TIMESTEP,
           database_socket_addresses=None, extra_algorithm_xml_paths=None,
           extra_mapping_inputs=None, extra_mapping_algorithms=None,
           extra_pre_run_algorithms=None, extra_post_run_algorithms=None,
-          extra_load_algorithms=None, time_scale_factor=None, **extra_params):
+          extra_load_algorithms=None, time_scale_factor=None,
+          n_chips_required=None, **extra_params):
     """ main method needed to be called to make the PyNN 0.8 setup. Needs to
     be called before any other function
 
@@ -169,6 +170,7 @@ def setup(timestep=pynn_control.DEFAULT_TIMESTEP,
     phase
     :param time_scale_factor: multiplicative factor to the machine time step
     (does not affect the neuron models accuracy)
+    :param n_chips_required: The number of chips needed by the simulation
     :param extra_params:  other stuff
     :return: rank thing
     """
@@ -196,7 +198,7 @@ def setup(timestep=pynn_control.DEFAULT_TIMESTEP,
         extra_load_algorithms=extra_load_algorithms,
         time_scale_factor=time_scale_factor, timestep=timestep,
         min_delay=min_delay, max_delay=max_delay, graph_label=graph_label,
-        n_chips_required=None)
+        n_chips_required=n_chips_required)
 
     # warn about kwargs arguments
     if len(extra_params) > 0:
@@ -317,9 +319,12 @@ def record_gsyn(source, filename):
 def list_standard_models():
     """Return a list of all the StandardCellType
     classes available for this simulator."""
-    return [obj.__name__
-            for obj in globals().values()
-            if isinstance(obj, type) and issubclass(obj, StandardCellType)]
+    results = list()
+    for (key, obj) in globals().iteritems():
+        if isinstance(obj, type) and issubclass(obj, DataHolder)  \
+                and not obj == DataHolder:
+            results.append(key)
+    return results
 
 
 @atexit.register
@@ -467,3 +472,11 @@ def run_until(self, tstop):
         return __pynn_run_until(tstop)
     else:
         raise exceptions.ConfigurationException(FAILED_STATE_MSG)
+
+
+def get_machine():
+    """ Get the spinnaker machine in use
+    """
+    if not globals_variables.has_simulator():
+        raise exceptions.ConfigurationException(FAILED_STATE_MSG)
+    return globals_variables.get_simulator().machine
