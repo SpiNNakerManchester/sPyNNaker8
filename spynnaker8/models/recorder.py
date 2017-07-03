@@ -4,6 +4,7 @@ import os
 import numpy
 from datetime import datetime
 import quantities as pq
+from spinn_utilities.ordered_set import OrderedSet
 
 from spynnaker.pyNN.models.common import AbstractNeuronRecordable
 from spynnaker.pyNN.models.common import AbstractSpikeRecordable
@@ -12,7 +13,6 @@ from spynnaker.pyNN.utilities import utility_calls
 from spinn_front_end_common.utilities.globals_variables import get_simulator
 from spynnaker.pyNN.exceptions import InvalidParameterType
 from spynnaker8.utilities import SpynnakerNeoBlock, SpynnakerNeoSegment
-from spinn_utilities.ordered_set import OrderedSet
 
 logger = logging.getLogger(__name__)
 
