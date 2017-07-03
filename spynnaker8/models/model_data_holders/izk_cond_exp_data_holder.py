@@ -1,7 +1,6 @@
 from spynnaker.pyNN.models.neuron import AbstractPopulationVertex
 from spynnaker8.utilities import DataHolder
-from spynnaker.pyNN.models.neuron.builds.izk_cond_exp_base import \
-    IzkCondExpBase
+from spynnaker.pyNN.models.neuron.builds import IzkCondExpBase
 
 
 class IzkCondExpDataHolder(DataHolder):
