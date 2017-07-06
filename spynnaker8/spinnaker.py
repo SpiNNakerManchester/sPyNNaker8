@@ -165,7 +165,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
                     "using a hardware timestep of %uus",
                     duration_timesteps, self.dt, hardware_timestep_us)
 
-        AbstractSpiNNakerCommon._run(self, duration_ms)
+        AbstractSpiNNakerCommon.run(self, duration_ms)
 
     @property
     def state(self):
