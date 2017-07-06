@@ -27,6 +27,7 @@ class SynfireIfCurrExp(BaseTestCase):
         except Exception as ex:
             # Just in case the range failed
             raise SkipTest(ex)
+        synfire_run.get_output_pop_gsyn_exc_numpy()
 
 
 if __name__ == '__main__':
@@ -34,7 +35,7 @@ if __name__ == '__main__':
                                  run_times=[runtime])
     spikes = synfire_run.get_output_pop_spikes_numpy()
     v = synfire_run.get_output_pop_voltage_numpy()
-    gsyn = synfire_run.get_output_pop_gsyn_numpy()
+    gsyn = synfire_run.get_output_pop_gsyn_exc_numpy()
 
     print len(spikes)
     plot_utils.plot_spikes(spikes)

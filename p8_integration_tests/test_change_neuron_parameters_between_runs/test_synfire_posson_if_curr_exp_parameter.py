@@ -43,7 +43,7 @@ if __name__ == '__main__':
                        start_time=start_time, duration=duration, rate=rate,
                        extract_between_runs=extract_between_runs,
                        set_between_runs=set_between_runs)
-    gsyn = synfire_run.get_output_pop_gsyn_numpy()
+    gsyn = synfire_run.get_output_pop_gsyn_exc_numpy()
     v = synfire_run.get_output_pop_voltage_numpy()
     spikes = synfire_run.get_output_pop_spikes_numpy()
     hist = numpy.histogram(spikes[:, 1], bins=[0, 5000, 10000])

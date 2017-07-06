@@ -54,12 +54,12 @@ if __name__ == '__main__':
                        extract_between_runs=extract_between_runs,
                        set_between_runs=set_between_runs,
                        record_input_spikes=record_input_spikes)
-    gsyn = synfire_run.get_output_pop_gsyn_numpy()
+    gsyn = synfire_run.get_output_pop_gsyn_exc_numpy()
     v = synfire_run.get_output_pop_voltage_numpy()
     input = synfire_run.get_spike_source_spikes_numpy()
     hist = numpy.histogram(input[:, 1], bins=[0, 5000, 10000])
     print hist[0][0], hist[0][1]
-    spikes = synfire_run.get_output_pop_spikes()
+    spikes = synfire_run.get_output_pop_spikes_numpy()
     plot_utils.plot_spikes(input, spikes2=spikes)
     plot_utils.heat_plot(v)
     plot_utils.heat_plot(gsyn)
