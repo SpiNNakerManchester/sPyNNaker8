@@ -175,7 +175,7 @@ class Recorder(RecordingCommon):
     def _get_all_possible_recordable_variables(self):
         variables = OrderedSet()
         if isinstance(self._population._vertex, AbstractSpikeRecordable):
-            variables.append('spikes')
+            variables.add('spikes')
         if isinstance(self._population._vertex, AbstractNeuronRecordable):
             variables.update(
                 self._population._vertex.get_recordable_variables())
