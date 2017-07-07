@@ -1,8 +1,7 @@
 import logging
 
-from spynnaker.pyNN.models.neuron.plasticity.stdp.timing_dependence.\
-    timing_dependence_spike_pair import TimingDependenceSpikePair as \
-    CommonTimingDependenceSpikePair
+from spynnaker.pyNN.models.neuron.plasticity.stdp.timing_dependence \
+    import TimingDependenceSpikePair as CommonTimingDependenceSpikePair
 
 logger = logging.getLogger(__name__)
 

@@ -1,6 +1,5 @@
-from spynnaker8.utilities.data_holder import DataHolder
-from spynnaker.pyNN.models.spike_source.spike_source_array \
-    import SpikeSourceArray
+from spynnaker8.utilities import DataHolder
+from spynnaker.pyNN.models.spike_source import SpikeSourceArray
 
 
 class SpikeSourceArrayDataHolder(DataHolder):
