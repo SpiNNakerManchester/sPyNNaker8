@@ -93,7 +93,7 @@ class Recorder(RecordingCommon):
         # if all are needed to be extracted, extract each and plonk into the
         # neo block segment
         if variables == 'all':
-            variables = self._get_all_possible_recordable_variables()
+            variables = self._get_all_recording_variables()
 
         # if variable is a base string, plonk into a array for ease of
         # conversion
@@ -175,11 +175,26 @@ class Recorder(RecordingCommon):
     def _get_all_possible_recordable_variables(self):
         variables = OrderedSet()
         if isinstance(self._population._vertex, AbstractSpikeRecordable):
-            variables.append('spikes')
+            variables.add('spikes')
         if isinstance(self._population._vertex, AbstractNeuronRecordable):
             variables.update(
                 self._population._vertex.get_recordable_variables())
-        return list(variables)
+        return variables
+
+    def _get_all_recording_variables(self):
+        possibles = self._get_all_possible_recordable_variables()
+        variables = OrderedSet()
+        for possible in possibles:
+            if possible == "spikes" and  \
+                    isinstance(self._population._vertex,
+                               AbstractSpikeRecordable) and \
+                    self._population._vertex.is_recording_spikes():
+                variables.add(possible)
+            elif isinstance(self._population._vertex,
+                            AbstractNeuronRecordable) and \
+                    self._population._vertex.is_recording(possible):
+                variables.add(possible)
+        return variables
 
     def _metadata(self):
         metadata = {
