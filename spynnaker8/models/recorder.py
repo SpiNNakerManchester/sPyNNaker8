@@ -1,3 +1,4 @@
+from collections import defaultdict
 import logging
 import neo
 import os
@@ -14,6 +15,7 @@ from spynnaker.pyNN.models.recording_common import RecordingCommon
 from spynnaker.pyNN.utilities import utility_calls
 from spinn_front_end_common.utilities.globals_variables import get_simulator
 from spynnaker.pyNN import exceptions
+from spynnaker8.models.data_cache import DataCache
 from spynnaker8.utilities.spynnaker8_neo_block import SpynnakerNeoBlock
 from spynnaker8.utilities.spynnaker8_neo_segment import SpynnakerNeoSegment
 
@@ -25,6 +27,7 @@ class Recorder(RecordingCommon):
         RecordingCommon.__init__(
             self, population, get_simulator().machine_time_step / 1000.0)
         self._recording_start_time = get_simulator().t
+        self._data_cache= defaultdict(DataCache)
 
     @staticmethod
     def _get_io(filename):
@@ -100,15 +103,19 @@ class Recorder(RecordingCommon):
         if isinstance(variables, basestring):
             variables = [variables]
 
+        data_cache = self._data_cache[get_simulator().segment_counter]
         for variable in variables:
+            if data_cache.has_data(variable, get_simulator().t):
+                data = data_cache.get_data(variable)
+            else:
+                data = self._get_recorded_variable(variable)
+                data_cache.save_data(data, variable, get_simulator().t)
             if variable == "spikes":
-                spikes = self._get_recorded_variable('spikes')
-                self._read_in_spikes(spikes, segment)
+                self._read_in_spikes(data, segment)
             else:
                 ids = sorted(self._filter_recorded(
                     self._indices_to_record[variable]))
-                signal_array = self._get_recorded_variable(variable)
-                self._read_in_signal(signal_array, segment, ids, variable)
+                self._read_in_signal(data, segment, ids, variable)
         if clear:
             self._clear_recording(variables)
         return segment
