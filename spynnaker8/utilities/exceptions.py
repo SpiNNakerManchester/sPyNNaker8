@@ -57,6 +57,6 @@ class InvalidParameterType(Spynnaker8Exception):
     pass
 
 
-class PyNN7Exception(exceptions.ConfigurationException, Spynnaker8Exception):
+class PyNN7Exception(ConfigurationException, Spynnaker8Exception):
     """ Raised when Pynn7 syntax is detected"""
     pass

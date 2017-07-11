@@ -348,9 +348,10 @@ def set_number_of_neurons_per_core(neuron_type, max_permitted):
     :param neuron_type:
     :param max_permitted:
     """
-try:
-    simulator = globals_variables.get_simulator()
-        simulator.set_number_of_neurons_per_core(neuron_type.build_model(),max_permitted)
+    try:
+        simulator = globals_variables.get_simulator()
+        simulator.set_number_of_neurons_per_core(neuron_type.build_model(),
+                                                 max_permitted)
     except AttributeError as ex:
         if isinstance(neuron_type, str):
             msg = "set_number_of_neurons_per_core call now expects " \
