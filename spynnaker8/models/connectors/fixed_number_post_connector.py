@@ -1,8 +1,7 @@
 import logging
 
-from spynnaker.pyNN.models.neural_projections.connectors. \
-    fixed_number_post_connector import FixedNumberPostConnector as \
-    CommonFixedNumberPostConnector
+from spynnaker.pyNN.models.neural_projections.connectors \
+    import FixedNumberPostConnector as CommonFixedNumberPostConnector
 from pyNN.connectors import FixedNumberPostConnector as \
     PyNNFixedNumberPostConnector
 

@@ -6,9 +6,8 @@ from spynnaker.pyNN.models.pynn_population_common import PyNNPopulationCommon
 from spinn_front_end_common.utilities import exceptions
 from spinn_front_end_common.utilities import globals_variables
 
-from spynnaker8.models.recorder import Recorder
-from spynnaker8.utilities.data_holder import DataHolder
-from spynnaker8.utilities.id import ID
+from spynnaker8.models import Recorder
+from spynnaker8.utilities import DataHolder, ID
 
 from pyNN import descriptions
 
@@ -89,7 +88,7 @@ class Population(PyNNPopulationCommon, Recorder):
         """
         return self._vertex
 
-    def id_to_index(self, id):
+    def id_to_index(self, id):  # @ReservedAssignment
         """
         Given the ID(s) of cell(s) in the Population, return its (their) index
         (order in the Population).
@@ -126,33 +125,30 @@ class Population(PyNNPopulationCommon, Recorder):
         if variables is None:  # reset the list of things to record
             # note that if record(None) is called, its a reset
             Recorder._turn_off_all_recording(self)
-        else:
             # handle one element vs many elements
-            if isinstance(variables, basestring):
+        elif isinstance(variables, basestring):
+            # handle special case of 'all'
+            if variables == "all":
+                logger.warn(
+                    "This is not currently standard PyNN, and therefore "
+                    "may not work in other simulators.")
 
-                # handle special case of 'all'
-                if variables == "all":
+                # get all possible recordings for this vertex
+                variables = self._get_all_possible_recordable_variables()
 
-                    logger.warn(
-                        "This is not currently standard PyNN, and therefore "
-                        "may not work in other simulators.")
-
-                    # get all possible recordings for this vertex
-                    variables = self._get_all_possible_recordable_variables()
-
-                    # iterate though them
-                    for variable in variables:
-                        self._record(variable, self._all_ids,
-                                     sampling_interval, to_file)
-                else:
-                    # record variable
-                    self._record(
-                        variables, self._all_ids, sampling_interval, to_file)
-
-            else:  # list of variables, so just iterate though them
+                # iterate though them
                 for variable in variables:
-                    self._record(
-                        variable, self._all_ids, sampling_interval, to_file)
+                    self._record(variable, self._all_ids,
+                                 sampling_interval, to_file)
+            else:
+                # record variable
+                self._record(
+                    variables, self._all_ids, sampling_interval, to_file)
+
+        else:  # list of variables, so just iterate though them
+            for variable in variables:
+                self._record(
+                    variable, self._all_ids, sampling_interval, to_file)
 
     def write_data(self, io, variables='all', gather=True, clear=False,
                    annotations=None):

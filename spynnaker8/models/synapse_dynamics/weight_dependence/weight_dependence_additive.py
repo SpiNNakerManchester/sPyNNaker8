@@ -1,6 +1,5 @@
-from spynnaker.pyNN.models.neuron.plasticity.stdp.weight_dependence\
-    .weight_dependence_additive import WeightDependenceAdditive as \
-    CommonWeightDependenceAdditive
+from spynnaker.pyNN.models.neuron.plasticity.stdp.weight_dependence \
+    import WeightDependenceAdditive as CommonWeightDependenceAdditive
 
 
 class WeightDependenceAdditive(CommonWeightDependenceAdditive):

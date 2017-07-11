@@ -1,6 +1,5 @@
-from spynnaker.pyNN.models.neural_projections.connectors. \
-    fixed_probability_connector import FixedProbabilityConnector as \
-    CommonFixedProbabilityConnector
+from spynnaker.pyNN.models.neural_projections.connectors \
+    import FixedProbabilityConnector as CommonFixedProbabilityConnector
 from pyNN.connectors import FixedProbabilityConnector as \
     PyNNFixedProbabilityConnector
 

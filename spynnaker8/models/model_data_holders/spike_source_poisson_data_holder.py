@@ -1,6 +1,5 @@
-from spynnaker.pyNN.models.spike_source.spike_source_poisson \
-    import SpikeSourcePoisson
-from spynnaker8.utilities.data_holder import DataHolder
+from spynnaker.pyNN.models.spike_source import SpikeSourcePoisson
+from spynnaker8.utilities import DataHolder
 
 
 class SpikeSourcePoissonDataHolder(DataHolder):

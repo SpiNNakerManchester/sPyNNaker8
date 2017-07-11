@@ -4,16 +4,15 @@ import numpy
 from pyNN import common as pynn_common
 from pyNN.space import Space as PyNNSpace
 
-from spynnaker8 import FromListConnector
-from spynnaker8.models.synapse_dynamics.synapse_dynamics_static \
-    import SynapseDynamicsStatic
+from spynnaker8.models.connectors import FromListConnector
+from spynnaker8.models.synapse_dynamics import SynapseDynamicsStatic
 from spynnaker8._version import __version__
 
 from spynnaker.pyNN.models.pynn_projection_common import PyNNProjectionCommon
 from spinn_front_end_common.utilities import globals_variables
-from spynnaker.pyNN import exceptions
+from spynnaker.pyNN.exceptions import InvalidParameterType
 
-from spinn_front_end_common.utilities import exceptions as common_exceptions
+from spinn_front_end_common.utilities.exceptions import ConfigurationException
 
 logger = logging.getLogger(__name__)
 
@@ -32,7 +31,7 @@ class Projection(PyNNProjectionCommon):
             receptor_type=None, space=None, label=None):
 
         if source is not None:
-            raise exceptions.InvalidParameterType(
+            raise InvalidParameterType(
                 "spynnaker8 {} does not yet support multi-compartmental "
                 "cells.".format(__version__))
 
@@ -81,15 +80,14 @@ class Projection(PyNNProjectionCommon):
     def set(self, **attributes):
         raise NotImplementedError
 
-    def get(self, attribute_names, format, gather=True, with_address=False,
-            multiple_synapses='sum'):
-
+    def get(self, attribute_names, format,  # @ReservedAssignment
+            gather=True, with_address=False, multiple_synapses='sum'):
         if with_address:
-            raise common_exceptions.ConfigurationException(
+            raise ConfigurationException(
                 "Spynnaker only recongises with_address=False")
 
         if multiple_synapses != 'sum':
-            raise common_exceptions.ConfigurationException(
+            raise ConfigurationException(
                 "Spynnaker only recongises multiple_synapses == sum")
 
         # fix issue with 1 vs many
@@ -113,29 +111,37 @@ class Projection(PyNNProjectionCommon):
     def __iter__(self):
         raise NotImplementedError
 
-    def getWeights(self, format='list', gather=True):
+    def getWeights(self, format='list',  # @ReservedAssignment
+                   gather=True):
         logger.warn("getWeights is deprecated.  Use get('weight') instead")
         return self.get('weight', format, gather, with_address=False)
 
-    def getDelays(self, format='list', gather=True):
+    def getDelays(self, format='list',  # @ReservedAssignment
+                  gather=True):
         logger.warn("getDelays is deprecated.  Use get('delay') instead")
         return self.get('delay', format, gather, with_address=False)
 
-    def getSynapseDynamics(self, parameter_name, format='list', gather=True):
+    def getSynapseDynamics(self, parameter_name,
+                           format='list',  # @ReservedAssignment
+                           gather=True):
         logger.warn(
             "getSynapseDynamics is deprecated.  Use get(parameter_name)"
             " instead")
         return self.get(parameter_name, format, gather, with_address=False)
 
-    def saveConnections(self, file, gather=True, compatible_output=True):
+    def saveConnections(self, file,  # @ReservedAssignment
+                        gather=True,
+                        compatible_output=True):  # @UnusedVariable
         logger.warn("saveConnections is deprecated.  Use save('all') instead")
         self.save('all', file, format='list', gather=gather)
 
-    def printWeights(self, file, format='list', gather=True):
+    def printWeights(self, file, format='list',  # @ReservedAssignment
+                     gather=True):
         logger.warn("printWeights is deprecated.  Use save('weight') instead")
         self.save('weight', file, format, gather)
 
-    def printDelays(self, file, format='list', gather=True):
+    def printDelays(self, file, format='list',  # @ReservedAssignment
+                    gather=True):
         """
         Print synaptic weights to file. In the array format, zeros are printed
         for non-existent connections.
@@ -143,7 +149,8 @@ class Projection(PyNNProjectionCommon):
         logger.warn("printDelays is deprecated.  Use save('delay') instead")
         self.save('delay', file, format, gather)
 
-    def weightHistogram(self, min=None, max=None, nbins=10):
+    def weightHistogram(self, min=None, max=None,  # @ReservedAssignment
+                        nbins=10):
         """
         Return a histogram of synaptic weights.
         If min and max are not given, the minimum and maximum weights are

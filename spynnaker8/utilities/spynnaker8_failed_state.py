@@ -1,4 +1,4 @@
-from spinn_front_end_common.utilities import exceptions
+from spinn_front_end_common.utilities.exceptions import ConfigurationException
 from spinn_front_end_common.utilities.failed_state import FAILED_STATE_MSG
 from spynnaker.pyNN.utilities.spynnaker_failed_state \
     import SpynnakerFailedState
@@ -13,7 +13,7 @@ class Spynnaker8FailedState(Spynnaker8SimulatorInterface,
 
     @property
     def dt(self):
-        raise exceptions.ConfigurationException(FAILED_STATE_MSG)
+        raise ConfigurationException(FAILED_STATE_MSG)
 
     @property
     def mpi_rank(self):

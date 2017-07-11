@@ -1,5 +1,5 @@
 import unittest
-import spynnaker.pyNN.utilities.utility_calls as utility_calls
+from spynnaker.pyNN.utilities import utility_calls
 import os
 import shutil
 from pyNN.random import RandomDistribution
