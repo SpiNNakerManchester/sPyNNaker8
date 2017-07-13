@@ -7,13 +7,13 @@ from datetime import datetime
 import quantities as pq
 from spinn_utilities.ordered_set import OrderedSet
 
-from spynnaker.pyNN.models.common.abstract_neuron_recordable import \
-    AbstractNeuronRecordable
-from spynnaker.pyNN.models.common.abstract_spike_recordable import \
-    AbstractSpikeRecordable
+from spynnaker.pyNN.models.common import AbstractNeuronRecordable
+from spynnaker.pyNN.models.common import AbstractSpikeRecordable
 from spynnaker.pyNN.models.recording_common import RecordingCommon
 from spynnaker.pyNN.utilities import utility_calls
 from spinn_front_end_common.utilities.globals_variables import get_simulator
+from spynnaker.pyNN.exceptions import InvalidParameterType
+from spynnaker8.utilities import SpynnakerNeoBlock, SpynnakerNeoSegment
 from spynnaker.pyNN import exceptions
 from spynnaker8.models.data_cache import DataCache
 from spynnaker8.utilities.spynnaker8_neo_block import SpynnakerNeoBlock
@@ -241,6 +241,6 @@ class Recorder(RecordingCommon):
                     get_simulator().placements,
                     get_simulator().graph_mapper)
             else:
-                raise exceptions.InvalidParameterType(
+                raise InvalidParameterType(
                     "The variable {} is not a recordable value".format(
                         variable))

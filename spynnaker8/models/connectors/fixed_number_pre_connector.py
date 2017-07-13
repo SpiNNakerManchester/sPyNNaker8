@@ -1,6 +1,5 @@
-from spynnaker.pyNN.models.neural_projections.connectors. \
-    fixed_number_pre_connector import FixedNumberPreConnector as \
-    CommonFixedNumberPreConnector
+from spynnaker.pyNN.models.neural_projections.connectors \
+    import FixedNumberPreConnector as CommonFixedNumberPreConnector
 from pyNN.connectors import FixedNumberPreConnector as \
     PyNNFixedNumberPreConnector
 

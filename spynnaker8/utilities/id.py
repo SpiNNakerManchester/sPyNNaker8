@@ -2,7 +2,7 @@ from pyNN import common as PyNNCommon
 
 
 class ID(int, PyNNCommon.IDMixin):
-    """ some filter container for allowing rnadom setters of values
+    """ some filter container for allowing random setters of values
 
     """
 
