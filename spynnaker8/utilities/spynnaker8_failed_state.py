@@ -17,24 +17,24 @@ class Spynnaker8FailedState(Spynnaker8SimulatorInterface,
 
     @property
     def mpi_rank(self):
-        raise exceptions.ConfigurationException(FAILED_STATE_MSG)
+        raise ConfigurationException(FAILED_STATE_MSG)
 
     @property
     def name(self):
-        raise exceptions.ConfigurationException(FAILED_STATE_MSG)
+        raise ConfigurationException(FAILED_STATE_MSG)
 
     @property
     def num_processes(self):
-        raise exceptions.ConfigurationException(FAILED_STATE_MSG)
+        raise ConfigurationException(FAILED_STATE_MSG)
 
     @property
     def recorders(self):
-        raise exceptions.ConfigurationException(FAILED_STATE_MSG)
+        raise ConfigurationException(FAILED_STATE_MSG)
 
     @property
     def segment_counter(self):
-        raise exceptions.ConfigurationException(FAILED_STATE_MSG)
+        raise ConfigurationException(FAILED_STATE_MSG)
 
     @property
     def t(self):
-        raise exceptions.ConfigurationException(FAILED_STATE_MSG)
+        raise ConfigurationException(FAILED_STATE_MSG)
