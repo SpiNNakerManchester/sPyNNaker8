@@ -1,7 +1,7 @@
 from pyNN.connectors import AllToAllConnector as PyNNAllToAllConnector
 
-from spynnaker.pyNN.models.neural_projections.connectors. \
-    all_to_all_connector import AllToAllConnector as CommonAllToAllConnector
+from spynnaker.pyNN.models.neural_projections.connectors \
+    import AllToAllConnector as CommonAllToAllConnector
 
 import logging
 

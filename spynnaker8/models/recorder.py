@@ -6,16 +6,13 @@ from datetime import datetime
 import quantities as pq
 from spinn_utilities.ordered_set import OrderedSet
 
-from spynnaker.pyNN.models.common.abstract_neuron_recordable import \
-    AbstractNeuronRecordable
-from spynnaker.pyNN.models.common.abstract_spike_recordable import \
-    AbstractSpikeRecordable
+from spynnaker.pyNN.models.common import AbstractNeuronRecordable
+from spynnaker.pyNN.models.common import AbstractSpikeRecordable
 from spynnaker.pyNN.models.recording_common import RecordingCommon
 from spynnaker.pyNN.utilities import utility_calls
 from spinn_front_end_common.utilities.globals_variables import get_simulator
-from spynnaker.pyNN import exceptions
-from spynnaker8.utilities.spynnaker8_neo_block import SpynnakerNeoBlock
-from spynnaker8.utilities.spynnaker8_neo_segment import SpynnakerNeoSegment
+from spynnaker.pyNN.exceptions import InvalidParameterType
+from spynnaker8.utilities import SpynnakerNeoBlock, SpynnakerNeoSegment
 
 logger = logging.getLogger(__name__)
 
@@ -175,7 +172,7 @@ class Recorder(RecordingCommon):
     def _get_all_possible_recordable_variables(self):
         variables = OrderedSet()
         if isinstance(self._population._vertex, AbstractSpikeRecordable):
-            variables.append('spikes')
+            variables.add('spikes')
         if isinstance(self._population._vertex, AbstractNeuronRecordable):
             variables.update(
                 self._population._vertex.get_recordable_variables())
@@ -219,6 +216,6 @@ class Recorder(RecordingCommon):
                     get_simulator().placements,
                     get_simulator().graph_mapper)
             else:
-                raise exceptions.InvalidParameterType(
+                raise InvalidParameterType(
                     "The variable {} is not a recordable value".format(
                         variable))
