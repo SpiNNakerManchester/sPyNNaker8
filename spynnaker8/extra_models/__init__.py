@@ -21,8 +21,6 @@ from spynnaker8.models.synapse_dynamics.timing_dependence \
 from spynnaker8.models.synapse_dynamics.weight_dependence \
     import WeightDependenceAdditiveTriplet
 
-import os
-
 __all__ = [
     # spynnaker 8 models
     'IFCurDelta', 'IFCurrExpCa2Adaptive', 'IFCondExpStock',
