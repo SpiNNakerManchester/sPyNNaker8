@@ -102,6 +102,8 @@ from spynnaker8.models.populations.population_view import PopulationView
 # noinspection PyUnresolvedReferences
 from spynnaker8.models.projection import Projection as SpiNNakerProjection
 
+from spynnaker8 import external_devices
+
 # big stuff
 from spynnaker8.spinnaker import SpiNNaker
 
@@ -128,7 +130,8 @@ __all__ = [
     'Assembly', 'Population', 'PopulationView',
     # projection
     'SpiNNakerProjection',
-
+    # External devices
+    'external_devices',
     # Stuff that we define
     'end', 'setup', 'run', 'run_until', 'run_for', 'num_processes', 'rank',
     'reset', 'set_number_of_neurons_per_core',
