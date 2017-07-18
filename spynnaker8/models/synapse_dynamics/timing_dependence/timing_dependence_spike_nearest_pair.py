@@ -1,4 +1,4 @@
-from spynnaker_extra_pynn_models.neuron.plasticity.stdp.timing_dependence \
+from spynnaker.pyNN.models.neuron.plasticity.stdp.timing_dependence \
     import TimingDependenceSpikeNearestPair as \
     CommonTimingDependenaceSpikeNearestPair
 

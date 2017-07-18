@@ -1,6 +1,6 @@
 from spynnaker.pyNN.models.neuron import AbstractPopulationVertex
 from spynnaker8.utilities import DataHolder
-from spynnaker_extra_pynn_models.neuron.builds import IFCondExpStoc
+from spynnaker.pyNN.models.neuron.builds import IFCondExpStoc
 
 
 class IfCondExpStocDataHolder(DataHolder):
