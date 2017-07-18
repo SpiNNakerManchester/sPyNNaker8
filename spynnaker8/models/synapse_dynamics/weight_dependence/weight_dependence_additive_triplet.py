@@ -1,4 +1,4 @@
-from spynnaker_extra_pynn_models.neuron.plasticity.stdp.weight_dependence\
+from spynnaker.pyNN.models.neuron.plasticity.stdp.weight_dependence\
     import WeightDependenceAdditiveTriplet \
     as CommonWeightDependenceAdditiveTriplet
 
