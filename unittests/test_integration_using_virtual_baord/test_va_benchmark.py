@@ -10,4 +10,5 @@ class TestVaBenchmark(BaseTestCase):
 
 
 if __name__ == '__main__':
-    test_va_benchmark.do_run()
+    x = TestVaBenchmark()
+    x.test_run()

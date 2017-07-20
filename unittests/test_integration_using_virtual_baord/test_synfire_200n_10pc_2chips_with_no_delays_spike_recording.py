@@ -30,8 +30,5 @@ class Synfire200n10pc2chipsWithNoDelaysSpikeRecording(BaseTestCase):
 
 
 if __name__ == '__main__':
-    synfire_run.do_run(nNeurons, delay=delay,
-                       neurons_per_core=neurons_per_core,
-                       constraint=constraint, record_v=record_v,
-                       record_gsyn_exc=record_gsyn,
-                       record_gsyn_inh=record_gsyn)
+    x = Synfire200n10pc2chipsWithNoDelaysSpikeRecording()
+    x.test_run()

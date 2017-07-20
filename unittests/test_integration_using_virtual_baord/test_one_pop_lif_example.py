@@ -31,5 +31,5 @@ class OnePopLifExample(BaseTestCase):
 
 
 if __name__ == '__main__':
-    nNeurons = 100  # number of neurons in each population
+    nNeurons = 255  # number of neurons in each population
     do_run(nNeurons)

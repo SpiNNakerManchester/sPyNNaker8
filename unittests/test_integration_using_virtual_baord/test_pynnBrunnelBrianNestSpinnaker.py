@@ -14,4 +14,5 @@ class PynnBrunnelBrianNestSpinnaker(BaseTestCase):
 
 
 if __name__ == '__main__':
-    script.do_run(Neurons, sim_time, record=True)
+    x = PynnBrunnelBrianNestSpinnaker()
+    x.test_run()

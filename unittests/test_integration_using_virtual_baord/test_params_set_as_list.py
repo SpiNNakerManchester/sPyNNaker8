@@ -3,8 +3,6 @@ import spynnaker8 as p
 from p8_integration_tests.base_test_case import BaseTestCase
 from pyNN.random import RandomDistribution, NumpyRNG
 
-__author__ = 'stokesa6'
-
 
 def do_run(nNeurons):
 
@@ -21,11 +19,6 @@ def do_run(nNeurons):
     v_reset = list()
     v_rest = list()
     v_thresh = list()
-
-    cell_params_lif = {'cm': cm, 'i_offset': i_off, 'tau_m': tau_m,
-                       'tau_refrac': tau_re, 'tau_syn_E': tau_syn_e,
-                       'tau_syn_I': tau_syn_i, 'v_reset': v_reset,
-                       'v_rest': v_rest, 'v_thresh': v_thresh}
 
     for atom in range(0, nNeurons):
         cm.append(0.25)

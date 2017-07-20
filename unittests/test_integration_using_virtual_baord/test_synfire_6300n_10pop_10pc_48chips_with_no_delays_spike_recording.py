@@ -13,5 +13,5 @@ class Synfire6300n10pop10pc48chipsNoDelaysSpikeRecording(BaseTestCase):
 
 
 if __name__ == '__main__':
-    synfire_npop_run.do_run(n_neurons, n_pops=n_pops,
-                            neurons_per_core=n_neurons)
+    x = Synfire6300n10pop10pc48chipsNoDelaysSpikeRecording()
+    x.test_run()

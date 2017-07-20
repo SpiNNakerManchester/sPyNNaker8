@@ -65,5 +65,5 @@ class SynfireIzhikevich(BaseTestCase):
 
 
 if __name__ == '__main__':
-    nNeurons = 200  # number of neurons in each population
-    do_run(nNeurons)
+    x = SynfireIzhikevich()
+    x.test_run()

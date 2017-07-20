@@ -18,3 +18,10 @@ class SSPNeuronClassNoEdgeTest(BaseTestCase):
         sim.run(100.0)
 
         sim.end()
+
+if __name__ == "__main__":
+    """
+    main entrance method
+    """
+    blah = SSPNeuronClassNoEdgeTest()
+    blah.test_run()

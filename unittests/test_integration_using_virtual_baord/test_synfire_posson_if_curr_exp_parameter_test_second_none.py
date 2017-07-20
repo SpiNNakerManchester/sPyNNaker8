@@ -35,11 +35,5 @@ class TestSynfirePossonIfCurrExpParameterTestSecondNone(BaseTestCase):
 
 
 if __name__ == '__main__':
-    synfire_run.do_run(n_neurons, neurons_per_core=neurons_per_core,
-                       run_times=run_times,
-                       use_wrap_around_connections=wrap_around,
-                       input_class=input_class, start_time=start_time,
-                       duration=duration, rate=rate,
-                       extract_between_runs=extract_between_runs,
-                       set_between_runs=set_between_runs,
-                       record_input_spikes=record_input_spikes)
+    x = TestSynfirePossonIfCurrExpParameterTestSecondNone()
+    x.test_synfire_posson_if_curr_exp_parameter_test_second_none()

@@ -11,6 +11,5 @@ class SynfireIfCurrExp(BaseTestCase):
 
 
 if __name__ == '__main__':
-    p.setup()
-    p.Population(10, p.SpikeSourceArray, {'spike_times': [100, 200]},
-                 label='messed up')
+    w = SynfireIfCurrExp()
+    w.test_run()

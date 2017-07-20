@@ -10,4 +10,5 @@ class TestReadingSpikeArrayDataAndBigSlices(BaseTestCase):
 
 
 if __name__ == '__main__':
-    integration.do_run()
+    x = TestReadingSpikeArrayDataAndBigSlices()
+    x.test_script()
