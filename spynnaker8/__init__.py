@@ -109,9 +109,6 @@ from spynnaker8.models.projection import Projection as SpiNNakerProjection
 # big stuff
 from spynnaker8.spinnaker import SpiNNaker
 
-# Exceptions
-from spynnaker8.utilities.exceptions import PyNN7Exception
-
 import logging
 
 logger = logging.getLogger(__name__)
@@ -348,16 +345,13 @@ def set_number_of_neurons_per_core(neuron_type, max_permitted):
     :param neuron_type:
     :param max_permitted:
     """
-    try:
-        simulator = globals_variables.get_simulator()
-        simulator.set_number_of_neurons_per_core(neuron_type.build_model(),
-                                                 max_permitted)
-    except AttributeError as ex:
-        if isinstance(neuron_type, str):
-            msg = "set_number_of_neurons_per_core call now expects " \
-                  "neuron_typeas a class instead of as a str"
-            raise PyNN7Exception(msg)
-        raise ex
+    if isinstance(neuron_type, str):
+        msg = "set_number_of_neurons_per_core call now expects " \
+              "neuron_typeas a class instead of as a str"
+        raise ConfigurationException(msg)
+    simulator = globals_variables.get_simulator()
+    simulator.set_number_of_neurons_per_core(neuron_type.build_model(),
+                                             max_permitted)
 
 
 def register_database_notification_request(hostname, notify_port, ack_port):
@@ -377,6 +371,17 @@ def register_database_notification_request(hostname, notify_port, ack_port):
 
 def connect(pre, post, weight=0.0, delay=None, receptor_type=None, p=1,
             rng=None):
+    """ builds a projection
+    
+    :param pre: source pop
+    :param post: destination pop
+    :param weight: weight of the connections
+    :param delay: the delay of the connections
+    :param receptor_type: excititory / inhib
+    :param p: probability
+    :param rng: random number generator
+    :return: 
+    """
     global __pynn_connect
     if not globals_variables.has_simulator():
         raise ConfigurationException(FAILED_STATE_MSG)
@@ -384,6 +389,13 @@ def connect(pre, post, weight=0.0, delay=None, receptor_type=None, p=1,
 
 
 def create(cellclass, cellparams=None, n=1):
+    """ builds a population with certian params
+    
+    :param cellclass: population class
+    :param cellparams: population params.
+    :param n: n neurons
+    :return: 
+    """
     global __pynn_create
     if not globals_variables.has_simulator():
         raise ConfigurationException(FAILED_STATE_MSG)
@@ -399,6 +411,10 @@ def NativeRNG(seed_value):
 
 
 def get_current_time():
+    """ the time within the simulation
+    
+    :return: 
+    """
     global __pynn_get_current_time
     if not globals_variables.has_simulator():
         raise ConfigurationException(FAILED_STATE_MSG)
@@ -406,6 +422,10 @@ def get_current_time():
 
 
 def get_min_delay():
+    """the minimum allowed synaptic delay
+    
+    :return: 
+    """
     global __pynn_get_min_delay
     if not globals_variables.has_simulator():
         raise ConfigurationException(FAILED_STATE_MSG)
@@ -413,6 +433,10 @@ def get_min_delay():
 
 
 def get_max_delay():
+    """ the maximum allowed synaptic delay
+    
+    :return: 
+    """
     global __pynn_get_max_delay
     if not globals_variables.has_simulator():
         raise ConfigurationException(FAILED_STATE_MSG)
@@ -420,6 +444,10 @@ def get_max_delay():
 
 
 def get_time_step():
+    """ the integration time step
+    
+    :return: 
+    """
     global __pynn_get_time_step
     if not globals_variables.has_simulator():
         raise ConfigurationException(FAILED_STATE_MSG)
@@ -427,12 +455,22 @@ def get_time_step():
 
 
 def initialize(cells, **initial_values):
+    """ sets cells values to certain values
+    
+    :param cells: the cells to change params on
+    :param initial_values: the params and there values to change
+    :return: 
+    """
     if not globals_variables.has_simulator():
         raise ConfigurationException(FAILED_STATE_MSG)
     pynn_common.initialize(cells, **initial_values)
 
 
 def num_processes():
+    """the number of MPI processes
+    
+    :return: 
+    """
     global __pynn_num_processes
     if not globals_variables.has_simulator():
         raise ConfigurationException(FAILED_STATE_MSG)
@@ -440,6 +478,10 @@ def num_processes():
 
 
 def rank():
+    """the MPI rank of the current node
+    
+    :return: 
+    """
     global __pynn_rank
     if not globals_variables.has_simulator():
         raise ConfigurationException(FAILED_STATE_MSG)
@@ -448,6 +490,18 @@ def rank():
 
 def record(variables, source, filename, sampling_interval=None,
            annotations=None):
+    """ sets variables to be recorded
+    
+    :param variables: may be either a single variable name or a list of \
+        variable names. For a given celltype class, celltype.recordable \
+        contains a list of variables that can be recorded for that celltype.
+    :param source: 
+    :param filename: file name to write data to
+    :param sampling_interval: how often to sample the reocrding, not \
+        ignored so far
+    :param annotations: the annotations to data writers
+    :return: neo object
+    """
     global __pynn_record
     if not globals_variables.has_simulator():
         raise ConfigurationException(FAILED_STATE_MSG)
@@ -455,7 +509,14 @@ def record(variables, source, filename, sampling_interval=None,
                          annotations)
 
 
-def reset(annotations={}):
+def reset(annotations=None):
+    """ resets the simulation to t = 0
+    
+    :param annotations: the annotations to the data objects
+    :return: 
+    """
+    if annotations is None:
+        annotations = {}
     global __pynn_reset
     if not globals_variables.has_simulator():
         raise ConfigurationException(FAILED_STATE_MSG)
@@ -463,6 +524,12 @@ def reset(annotations={}):
 
 
 def run(simtime, callbacks=None):
+    """ The run() function advances the simulation for a given number of \
+        milliseconds, e.g.:
+    :param simtime:  time in milliseconds
+    :param callbacks: callbacks to run 
+    :return: 
+    """
     global __pynn_run
     if not globals_variables.has_simulator():
         raise ConfigurationException(FAILED_STATE_MSG)
@@ -475,6 +542,12 @@ run_for = run
 
 
 def run_until(self, tstop):
+    """ run untill that time period has completed
+    
+    :param self: ????
+    :param tstop: the time to stop at
+    :return: 
+    """
     global __pynn_run_until
     if not globals_variables.has_simulator():
         raise ConfigurationException(FAILED_STATE_MSG)

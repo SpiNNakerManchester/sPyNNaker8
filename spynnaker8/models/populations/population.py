@@ -107,7 +107,7 @@ class Population(PyNNPopulationCommon, Recorder):
         return numpy.array(
             [ID(atom_id) for atom_id in id_range], dtype=ID)
 
-    def record(self, variables=None, to_file=None, sampling_interval=None):
+    def record(self, variables, to_file=None, sampling_interval=None):
         """
         Record the specified variable or variables for all cells in the
         Population or view.
