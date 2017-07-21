@@ -9,13 +9,14 @@ import spynnaker8 as p
 
 def do_run(nNeurons, n_pops, neurons_per_core, runtime=25000):
     """
-
+    Runs the script Does the run based on the parameters
     :param nNeurons: Number of Neurons in chain
     :type  nNeurons: int
     :param n_pops: Number of populations
     ;type n_pops: int
     :param neurons_per_core: Number of neurons per core
     :type neurons_per_core: int
+    :param runtime: time to run the script for
     """
     p.setup(timestep=1.0, min_delay=1.0, max_delay=144.0)
     p.set_number_of_neurons_per_core(p.IF_curr_exp, neurons_per_core)
