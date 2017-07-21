@@ -2,11 +2,14 @@ from quantities import ms
 import numpy as np
 
 
-def convert_analog_signal(data):
-    raise NotImplementedError("AnalogSignal")
-
-
 def convert_analog_signalarray(signal_array, time_unit=ms):
+    """
+    Converts part of a NEO object into told spynakker7 format
+
+    :param signal_array: Extended Quantities object
+    :param time_unit: Data time unit for time index
+    :rtype ndarray
+    """
     ids = signal_array.channel_index
     if time_unit == ms:
         times = signal_array.times.magnitude
@@ -48,7 +51,7 @@ def convert_data_list(data, name, runs=None):
 
     :param data: Data as returned by a getData() call
     :type data: SpynnakerNeoBlock
-    :param name: Nane of the data to be extracted.
+    :param name: Name of the data to be extracted.
         Same values as used in getData()
     :type str
     :param runs: List of Zero based index of the run to extract data for.
@@ -97,6 +100,15 @@ def convert_gsyn_inh_list(data):
 
 
 def convert_gsyn(gsyn_exc, gsyn_inh):
+    """
+    Converts two neo objects into the spynakker7 format
+
+    Note: It is acceptable for both neo parameters to be the same object
+
+    :param gsyn_exc: neo with gsyn_exc data
+    :param gsyn_inh: neo with gsyn_exc data
+    :rtype nparray
+    """
     exc = gsyn_exc.segments[0].filter(name='gsyn_exc')[0]
     inh = gsyn_inh.segments[0].filter(name='gsyn_inh')[0]
     ids = exc.channel_index
@@ -123,6 +135,12 @@ def convert_gsyn(gsyn_exc, gsyn_inh):
 
 
 def convert_spiketrains(spiketrains):
+    """
+    Converts a list of spiketrains into spynakker7 format
+
+    :param spiketrains: List of SpikeTrains
+    :rtype nparray
+    """
     neurons = np.concatenate(map(lambda x:
                                  np.repeat(x.annotations['source_index'],
                                            len(x)),
@@ -132,12 +150,32 @@ def convert_spiketrains(spiketrains):
 
 
 def convert_spikes(neo):
+    """
+    Extracts the spikes for run one from a Neo Object
+
+    :param neo: neo Object incliding Spike Data
+    :rtype nparray
+    """
     return convert_spiketrains(neo.segments[0].spiketrains)
 
 
 def count_spiketrains(spiketrains):
+    """
+    Help function to count the number of spikes in a list of spiketrains
+
+    :param spiketrains: List of SpikeTrains
+    :return Total number of spikes in all the spiketrains
+    """
     return sum(map(len, spiketrains))
 
 
 def count_spikes(neo):
+    """
+    Help function to count the number of spikes in a list of spiketrains
+
+    Only counts run 0
+
+    :param neo: Neo Object which has spikes in it
+    :return:
+    """
     return count_spiketrains(neo.segments[0].spiketrains)

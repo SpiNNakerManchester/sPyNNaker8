@@ -9,8 +9,24 @@ try:
 except Exception as e:
     matplotlib_missing = True
 
+"""
+Plotting tools to be unsed together with
+https://github.com/NeuralEnsemble/PyNN/blob/master/pyNN/utility/plotting.py
+"""
+
 
 def handle_options(ax, options):
+    """
+    Handles options that can not be passed to axes.plot
+
+    Removes the ones it has handled
+
+    axes.plot will throw an exception if it gets unwanted options
+
+    :param ax: An Axes in a matplot lib figure
+    :type ax: matplotlib.axes
+    :param options: All options the plotter can be configured with
+    """
     if "xticks" not in options or options.pop("xticks") is False:
         plt.setp(ax.get_xticklabels(), visible=False)
     if "xlabel" in options:
@@ -30,6 +46,15 @@ def handle_options(ax, options):
 
 
 def plot_spikes(ax, spike_times, neurons, label='', **options):
+    """
+    Plots the spikes based on two lists
+
+    :param ax: An Axes in a matplot lib figure
+    :param spike_times: List of Spiketimes
+    :param neurons: List of Neuron Ids
+    :param label: Label for the graph
+    :param options: plotting options
+    """
     max_index = max(neurons)
     min_index = min(neurons)
     ax.plot(spike_times, neurons, 'b.', **options)
@@ -42,7 +67,13 @@ def plot_spikes(ax, spike_times, neurons, label='', **options):
 
 def plot_spiketrains(ax, spiketrains, label='', **options):
     """
+
     Plot all spike trains in a Segment in a raster plot.
+
+    :param ax: An Axes in a matplot lib figure
+    :param spiketrains: List of spiketimes
+    :param label: Label for the graph
+    :param options: plotting options
     """
     ax.set_xlim(0, spiketrains[0].t_stop / ms)
     handle_options(ax, options)
@@ -57,6 +88,11 @@ def plot_spiketrains(ax, spiketrains, label='', **options):
 def plot_spikes_numpy(ax, spikes, label='', **options):
     """
     Plot all spike
+
+    :param ax: An Axes in a matplot lib figure
+    :param spikes: spynakker7 format nparray of spikes
+    :param label: Label for the graph
+    :param options: plotting options
     """
     handle_options(ax, options)
     neurons = spikes[:, 0]
@@ -65,6 +101,16 @@ def plot_spikes_numpy(ax, spikes, label='', **options):
 
 
 def heat_plot(ax, neurons, times, values, label='', **options):
+    """
+    Plots three lists of neurons, times and values into a heatmap
+
+    :param ax: An Axes in a matplot lib figure
+    :param neurons: List of Neuron ids
+    :param times: List of times
+    :param values: List of values to plot
+    :param label: Label for the graph
+    :param options: plotting options
+    """
     handle_options(ax, options)
     info_array = np.empty((max(neurons)+1, max(times)+1))
     info_array[:] = np.nan
@@ -79,6 +125,14 @@ def heat_plot(ax, neurons, times, values, label='', **options):
 
 
 def heat_plot_numpy(ax, data, label='', **options):
+    """
+    Plots neurons, times and values into a heatmap
+
+    :param ax: An Axes in a matplot lib figure
+    :param data: nparray of values in spknakker7 format
+    :param label: Label for the graph
+    :param options: plotting options
+    """
     neurons = data[:, 0].astype(int)
     times = data[:, 1].astype(int)
     values = data[:, 2]
@@ -86,6 +140,14 @@ def heat_plot_numpy(ax, data, label='', **options):
 
 
 def heat_plot_neo(ax, signal_array, label='', **options):
+    """
+    Plots neurons, times and values into a heatmap
+
+    :param ax: An Axes in a matplot lib figure
+    :param signal_array: Neo Signal array Object
+    :param label: Label for the graph
+    :param options: plotting options
+    """
     if label is None:
         label = signal_array.name
     ids = signal_array.channel_index.astype(int)
@@ -97,6 +159,20 @@ def heat_plot_neo(ax, signal_array, label='', **options):
 
 
 def plot_segment(axes, segment, label='', **options):
+    """
+    Plots a segment into a plot of spikes or a heatmap
+
+    If there is more than ode type of Data in the segment options must
+        include the name of the data to plot
+
+    Note: method signature defined by pynn plotting
+        This allows mixing of this plotting tool and pynn's
+
+    :param axes: An Axes in a matplot lib figure
+    :param segment: Data for one run to plot
+    :param label: Label for the graph
+    :param options: plotting options
+    """
     if "name" in options:
         name = options.pop("name")
         if name == 'spikes':
@@ -115,7 +191,7 @@ def plot_segment(axes, segment, label='', **options):
                       **options)
     elif len(segment.analogsignalarrays) > 1:
         raise Exception("Block.segment[0] has {} types of data "
-                        "please specifiy one to plot using name="
+                        "please specify one to plot using name="
                         "" % len(segment.analogsignalarrays))
     else:
         raise Exception("Block does not appear to hold any data")
