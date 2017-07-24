@@ -1,43 +1,43 @@
 import spynnaker8 as sim
+from p8_integration_tests.base_test_case import BaseTestCase
 # import neo_convertor
 
-sim.setup(timestep=1)
-pop_1 = sim.Population(1, sim.IF_curr_exp, {}, label="pop_1")
-input = sim.Population(1, sim.SpikeSourceArray, {'spike_times': [[0]]},
-                       label="input")
-input_proj = sim.Projection(input, pop_1, sim.OneToOneConnector(),
-                            synapse_type=sim.StaticSynapse(weight=5.0,
-                                                           delay=1),
-                            receptor_type="excitatory", source=None,
-                            space=None)
-loop = sim.Projection(pop_1, pop_1, sim.OneToOneConnector(),
-                      synapse_type=sim.StaticSynapse(weight=5.0, delay=1),
-                      receptor_type="excitatory", source=None,
-                      space=None)
 
-pop_1.record("spikes")
-pop_1.record("v")
-sim.run(20)
-# old_neo = pop_1.get_data("all")
-# old_spikes = neo_convertor.convert_spikes(old_neo)
-old_spikes = pop_1.spinnaker_get_data("spikes")
-print old_spikes
-old_v = pop_1.spinnaker_get_data("v")
-# old_v = neo_convertor.convert_data(old_neo, "v")
-print old_v
+def do_run():
+    sim.setup(timestep=1)
+    pop_1 = sim.Population(1, sim.IF_curr_exp, {}, label="pop_1")
+    inp = sim.Population(
+        1, sim.SpikeSourceArray, {'spike_times': [[0]]}, label="input")
+    sim.Projection(
+        pop_1, pop_1, sim.OneToOneConnector(),
+        synapse_type=sim.StaticSynapse(weight=5.0, delay=1),
+        receptor_type="excitatory", source=None, space=None)
 
-loop = sim.Projection(input, pop_1, sim.FromListConnector([[0, 0, 5, 5]]),
-                      synapse_type=sim.StaticSynapse(weight=5.0, delay=1),
-                      receptor_type="excitatory", source=None,
-                      space=None)
-sim.reset()
-sim.run(20)
-# neo = pop_1.get_data("all")
-# spikes = neo_convertor.convert_spikes(neo)
-spikes = pop_1.spinnaker_get_data("spikes")
-print spikes
-# v = neo_convertor.convert_data(neo, "v")
-v = pop_1.spinnaker_get_data("v")
-print v
+    pop_1.record("spikes")
+    sim.run(20)
+    first_spikes = pop_1.spinnaker_get_data("spikes")
 
-print "DONE"
+    sim.Projection(
+        inp, pop_1, sim.FromListConnector([[0, 0, 5, 5]]),
+        synapse_type=sim.StaticSynapse(weight=5.0, delay=1),
+        receptor_type="excitatory", source=None,
+        space=None)
+
+    sim.reset()
+    sim.run(20)
+    second_spikes = pop_1.spinnaker_get_data("spikes")
+
+    return first_spikes, second_spikes
+
+
+class TestSynapesExcitVsInhib(BaseTestCase):
+    def test_run(self):
+        first_spikes, second_spikes = do_run()
+        assert len(first_spikes) == 0
+        assert len(second_spikes) > 0
+
+
+if __name__ == '__main__':
+    first_spikes, second_spikes = do_run()
+    print first_spikes
+    print second_spikes
