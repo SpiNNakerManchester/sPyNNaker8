@@ -151,5 +151,6 @@ class TestMultipleStdpMechsOnSameNeuron(BaseTestCase):
             self.run_multiple_stdp_mechs_on_same_neuron(
                 mode="tau")
 
+
 if __name__ == '__main__':
     unittest.main()

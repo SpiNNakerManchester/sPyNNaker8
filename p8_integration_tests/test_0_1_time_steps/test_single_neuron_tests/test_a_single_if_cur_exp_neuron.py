@@ -3,7 +3,6 @@ test that a single neuron of if cur exp works as expected
 """
 
 # general imports
-import os
 from unittest import SkipTest
 
 from p8_integration_tests.base_test_case import BaseTestCase
