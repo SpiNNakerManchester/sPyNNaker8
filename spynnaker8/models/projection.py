@@ -83,14 +83,14 @@ class Projection(PyNNProjectionCommon):
     def get(self, attribute_names, format,  # @ReservedAssignment
             gather=True, with_address=False, multiple_synapses='sum'):
         """ get a parameter for pynn 0.8
-        
+
         :param attribute_names: list of attributes to gather
         :type attribute_names: basestring or iterable of basestring
-        :param format: 
-        :param gather: 
-        :param with_address: 
-        :param multiple_synapses: 
-        :return: 
+        :param format: ????????
+        :param gather: gather over all nodes (defaulted to true on spinnaker)
+        :param with_address: ??????????????
+        :param multiple_synapses: ?????????????
+        :return: returns parameters and source, dest.
         """
         if with_address:
             raise ConfigurationException(
