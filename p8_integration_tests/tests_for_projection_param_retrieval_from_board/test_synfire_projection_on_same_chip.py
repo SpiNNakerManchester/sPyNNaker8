@@ -30,11 +30,6 @@ class SynfireProjectionOnSameChip(BaseTestCase):
                            run_times=runtimes, get_weights=get_weights,
                            get_delays=get_delays)
         weights = synfire_run.get_weights()
-        print weights
-        print type(weights[0])
-        print type(weights[0][0])
-        print type(weights[0][0][0])
-        print len(weights[0][0][0])
         self.assertEquals(n_neurons, len(weights[0]))
         self.assertEquals(n_neurons, len(weights[1]))
         self.assertTrue(numpy.allclose(weights[0], weights[1]))
