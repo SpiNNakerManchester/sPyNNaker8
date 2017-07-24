@@ -13,7 +13,7 @@ class TestMultipleStdpMechsOnSameNeuron(BaseTestCase):
     """
     tests the get spikes given a simulation at 0.1 ms time steps
     """
-    def run_multiple_stdp_mechs_on_same_neuron(self):
+    def run_multiple_stdp_mechs_on_same_neuron(self, mode="same"):
         p.setup(timestep=1.0, min_delay=1.0, max_delay=144.0)
         nNeurons = 200  # number of neurons in each population
 
@@ -51,12 +51,35 @@ class TestMultipleStdpMechsOnSameNeuron(BaseTestCase):
         )
 
         # Plastic Connection between pre_pop and post_pop
-        stdp_model3 = p.STDPMechanism(
-            timing_dependence=p.SpikePairRule(
-                tau_plus=16.7, tau_minus=33.7, A_plus=0.005, A_minus=0.005),
-            weight_dependence=p.MultiplicativeWeightDependence(
-                w_min=0.0, w_max=1.0),
-        )
+        if mode == "same":
+            stdp_model3 = p.STDPMechanism(
+                timing_dependence=p.SpikePairRule(
+                    tau_plus=16.7, tau_minus=33.7, A_plus=0.005, A_minus=0.005),
+                weight_dependence=p.AdditiveWeightDependence(
+                    w_min=0.0, w_max=1.0),
+            )
+        elif mode == "weight_dependence":
+            stdp_model3 = p.STDPMechanism(
+                timing_dependence=p.SpikePairRule(
+                    tau_plus=16.7, tau_minus=33.7, A_plus=0.005, A_minus=0.005),
+                weight_dependence=p.MultiplicativeWeightDependence(
+                    w_min=0.0, w_max=1.0),
+            )
+        elif mode == "tau":
+            stdp_model3 = p.STDPMechanism(
+                timing_dependence=p.SpikePairRule(
+                    tau_plus=15.7, tau_minus=33.7, A_plus=0.005, A_minus=0.005),
+                weight_dependence=p.AdditiveWeightDependence(
+                    w_min=0.0, w_max=1.0),
+            )
+        elif mode == "wmin":
+            stdp_model3 = p.STDPMechanism(
+                timing_dependence=p.SpikePairRule(tau_plus=16.7, tau_minus=33.7,
+                    A_plus=0.005, A_minus=0.005),
+                weight_dependence=p.AdditiveWeightDependence(w_min=1.0,
+                    w_max=1.0), )
+        else:
+            raise Exception(mode)
 
         injectionConnection = [(0, 0, weight_to_spike, 1)]
         spikeArray1 = {'spike_times': [[0]]}
@@ -107,9 +130,22 @@ class TestMultipleStdpMechsOnSameNeuron(BaseTestCase):
         projections.append(pop)
 
     def test_test_multiple_stdp_mechs_on_same_neuron(self):
-        with self.assertRaises(SynapticConfigurationException):
-            self.run_multiple_stdp_mechs_on_same_neuron()
+        self.run_multiple_stdp_mechs_on_same_neuron(mode="same")
 
+    def test_weight_dependence(self):
+        with self.assertRaises(SynapticConfigurationException):
+            self.run_multiple_stdp_mechs_on_same_neuron(
+                mode="weight_dependence")
+
+    def test_wmin(self):
+        with self.assertRaises(SynapticConfigurationException):
+            self.run_multiple_stdp_mechs_on_same_neuron(
+                mode="wmin")
+
+    def test_tau(self):
+        with self.assertRaises(SynapticConfigurationException):
+            self.run_multiple_stdp_mechs_on_same_neuron(
+                mode="tau")
 
 if __name__ == '__main__':
     unittest.main()
