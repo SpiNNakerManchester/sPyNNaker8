@@ -76,14 +76,8 @@ from spynnaker8.utilities.data_holder import DataHolder
 from spynnaker8.models.model_data_holders.if_cond_exp_data_holder import \
     IFCondExpDataHolder as IF_cond_exp
 # noinspection PyUnresolvedReferences
-from spynnaker8.models.model_data_holders.if_curr_dual_exp_data_holder \
-    import IFCurrDualExpDataHolder as IF_curr_duel_exp
-# noinspection PyUnresolvedReferences
 from spynnaker8.models.model_data_holders.if_curr_exp_data_holder import \
     IFCurrExpDataHolder as IF_curr_exp
-# noinspection PyUnresolvedReferences
-from spynnaker8.models.model_data_holders.izk_cond_exp_data_holder import \
-    IzkCondExpDataHolder as Izhikevich_cond
 # noinspection PyUnresolvedReferences
 from spynnaker8.models.model_data_holders.izk_curr_exp_data_holder import \
     IzkCurrExpDataHolder as Izhikevich
@@ -105,6 +99,9 @@ from spynnaker8.models.populations.population_view import PopulationView
 # projection
 # noinspection PyUnresolvedReferences
 from spynnaker8.models.projection import Projection as SpiNNakerProjection
+
+from spynnaker8 import external_devices
+from spynnaker8 import extra_models
 
 # big stuff
 from spynnaker8.spinnaker import SpiNNaker
@@ -130,13 +127,14 @@ __all__ = [
     'STDPMechanism', 'AdditiveWeightDependence',
     'MultiplicativeWeightDependence', 'SpikePairRule',
     # neuron stuff
-    'IF_cond_exp', 'IF_curr_duel_exp', 'IF_curr_exp', 'Izhikevich_cond',
+    'IF_cond_exp', 'IF_curr_exp',
     'Izhikevich', 'SpikeSourceArray', 'SpikeSourcePoisson',
     # pops
     'Assembly', 'Population', 'PopulationView',
     # projection
     'SpiNNakerProjection',
-
+    # External devices and extra models
+    'external_devices', 'extra_models',
     # Stuff that we define
     'end', 'setup', 'run', 'run_until', 'run_for', 'num_processes', 'rank',
     'reset', 'set_number_of_neurons_per_core',
