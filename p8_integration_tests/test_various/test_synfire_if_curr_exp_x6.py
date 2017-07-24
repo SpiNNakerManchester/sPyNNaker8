@@ -43,16 +43,26 @@ def do_run(nNeurons):
 
     p.run(1000)
 
+    spikes = []
+    for x in range(0, 12, 2):
+        spikes.append(populations[x].spinnaker_get_data("spikes"))
+
     p.end()
+
+    return spikes
 
 
 class SynfireIfCurrx6(BaseTestCase):
 
     def test_run(self):
         nNeurons = 200  # number of neurons in each population
-        do_run(nNeurons)
+        spikes = do_run(nNeurons)
+        for x in range(0, 12, 2):
+            self.assertEqual(999, len(spikes[x / 2]))
 
 
 if __name__ == '__main__':
     nNeurons = 200  # number of neurons in each population
-    do_run(nNeurons)
+    spikes = do_run(nNeurons)
+    for x in range(0, 12, 2):
+        print x, len(spikes[x / 2])
