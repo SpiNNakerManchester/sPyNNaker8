@@ -54,30 +54,34 @@ class TestMultipleStdpMechsOnSameNeuron(BaseTestCase):
         if mode == "same":
             stdp_model3 = p.STDPMechanism(
                 timing_dependence=p.SpikePairRule(
-                    tau_plus=16.7, tau_minus=33.7, A_plus=0.005, A_minus=0.005),
+                    tau_plus=16.7, tau_minus=33.7, A_plus=0.005,
+                    A_minus=0.005),
                 weight_dependence=p.AdditiveWeightDependence(
                     w_min=0.0, w_max=1.0),
             )
         elif mode == "weight_dependence":
             stdp_model3 = p.STDPMechanism(
                 timing_dependence=p.SpikePairRule(
-                    tau_plus=16.7, tau_minus=33.7, A_plus=0.005, A_minus=0.005),
+                    tau_plus=16.7, tau_minus=33.7, A_plus=0.005,
+                    A_minus=0.005),
                 weight_dependence=p.MultiplicativeWeightDependence(
                     w_min=0.0, w_max=1.0),
             )
         elif mode == "tau":
             stdp_model3 = p.STDPMechanism(
                 timing_dependence=p.SpikePairRule(
-                    tau_plus=15.7, tau_minus=33.7, A_plus=0.005, A_minus=0.005),
+                    tau_plus=15.7, tau_minus=33.7, A_plus=0.005,
+                    A_minus=0.005),
                 weight_dependence=p.AdditiveWeightDependence(
                     w_min=0.0, w_max=1.0),
             )
         elif mode == "wmin":
             stdp_model3 = p.STDPMechanism(
-                timing_dependence=p.SpikePairRule(tau_plus=16.7, tau_minus=33.7,
-                    A_plus=0.005, A_minus=0.005),
+                timing_dependence=p.SpikePairRule(
+                    tau_plus=16.7, tau_minus=33.7, A_plus=0.005,
+                    A_minus=0.005),
                 weight_dependence=p.AdditiveWeightDependence(w_min=1.0,
-                    w_max=1.0), )
+                                                             w_max=1.0), )
         else:
             raise Exception(mode)
 
