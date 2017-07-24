@@ -57,7 +57,7 @@ class Projection(PyNNProjectionCommon):
             synapse_plastic_parameters = connector.get_extra_parameters()
             if synapse_plastic_parameters is not None:
                 for parameter in synapse_plastic_parameters.dtype.names:
-                    synapse_type.set(
+                    synapse_type.set_value(
                         parameter, synapse_plastic_parameters[:, parameter])
 
         # set rng if needed
@@ -82,6 +82,16 @@ class Projection(PyNNProjectionCommon):
 
     def get(self, attribute_names, format,  # @ReservedAssignment
             gather=True, with_address=False, multiple_synapses='sum'):
+        """ get a parameter for pynn 0.8
+
+        :param attribute_names: list of attributes to gather
+        :type attribute_names: basestring or iterable of basestring
+        :param format: ????????
+        :param gather: gather over all nodes (defaulted to true on spinnaker)
+        :param with_address: ??????????????
+        :param multiple_synapses: ?????????????
+        :return: returns parameters and source, dest.
+        """
         if with_address:
             raise ConfigurationException(
                 "Spynnaker only recongises with_address=False")
@@ -171,8 +181,39 @@ class Projection(PyNNProjectionCommon):
         """
 
         logger.info("Downloading synaptic matrices for projection %s",
-                    self.label)
+                    self._label)
         return self._get_synaptic_data(True, names)
+
+    def save(self, attribute_names, file, format='list', gather=True,
+             with_address=True):
+        """
+        Print synaptic attributes (weights, delays, etc.) to file. In the array
+        format, zeros are printed for non-existent connections.
+        Values will be expressed in the standard PyNN units (i.e. millivolts,
+        nanoamps, milliseconds, microsiemens, nanofarads, event per second).
+        """
+
+        if attribute_names in ('all', 'connections'):
+            attribute_names = \
+                self._projection_edge.post_vertex.synapse_dynamics.\
+                get_parameter_names()
+
+        if isinstance(file, basestring):
+            file = open(file, mode='wb')
+
+        all_values = self.get(
+            attribute_names, format=format, gather=gather,
+            with_address=with_address)
+
+        if format == 'array':
+            all_values = [numpy.where(numpy.isnan(values), 0.0, values)
+                          for values in all_values]
+        if self._simulator.state.mpi_rank == 0:
+            metadata = {"columns": attribute_names}
+            if with_address:
+                metadata["columns"] = ["i", "j"] + list(metadata["columns"])
+            file.write(all_values, metadata)
+            file.close()
 
     def __repr__(self):
         return "projection {}".format(self._projection_edge.label)
