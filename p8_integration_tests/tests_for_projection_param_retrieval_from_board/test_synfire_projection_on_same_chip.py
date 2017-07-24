@@ -20,9 +20,8 @@ get_delays = True
 
 class SynfireProjectionOnSameChip(BaseTestCase):
 
-    @unittest.skip("BROKEN p8_integration_tests/"
-                   "tests_for_projection_param_retrieval_from_board/"
-                   "test_synfire_projection_on_same_chip.py")
+    @unittest.skip("https://github.com/SpiNNakerManchester/sPyNNaker8/"
+                   "issues/22")
     def test_get_before_and_after(self):
         synfire_run = TestRun()
         synfire_run.do_run(n_neurons, neurons_per_core=neurons_per_core,
@@ -31,6 +30,11 @@ class SynfireProjectionOnSameChip(BaseTestCase):
                            run_times=runtimes, get_weights=get_weights,
                            get_delays=get_delays)
         weights = synfire_run.get_weights()
+        print weights
+        print type(weights[0])
+        print type(weights[0][0])
+        print type(weights[0][0][0])
+        print len(weights[0][0][0])
         self.assertEquals(n_neurons, len(weights[0]))
         self.assertEquals(n_neurons, len(weights[1]))
         self.assertTrue(numpy.allclose(weights[0], weights[1]))
@@ -50,11 +54,15 @@ if __name__ == '__main__':
                        get_delays=get_delays)
     weights = synfire_run.get_weights()
     delays = synfire_run.get_delay()
+    print "weights[0]"
     print weights[0]
     print weights[0].shape
+    print "weights[1]"
     print weights[1]
     print weights[1].shape
+    print "delays[0]"
     print delays[0]
     print delays[0].shape
+    print "delays[1]"
     print delays[1]
     print delays[1].shape
