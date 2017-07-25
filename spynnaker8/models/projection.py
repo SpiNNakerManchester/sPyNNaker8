@@ -1,7 +1,7 @@
 import logging
 import numpy
 
-from pyNN import common as pynn_common
+from pyNN import common as pynn_common, recording
 from pyNN.space import Space as PyNNSpace
 
 from spynnaker8.models.connectors import FromListConnector
@@ -13,6 +13,7 @@ from spinn_front_end_common.utilities import globals_variables
 from spynnaker.pyNN.exceptions import InvalidParameterType
 
 from spinn_front_end_common.utilities.exceptions import ConfigurationException
+import functools
 
 logger = logging.getLogger(__name__)
 
@@ -81,42 +82,56 @@ class Projection(PyNNProjectionCommon):
         raise NotImplementedError
 
     def get(self, attribute_names, format,  # @ReservedAssignment
-            gather=True, with_address=False, multiple_synapses='sum'):
+            gather=True, with_address=True, multiple_synapses='last'):
         """ get a parameter for pynn 0.8
 
         :param attribute_names: list of attributes to gather
         :type attribute_names: basestring or iterable of basestring
-        :param format: ????????
+        :param format: "list" or "array"
         :param gather: gather over all nodes (defaulted to true on spinnaker)
-        :param with_address: ??????????????
-        :param multiple_synapses: ?????????????
-        :return: returns parameters and source, dest.
+        :param with_address: True if the source and target are to be included
+        :param multiple_synapses:\
+            What to do with the data if format="array" and if the multiple\
+            source-target pairs with the same values exist.  Currently only\
+            "last" is supported
+        :return: values selected
         """
-        if with_address:
-            raise ConfigurationException(
-                "Spynnaker only recongises with_address=False")
+        return self._get_data(
+            attribute_names, format, gather, with_address, multiple_synapses)
 
-        if multiple_synapses != 'sum':
-            raise ConfigurationException(
-                "Spynnaker only recongises multiple_synapses == sum")
+    def _get_data(
+            self, attribute_names, format,  # @ReservedAssignment
+            gather=True, with_address=True, multiple_synapses='last',
+            notify=None):
+        """ Internal data getter to add notify option
+        """
 
-        # fix issue with 1 vs many
+        if multiple_synapses != 'last':
+            raise ConfigurationException(
+                "Spynnaker only recognises multiple_synapses == last")
+
+        # fix issue with 1 versus many
         if isinstance(attribute_names, basestring):
             attribute_names = [attribute_names]
 
-        data_pile = list()
+        data_items = list()
+        if with_address:
+            data_items.append("source")
+            data_items.append("target")
 
-        attribute_names.insert(0, 'source')
-        attribute_names.insert(1, 'target')
-
-        # gather all the attributes, but format of pynn is source,
-        # destination, attribute. so will need to delete source and dest
-        #  from each atrtibute after the first.
+        # Split out attributes in to standard versus synapse dynamics data
+        fixed_values = list()
         for attribute in attribute_names:
-            data_pile.append(PyNNProjectionCommon.get(
-                self, attribute, format, gather))
+            if attribute in {"source", "target", "weight", "delay"}:
+                data_items.append(attribute)
+            else:
+                value = self._synapse_information.synapse_dynamics.get_value(
+                    attribute)
+                fixed_values.append((attribute, value))
 
-        return numpy.dstack(data_pile)[0]
+        # Return the connection data
+        return self._get_synaptic_data(
+            format == "list", data_items, fixed_values, notify=notify)
 
     def __iter__(self):
         raise NotImplementedError
@@ -171,21 +186,22 @@ class Projection(PyNNProjectionCommon):
             " instead")
         pynn_common.Projection.weightHistogram(min=min, max=max, nbins=nbins)
 
-    def _get_attributes_as_list(self, names):
-        """ internally forced upon us call from pynn. Is getting synaptic data
+    def _save_callback(
+            self, save_file, format,  # @ReservedAssignment
+            metadata, data):
+        data_file = save_file
+        if isinstance(data_file, basestring):
+            data_file = recording.files.StandardTextFile(save_file, mode='wb')
+        if format == 'array':
+            data = [
+                numpy.where(numpy.isnan(values), 0.0, values)
+                for values in data]
+        data_file.write(data, metadata)
+        data_file.close()
 
-        :param names: name of the attributes whose values are wanted, or a
-        list of such names. an example is ['delay', 'weight']
-        :return: a array of tuples, each containing the named data's per
-        connection
-        """
-
-        logger.info("Downloading synaptic matrices for projection %s",
-                    self._label)
-        return self._get_synaptic_data(True, names)
-
-    def save(self, attribute_names, file, format='list', gather=True,
-             with_address=True):
+    def save(
+            self, attribute_names, file, format='list',  # @ReservedAssignment
+            gather=True, with_address=True):
         """
         Print synaptic attributes (weights, delays, etc.) to file. In the array
         format, zeros are printed for non-existent connections.
@@ -197,23 +213,13 @@ class Projection(PyNNProjectionCommon):
             attribute_names = \
                 self._projection_edge.post_vertex.synapse_dynamics.\
                 get_parameter_names()
-
-        if isinstance(file, basestring):
-            file = open(file, mode='wb')
-
-        all_values = self.get(
-            attribute_names, format=format, gather=gather,
-            with_address=with_address)
-
-        if format == 'array':
-            all_values = [numpy.where(numpy.isnan(values), 0.0, values)
-                          for values in all_values]
-        if self._simulator.state.mpi_rank == 0:
-            metadata = {"columns": attribute_names}
-            if with_address:
-                metadata["columns"] = ["i", "j"] + list(metadata["columns"])
-            file.write(all_values, metadata)
-            file.close()
+        metadata = {"columns": attribute_names}
+        if with_address:
+            metadata["columns"] = ["i", "j"] + list(metadata["columns"])
+        self._get_data(
+            attribute_names, format, gather, with_address,
+            notify=functools.partial(
+                self._save_callback, args=[file, format, metadata]))
 
     def __repr__(self):
         return "projection {}".format(self._projection_edge.label)
