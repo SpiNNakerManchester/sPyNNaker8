@@ -43,19 +43,25 @@ class Synfire20n20pcDelaysDelayExtensionsAllRecording(BaseTestCase):
 
         self.assertEquals(n_neurons*runtime, len(gsyn_exc))
         read_gsyn = numpy.loadtxt(gysn_file, delimiter=',')
-        self.assertTrue(numpy.allclose(read_gsyn[:, 0:3], gsyn_exc_7))
-        self.assertTrue(numpy.allclose(read_gsyn[:, 0:3], gsyn_exc))
+        self.assertTrue(numpy.allclose(read_gsyn, gsyn_exc_7),
+                        "gsyn synakker method mismatch")
+        self.assertTrue(numpy.allclose(read_gsyn, gsyn_exc),
+                        "gsyn neo method mismatch")
 
         self.assertEquals(n_neurons*runtime, len(v))
         read_v = numpy.loadtxt(v_file, delimiter=',')
-        self.assertTrue(numpy.allclose(read_v, v_7))
-        self.assertTrue(numpy.allclose(read_v, v))
+        self.assertTrue(numpy.allclose(read_v, v_7),
+                        "v synakker method mismatch")
+        self.assertTrue(numpy.allclose(read_v, v),
+                        "v neo method mismatch")
 
         self.assertEquals(expected_spikes, len(spikes))
         spike_checker.synfire_spike_checker(spikes, n_neurons)
         read_spikes = numpy.loadtxt(spike_file, delimiter=',')
-        self.assertTrue(numpy.allclose(read_spikes, spikes_7))
-        self.assertTrue(numpy.allclose(read_spikes, spikes))
+        self.assertTrue(numpy.allclose(read_spikes, spikes_7),
+                        "spikes synakker method mismatch")
+        self.assertTrue(numpy.allclose(read_spikes, spikes),
+                        "spikes neo method mismatch")
 
     def test_all_constarint(self):
         synfire_run = TestRun()
@@ -65,9 +71,6 @@ class Synfire20n20pcDelaysDelayExtensionsAllRecording(BaseTestCase):
                            record=True, record_7=True, record_v=True,
                            record_v_7=True, record_gsyn_exc=True,
                            record_gsyn_exc_7=True, record_gsyn_inh=False)
-        gsyn_exc_7 = synfire_run.get_output_pop_gsyn_exc_7()
-        v_7 = synfire_run.get_output_pop_voltage_7()
-        spikes_7 = synfire_run.get_output_pop_spikes_7()
 
         gsyn_exc = synfire_run.get_output_pop_gsyn_exc_numpy()
         v = synfire_run.get_output_pop_voltage_numpy()
@@ -75,56 +78,19 @@ class Synfire20n20pcDelaysDelayExtensionsAllRecording(BaseTestCase):
 
         self.assertEquals(n_neurons*runtime, len(gsyn_exc))
         read_gsyn = numpy.loadtxt(gysn_file, delimiter=',')
-        self.assertTrue(numpy.allclose(read_gsyn[:, 0:3], gsyn_exc_7))
-        self.assertTrue(numpy.allclose(read_gsyn[:, 0:3], gsyn_exc))
+        self.assertTrue(numpy.allclose(read_gsyn, gsyn_exc),
+                        "gsyn neo method mismatch")
 
         self.assertEquals(n_neurons*runtime, len(v))
         read_v = numpy.loadtxt(v_file, delimiter=',')
-        self.assertTrue(numpy.allclose(read_v, v_7))
-        self.assertTrue(numpy.allclose(read_v, v))
+        self.assertTrue(numpy.allclose(read_v, v),
+                        "v neo method mismatch")
 
         self.assertEquals(expected_spikes, len(spikes))
         spike_checker.synfire_spike_checker(spikes, n_neurons)
         read_spikes = numpy.loadtxt(spike_file, delimiter=',')
-        self.assertTrue(numpy.allclose(read_spikes, spikes_7))
-        self.assertTrue(numpy.allclose(read_spikes, spikes))
-
-    def test_spikes_no_constarint(self):
-        synfire_run = TestRun()
-        synfire_run.do_run(n_neurons, neurons_per_core=neurons_per_core,
-                           delay=delay, run_times=[runtime],
-                           record=True, record_v=False,
-                           record_gsyn_exc_7=False, record_gsyn_inh=False)
-        spikes = synfire_run.get_output_pop_spikes_numpy()
-
-        self.assertEquals(expected_spikes, len(spikes))
-        spike_checker.synfire_spike_checker(spikes, n_neurons)
-        read_spikes = numpy.loadtxt(spike_file, delimiter=',')
-        self.assertTrue(numpy.allclose(read_spikes, spikes))
-
-    def test_v_no_constarint(self):
-        synfire_run = TestRun()
-        synfire_run.do_run(n_neurons, neurons_per_core=neurons_per_core,
-                           delay=delay, run_times=[runtime],
-                           record=False, record_v=True,
-                           record_gsyn_exc_7=False, record_gsyn_inh=False)
-        v = synfire_run.get_output_pop_voltage_numpy()
-
-        self.assertEquals(n_neurons*runtime, len(v))
-        read_v = numpy.loadtxt(v_file, delimiter=',')
-        self.assertTrue(numpy.allclose(read_v, v))
-
-    def test_gsyn_no_constarint(self):
-        synfire_run = TestRun()
-        synfire_run.do_run(n_neurons, neurons_per_core=neurons_per_core,
-                           delay=delay, run_times=[runtime],
-                           record=False, record_v=False,
-                           record_gsyn_exc_7=True, record_gsyn_inh=False)
-        gsyn_exc = synfire_run.get_output_pop_gsyn_exc_numpy()
-
-        self.assertEquals(n_neurons*runtime, len(gsyn_exc))
-        read_gsyn = numpy.loadtxt(gysn_file, delimiter=',')
-        self.assertTrue(numpy.allclose(read_gsyn[:, 0:3], gsyn_exc))
+        self.assertTrue(numpy.allclose(read_spikes, spikes),
+                        "spikes neo method mismatch")
 
 
 if __name__ == '__main__':
