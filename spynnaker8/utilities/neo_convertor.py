@@ -42,6 +42,8 @@ def convert_data(data, name, run=0):
     if name == "all":
         raise ValueError("Unable to convert all data in one go "
                          "as result would be comparing apples and oranges.")
+    if name == "spikes":
+        return convert_spikes(data, run)
     return convert_analog_signalarray(data.segments[run].filter(name=name)[0])
 
 
@@ -149,14 +151,20 @@ def convert_spiketrains(spiketrains):
     return np.column_stack((neurons, spikes))
 
 
-def convert_spikes(neo):
+def convert_spikes(neo, run=0):
     """
     Extracts the spikes for run one from a Neo Object
 
     :param neo: neo Object incliding Spike Data
+    :param run: Zero based index of the run to extract data for
+    :type int
     :rtype nparray
     """
-    return convert_spiketrains(neo.segments[0].spiketrains)
+    if len(neo.segments) <= run:
+        raise ValueError("Data only contains {} so unable to run {}. "
+                         "Note run is the zero based index."
+                         "".format(len(neo.segments), run))
+    return convert_spiketrains(neo.segments[run].spiketrains)
 
 
 def count_spiketrains(spiketrains):

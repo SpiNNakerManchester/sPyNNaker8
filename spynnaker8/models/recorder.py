@@ -122,15 +122,17 @@ class Recorder(RecordingCommon):
             description=self._population.describe(),
             rec_datetime=datetime.now())
 
-        # if all are needed to be extracted, extract each and plonk into the
-        # neo block segment
-        if variables == 'all':
-            variables = self._get_all_recording_variables()
-
         # if variable is a base string, plonk into a array for ease of
         # conversion
         if isinstance(variables, basestring):
             variables = [variables]
+
+        # if all are needed to be extracted, extract each and plonk into the
+        # neo block segment
+        if 'all' in variables:
+            variables = set(variables)
+            variables.remove('all')
+            variables.update(self._get_all_recording_variables())
 
         label = self._population.label
         recording_start_time = self._recording_start_time
@@ -167,13 +169,15 @@ class Recorder(RecordingCommon):
 
         data_cache = self._data_cache[segment_number]
 
-        if variables == 'all':
-            variables = data_cache.variables
-
         # if variable is a base string, plonk into a array for ease of
         # conversion
         if isinstance(variables, basestring):
             variables = [variables]
+
+        if 'all' in variables:
+            variables = set(variables)
+            variables.remove('all')
+            variables.update(data_cache.variables)
 
         # build segment for the previous data to be gathered in
         segment = SpynnakerNeoSegment(
