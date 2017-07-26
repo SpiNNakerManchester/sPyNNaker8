@@ -35,9 +35,7 @@ before_script:
 
 script:
   - py.test unittests
-  - flake8 spynnaker8
-  - flake8 unittests
-  - flake8 p8_integration_tests
+  - flake8
   - cd doc/source
   - sphinx-build -T -E -b html -d _build/doctrees-readthedocsdirhtml -D language=en . _build/html
   - sphinx-build -T -b json -d _build/doctrees-json -D language=en . _build/json

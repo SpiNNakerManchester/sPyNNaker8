@@ -25,7 +25,7 @@ class TestGetSpikesAt0_1msTimeStep(BaseTestCase):
         synfire_run.do_run(n_neurons, time_step=timestep, max_delay=max_delay,
                            delay=delay, neurons_per_core=neurons_per_core,
                            run_times=[runtime])
-        spikes = synfire_run.get_output_pop_spikes()
+        spikes = synfire_run.get_output_pop_spikes_numpy()
 
         pre_recorded_spikes = [[0, 3], [1, 7], [2, 11], [3, 15], [4, 19],
                                [5, 23], [6, 27], [7, 31], [8, 35], [9, 39],

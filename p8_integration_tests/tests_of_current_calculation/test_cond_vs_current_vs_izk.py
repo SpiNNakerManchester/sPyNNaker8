@@ -2,13 +2,14 @@
 Synfirechain-like example
 """
 import spynnaker8 as p
+from spynnaker8.utilities import neo_convertor
 from p8_integration_tests.base_test_case import BaseTestCase
 
 
 def do_run(nNeurons):
     p.setup(timestep=1.0, min_delay=1.0, max_delay=144.0)
 
-    p.set_number_of_neurons_per_core("IF_curr_exp", nNeurons / 2)
+    p.set_number_of_neurons_per_core(p.IF_curr_exp, nNeurons / 2)
 
     cell_params_lif = {'cm': 0.25,
                        'i_offset': 0.0,
@@ -21,7 +22,7 @@ def do_run(nNeurons):
                        'v_thresh': -50.0
                        }
 
-    p.set_number_of_neurons_per_core("IF_cond_exp", nNeurons / 2)
+    p.set_number_of_neurons_per_core(p.IF_cond_exp, nNeurons / 2)
 
     cell_params_cond = {'cm': 0.25,
                         'i_offset': 0.0,
@@ -36,7 +37,7 @@ def do_run(nNeurons):
                         'e_rev_I': -80.
                         }
 
-    p.set_number_of_neurons_per_core("IZK_curr_exp", 100)
+    p.set_number_of_neurons_per_core(p.Izhikevich, 100)
 
     cell_params_izk = {'a': 0.02,
                        'b': 0.2,
@@ -72,7 +73,7 @@ def do_run(nNeurons):
     populations.append(p.Population(nNeurons, p.IF_curr_exp, cell_params_lif,
                                     label='pop_curr'))
     # izk setup
-    populations.append(p.Population(nNeurons, p.IZK_curr_exp, cell_params_izk,
+    populations.append(p.Population(nNeurons, p.Izhikevich, cell_params_izk,
                                     label='izk pop'))
 
     # sink pop for spikes to go to (otherwise they are not recorded as firing)
@@ -97,36 +98,42 @@ def do_run(nNeurons):
     projections.append(p.Projection(populations[0], populations[3],
                                     p.FromListConnector(sinkConnection)))
     # record stuff for cond
-    populations[0].record_v()
-    populations[0].record_gsyn()
-    populations[0].record()
+    populations[0].record("v")
+    populations[0].record("gsyn_exc")
+    populations[0].record("spikes")
 
     # record stuff for curr
-    populations[1].record_v()
-    populations[1].record_gsyn()
-    populations[1].record()
+    populations[1].record("v")
+    populations[1].record("gsyn_exc")
+    populations[1].record("spikes")
 
     # record stuff for izk
-    populations[2].record_v()
-    populations[2].record_gsyn()
-    populations[2].record()
+    populations[2].record("v")
+    populations[2].record("gsyn_exc")
+    populations[2].record("spikes")
 
     p.run(500)
 
     # get cond
-    cond_v = populations[0].get_v(compatible_output=True)
-    cond_gsyn = populations[0].get_gsyn(compatible_output=True)
-    cond_spikes = populations[0].getSpikes(compatible_output=True)
+    neo = populations[0].get_data(["v", "spikes", "gsyn_exc"])
+
+    cond_v = neo_convertor.convert_data(neo, name="v")
+    cond_gsyn = neo_convertor.convert_data(neo, name="gsyn_exc")
+    cond_spikes = neo_convertor.convert_spikes(neo)
 
     # get curr
-    curr_v = populations[1].get_v(compatible_output=True)
-    curr_gsyn = populations[1].get_gsyn(compatible_output=True)
-    curr_spikes = populations[1].getSpikes(compatible_output=True)
+    neo = populations[1].get_data(["v", "spikes", "gsyn_exc"])
+
+    curr_v = neo_convertor.convert_data(neo, name="v")
+    curr_gsyn = neo_convertor.convert_data(neo, name="gsyn_exc")
+    curr_spikes = neo_convertor.convert_spikes(neo)
 
     # get izk
-    izk_v = populations[1].get_v(compatible_output=True)
-    izk_gsyn = populations[1].get_gsyn(compatible_output=True)
-    izk_spikes = populations[1].getSpikes(compatible_output=True)
+    neo = populations[1].get_data(["v", "spikes", "gsyn_exc"])
+
+    izk_v = neo_convertor.convert_data(neo, name="v")
+    izk_gsyn = neo_convertor.convert_data(neo, name="gsyn_exc")
+    izk_spikes = neo_convertor.convert_spikes(neo)
 
     p.end()
 

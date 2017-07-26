@@ -6,6 +6,7 @@ import numpy
 from p8_integration_tests.base_test_case import BaseTestCase
 
 import spynnaker8 as p
+from spynnaker8.utilities import neo_convertor
 import spynnaker.plot_utils as plot_utils
 import spynnaker.spike_checker as spike_checker
 
@@ -13,7 +14,7 @@ import spynnaker.spike_checker as spike_checker
 def do_run(nNeurons):
     p.setup(timestep=1.0, min_delay=1.0, max_delay=144.0)
     max_delay = 50
-    p.set_number_of_neurons_per_core("IF_curr_exp", nNeurons / 2)
+    p.set_number_of_neurons_per_core(p.IF_curr_exp, nNeurons / 2)
 
     cell_params_lif = {'cm': 0.25, 'i_offset': 0.0, 'tau_m': 20.0,
                        'tau_refrac': 2.0, 'tau_syn_E': 5.0, 'tau_syn_I': 5.0,
@@ -45,17 +46,19 @@ def do_run(nNeurons):
     projections.append(p.Projection(populations[1], populations[0],
                                     p.FromListConnector(injectionConnection)))
 
-    populations[0].record_v()
-    populations[0].record_gsyn()
-    populations[0].record()
+    populations[0].record("v")
+    populations[0].record("gsyn_exc")
+    populations[0].record("spikes")
 
     run_time = (max_delay * nNeurons)
     print "Running for {} ms".format(run_time)
     p.run(run_time)
 
-    v = populations[0].get_v(compatible_output=True)
-    gsyn = populations[0].get_gsyn(compatible_output=True)
-    spikes = populations[0].getSpikes(compatible_output=True)
+    neo = populations[0].get_data(["v", "spikes", "gsyn_exc"])
+
+    v = neo_convertor.convert_data(neo, name="v")
+    gsyn = neo_convertor.convert_data(neo, name="gsyn_exc")
+    spikes = neo_convertor.convert_spikes(neo)
 
     p.end()
 

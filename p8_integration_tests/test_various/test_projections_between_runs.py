@@ -30,11 +30,11 @@ def do_run():
     return first_spikes, second_spikes
 
 
-class TestSynapesExcitVsInhib(BaseTestCase):
+class TestProjectionBetweenRun(BaseTestCase):
     def test_run(self):
         first_spikes, second_spikes = do_run()
         assert len(first_spikes) == 0
-        assert len(second_spikes) > 0
+        assert len(second_spikes) == 2
 
 
 if __name__ == '__main__':

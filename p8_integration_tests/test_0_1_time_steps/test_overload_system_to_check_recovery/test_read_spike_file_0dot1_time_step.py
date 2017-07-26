@@ -59,10 +59,9 @@ def do_run():
     spikes_file = os.path.join(current_file_path, 'test.spikes')
 
     spikes = read_spikefile(spikes_file, n_neurons)
-    spike_array = {'spike_times': spikes}
 
     populations.append(p.Population(
-        n_neurons, p.SpikeSourceArray(**spike_array),
+        n_neurons, p.SpikeSourceArray(spike_times=spikes),
         label='inputSpikes_1'))
     populations.append(p.Population(
         n_neurons, p.IF_cond_exp(**cell_params_lif), label='pop_1'))

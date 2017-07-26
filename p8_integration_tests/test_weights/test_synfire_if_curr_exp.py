@@ -20,7 +20,7 @@ class SynfireIfCurr_exp(BaseTestCase):
         synfire_run.do_run(nNeurons, neurons_per_core=neurons_per_core,
                            delay=delay, run_times=run_times,
                            get_weights=get_weights)
-        spikes = synfire_run.get_output_pop_spikes()
+        spikes = synfire_run.get_output_pop_spikes_numpy()
         weights = synfire_run.get_weights()
 
         self.assertEquals(263, len(spikes))
@@ -32,7 +32,7 @@ if __name__ == '__main__':
     synfire_run.do_run(nNeurons, neurons_per_core=neurons_per_core,
                        delay=delay, run_times=run_times,
                        get_weights=get_weights)
-    spikes = synfire_run.get_output_pop_spikes()
+    spikes = synfire_run.get_output_pop_spikes_numpy()
     weights = synfire_run.get_weights()
 
     print len(spikes)

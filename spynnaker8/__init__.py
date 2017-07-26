@@ -1,10 +1,14 @@
 # common imports
 import atexit
+import numpy as __numpy
 
 # pynn imports
 from pyNN import common as pynn_common
 from pyNN.common import control as pynn_control
 from pyNN.recording import get_io
+from pyNN.random import NumpyRNG, RandomDistribution
+from pyNN.space import \
+    distance, Space, Line, Grid2D, Grid3D, Cuboid, Sphere, RandomStructure
 
 # fec improts
 from spinn_front_end_common.utilities.exceptions import ConfigurationException
@@ -107,6 +111,10 @@ import logging
 logger = logging.getLogger(__name__)
 
 __all__ = [
+    # PyNN imports
+    'Cuboid', 'distance', 'Grid2D', 'Grid3D', 'Line', 'NumpyRNG',
+    'RandomDistribution', 'RandomStructure', 'Space', 'Sphere',
+
     # connections
     'AllToAllConnector', 'ArrayConnector', 'CSAConnector',
     'DistanceDependentProbabilityConnector', 'FixedNumberPostConnector',
@@ -209,7 +217,7 @@ def setup(timestep=pynn_control.DEFAULT_TIMESTEP,
 def name():
     """ returns the name of the simulator
 
-    :return:
+    :rtype:None
     """
     return globals_variables.get_simulator().name
 
@@ -242,7 +250,7 @@ def _create_overloaded_functions(spinnaker_simulator):
     """ creates functions that the main PyNN interface supports (
     given from PyNN)
     :param spinnaker_simulator: the simulator object we use underneath
-    :return: None
+    :rtype: None
     """
 
     # get the global functions
@@ -274,7 +282,7 @@ def end(_=True):
 
     :param _: was named compatible_output, which we dont care about,
     so is a none existent parameter
-    :return:  None
+    :rtype:  None
     """
     for (population, variables, filename) in \
             globals_variables.get_simulator().write_on_end:
@@ -289,7 +297,7 @@ def record_v(source, filename):
     this is not documented in the public facing api
     :param source: the population / view / assembly to record
     :param filename: the neo file to write to
-    :return: None
+    :rtype: None
     """
     logger.warn(
         "Using record_v is deprecated.  Use record('v') function instead")
@@ -302,7 +310,7 @@ def record_gsyn(source, filename):
 
     :param source: the population / view / assembly to record
     :param filename: the neo file to write to
-    :return: None
+    :rtype: None
     """
 
     logger.warn(
@@ -332,23 +340,26 @@ def _stop_on_spinnaker():
 def set_number_of_neurons_per_core(neuron_type, max_permitted):
     """ Sets a ceiling on the number of neurons of a given type that can be\
         placed on a single core.
-    :param neuron_type:
-    :param max_permitted:
+    :param neuron_type: neuron type
+    :param max_permitted: the number to set to
+    :rtype: None
     """
-
-    if hasattr(neuron_type.build_model(), "set_model_max_atoms_per_core"):
-        neuron_type.build_model().set_model_max_atoms_per_core(max_permitted)
-    else:
-        raise Exception("{} is not a Vertex type".format(neuron_type))
+    if isinstance(neuron_type, str):
+        msg = "set_number_of_neurons_per_core call now expects " \
+              "neuron_typeas a class instead of as a str"
+        raise ConfigurationException(msg)
+    simulator = globals_variables.get_simulator()
+    simulator.set_number_of_neurons_per_core(neuron_type.build_model(),
+                                             max_permitted)
 
 
 def register_database_notification_request(hostname, notify_port, ack_port):
     """ Adds a socket system which is registered with the notification protocol
 
-    :param hostname:
-    :param notify_port:
-    :param ack_report:
-    :return:
+    :param hostname: hostname to connect to
+    :param notify_port: port num for the notify command
+    :param ack_port: port num for the ack command
+    :rtype: None
     """
     globals_variables.get_simulator().add_socket_address(
         SocketAddress(hostname, notify_port, ack_port))
@@ -359,6 +370,17 @@ def register_database_notification_request(hostname, notify_port, ack_port):
 
 def connect(pre, post, weight=0.0, delay=None, receptor_type=None, p=1,
             rng=None):
+    """ builds a projection
+
+    :param pre: source pop
+    :param post: destination pop
+    :param weight: weight of the connections
+    :param delay: the delay of the connections
+    :param receptor_type: excititory / inhib
+    :param p: probability
+    :param rng: random number generator
+    :rtype: None
+    """
     global __pynn_connect
     if not globals_variables.has_simulator():
         raise ConfigurationException(FAILED_STATE_MSG)
@@ -366,13 +388,32 @@ def connect(pre, post, weight=0.0, delay=None, receptor_type=None, p=1,
 
 
 def create(cellclass, cellparams=None, n=1):
+    """ builds a population with certian params
+
+    :param cellclass: population class
+    :param cellparams: population params.
+    :param n: n neurons
+    :rtype: None
+    """
     global __pynn_create
     if not globals_variables.has_simulator():
         raise ConfigurationException(FAILED_STATE_MSG)
     __pynn_create(cellclass, cellparams, n)
 
 
+def NativeRNG(seed_value):
+    """ Fixes the random number generator's seed
+    :param seed_value:
+    :rtype: None
+    """
+    __numpy.random.seed(seed_value)
+
+
 def get_current_time():
+    """ the time within the simulation
+
+    :return: returns the current time
+    """
     global __pynn_get_current_time
     if not globals_variables.has_simulator():
         raise ConfigurationException(FAILED_STATE_MSG)
@@ -380,6 +421,10 @@ def get_current_time():
 
 
 def get_min_delay():
+    """the minimum allowed synaptic delay
+
+    :return: returns the min delay of the simulation
+    """
     global __pynn_get_min_delay
     if not globals_variables.has_simulator():
         raise ConfigurationException(FAILED_STATE_MSG)
@@ -387,6 +432,10 @@ def get_min_delay():
 
 
 def get_max_delay():
+    """ the maximum allowed synaptic delay
+
+    :return: returns the max delay of the simulation
+    """
     global __pynn_get_max_delay
     if not globals_variables.has_simulator():
         raise ConfigurationException(FAILED_STATE_MSG)
@@ -394,6 +443,10 @@ def get_max_delay():
 
 
 def get_time_step():
+    """ the integration time step
+
+    :return: get the time step of the simulation
+    """
     global __pynn_get_time_step
     if not globals_variables.has_simulator():
         raise ConfigurationException(FAILED_STATE_MSG)
@@ -401,12 +454,22 @@ def get_time_step():
 
 
 def initialize(cells, **initial_values):
+    """ sets cells values to certain values
+
+    :param cells: the cells to change params on
+    :param initial_values: the params and there values to change
+    :rtype: None
+    """
     if not globals_variables.has_simulator():
         raise ConfigurationException(FAILED_STATE_MSG)
     pynn_common.initialize(cells, **initial_values)
 
 
 def num_processes():
+    """the number of MPI processes
+
+    :return: the num MPI processes
+    """
     global __pynn_num_processes
     if not globals_variables.has_simulator():
         raise ConfigurationException(FAILED_STATE_MSG)
@@ -414,6 +477,10 @@ def num_processes():
 
 
 def rank():
+    """the MPI rank of the current node
+
+    :return: mpi rank
+    """
     global __pynn_rank
     if not globals_variables.has_simulator():
         raise ConfigurationException(FAILED_STATE_MSG)
@@ -422,6 +489,18 @@ def rank():
 
 def record(variables, source, filename, sampling_interval=None,
            annotations=None):
+    """ sets variables to be recorded
+
+    :param variables: may be either a single variable name or a list of \
+        variable names. For a given celltype class, celltype.recordable \
+        contains a list of variables that can be recorded for that celltype.
+    :param source: ?????
+    :param filename: file name to write data to
+    :param sampling_interval: how often to sample the reocrding, not \
+        ignored so far
+    :param annotations: the annotations to data writers
+    :return: neo object
+    """
     global __pynn_record
     if not globals_variables.has_simulator():
         raise ConfigurationException(FAILED_STATE_MSG)
@@ -429,7 +508,14 @@ def record(variables, source, filename, sampling_interval=None,
                          annotations)
 
 
-def reset(annotations={}):
+def reset(annotations=None):
+    """ resets the simulation to t = 0
+
+    :param annotations: the annotations to the data objects
+    :rtype: None
+    """
+    if annotations is None:
+        annotations = {}
     global __pynn_reset
     if not globals_variables.has_simulator():
         raise ConfigurationException(FAILED_STATE_MSG)
@@ -437,6 +523,13 @@ def reset(annotations={}):
 
 
 def run(simtime, callbacks=None):
+    """ The run() function advances the simulation for a given number of \
+        milliseconds, e.g.:
+
+    :param simtime:  time in milliseconds
+    :param callbacks: callbacks to run
+    :return: ?????
+    """
     global __pynn_run
     if not globals_variables.has_simulator():
         raise ConfigurationException(FAILED_STATE_MSG)
@@ -449,6 +542,12 @@ run_for = run
 
 
 def run_until(self, tstop):
+    """ run until that time period has completed
+
+    :param self: ????
+    :param tstop: the time to stop at
+    :return: ??????
+    """
     global __pynn_run_until
     if not globals_variables.has_simulator():
         raise ConfigurationException(FAILED_STATE_MSG)
@@ -457,6 +556,7 @@ def run_until(self, tstop):
 
 def get_machine():
     """ Get the spinnaker machine in use
+    :return: the machine object
     """
     if not globals_variables.has_simulator():
         raise ConfigurationException(FAILED_STATE_MSG)

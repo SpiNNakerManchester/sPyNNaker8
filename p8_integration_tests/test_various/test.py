@@ -27,21 +27,21 @@ def do_run(nNeurons):
                                     label='pop_2'))
     populations[1].add_placement_constraint(x=1, y=0)
 
-    populations[0].record_v()
-    populations[0].record_gsyn()
-    populations[0].record()
-    populations[1].record_v()
-    populations[1].record_gsyn()
-    populations[1].record()
+    populations[0].record("v")
+    populations[0].record("gsyn_exc")
+    populations[0].record("spikes")
+    populations[1].record("v")
+    populations[1].record("gsyn_exc")
+    populations[1].record("spikes")
 
     p.run(100)
 
-    v1 = populations[0].get_v()
-    gsyn1 = populations[0].get_gsyn()
-    spikes1 = populations[0].getSpikes()
-    v2 = populations[0].get_v()
-    gsyn2 = populations[0].get_gsyn()
-    spikes2 = populations[0].getSpikes()
+    v1 = populations[0].spinnaker_get_data("v")
+    gsyn1 = populations[0].spinnaker_get_data("gsyn_exc")
+    spikes1 = populations[0].spinnaker_get_data("spikes")
+    v2 = populations[1].spinnaker_get_data("v")
+    gsyn2 = populations[1].spinnaker_get_data("gsyn_exc")
+    spikes2 = populations[1].spinnaker_get_data("spikes")
 
     p.end()
 

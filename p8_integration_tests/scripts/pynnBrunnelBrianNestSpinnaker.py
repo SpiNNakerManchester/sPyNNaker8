@@ -174,8 +174,8 @@ def do_run(Neurons, sim_time, record):
     ext_conn = pynn.OneToOneConnector()
 
     uniform_distr = RandomDistribution('uniform', [-10, 0], rng)
-    e_pop.initialize('v', uniform_distr)
-    i_pop.initialize('v', uniform_distr)
+    e_pop.initialize(v=uniform_distr)
+    i_pop.initialize(v=uniform_distr)
 
     # Projections
     pynn.Projection(

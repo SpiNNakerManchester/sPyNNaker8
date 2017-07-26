@@ -2,6 +2,7 @@
 
 
 import spynnaker8 as p
+from spynnaker8.utilities import neo_convertor
 
 from p8_integration_tests.base_test_case import BaseTestCase
 
@@ -23,16 +24,16 @@ def do_run():
                            {'spike_times': [120., 140., 160.]})
     # setup excitatory and inhibitory connections
     listcon = p.FromListConnector([(0, 0, 0.01, 1.0)])
-    p.Projection(exc_pop, if_pop, listcon, target='excitatory')
-    p.Projection(inh_pop, if_pop, listcon, target='inhibitory')
+    p.Projection(exc_pop, if_pop, listcon, receptor_type='excitatory')
+    p.Projection(inh_pop, if_pop, listcon, receptor_type='inhibitory')
     # setup recorder
-    if_pop.record_v()
+    if_pop.record("v")
     p.run(200.)
     # read out voltage and plot
-    V = if_pop.get_v()
+    neo = if_pop.get_data("v")
     p.end()
 
-    return V
+    return neo
 
 
 class TestSynapesExcitVsInhib(BaseTestCase):
@@ -41,7 +42,8 @@ class TestSynapesExcitVsInhib(BaseTestCase):
 
 
 if __name__ == '__main__':
-    V = do_run()
+    neo = do_run()
+    V = neo_convertor.convert_data(neo, "v")
     import pylab  # deferred so unittest are not dependent on it
     pylab.plot(V[:, 1], V[:, 2], '.', label=p.__name__)
     pylab.legend()

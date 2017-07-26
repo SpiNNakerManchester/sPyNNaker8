@@ -18,7 +18,7 @@ class Synfire2RunNoExtractionSpikeArrayChanged(BaseTestCase):
     def test_run(self):
         synfire_run.do_run(nNeurons, spike_times_list=spike_times_list,
                            run_times=run_times)
-        spikes = synfire_run.get_output_pop_spikes()
+        spikes = synfire_run.get_output_pop_spikes_list_numpy()
 
         self.assertEquals(53, len(spikes[0]))
         self.assertEquals(156, len(spikes[1]))
@@ -30,9 +30,9 @@ class Synfire2RunNoExtractionSpikeArrayChanged(BaseTestCase):
 if __name__ == '__main__':
     synfire_run.do_run(nNeurons, spike_times_list=spike_times_list,
                        run_times=run_times)
-    gsyn = synfire_run.get_output_pop_gsyn()
-    v = synfire_run.get_output_pop_voltage()
-    spikes = synfire_run.get_output_pop_spikes()
+    gsyn = synfire_run.get_output_pop_gsyn_exc_list_numpy()
+    v = synfire_run.get_output_pop_voltage_list_numpy()
+    spikes = synfire_run.get_output_pop_spikes_list_numpy()
 
     print len(spikes[0])
     print len(spikes[1])

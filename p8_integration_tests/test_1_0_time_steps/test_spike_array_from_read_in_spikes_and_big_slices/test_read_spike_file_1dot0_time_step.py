@@ -7,7 +7,6 @@ import spynnaker8 as p
 
 # general imports
 from p8_integration_tests.base_test_case import BaseTestCase
-from spinnman.exceptions import SpinnmanTimeoutException
 from unittest import SkipTest
 
 
@@ -37,7 +36,7 @@ def do_run():
     """
     p.setup(timestep=1.0, min_delay=1.0, max_delay=144.0)
     n_neurons = 128 * 128  # number of neurons in each population
-    p.set_number_of_neurons_per_core("IF_cond_exp", 256)
+    p.set_number_of_neurons_per_core(p.IF_cond_exp, 256)
 
     cell_params_lif = {'cm': 0.25,
                        'i_offset': 0.0,
@@ -67,13 +66,13 @@ def do_run():
     populations.append(p.Population(
         n_neurons, p.IF_cond_exp, cell_params_lif, label='pop_1'))
     projections.append(p.Projection(
-        populations[0], populations[1], p.OneToOneConnector(
-            weights=weight_to_spike, delays=delay)))
-    populations[1].record()
+        populations[0], populations[1], p.OneToOneConnector(),
+        synapse_type=p.StaticSynapse(weight=weight_to_spike, delay=delay)))
+    populations[1].record("spikes")
 
     p.run(1000)
 
-    spikes = populations[1].getSpikes(compatible_output=True)
+    spikes = populations[1].spinnaker_get_data('spikes')
 
     p.end()
 
@@ -105,11 +104,7 @@ class TestReadingSpikeArrayDataAndBigSlices(BaseTestCase):
         test that tests the printing of v from a pre determined recording
         :return:
         """
-        try:
-            spikes = do_run()
-        except SpinnmanTimeoutException as ex:
-            # System intentional overload so may error
-            raise SkipTest(ex)
+        spikes = do_run()
         try:
             self.assertLess(8400, len(spikes))
             self.assertGreater(8800, len(spikes))

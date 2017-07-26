@@ -14,6 +14,9 @@ neurons_per_core = None
 synfire_run = TestRun()
 record = False
 get_spikes = True
+record_v = False
+get_gsyn_exc = False
+get_gsyn_inh = False
 
 
 class SynfireExtractingSpikesWhenNothingSetToRecorded(BaseTestCase):
@@ -25,10 +28,13 @@ class SynfireExtractingSpikesWhenNothingSetToRecorded(BaseTestCase):
         with self.assertRaises(ConfigurationException):
             synfire_run.do_run(n_neurons, neurons_per_core=neurons_per_core,
                                delay=delay, run_times=[runtime], record=record,
-                               get_spikes=get_spikes)
+                               get_spikes=get_spikes, record_v=record_v,
+                               get_gsyn_exc=get_gsyn_exc,
+                               get_gsyn_inh=get_gsyn_inh)
 
 
 if __name__ == '__main__':
     synfire_run.do_run(n_neurons, neurons_per_core=neurons_per_core,
                        delay=delay, run_times=[runtime], record=record,
-                       get_spikes=get_spikes)
+                       get_spikes=get_spikes, record_v=record_v,
+                       get_gsyn_exc=get_gsyn_exc, get_gsyn_inh=get_gsyn_inh)

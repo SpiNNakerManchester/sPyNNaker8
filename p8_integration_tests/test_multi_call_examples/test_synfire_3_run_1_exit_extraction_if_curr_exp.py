@@ -17,7 +17,7 @@ class Synfire3Run1ExitExtractionIfCurrExp(BaseTestCase):
 
     def test_run(self):
         synfire_run.do_run(nNeurons, run_times=run_times, reset=reset)
-        spikes = synfire_run.get_output_pop_spikes()
+        spikes = synfire_run.get_output_pop_spikes_list_numpy()
 
         self.assertEquals(53, len(spikes[0]))
         self.assertEquals(106, len(spikes[1]))
@@ -29,17 +29,17 @@ class Synfire3Run1ExitExtractionIfCurrExp(BaseTestCase):
 
 if __name__ == '__main__':
     synfire_run.do_run(nNeurons, run_times=run_times, reset=reset)
-    gsyn = synfire_run.get_output_pop_gsyn()
-    v = synfire_run.get_output_pop_voltage()
-    spikes = synfire_run.get_output_pop_spikes()
+    gsyn = synfire_run.get_output_pop_gsyn_exc_list_numpy()
+    v = synfire_run.get_output_pop_voltage_list_numpy()
+    spikes = synfire_run.get_output_pop_spikes_list_numpy()
 
     print len(spikes[0])
     print len(spikes[1])
     print len(spikes[2])
-    plot_utils.plot_spikes(spikes[0], spikes[1], spikes[2])
+    plot_utils.plot_spikes(spikes)
     plot_utils.heat_plot(v[0], title="v1")
     plot_utils.heat_plot(gsyn[0], title="gysn1")
     plot_utils.heat_plot(v[1], title="v2")
     plot_utils.heat_plot(gsyn[1], title="gysn2")
     plot_utils.heat_plot(v[2], title="v3")
-    plot_utils.heat_plot(gsyn[3], title="gysn3")
+    plot_utils.heat_plot(gsyn[2], title="gysn3")

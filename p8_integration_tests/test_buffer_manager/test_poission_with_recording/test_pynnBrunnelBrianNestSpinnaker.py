@@ -3,7 +3,7 @@ import p8_integration_tests.test_buffer_manager.test_poission_with_recording.\
 
 from p8_integration_tests.base_test_case import BaseTestCase
 import p8_integration_tests.scripts.pynnBrunnelBrianNestSpinnaker as script
-
+from spynnaker8.utilities import neo_convertor
 from unittest import SkipTest
 
 Neurons = 3000  # number of neurons in each population
@@ -28,13 +28,16 @@ def plot(esp, sim_time, N_E):
 
 class PynnBrunnelBrianNestSpinnaker(BaseTestCase):
 
+    # AttributeError: 'SpikeSourcePoisson' object has no attribute 'describe'
     def test_run(self):
         (esp, s, N_E) = script.do_run(Neurons, sim_time, record=True)
+        esp_numpy = neo_convertor.convert_spikes(esp)
+        s_numpy = neo_convertor.convert_spikes(s)
         try:
-            self.assertLess(200, len(esp))
-            self.assertGreater(300, len(esp))
-            self.assertLess(22000, len(s))
-            self.assertGreater(26000, len(s))
+            self.assertLess(200, len(esp_numpy))
+            self.assertGreater(300, len(esp_numpy))
+            self.assertLess(22000, len(s_numpy))
+            self.assertGreater(26000, len(s_numpy))
             self.assertEquals(2400, N_E)
         except Exception as ex:
             # Just in case the range failed
@@ -43,7 +46,9 @@ class PynnBrunnelBrianNestSpinnaker(BaseTestCase):
 
 if __name__ == '__main__':
     (esp, s, N_E) = script.do_run(Neurons, sim_time, record=True)
-    plot(esp, sim_time, N_E)
-    print len(esp)
-    print len(s)
+    esp_numpy = neo_convertor.convert_spikes(esp)
+    s_numpy = neo_convertor.convert_spikes(s)
+    plot(esp_numpy, sim_time, N_E)
+    print len(esp_numpy)
+    print len(s_numpy)
     print N_E
