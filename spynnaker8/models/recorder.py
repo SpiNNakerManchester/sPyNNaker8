@@ -27,7 +27,7 @@ class Recorder(RecordingCommon):
         RecordingCommon.__init__(
             self, population, get_simulator().machine_time_step / 1000.0)
         self._recording_start_time = get_simulator().t
-        self._data_cache= defaultdict(DataCache)
+        self._data_cache = {}
 
     @staticmethod
     def _get_io(filename):
@@ -63,9 +63,11 @@ class Recorder(RecordingCommon):
 
         data = SpynnakerNeoBlock()
 
+        for previous in range(0, get_simulator().segment_counter):
+            data.segments.append(self._get_previous_segment(previous))
         # use really bad python because pynn expects it to be there.
         # add to the segments the new data
-        data.segments.append(self._get_data(variables, clear))
+        data.segments.append(self._get_current_segment(variables, clear))
 
         # add fluff to the neo block
         data.name = self._population.label
@@ -76,6 +78,20 @@ class Recorder(RecordingCommon):
             data.annotate(**annotations)
         return data
 
+    def cache_data(self):
+        variables = self._get_all_recording_variables()
+        if len(variables) == 0:
+            return
+
+        segment_number = get_simulator().segment_counter
+        logger.info("Caching data for segment {}".format(segment_number))
+
+        data_cache = DataCache(segment_number, get_simulator().t)
+        for variable in variables:
+            data = self._get_recorded_variable(variable)
+            data_cache.save_data(data, variable)
+        self._data_cache[segment_number] = data_cache
+
     def _filter_recorded(self, filter_ids):
         record_ids = list()
         for neuron_id in range(0, len(filter_ids)):
@@ -85,7 +101,7 @@ class Recorder(RecordingCommon):
                 record_ids.append(neuron_id + self._population._first_id)
         return record_ids
 
-    def _get_data(self, variables, clear):
+    def _get_current_segment(self, variables, clear):
 
         # build segment for the current data to be gathered in
         segment = SpynnakerNeoSegment(
@@ -103,21 +119,38 @@ class Recorder(RecordingCommon):
         if isinstance(variables, basestring):
             variables = [variables]
 
-        data_cache = self._data_cache[get_simulator().segment_counter]
         for variable in variables:
-            if data_cache.has_data(variable, get_simulator().t):
-                data = data_cache.get_data(variable)
-            else:
-                data = self._get_recorded_variable(variable)
-                data_cache.save_data(data, variable, get_simulator().t)
+            data = self._get_recorded_variable(variable)
+            #    data_cache.save_data(data, variable, get_simulator().t)
             if variable == "spikes":
-                self._read_in_spikes(data, segment)
+                self._read_in_spikes(data, segment, get_simulator().t)
             else:
                 ids = sorted(self._filter_recorded(
                     self._indices_to_record[variable]))
                 self._read_in_signal(data, segment, ids, variable)
         if clear:
             self._clear_recording(variables)
+        return segment
+
+    def _get_previous_segment(self, segment_number):
+        data_cache = self._data_cache[segment_number]
+
+        # build segment for the previous data to be gathered in
+        segment = SpynnakerNeoSegment(
+            name="segment{}".format(segment_number),
+            description=self._population.describe(),
+            rec_datetime=data_cache.rec_datetime)
+
+        variables = self._get_all_recording_variables()
+
+        for variable in variables:
+            data = data_cache.get_data(variable)
+            if variable == "spikes":
+                self._read_in_spikes(data, segment, data_cache.t)
+            else:
+                ids = sorted(self._filter_recorded(
+                    self._indices_to_record[variable]))
+                self._read_in_signal(data, segment, ids, variable)
         return segment
 
     def _read_in_signal(self, signal_array, segment, ids, variable):
@@ -162,8 +195,8 @@ class Recorder(RecordingCommon):
         processed_data = numpy.vstack(processed_data).T
         return processed_data
 
-    def _read_in_spikes(self, spikes, segment):
-        t_stop = get_simulator().t * pq.ms
+    def _read_in_spikes(self, spikes, segment, t):
+        t_stop = t * pq.ms
 
         for atom_id in sorted(self._filter_recorded(
                 self._indices_to_record['spikes'])):

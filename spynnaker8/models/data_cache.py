@@ -1,14 +1,27 @@
+from datetime import datetime
+
 class DataCache(object):
 
     _cache = dict()
-    _record_times = dict()
 
-    def has_data(self, variable, record_time):
-        return variable in self._record_times
+    def __init__(self, segment_number, t):
+        self._segment_number = segment_number
+        self._t = t
+
+    def has_data(self, variable):
+        return variable in self._cache
 
     def get_data(self, variable):
         return self._cache[variable]
 
-    def save_data(self, data, variable,record_time):
+    def save_data(self, data, variable):
+        self._rec_datetime = datetime.now()
         self._cache[variable] = data
-        self._record_times[variable] = record_time
+
+    @property
+    def rec_datetime(self):
+        return self._rec_datetime
+
+    @property
+    def t(self):
+        return self._t
