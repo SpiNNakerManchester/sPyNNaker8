@@ -40,7 +40,7 @@ class TestRun(object):
             record_v=True, get_v=None, v_path=None, record_v_7=False,
             record_gsyn_exc=True, record_gsyn_inh=True, get_gsyn_exc=None,
             get_gsyn_inh=None, gsyn_path_exc=None, gsyn_path_inh=None,
-            record_gsyn_exc_7=False, record_gsyn_inh_7=False,
+            record_gsyn_exc_7=False, record_gsyn_inh_7=False, get_all=False,
             use_spike_connections=True, use_wrap_around_connections=True,
             get_weights=False, get_delays=False, end_before_print=False,
             randomise_v_init=False):
@@ -154,6 +154,9 @@ class TestRun(object):
         :param record_gsyn_inh_7: If True will aks for gsyn inh to be recorded
             in PyNN 7 format
         :type record_gsyn_inh_7: bool
+        :param get_all: if True will obtain another neo object with all the
+            data set to be recorded by any other parameter
+        :type get_all: bool
         :param get_weights: If True set will add a weight value to the return
         :type get_weights: bool
         :param get_delays: If True delays will be gotten
@@ -186,6 +189,7 @@ class TestRun(object):
         self._recorded_gsyn_exc_7 = None
         self._recorded_gsyn_inh_list = []
         self._recorded_gsyn_inh_7 = None
+        self._recorded_all_list = []
         self._input_spikes_recorded_list = []
         self._input_spikes_recorded_7 = []
         self._weights = []
@@ -344,7 +348,8 @@ class TestRun(object):
                                get_spikes, record_7, get_v, record_v_7,
                                get_gsyn_exc, record_gsyn_exc_7,
                                get_gsyn_inh, record_gsyn_inh_7,
-                               record_input_spikes, record_input_spikes_7)
+                               record_input_spikes, record_input_spikes_7,
+                               get_all)
                 self._get_weight_delay(projections[0], get_weights, get_delays)
 
             if new_pop:
@@ -373,7 +378,7 @@ class TestRun(object):
         self._get_data(populations[0], populations[1], get_spikes, record_7,
                        get_v, record_v_7, get_gsyn_exc, record_gsyn_exc_7,
                        get_gsyn_inh, record_gsyn_inh_7, record_input_spikes,
-                       record_input_spikes_7)
+                       record_input_spikes_7, get_all)
 
         self._get_weight_delay(projections[0], get_weights, get_delays)
 
@@ -463,6 +468,12 @@ class TestRun(object):
     def get_output_pop_spikes_7(self):
         return self._recorded_spikes_7
 
+    def get_output_pop_all_list(self):
+        return self._recorded_all_list
+
+    def get_output_pop_all_neo(self):
+        return self._recorded_all_list[0]
+
     def get_spike_source_spikes_list(self):
         return self._input_spikes_recorded_list
 
@@ -512,7 +523,7 @@ class TestRun(object):
                   get_spikes, record_7, get_v, record_v_7,
                   get_gsyn_exc, record_gsyn_exc_7,
                   get_gsyn_inh, record_gysn_inh_7,
-                  record_input_spikes, record_input_spikes_7):
+                  record_input_spikes, record_input_spikes_7, get_all):
 
         if get_spikes:
             spikes = output_population.get_data(['spikes'])
@@ -567,6 +578,9 @@ class TestRun(object):
                 self._input_spikes_recorded_7 = spikes
             else:
                 self._input_spikes_recorded_7 += spikes
+
+        if get_all:
+            self._recorded_all_list.append(output_population.get_data(['all']))
 
     def _get_weight_delay(self, projection, get_weights, get_delays):
         if get_weights:
