@@ -13,8 +13,6 @@ from spynnaker.pyNN.models.recording_common import RecordingCommon
 from spynnaker.pyNN.utilities import utility_calls
 from spinn_front_end_common.utilities.globals_variables import get_simulator
 from spynnaker.pyNN.exceptions import InvalidParameterType
-from spynnaker8.utilities import SpynnakerNeoBlock, SpynnakerNeoSegment
-from spynnaker.pyNN import exceptions
 from spynnaker8.models.data_cache import DataCache
 from spynnaker8.utilities.spynnaker8_neo_block import SpynnakerNeoBlock
 from spynnaker8.utilities.spynnaker8_neo_segment import SpynnakerNeoSegment
@@ -64,7 +62,8 @@ class Recorder(RecordingCommon):
         data = SpynnakerNeoBlock()
 
         for previous in range(0, get_simulator().segment_counter):
-            data.segments.append(self._get_previous_segment(previous))
+            data.segments.append(self._get_previous_segment(previous,
+                                                            variables))
         # use really bad python because pynn expects it to be there.
         # add to the segments the new data
         data.segments.append(self._get_current_segment(variables, clear))
@@ -86,10 +85,24 @@ class Recorder(RecordingCommon):
         segment_number = get_simulator().segment_counter
         logger.info("Caching data for segment {}".format(segment_number))
 
-        data_cache = DataCache(segment_number, get_simulator().t)
+        data_cache = DataCache(label=self._population.label,
+                               description=self._population.describe(),
+                               segment_number=segment_number,
+                               recording_start_time=self._recording_start_time,
+                               t=get_simulator().t,
+                               sampling_interval=self._sampling_interval,
+                               first_id=self._population._first_id)
         for variable in variables:
             data = self._get_recorded_variable(variable)
-            data_cache.save_data(data, variable)
+            ids = sorted(
+                self._filter_recorded(self._indices_to_record[variable]))
+            indexes = numpy.array(
+                [self._population.id_to_index(atom_id) for atom_id in ids])
+            data_cache.save_data(variable=variable,
+                                 data=data,
+                                 ids=ids,
+                                 indexes=indexes,
+                                 units=self._population.find_units(variable))
         self._data_cache[segment_number] = data_cache
 
     def _filter_recorded(self, filter_ids):
@@ -119,38 +132,77 @@ class Recorder(RecordingCommon):
         if isinstance(variables, basestring):
             variables = [variables]
 
+        label = self._population.label
+        recording_start_time = self._recording_start_time
+        t = get_simulator().t
+        sampling_interval = self._sampling_interval
+        first_id = self._population._first_id
         for variable in variables:
             data = self._get_recorded_variable(variable)
-            #    data_cache.save_data(data, variable, get_simulator().t)
+            ids = sorted(
+                self._filter_recorded(self._indices_to_record[variable]))
+            indexes = numpy.array(
+                [self._population.id_to_index(atom_id) for atom_id in ids])
             if variable == "spikes":
-                self._read_in_spikes(data, segment, get_simulator().t)
+                segment.read_in_spikes(data, t, ids, indexes, first_id,
+                                       recording_start_time, label)
             else:
-                ids = sorted(self._filter_recorded(
-                    self._indices_to_record[variable]))
-                self._read_in_signal(data, segment, ids, variable)
+                units = self._population.find_units(variable)
+                segment.read_in_signal(data, ids, indexes, variable,
+                                       recording_start_time, sampling_interval,
+                                       units, label)
         if clear:
             self._clear_recording(variables)
         return segment
 
-    def _get_previous_segment(self, segment_number):
+    def _get_previous_segment(self, segment_number, variables):
+        if segment_number not in self._data_cache:
+            logger.warn("No Data available for Segment {}"
+                        .format(segment_number))
+            segment = SpynnakerNeoSegment(
+                name="segment{}".format(segment_number),
+                description="Empty",
+                rec_datetime=datetime.now())
+            return segment
+
         data_cache = self._data_cache[segment_number]
+
+        if variables == 'all':
+            variables = data_cache.variables
+
+        # if variable is a base string, plonk into a array for ease of
+        # conversion
+        if isinstance(variables, basestring):
+            variables = [variables]
 
         # build segment for the previous data to be gathered in
         segment = SpynnakerNeoSegment(
             name="segment{}".format(segment_number),
-            description=self._population.describe(),
+            description=data_cache.description,
             rec_datetime=data_cache.rec_datetime)
 
-        variables = self._get_all_recording_variables()
-
+        label = data_cache.label
+        recording_start_time = data_cache.recording_start_time
+        t = data_cache.t
+        sampling_interval = data_cache.sampling_interval
+        first_id = data_cache.first_id
         for variable in variables:
-            data = data_cache.get_data(variable)
+            if variable not in data_cache.variables:
+                logger.warn("No Data available for Segment {} variable {}"
+                            "".format(segment_number, variable))
+                continue
+            variable_cache = data_cache.get_data(variable)
+            data = variable_cache.data
+            ids = variable_cache.ids
+            indexes = variable_cache.indexes
             if variable == "spikes":
-                self._read_in_spikes(data, segment, data_cache.t)
+                segment.read_in_spikes(data, t, ids, indexes, first_id,
+                                       recording_start_time, label)
             else:
-                ids = sorted(self._filter_recorded(
-                    self._indices_to_record[variable]))
-                self._read_in_signal(data, segment, ids, variable)
+                units = variable_cache.units
+                segment.read_in_signal(data, ids, indexes, variable,
+                                       recording_start_time, sampling_interval,
+                                       units, label)
         return segment
 
     def _read_in_signal(self, signal_array, segment, ids, variable):
