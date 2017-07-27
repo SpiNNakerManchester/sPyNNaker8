@@ -26,6 +26,18 @@ class DataCache(object):
 
     def __init__(self, label, description, segment_number,
                  recording_start_time, t, sampling_interval, first_id):
+        """ constructor
+
+        :param label: cache label
+        :param description: cache description
+        :param segment_number: cache segment number
+        :param recording_start_time: when this cache was started in\
+            recording space.
+        :param t: time
+        :param sampling_interval: sampling interval, same as t in spynnaker \
+            world to date.
+        :param first_id: first atom
+        """
         self._label = label
         self._description = description
         self._segment_number = segment_number
