@@ -77,6 +77,30 @@ class Recorder(RecordingCommon):
             data.annotate(**annotations)
         return data
 
+    def _get_units(self, variable):
+        """
+        Get untis with some safety code if the population has trouble
+
+        :param variable: name of the variable
+        :type variable: str
+        :return: type of the data
+        :rtype: str
+        """
+        try:
+            return self._population.find_units(variable)
+        except Exception as ex:
+            logger.warn("Population: {} Does not support units for {}"
+                        "".format(self._populations.label, variable))
+            if variable == "spikes":
+                return "spikes"
+            if variable == "v":
+                return "mV"
+            if variable == "gsyn_exc":
+                return "uS"
+            if variable == "gsyn_inh":
+                return "uS"
+            raise ex
+
     def cache_data(self):
         variables = self._get_all_recording_variables()
         if len(variables) == 0:
@@ -102,7 +126,7 @@ class Recorder(RecordingCommon):
                                  data=data,
                                  ids=ids,
                                  indexes=indexes,
-                                 units=self._population.find_units(variable))
+                                 units=self._get_units(variable))
         self._data_cache[segment_number] = data_cache
 
     def _filter_recorded(self, filter_ids):
@@ -156,7 +180,7 @@ class Recorder(RecordingCommon):
                     variable=variable,
                     recording_start_time=self._recording_start_time,
                     sampling_interval=self._sampling_interval,
-                    units=self._population.find_units(variable),
+                    units=self._get_units(variable),
                     label=self._population.label)
         if clear:
             self._clear_recording(variables)
