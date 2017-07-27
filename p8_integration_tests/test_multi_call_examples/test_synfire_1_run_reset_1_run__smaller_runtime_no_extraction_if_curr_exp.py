@@ -46,14 +46,21 @@ class Synfire1RunReset1RunSmallerRuntimeNoExtraction(BaseTestCase):
 
 
 if __name__ == '__main__':
-    synfire_run.do_run(nNeurons, run_times=run_times, reset=reset)
-    gsyn = synfire_run.get_output_pop_gsyn_exc_list_numpy()
-    v = synfire_run.get_output_pop_voltage_list_numpy()
-    spikes = synfire_run.get_output_pop_spikes_list_numpy()
+    synfire_run.do_run(nNeurons, run_times=run_times, reset=reset,
+                       get_all=True)
+    neos = synfire_run.get_output_pop_all_list()
+    spikes = [1, 1]
+    spikes[0] = neo_convertor.convert_spikes(neos[1], 0)
+    spikes[1] = neo_convertor.convert_spikes(neos[1], 1)
+    v_1_0 = neo_convertor.convert_data(neos[1], "v", 0)
+    v_1_1 = neo_convertor.convert_data(neos[1], "v", 1)
+    gsyn_exc_1_0 = neo_convertor.convert_data(neos[1], "gsyn_exc", 0)
+    gsyn_exc_1_1 = neo_convertor.convert_data(neos[1], "gsyn_exc", 1)
     print len(spikes[0])
     print len(spikes[1])
     plot_utils.plot_spikes(spikes)
-    plot_utils.heat_plot(v[0], title="v1")
-    plot_utils.heat_plot(gsyn[0], title="gysn1")
-    plot_utils.heat_plot(v[1], title="v2")
-    plot_utils.heat_plot(gsyn[1], title="gysn2")
+    plot_utils.heat_plot(v_1_0, title="v1")
+    plot_utils.heat_plot(gsyn_exc_1_0, title="gysn1")
+    plot_utils.heat_plot(v_1_1, title="v2")
+    plot_utils.heat_plot(gsyn_exc_1_1, title="gysn2")
+
