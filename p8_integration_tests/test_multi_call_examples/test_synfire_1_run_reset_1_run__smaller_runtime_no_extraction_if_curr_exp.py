@@ -35,7 +35,6 @@ class Synfire1RunReset1RunSmallerRuntimeNoExtraction(BaseTestCase):
         self.assertEquals(nNeurons*run_times[0], len(v_0_0))
         self.assertEquals(nNeurons*run_times[1], len(v_1_1))
         gsyn_exc_0_0 = neo_convertor.convert_data(neos[0], "gsyn_exc", 0)
-        gsyn_exc_1_0 = neo_convertor.convert_data(neos[1], "gsyn_exc", 0)
         gsyn_exc_1_1 = neo_convertor.convert_data(neos[1], "gsyn_exc", 1)
         self.assertEquals(nNeurons*run_times[0], len(gsyn_exc_0_0))
         self.assertEquals(nNeurons*run_times[1], len(gsyn_exc_1_1))
@@ -63,4 +62,3 @@ if __name__ == '__main__':
     plot_utils.heat_plot(gsyn_exc_1_0, title="gysn1")
     plot_utils.heat_plot(v_1_1, title="v2")
     plot_utils.heat_plot(gsyn_exc_1_1, title="gysn2")
-

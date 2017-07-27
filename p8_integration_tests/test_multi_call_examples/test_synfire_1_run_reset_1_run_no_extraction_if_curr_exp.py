@@ -38,7 +38,6 @@ class Synfire1RunReset1RunNo_extraction_if_curr_exp(BaseTestCase):
         self.assertEquals(nNeurons*run_times[0], len(v_0_0))
         self.assertEquals(nNeurons*run_times[1], len(v_1_1))
         gsyn_exc_0_0 = neo_convertor.convert_data(neos[0], "gsyn_exc", 0)
-        gsyn_exc_1_0 = neo_convertor.convert_data(neos[1], "gsyn_exc", 0)
         gsyn_exc_1_1 = neo_convertor.convert_data(neos[1], "gsyn_exc", 1)
         self.assertEquals(nNeurons*run_times[0], len(gsyn_exc_0_0))
         self.assertEquals(nNeurons*run_times[1], len(gsyn_exc_1_1))
