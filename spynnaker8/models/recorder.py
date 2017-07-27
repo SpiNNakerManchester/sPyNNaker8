@@ -88,7 +88,7 @@ class Recorder(RecordingCommon):
             return self._population.find_units(variable)
         except Exception as ex:
             logger.warn("Population: {} Does not support units for {}"
-                        "".format(self._populations.label, variable))
+                        "".format(self._population.label, variable))
             if variable == "spikes":
                 return "spikes"
             if variable == "v":
