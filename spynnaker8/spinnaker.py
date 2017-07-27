@@ -53,7 +53,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 
         # pynn demanded objects
         self._id_counter = 42
-        self._segment_counter = -1
+        self._segment_counter = 0
         self._name = "SpiNNaker_under_version({}-{})".format(
             _version.__version__, _version.__version_name__)
         self._recorders = set([])
@@ -130,8 +130,10 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 
         :return: None
         """
+        for population in self._populations:
+            population.cache_data()
 
-        self._segment_counter = -1
+        self._segment_counter += 1
 
         AbstractSpiNNakerCommon.reset(self)
 
