@@ -30,7 +30,7 @@ from spynnaker8.models.synapse_dynamics.weight_dependence \
 __all__ = [
     # spynnaker 8 models
     'IFCurDelta', 'IFCurrExpCa2Adaptive', 'IFCondExpStock',
-    'Izhikevich_cond', 'IF_curr_dual_exp',
+    'Izhikevich_cond', 'IF_curr_dual_exp', 'IF_curr_exp_sEMD',
 
     # spynnaker 8 plastic stuff
     'WeightDependenceAdditiveTriplet',
