@@ -230,11 +230,11 @@ class Recorder(RecordingCommon):
         possibles = self._get_all_possible_recordable_variables()
         variables = OrderedSet()
         for possible in possibles:
-            if possible == "spikes" and  \
-                    isinstance(self._population._vertex,
-                               AbstractSpikeRecordable) and \
-                    self._population._vertex.is_recording_spikes():
-                variables.add(possible)
+            if possible == "spikes":
+                if isinstance(self._population._vertex,
+                              AbstractSpikeRecordable) \
+                        and self._population._vertex.is_recording_spikes():
+                    variables.add(possible)
             elif isinstance(self._population._vertex,
                             AbstractNeuronRecordable) and \
                     self._population._vertex.is_recording(possible):
