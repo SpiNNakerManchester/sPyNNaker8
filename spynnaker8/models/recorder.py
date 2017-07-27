@@ -134,25 +134,30 @@ class Recorder(RecordingCommon):
             variables.remove('all')
             variables.update(self._get_all_recording_variables())
 
-        label = self._population.label
-        recording_start_time = self._recording_start_time
-        t = get_simulator().t
-        sampling_interval = self._sampling_interval
-        first_id = self._population._first_id
         for variable in variables:
-            data = self._get_recorded_variable(variable)
             ids = sorted(
                 self._filter_recorded(self._indices_to_record[variable]))
             indexes = numpy.array(
                 [self._population.id_to_index(atom_id) for atom_id in ids])
             if variable == "spikes":
-                segment.read_in_spikes(data, t, ids, indexes, first_id,
-                                       recording_start_time, label)
+                segment.read_in_spikes(
+                    spikes=self._get_recorded_variable(variable),
+                    t=get_simulator().t,
+                    ids=ids,
+                    indexes=indexes,
+                    first_id=self._population._first_id,
+                    recording_start_time=self._recording_start_time,
+                    label=self._population.label)
             else:
-                units = self._population.find_units(variable)
-                segment.read_in_signal(data, ids, indexes, variable,
-                                       recording_start_time, sampling_interval,
-                                       units, label)
+                segment.read_in_signal(
+                    signal_array=self._get_recorded_variable(variable),
+                    ids=ids,
+                    indexes=indexes,
+                    variable=variable,
+                    recording_start_time=self._recording_start_time,
+                    sampling_interval=self._sampling_interval,
+                    units=self._population.find_units(variable),
+                    label=self._population.label)
         if clear:
             self._clear_recording(variables)
         return segment
@@ -185,88 +190,32 @@ class Recorder(RecordingCommon):
             description=data_cache.description,
             rec_datetime=data_cache.rec_datetime)
 
-        label = data_cache.label
-        recording_start_time = data_cache.recording_start_time
-        t = data_cache.t
-        sampling_interval = data_cache.sampling_interval
-        first_id = data_cache.first_id
         for variable in variables:
             if variable not in data_cache.variables:
                 logger.warn("No Data available for Segment {} variable {}"
                             "".format(segment_number, variable))
                 continue
             variable_cache = data_cache.get_data(variable)
-            data = variable_cache.data
-            ids = variable_cache.ids
-            indexes = variable_cache.indexes
             if variable == "spikes":
-                segment.read_in_spikes(data, t, ids, indexes, first_id,
-                                       recording_start_time, label)
+                segment.read_in_spikes(
+                    spikes=variable_cache.data,
+                    t=data_cache.t,
+                    ids=variable_cache.ids,
+                    indexes=variable_cache.indexes,
+                    first_id=data_cache.first_id,
+                    recording_start_time=data_cache.recording_start_time,
+                    label=data_cache.label)
             else:
-                units = variable_cache.units
-                segment.read_in_signal(data, ids, indexes, variable,
-                                       recording_start_time, sampling_interval,
-                                       units, label)
+                segment.read_in_signal(
+                    signal_array=variable_cache.data,
+                    ids= variable_cache.ids,
+                    indexes=variable_cache.indexes,
+                    variable=variable,
+                    recording_start_time=data_cache.recording_start_time,
+                    sampling_interval=data_cache.sampling_interval,
+                    units=variable_cache.units,
+                    label=data_cache.label)
         return segment
-
-    def _read_in_signal(self, signal_array, segment, ids, variable):
-        """ reads in a data item that's not spikes (likely v, gsyn e, gsyn i)
-
-        :param signal_array: the raw signal data
-        :param segment: the segment to put the data into
-        :param ids: the recorded ids
-        :param variable: the variable name
-        :return: None
-        """
-        t_start = self._recording_start_time * pq.ms
-        sampling_period = self._sampling_interval * pq.ms
-        if signal_array.size > 0:
-            channel_indices = numpy.array(
-                [self._population.id_to_index(atom_id)
-                 for atom_id in ids])
-            processed_data = \
-                self._convert_extracted_data_into_neo_expected_format(
-                    signal_array, channel_indices)
-            units = self._population.find_units(variable)
-            source_ids = numpy.fromiter(ids, dtype=int)
-            data_array = neo.AnalogSignalArray(
-                    processed_data,
-                    units=units,
-                    t_start=t_start,
-                    sampling_period=sampling_period,
-                    name=variable,
-                    source_population=self._population.label,
-                    channel_index=channel_indices,
-                    source_ids=source_ids)
-            data_array.shape = (
-                data_array.shape[0], data_array.shape[1])
-            segment.analogsignalarrays.append(data_array)
-
-    @staticmethod
-    def _convert_extracted_data_into_neo_expected_format(
-            signal_array, channel_indices):
-        processed_data = [
-            signal_array[:, 2][signal_array[:, 0] == index]
-            for index in channel_indices]
-        processed_data = numpy.vstack(processed_data).T
-        return processed_data
-
-    def _read_in_spikes(self, spikes, segment, t):
-        t_stop = t * pq.ms
-
-        for atom_id in sorted(self._filter_recorded(
-                self._indices_to_record['spikes'])):
-            # get times per atom
-            segment.spiketrains.append(
-                neo.SpikeTrain(
-                    times=spikes[spikes[:, 0] ==
-                                 atom_id - self._population._first_id][:, 1],
-                    t_start=self._recording_start_time,
-                    t_stop=t_stop,
-                    units='ms',
-                    source_population=self._population.label,
-                    source_id=int(atom_id),
-                    source_index=self._population.id_to_index(atom_id)))
 
     def _get_all_possible_recordable_variables(self):
         variables = OrderedSet()
