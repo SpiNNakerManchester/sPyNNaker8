@@ -88,7 +88,7 @@ class Recorder(RecordingCommon):
             return self._population.find_units(variable)
         except Exception as ex:
             logger.warn("Population: {} Does not support units for {}"
-                        "".format(self._populations.label, variable))
+                        "".format(self._population.label, variable))
             if variable == "spikes":
                 return "spikes"
             if variable == "v":
@@ -145,13 +145,14 @@ class Recorder(RecordingCommon):
         """
         # if variable is a base string, plonk into a array for ease of
         # conversion
+        variables = variables_to_clean
         if isinstance(variables_to_clean, basestring):
             variables = [variables_to_clean]
 
         # if all are needed to be extracted, extract each and plonk into the
         # neo block segment. ensures whatever was in variables stays in
         # variables, regardless of all
-        if 'all' in variables:
+        if 'all' in variables_to_clean:
             variables = OrderedSet(variables_to_clean)
             variables.remove('all')
             variables.update(self._get_all_recording_variables())
