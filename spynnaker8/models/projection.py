@@ -96,12 +96,15 @@ class Projection(PyNNProjectionCommon):
             "last" is supported
         :return: values selected
         """
+        if not gather:
+            logger.warn("Spynnaker always gathers from every core.")
+
         return self._get_data(
-            attribute_names, format, gather, with_address, multiple_synapses)
+            attribute_names, format, with_address, multiple_synapses)
 
     def _get_data(
             self, attribute_names, format,  # @ReservedAssignment
-            gather=True, with_address=True, multiple_synapses='last',
+            with_address=True, multiple_synapses='last',
             notify=None):
         """ Internal data getter to add notify option
         """
@@ -122,9 +125,11 @@ class Projection(PyNNProjectionCommon):
         # Split out attributes in to standard versus synapse dynamics data
         fixed_values = list()
         for attribute in attribute_names:
-            if attribute in {"source", "target", "weight", "delay"}:
-                data_items.append(attribute)
-            else:
+            # if with address set to true, we have decided the end user is
+            # being stupid if they request source and/or target then they get
+            # it twice
+            data_items.append(attribute)
+            if attribute not in {"source", "target", "weight", "delay"}:
                 value = self._synapse_information.synapse_dynamics.get_value(
                     attribute)
                 fixed_values.append((attribute, value))
