@@ -60,9 +60,9 @@ class Recorder(RecordingCommon):
         data = SpynnakerNeoBlock()
 
         for previous in range(0, get_simulator().segment_counter):
-            data.segments.append(self._get_previous_segment(previous,
-                                                            variables))
-        # use really bad python because pynn expects it to be there.
+            data.segments.append(
+                self._get_previous_segment(previous, variables))
+
         # add to the segments the new data
         data.segments.append(self._get_current_segment(variables, clear))
 
@@ -77,7 +77,7 @@ class Recorder(RecordingCommon):
 
     def _get_units(self, variable):
         """
-        Get untis with some safety code if the population has trouble
+        Get units with some safety code if the population has trouble
 
         :param variable: name of the variable
         :type variable: str
@@ -100,32 +100,33 @@ class Recorder(RecordingCommon):
             raise ex
 
     def cache_data(self):
+        """ store data for later extraction
+
+        :rtype: None
+        """
         variables = self._get_all_recording_variables()
-        if len(variables) == 0:
-            return
+        if len(variables) != 0:
+            segment_number = get_simulator().segment_counter
+            logger.info("Caching data for segment {}".format(segment_number))
 
-        segment_number = get_simulator().segment_counter
-        logger.info("Caching data for segment {}".format(segment_number))
+            data_cache = DataCache(
+                label=self._population.label,
+                description=self._population.describe(),
+                segment_number=segment_number,
+                recording_start_time=self._recording_start_time,
+                t=get_simulator().t, sampling_interval=self._sampling_interval,
+                first_id=self._population._first_id)
 
-        data_cache = DataCache(label=self._population.label,
-                               description=self._population.describe(),
-                               segment_number=segment_number,
-                               recording_start_time=self._recording_start_time,
-                               t=get_simulator().t,
-                               sampling_interval=self._sampling_interval,
-                               first_id=self._population._first_id)
-        for variable in variables:
-            data = self._get_recorded_variable(variable)
-            ids = sorted(
-                self._filter_recorded(self._indices_to_record[variable]))
-            indexes = numpy.array(
-                [self._population.id_to_index(atom_id) for atom_id in ids])
-            data_cache.save_data(variable=variable,
-                                 data=data,
-                                 ids=ids,
-                                 indexes=indexes,
-                                 units=self._get_units(variable))
-        self._data_cache[segment_number] = data_cache
+            for variable in variables:
+                data = self._get_recorded_variable(variable)
+                ids = sorted(
+                    self._filter_recorded(self._indices_to_record[variable]))
+                indexes = numpy.array(
+                    [self._population.id_to_index(atom_id) for atom_id in ids])
+                data_cache.save_data(
+                    variable=variable, data=data, ids=ids, indexes=indexes,
+                    units=self._get_units(variable))
+            self._data_cache[segment_number] = data_cache
 
     def _filter_recorded(self, filter_ids):
         record_ids = list()
@@ -136,6 +137,26 @@ class Recorder(RecordingCommon):
                 record_ids.append(neuron_id + self._population._first_id)
         return record_ids
 
+    def _clean_variables(self, variables_to_clean):
+        """ sorts out variables for processing usage
+
+        :param variables_to_clean: list of variables names, or all, or single.
+        :return: ordered set of variables strings.
+        """
+        # if variable is a base string, plonk into a array for ease of
+        # conversion
+        if isinstance(variables_to_clean, basestring):
+            variables = [variables_to_clean]
+
+        # if all are needed to be extracted, extract each and plonk into the
+        # neo block segment. ensures whatever was in variables stays in
+        # variables, regardless of all
+        if 'all' in variables:
+            variables = OrderedSet(variables_to_clean)
+            variables.remove('all')
+            variables.update(self._get_all_recording_variables())
+        return variables
+
     def _get_current_segment(self, variables, clear):
 
         # build segment for the current data to be gathered in
@@ -144,17 +165,8 @@ class Recorder(RecordingCommon):
             description=self._population.describe(),
             rec_datetime=datetime.now())
 
-        # if variable is a base string, plonk into a array for ease of
-        # conversion
-        if isinstance(variables, basestring):
-            variables = [variables]
-
-        # if all are needed to be extracted, extract each and plonk into the
-        # neo block segment
-        if 'all' in variables:
-            variables = set(variables)
-            variables.remove('all')
-            variables.update(self._get_all_recording_variables())
+        # sort out variables for using
+        variables = self._clean_variables(variables)
 
         for variable in variables:
             ids = sorted(
@@ -164,18 +176,14 @@ class Recorder(RecordingCommon):
             if variable == "spikes":
                 segment.read_in_spikes(
                     spikes=self._get_recorded_variable(variable),
-                    t=get_simulator().t,
-                    ids=ids,
-                    indexes=indexes,
+                    t=get_simulator().t, ids=ids, indexes=indexes,
                     first_id=self._population._first_id,
                     recording_start_time=self._recording_start_time,
                     label=self._population.label)
             else:
                 segment.read_in_signal(
                     signal_array=self._get_recorded_variable(variable),
-                    ids=ids,
-                    indexes=indexes,
-                    variable=variable,
+                    ids=ids, indexes=indexes, variable=variable,
                     recording_start_time=self._recording_start_time,
                     sampling_interval=self._sampling_interval,
                     units=self._get_units(variable),
@@ -196,15 +204,8 @@ class Recorder(RecordingCommon):
 
         data_cache = self._data_cache[segment_number]
 
-        # if variable is a base string, plonk into a array for ease of
-        # conversion
-        if isinstance(variables, basestring):
-            variables = [variables]
-
-        if 'all' in variables:
-            variables = set(variables)
-            variables.remove('all')
-            variables.update(data_cache.variables)
+        # sort out variables
+        variables = self._clean_variables(variables)
 
         # build segment for the previous data to be gathered in
         segment = SpynnakerNeoSegment(
