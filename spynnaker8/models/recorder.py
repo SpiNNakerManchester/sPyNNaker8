@@ -145,7 +145,7 @@ class Recorder(RecordingCommon):
         """
         # if variable is a base string, plonk into a array for ease of
         # conversion
-        variables = None
+        variables = variables_to_clean
         if isinstance(variables_to_clean, basestring):
             variables = [variables_to_clean]
 
