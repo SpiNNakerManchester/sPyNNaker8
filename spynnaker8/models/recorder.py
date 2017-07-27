@@ -1,10 +1,8 @@
-from collections import defaultdict
 import logging
 import neo
 import os
 import numpy
 from datetime import datetime
-import quantities as pq
 from spinn_utilities.ordered_set import OrderedSet
 
 from spynnaker.pyNN.models.common import AbstractNeuronRecordable
@@ -232,7 +230,7 @@ class Recorder(RecordingCommon):
             else:
                 segment.read_in_signal(
                     signal_array=variable_cache.data,
-                    ids= variable_cache.ids,
+                    ids=variable_cache.ids,
                     indexes=variable_cache.indexes,
                     variable=variable,
                     recording_start_time=data_cache.recording_start_time,

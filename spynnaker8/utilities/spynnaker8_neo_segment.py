@@ -2,6 +2,7 @@ from neo import Segment, SpikeTrain, AnalogSignalArray
 import numpy
 import quantities as pq
 
+
 class SpynnakerNeoSegment(Segment):
     """ spynnaker version of the neo segment holding the data elements as
     needed
