@@ -113,8 +113,7 @@ if __name__ == '__main__':
     numpy.savetxt(v_file, v, delimiter=',')
     numpy.savetxt(gysn_file, gsyn_exc, delimiter=',')
 
-    Figure(
-           SpynakkerPanel(spikes_neo, yticks=True, xticks=True, markersize=4,
+    Figure(SpynakkerPanel(spikes_neo, yticks=True, xticks=True, markersize=4,
                           xlim=(0, runtime)),
            SpynakkerPanel(v_neo, yticks=True, xticks=True),
            SpynakkerPanel(gsyn_exc_neo, yticks=True),
