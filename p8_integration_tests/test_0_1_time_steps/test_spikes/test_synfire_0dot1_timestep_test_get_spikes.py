@@ -31,7 +31,7 @@ class TestGetSpikesAt0_1msTimeStep(BaseTestCase):
                                max_delay=max_delay, delay=delay,
                                neurons_per_core=neurons_per_core,
                                run_times=[runtime])
-            spikes = synfire_run.get_output_pop_spikes()
+            spikes = synfire_run.get_output_pop_spikes_numpy()
             # Eact spike checking removed as system may oervload
             spike_checker.synfire_spike_checker(spikes, n_neurons)
         # System intentional overload so may error

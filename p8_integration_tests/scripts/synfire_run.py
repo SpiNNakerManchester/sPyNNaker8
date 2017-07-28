@@ -1,11 +1,10 @@
 """
 Synfirechain-like example
 """
-
 import spynnaker8 as p
-
 from spynnaker8 import IF_curr_exp
 from spynnaker8 import SpikeSourceArray
+from spynnaker8.utilities import neo_convertor
 
 CELL_PARAMS_LIF = {'cm': 0.25, 'i_offset': 0.0, 'tau_m': 20.0,
                    'tau_refrac': 2.0, 'tau_syn_E': 5.0, 'tau_syn_I': 5.0,
@@ -15,11 +14,16 @@ CELL_PARAMS_LIF = {'cm': 0.25, 'i_offset': 0.0, 'tau_m': 20.0,
 class TestRun(object):
 
     def __init__(self):
-        self._recorded_v = None
-        self._recorded_spikes = None
-        self._recorded_gsyn_exc = None
-        self._recorded_gsyn_inh = None
-        self._input_spikes_recorded = None
+        self._recorded_v_list = None
+        self._recorded_v_7 = None
+        self._recorded_spikes_list = None
+        self._recorded_spikes_7 = None
+        self._recorded_gsyn_exc_list = None
+        self._recorded_gsyn_exc_7 = None
+        self._recorded_gsyn_inh_list = None
+        self._recorded_gsyn_inh_7 = None
+        self._input_spikes_recorded_list = None
+        self._input_spikes_recorded_7 = None
         self._weights = None
         self._delays = None
 
@@ -31,13 +35,15 @@ class TestRun(object):
             neurons_per_core=10, cell_class=IF_curr_exp, constraint=None,
             cell_params=CELL_PARAMS_LIF, run_times=None, reset=False,
             extract_between_runs=True, set_between_runs=None, new_pop=False,
-            record_input_spikes=False, record=True, get_spikes=None,
-            spike_path=None, record_v=True, get_v=None, v_path=None,
-            record_gsyn_exc=True, record_gsyn_inh=True,
-            get_gsyn_exc=None, get_gsyn_inh=None, gsyn_path_exc=None,
-            gsyn_path_inh=None, use_spike_connections=True,
-            use_wrap_around_connections=True, get_weights=False,
-            get_delays=False, end_before_print=False, randomise_v_init=False):
+            record_input_spikes=False, record_input_spikes_7=False,
+            record=True, get_spikes=None, spike_path=None, record_7=False,
+            record_v=True, get_v=None, v_path=None, record_v_7=False,
+            record_gsyn_exc=True, record_gsyn_inh=True, get_gsyn_exc=None,
+            get_gsyn_inh=None, gsyn_path_exc=None, gsyn_path_inh=None,
+            record_gsyn_exc_7=False, record_gsyn_inh_7=False,
+            use_spike_connections=True, use_wrap_around_connections=True,
+            get_weights=False, get_delays=False, end_before_print=False,
+            randomise_v_init=False):
         """
 
         :param n_neurons: Number of Neurons in chain
@@ -97,7 +103,10 @@ class TestRun(object):
         :type new_pop: bool
         :param record_input_spikes: check for recording input spikes
         :type record_input_spikes: bool
-        :param record: If True will aks for spikes to be recorded
+        :param record_input_spikes_7: check for recording input spikes in
+            PyNN7 format
+        :type record_input_spikes_7: bool
+        :param record: If True will asks for spikes to be recorded
         :type record: bool
         :param get_spikes: If set overrides the normal behaviour
             of getting spikes if and only if record is True.
@@ -105,7 +114,10 @@ class TestRun(object):
         :type get_spikes: bool
         :param spike_path: The path to print(write) the last spike data too
         :type spike_path: str or None
-        :param record_v: If True will aks for voltage to be recorded
+        :param record_7: If True will asks for spikes to be recorded
+            in PyNN7 format
+        :type record_7: bool
+        :param record_v: If True will ask for voltage to be recorded
         :type record_v: bool
         :param get_v: If set overrides the normal behaviour
             of getting v if and only if record_v is True.
@@ -113,6 +125,11 @@ class TestRun(object):
         :type get_v: bool
         :param v_path: The path to print(write) the last v data too
         :type v_path: str or None
+        :param get_v_7: If True
+        get_v_7
+        :param record_v_7: If True will ask for voltage to be recorded
+            in PyNN7 format
+        :type record_v_7: bool
         :param record_gsyn_exc: If True will aks for gsyn exc to be recorded
         :type record_gsyn_exc: bool
         :param record_gsyn_inh: If True will aks for gsyn inh to be recorded
@@ -122,15 +139,21 @@ class TestRun(object):
         :type gsyn_path_exc: str or None
         :param get_gsyn_exc: If set overrides the normal behaviour
             of getting gsyn exc if and only if record_gsyn_exc is True.
-            If left None the value of record_gsyn is used.
+            If left None the value of record_gsyn_exc is used.
         :type get_gsyn_exc: bool
         :param get_gsyn_inh: If set overrides the normal behaviour
             of getting gsyn inh if and only if record_gsyn_inh is True.
-            If left None the value of record_gsyn is used.
+            If left None the value of record_gsyn_ihn is used.
         :type get_gsyn_inh: bool
         :param gsyn_path_inh: The path to print(write) the last gsyn in the
             data too
         :type gsyn_path_inh: str or None
+        :param record_gsyn_exc_7: If True will aks for gsyn exc to be recorded
+            in PyNN 7 format
+        :type record_gsyn_exc_7: bool
+        :param record_gsyn_inh_7: If True will aks for gsyn inh to be recorded
+            in PyNN 7 format
+        :type record_gsyn_inh_7: bool
         :param get_weights: If True set will add a weight value to the return
         :type get_weights: bool
         :param get_delays: If True delays will be gotten
@@ -155,10 +178,16 @@ class TestRun(object):
 
             All three/four values will repeated once per run is requested
         """
-        self._recorded_v = []
-        self._recorded_spikes = []
-        self._recorded_gsyn = []
-        self._input_spikes_recorded = []
+        self._recorded_v_list = []
+        self._recorded_v_7 = None
+        self._recorded_spikes_list = []
+        self._recorded_spikes_7 = None
+        self._recorded_gsyn_exc_list = []
+        self._recorded_gsyn_exc_7 = None
+        self._recorded_gsyn_inh_list = []
+        self._recorded_gsyn_inh_7 = None
+        self._input_spikes_recorded_list = []
+        self._input_spikes_recorded_7 = []
         self._weights = []
         self._delays = []
 
@@ -176,15 +205,52 @@ class TestRun(object):
 
         if get_spikes is None:
             get_spikes = record
+        else:
+            if not record:
+                if record_7:
+                    msg = "record_7 will cause spike recording to be turned on"
+                    raise Exception(msg)
+                if spike_path:
+                    msg = "spike_path will cause spike recording to be " \
+                          "turned on"
+                    raise Exception(msg)
 
         if get_v is None:
             get_v = record_v
+        else:
+            if not record_v:
+                if record_v_7:
+                    msg = "record_v_7 will cause v recording to be turned on"
+                    raise Exception(msg)
+                if v_path:
+                    msg = "v_path will cause v recording to be turned on"
+                    raise Exception(msg)
 
         if get_gsyn_exc is None:
             get_gsyn_exc = record_gsyn_exc
+        else:
+            if not record_gsyn_exc:
+                if record_gsyn_exc_7:
+                    msg = "record_gsyn_exc_7 will cause gsyn_exc recording " \
+                          "to be turned on"
+                    raise Exception(msg)
+                if gsyn_path_exc:
+                    msg = "gsyn_path_exc will cause gsyn_exc recording " \
+                          "to be turned on"
+                    raise Exception(msg)
 
         if get_gsyn_inh is None:
             get_gsyn_inh = record_gsyn_inh
+        else:
+            if not record_gsyn_inh:
+                if record_gsyn_inh_7:
+                    msg = "record_gsyn_inh_7 will cause gsyn_inh recording " \
+                          "to be turned on"
+                    raise Exception(msg)
+                if gsyn_path_inh:
+                    msg = "gsyn_path_inh will cause gsyn_exc recording " \
+                          "to be turned on"
+                    raise Exception(msg)
 
         p.setup(timestep=time_step, min_delay=1.0, max_delay=max_delay)
         if neurons_per_core is not None:
@@ -226,7 +292,7 @@ class TestRun(object):
         if randomise_v_init:
             rng = p.NumpyRNG(seed=28375)
             v_init = p.RandomDistribution('uniform', [-60, -40], rng)
-            populations[0].randomInit(v_init)
+            populations[0].initialize(v=v_init)
 
         if constraint is not None:
             populations[0].set_constraint(constraint)
@@ -254,15 +320,15 @@ class TestRun(object):
             p.StaticSynapse(weight=weight_to_spike, delay=1)))
 
         # handle recording
-        if record or spike_path is not None:
+        if record or record_7 or spike_path:
             populations[0].record("spikes")
-        if record_v or v_path is not None:
+        if record_v or record_v_7 or v_path:
             populations[0].record("v")
-        if record_gsyn_exc or gsyn_path_exc is not None:
+        if record_gsyn_exc or record_gsyn_exc_7 or gsyn_path_exc:
             populations[0].record("gsyn_exc")
-        if record_gsyn_inh or gsyn_path_inh is not None:
+        if record_gsyn_inh or record_gsyn_inh_7 or gsyn_path_inh:
             populations[0].record("gsyn_inh")
-        if record_input_spikes:
+        if record_input_spikes or record_input_spikes_7:
             populations[1].record("spikes")
 
         results = ()
@@ -274,13 +340,12 @@ class TestRun(object):
             run_count += 1
 
             if extract_between_runs:
-                self._get_data(
-                    populations[0], populations[1], get_spikes, get_v,
-                    get_gsyn_exc, get_gsyn_inh, record_input_spikes)
-                if get_weights:
-                    results += (projections[0].get("weight"))
-                if get_delays:
-                    self._delays.append(projections[0].get("delay"))
+                self._get_data(populations[0], populations[1],
+                               get_spikes, record_7, get_v, record_v_7,
+                               get_gsyn_exc, record_gsyn_exc_7,
+                               get_gsyn_inh, record_gsyn_inh_7,
+                               record_input_spikes, record_input_spikes_7)
+                self._get_weight_delay(projections[0], get_weights, get_delays)
 
             if new_pop:
                 populations.append(
@@ -294,28 +359,23 @@ class TestRun(object):
                 projections.append(new_projection)
 
             if spike_times_list is not None:
-                populations[1].set("spike_times", spike_times_list[run_count])
+                populations[1].set(spike_times=spike_times_list[run_count])
 
             for (pop, name, value) in set_between_runs:
-                if pop == 0:
-                    populations[0].set(name=value)
-                else:
-                    populations[1].set(name=value)
+                new_values = {name: value}
+                populations[pop].set(**new_values)
 
             if reset:
                 p.reset()
 
         p.run(run_times[-1])
 
-        self._get_data(
-            populations[0], populations[1], record, record_v,
-            record_gsyn_exc, record_gsyn_inh, record_input_spikes)
+        self._get_data(populations[0], populations[1], get_spikes, record_7,
+                       get_v, record_v_7, get_gsyn_exc, record_gsyn_exc_7,
+                       get_gsyn_inh, record_gsyn_inh_7, record_input_spikes,
+                       record_input_spikes_7)
 
-        if get_weights:
-            results += (projections[0].get("weight"))
-
-        if get_delays:
-            self._delays.append(projections[0].get("delays"))
+        self._get_weight_delay(projections[0], get_weights, get_delays)
 
         if end_before_print:
             if v_path is not None or spike_path is not None or \
@@ -336,60 +396,185 @@ class TestRun(object):
 
         return results
 
-    def get_output_pop_gsyn_exc(self):
-        return self._recorded_gsyn_exc
+    def get_output_pop_gsyn_exc_neo(self):
+        return self._recorded_gsyn_exc_list[0]
 
-    def get_output_pop_gsyn_inh(self):
-        return self._recorded_gsyn_inh
+    def get_output_pop_gsyn_exc_numpy(self):
+        gsyn_exc_neo = self._recorded_gsyn_exc_list[0]
+        return neo_convertor.convert_data(gsyn_exc_neo, "gsyn_exc")
 
-    def get_output_pop_voltage(self):
-        return self._recorded_v
+    def get_output_pop_gsyn_exc_list(self):
+        return self._recorded_gsyn_exc_list
 
-    def get_output_pop_spikes(self):
-        return self._recorded_spikes
+    def get_output_pop_gsyn_exc_list_numpy(self):
+        return map(neo_convertor.convert_gsyn_exc_list,
+                   self._recorded_gsyn_exc_list)
 
-    def get_spike_source_spikes(self):
-        return self._input_spikes_recorded
+    def get_output_pop_gsyn_exc_7(self):
+        return self._recorded_gsyn_exc_7
 
-    def _get_data(
-            self, output_population, input_population, record, record_v,
-            record_gsyn_exc, record_gsyn_inh, input_pop_record_spikes):
+    def get_output_pop_gsyn_inh_list(self):
+        return self._recorded_gsyn_inh_list
 
-        if record_v:
-            if self._recorded_v is None:
-                self._recorded_v = output_population.get_data(['v'])
+    def get_output_pop_gsyn_inh_list_numpy(self):
+        return map(neo_convertor.convert_gsyn_inh_list,
+                   self._recorded_gsyn_inh_list)
+
+    def get_output_pop_gsyn_inh_neo(self):
+        return self._recorded_gsyn_inh_list[0]
+
+    def get_output_pop_gsyn_inh_numpy(self):
+        gsyn_inh_neo = self._recorded_gsyn_inh_list[0]
+        return neo_convertor.convert_data(gsyn_inh_neo, "gsyn_exc")
+
+    def get_output_pop_gsyn_inh_7(self):
+        return self._recorded_gsyn_inh_7
+
+    def get_output_pop_voltage_list(self):
+        return self._recorded_v_list
+
+    def get_output_pop_voltage_list_numpy(self):
+        return map(neo_convertor.convert_v_list,
+                   self._recorded_v_list)
+
+    def get_output_pop_voltage_neo(self):
+        return self._recorded_v_list[0]
+
+    def get_output_pop_voltage_numpy(self):
+        v_neo = self._recorded_v_list[0]
+        return neo_convertor.convert_data(v_neo, "v")
+
+    def get_output_pop_voltage_7(self):
+        return self._recorded_v_7
+
+    def get_output_pop_spikes_list(self):
+        return self._recorded_spikes_list
+
+    def get_output_pop_spikes_list_numpy(self):
+        return map(neo_convertor.convert_spikes, self._recorded_spikes_list)
+
+    def get_output_pop_spikes_neo(self):
+        return self._recorded_spikes_list[0]
+
+    def get_output_pop_spikes_numpy(self):
+        spikes = self._recorded_spikes_list[0]
+        return neo_convertor.convert_spikes(spikes)
+
+    def get_output_pop_spikes_7(self):
+        return self._recorded_spikes_7
+
+    def get_spike_source_spikes_list(self):
+        return self._input_spikes_recorded_list
+
+    def get_spike_source_spikes_list_numpy(self):
+        return map(neo_convertor.convert_spikes,
+                   self._input_spikes_recorded_list)
+
+    def get_spike_source_spikes_neo(self):
+        return self._input_spikes_recorded_list[0]
+
+    def get_spike_source_spikes_numpy(self):
+        spikes = self._input_spikes_recorded_list[0]
+        return neo_convertor.convert_spikes(spikes)
+
+    def get_spike_source_spikes_7(self):
+        return self._input_spikes_recorded_7
+
+    def get_weights(self):
+        """
+
+        ;return if not recorded returns None
+            if recorded once returns a numpy array
+            if recorded more than once returns a list of numpy arrays
+        :rtype: None, nparray or list of nparray
+        """
+        if len(self._weights) == 0:
+            return None
+        if len(self._weights) == 1:
+            return self._weights[0]
+        return self._weights
+
+    def get_delay(self):
+        """
+
+        ;return if not recorded returns None
+            if recorded once returns a numpy array
+            if recorded more than once returns a list of numpy arrays
+        :rtype: None, nparray or list of nparray
+        """
+        if len(self._delays) == 0:
+            return None
+        if len(self._delays) == 1:
+            return self._delays[0]
+        return self._delays
+
+    def _get_data(self, output_population, input_population,
+                  get_spikes, record_7, get_v, record_v_7,
+                  get_gsyn_exc, record_gsyn_exc_7,
+                  get_gsyn_inh, record_gysn_inh_7,
+                  record_input_spikes, record_input_spikes_7):
+
+        if get_spikes:
+            spikes = output_population.get_data(['spikes'])
+            self._recorded_spikes_list.append(spikes)
+
+        if record_7:
+            spikes = output_population.spinnaker_get_data('spikes')
+            if self._recorded_spikes_7 is None:
+                self._recorded_spikes_7 = spikes
             else:
-                self._recorded_v += output_population.get_data(['v'])
+                self._recorded_spikes_7 += spikes
 
-        if record_gsyn_exc:
-            if self._recorded_gsyn_exc is None:
-                self._recorded_gsyn_exc = output_population.get_data([
-                    'gsyn_exc'])
-            else:
-                self._recorded_gsyn_exc += output_population.get_data([
-                    'gsyn_exc'])
+        if get_v:
+            self._recorded_v_list.append(output_population.get_data(['v']))
 
-        if record_gsyn_inh:
-            if self._recorded_gsyn_inh is None:
-                self._recorded_gsyn_inh = output_population.get_data(
-                    ['gsyn_inh'])
+        if record_v_7:
+            v = output_population.spinnaker_get_data('v')
+            if self._recorded_v_7 is None:
+                self._recorded_v_7 = v
             else:
-                self._recorded_gsyn_inh += output_population.get_data(
-                    ['gsyn_inh'])
+                self._recorded_v_7 += v
 
-        if record:
-            if self._recorded_spikes is None:
-                self._recorded_spikes = output_population.get_data(['spikes'])
-            else:
-                self._recorded_spikes += output_population.get_data(['spikes'])
+        if get_gsyn_exc:
+            gsyn_exc = output_population.get_data(['gsyn_exc'])
+            self._recorded_gsyn_exc_list.append(gsyn_exc)
 
-        if input_pop_record_spikes:
-            if self._input_spikes_recorded is None:
-                self._input_spikes_recorded = input_population.get_data(
-                    ['spikes'])
+        if record_gsyn_exc_7:
+            gsyn_exc = output_population.spinnaker_get_data('gsyn_exc')
+            if self._recorded_gsyn_exc_7 is None:
+                self._recorded_gsyn_exc_7 = gsyn_exc
             else:
-                self._input_spikes_recorded += input_population.get_data(
-                    ['spikes'])
+                self._recorded_gsyn_exc_7 += gsyn_exc
+
+        if get_gsyn_inh:
+            gsyn_inh = output_population.get_data(['gsyn_inh'])
+            self._recorded_gsyn_inh_list.append(gsyn_inh)
+
+        if record_gysn_inh_7:
+            gsyn_inh = output_population.spinnaker_get_data('gsyn_inh')
+            if self._recorded_gsyn_inh_7 is None:
+                self._recorded_gsyn_inh_7 = gsyn_inh
+            else:
+                self._recorded_gsyn_inh_7 += gsyn_inh
+
+        if record_input_spikes:
+            spikes = input_population.get_data(['spikes'])
+            self._input_spikes_recorded_list.append(spikes)
+
+        if record_input_spikes_7:
+            spikes = input_population.spinnaker_get_data('spikes')
+            if self._input_spikes_recorded_7 is None:
+                self._input_spikes_recorded_7 = spikes
+            else:
+                self._input_spikes_recorded_7 += spikes
+
+    def _get_weight_delay(self, projection, get_weights, get_delays):
+        if get_weights:
+            weights = projection.get(attribute_names=["weight"], format="list")
+            self._weights.append(weights)
+        if get_delays:
+            delays = projection.get(attribute_names=["delay"], format="list")
+            self._delays.append(delays)
 
 
 if __name__ == "__main__":

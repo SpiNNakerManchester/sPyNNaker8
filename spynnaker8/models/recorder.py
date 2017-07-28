@@ -88,7 +88,7 @@ class Recorder(RecordingCommon):
             return self._population.find_units(variable)
         except Exception as ex:
             logger.warn("Population: {} Does not support units for {}"
-                        "".format(self._populations.label, variable))
+                        "".format(self._population.label, variable))
             if variable == "spikes":
                 return "spikes"
             if variable == "v":
@@ -137,22 +137,22 @@ class Recorder(RecordingCommon):
                 record_ids.append(neuron_id + self._population._first_id)
         return record_ids
 
-    def _clean_variables(self, variables_to_clean):
+    def _clean_variables(self, variables):
         """ sorts out variables for processing usage
 
-        :param variables_to_clean: list of variables names, or all, or single.
+        :param variables: list of variables names, or all, or single.
         :return: ordered set of variables strings.
         """
         # if variable is a base string, plonk into a array for ease of
         # conversion
-        if isinstance(variables_to_clean, basestring):
-            variables = [variables_to_clean]
+        if isinstance(variables, basestring):
+            variables = [variables]
 
         # if all are needed to be extracted, extract each and plonk into the
         # neo block segment. ensures whatever was in variables stays in
         # variables, regardless of all
         if 'all' in variables:
-            variables = OrderedSet(variables_to_clean)
+            variables = OrderedSet(variables)
             variables.remove('all')
             variables.update(self._get_all_recording_variables())
         return variables

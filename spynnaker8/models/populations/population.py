@@ -3,6 +3,7 @@ import logging
 
 from spynnaker.pyNN.exceptions import InvalidParameterType
 from spynnaker.pyNN.models.pynn_population_common import PyNNPopulationCommon
+from spinn_front_end_common.utilities import exceptions
 from spinn_front_end_common.utilities import globals_variables
 
 from spynnaker8.models import Recorder
@@ -257,6 +258,12 @@ class Population(PyNNPopulationCommon, Recorder):
             "This call is not standard pynn and therefore will not be "
             "compatible between simulators. Nor do we guarantee that this "
             "function will exist in future releases.")
+        if isinstance(variable, list):
+            if len(variable) == 1:
+                variable = variable[0]
+            else:
+                msg = "Only one type of data at a time is supported"
+                raise exceptions.ConfigurationException(msg)
         return self._get_recorded_variable(variable)
 
     def find_units(self, variable):

@@ -4,6 +4,7 @@ Synfirechain-like example
 """
 from p8_integration_tests.base_test_case import BaseTestCase
 import spynnaker8 as p
+from spynnaker8.utilities import neo_convertor
 import spynnaker.plot_utils as plot_utils
 import spynnaker.spike_checker as spike_checker
 from unittest import SkipTest
@@ -11,7 +12,7 @@ from unittest import SkipTest
 
 def do_run(nNeurons):
     p.setup(timestep=1.0, min_delay=1.0, max_delay=32.0)
-    p.set_number_of_neurons_per_core("IZK_curr_exp", 100)
+    p.set_number_of_neurons_per_core(p.Izhikevich, 100)
 
     cell_params_izk = {
         'a': 0.02,
@@ -38,7 +39,7 @@ def do_run(nNeurons):
 
     injectionConnection = [(0, 0, weight_to_spike, delay)]
     spikeArray = {'spike_times': [[50]]}
-    populations.append(p.Population(nNeurons, p.IZK_curr_exp, cell_params_izk,
+    populations.append(p.Population(nNeurons, p.Izhikevich, cell_params_izk,
                                     label='pop_1'))
     populations.append(p.Population(1, p.SpikeSourceArray, spikeArray,
                                     label='inputSpikes_1'))
@@ -48,22 +49,24 @@ def do_run(nNeurons):
     projections.append(p.Projection(populations[1], populations[0],
                                     p.FromListConnector(injectionConnection)))
 
-    populations[0].record_v()
-    populations[0].record_gsyn()
-    populations[0].record()
+    populations[0].record("v")
+    populations[0].record("gsyn_exc")
+    populations[0].record("spikes")
 
     p.run(500)
 
-    v = populations[0].get_v(compatible_output=True)
-    gsyn = populations[0].get_gsyn(compatible_output=True)
-    spikes = populations[0].getSpikes(compatible_output=True)
+    neo = populations[0].get_data(["v", "spikes", "gsyn_exc"])
+
+    v = neo_convertor.convert_data(neo, name="v")
+    gsyn = neo_convertor.convert_data(neo, name="gsyn_exc")
+    spikes = neo_convertor.convert_spikes(neo)
 
     p.end()
 
     return (v, gsyn, spikes)
 
 
-class SynfireIzkCurrExp(BaseTestCase):
+class SynfireIzhikevich(BaseTestCase):
     def test_run(self):
         nNeurons = 200  # number of neurons in each population
         (v, gsyn, spikes) = do_run(nNeurons)

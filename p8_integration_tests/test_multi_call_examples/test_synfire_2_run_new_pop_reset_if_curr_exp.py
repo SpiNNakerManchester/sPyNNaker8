@@ -6,6 +6,7 @@ from p8_integration_tests.scripts.synfire_run import TestRun
 
 import spynnaker.plot_utils as plot_utils
 import spynnaker.spike_checker as spike_checker
+import unittest
 
 nNeurons = 200  # number of neurons in each population
 spike_times = [[0, 1050]]
@@ -16,10 +17,12 @@ synfire_run = TestRun()
 
 
 class Synfire1RunReset1RunNo_extraction_if_curr_exp(BaseTestCase):
+    @unittest.skip("https://github.com/SpiNNakerManchester/"
+                   "SpiNNFrontEndCommon/issues/150")
     def test_run(self):
         synfire_run.do_run(nNeurons, spike_times=spike_times,
                            run_times=run_times, reset=reset, new_pop=new_pop)
-        spikes = synfire_run.get_output_pop_spikes()
+        spikes = synfire_run.get_output_pop_spikes_list_numpy()
 
         self.assertEquals(53, len(spikes[0]))
         self.assertEquals(53, len(spikes[1]))
@@ -30,9 +33,9 @@ class Synfire1RunReset1RunNo_extraction_if_curr_exp(BaseTestCase):
 if __name__ == '__main__':
     synfire_run.do_run(nNeurons, spike_times=spike_times, run_times=run_times,
                        reset=reset, new_pop=new_pop)
-    gsyn = synfire_run.get_output_pop_gsyn()
-    v = synfire_run.get_output_pop_voltage()
-    spikes = synfire_run.get_output_pop_spikes()
+    gsyn = synfire_run.get_output_pop_gsyn_exc_list_numpy()
+    v = synfire_run.get_output_pop_voltage_list_numpy()
+    spikes = synfire_run.get_output_pop_spikes_list_numpy()
 
     print len(spikes[0])
     print len(spikes[1])

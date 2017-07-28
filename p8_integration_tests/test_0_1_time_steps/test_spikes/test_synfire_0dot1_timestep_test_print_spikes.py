@@ -2,10 +2,12 @@
 Synfirechain-like example
 """
 import os
+import pickle
 import unittest
 from p8_integration_tests.base_test_case import BaseTestCase
 from p8_integration_tests.scripts.synfire_run import TestRun
-import spynnaker.pyNN.utilities.utility_calls as utility_calls
+from spynnaker8.utilities import neo_compare
+
 from spinnman.exceptions import SpinnmanTimeoutException
 from unittest import SkipTest
 
@@ -16,7 +18,7 @@ delay = 1.7
 neurons_per_core = n_neurons/2
 runtime = 500
 current_file_path = os.path.dirname(os.path.abspath(__file__))
-current_file_path = os.path.join(current_file_path, "spikes.data")
+spike_path = os.path.join(current_file_path, "spikes.pickle")
 synfire_run = TestRun()
 
 
@@ -31,18 +33,14 @@ class TestPrintSpikes(BaseTestCase):
                                max_delay=max_delay, delay=delay,
                                neurons_per_core=neurons_per_core,
                                run_times=[runtime],
-                               spike_path=current_file_path)
-            spikes = synfire_run.get_output_pop_spikes()
+                               spike_path=spike_path)
+            spikes = synfire_run.get_output_pop_spikes_neo()
 
-            read_in_spikes = utility_calls.read_spikes_from_file(
-                current_file_path, min_atom=0, max_atom=n_neurons,
-                min_time=0, max_time=500)
+            with open(spike_path, "r") as spike_file:
+                read_in_spikes = pickle.load(spike_file)
 
-            for spike_element, read_element in zip(spikes, read_in_spikes):
-                self.assertEqual(round(spike_element[0], 1),
-                                 round(read_element[0], 1))
-                self.assertEqual(round(spike_element[1], 1),
-                                 round(read_element[1], 1))
+            neo_compare.compare_blocks(spikes, read_in_spikes)
+
         except SpinnmanTimeoutException as ex:
             # System intentional overload so may error
             raise SkipTest(ex)

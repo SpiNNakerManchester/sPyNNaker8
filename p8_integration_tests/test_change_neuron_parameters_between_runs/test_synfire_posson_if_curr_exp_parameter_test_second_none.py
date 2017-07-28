@@ -1,7 +1,6 @@
 from p8_integration_tests.base_test_case import BaseTestCase
 from p8_integration_tests.scripts.synfire_run import TestRun
-from spynnaker.pyNN.models.spike_source.spike_source_poisson \
-    import SpikeSourcePoisson
+import spynnaker8 as p
 import spynnaker.spike_checker as spike_checker
 import spynnaker.plot_utils as plot_utils
 import numpy
@@ -11,7 +10,7 @@ neurons_per_core = n_neurons / 2
 run_times = [5000, 5000]
 wrap_around = False
 # parameters for population 1 first run
-input_class = SpikeSourcePoisson
+input_class = p.SpikeSourcePoisson
 start_time = 0
 duration = 5000.0
 rate = 2.0
@@ -36,8 +35,8 @@ class TestSynfirePossonIfCurrExpParameterTestSecondNone(BaseTestCase):
                            extract_between_runs=extract_between_runs,
                            set_between_runs=set_between_runs,
                            record_input_spikes=record_input_spikes)
-        input = synfire_run.get_spike_source_spikes()
-        spikes = synfire_run.get_output_pop_spikes()
+        input = synfire_run.get_spike_source_spikes_numpy()
+        spikes = synfire_run.get_output_pop_spikes_numpy()
         # Check input spikes stop
         hist = numpy.histogram(input[:, 1], bins=[0, 5000, 10000])
         self.assertEqual(0, hist[0][1])
@@ -55,12 +54,12 @@ if __name__ == '__main__':
                        extract_between_runs=extract_between_runs,
                        set_between_runs=set_between_runs,
                        record_input_spikes=record_input_spikes)
-    gsyn = synfire_run.get_output_pop_gsyn()
-    v = synfire_run.get_output_pop_voltage()
-    input = synfire_run.get_spike_source_spikes()
+    gsyn = synfire_run.get_output_pop_gsyn_exc_numpy()
+    v = synfire_run.get_output_pop_voltage_numpy()
+    input = synfire_run.get_spike_source_spikes_numpy()
     hist = numpy.histogram(input[:, 1], bins=[0, 5000, 10000])
     print hist[0][0], hist[0][1]
-    spikes = synfire_run.get_output_pop_spikes()
+    spikes = synfire_run.get_output_pop_spikes_numpy()
     plot_utils.plot_spikes(input, spikes2=spikes)
     plot_utils.heat_plot(v)
     plot_utils.heat_plot(gsyn)

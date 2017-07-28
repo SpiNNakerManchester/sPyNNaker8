@@ -16,6 +16,7 @@ $Id: IF_cond_exp.py 917 2011-01-31 15:23:34Z apdavison $
 from p8_integration_tests.base_test_case import BaseTestCase
 
 import spynnaker8 as p
+from spynnaker8.utilities import neo_convertor
 
 
 def do_run():
@@ -34,20 +35,22 @@ def do_run():
                                  label='spike_sourceE')
 
     p.Projection(spike_sourceE, ifcell,
-                 p.OneToOneConnector(weights=1, delays=2), target='excitatory')
+                 p.OneToOneConnector(),
+                 synapse_type=p.StaticSynapse(weight=1, delay=2),
+                 receptor_type="excitatory")
     breakMe = True
     if breakMe:
-        p.Projection(spike_sourceE, ifcell,
-                     p.OneToOneConnector(weights=1, delays=2),
-                     target='excitatory')
-
-    ifcell.record_v()
-    ifcell.record_gsyn()
+        p.Projection(spike_sourceE, ifcell, p.OneToOneConnector(),
+                     synapse_type=p.StaticSynapse(weight=1, delay=2),
+                     receptor_type="excitatory")
+    ifcell.record("v")
+    ifcell.record("gsyn_exc")
 
     p.run(200.0)
 
-    recorded_v = ifcell.get_v()
-    recorded_gsyn = ifcell.get_gsyn()
+    neo = ifcell.get_data(["v", "gsyn_exc"])
+    recorded_v = neo_convertor.convert_data(neo, name="v")
+    recorded_gsyn = neo_convertor.convert_data(neo, name="gsyn_exc")
 
     p.end()
 
