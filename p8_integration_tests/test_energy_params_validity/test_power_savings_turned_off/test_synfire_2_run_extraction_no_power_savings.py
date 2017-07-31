@@ -20,7 +20,7 @@ class Synfire2RunExtractionIfCurrExp(BaseTestCase):
             self.assert_logs_messages(
                 l.records, "Working out if machine is booted", 'INFO', 1)
 
-if __name__ == '__main__':
-    synfire_run.do_run(nNeurons, spike_times=spike_times, run_times=run_times,
-                       reset=False)
 
+if __name__ == '__main__':
+    synfire_run.do_run(
+        nNeurons, spike_times=spike_times, run_times=run_times, reset=False)
