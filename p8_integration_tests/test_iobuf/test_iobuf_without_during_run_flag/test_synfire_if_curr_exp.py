@@ -2,24 +2,21 @@
 Synfirechain-like example
 """
 from p8_integration_tests.base_test_case import BaseTestCase
-from p8_integration_tests.scripts.synfire_run import TestRun
 from spinn_front_end_common.utilities import globals_variables
 import os
-
-n_neurons = 200  # number of neurons in each population
-runtime = 5000
-neurons_per_core = n_neurons / 2
-synfire_run = TestRun()
+import spynnaker8 as p
 
 
 class SynfireIfCurrExp(BaseTestCase):
 
     def test_run(self):
-        synfire_run.do_run(n_neurons, neurons_per_core=neurons_per_core,
-                           run_times=[runtime], record=False, record_v=False,
-                           record_gsyn_exc=False, record_gsyn_inh=False)
+        p.setup(timestep=1.0, min_delay=1.0, max_delay=144.0)
+        p.Population(10, p.IF_curr_exp(), label='pop_1')
+        p.run(500)
 
         prov_path = globals_variables.get_simulator()._provenance_file_path
+        p.end()
+
         files = os.listdir(prov_path)
         found_iobuf = False
 
