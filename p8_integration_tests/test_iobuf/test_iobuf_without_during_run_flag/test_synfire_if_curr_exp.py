@@ -32,5 +32,3 @@ class SynfireIfCurrExp(BaseTestCase):
 if __name__ == '__main__':
     x = SynfireIfCurrExp()
     x.test_run()
-
-
