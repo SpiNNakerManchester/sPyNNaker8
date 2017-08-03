@@ -115,7 +115,8 @@ class Synfire20n20pcDelaysDelayExtensionsAllRecording(BaseTestCase):
 
         self.assertEquals(n_neurons * runtime, len(v))
         read_v = numpy.loadtxt(v_file, delimiter=',')
-        self.assertTrue(numpy.allclose(read_v, v, rtol=1e-04), "v neo method mismatch")
+        self.assertTrue(numpy.allclose(read_v, v, rtol=1e-04),
+                        "v neo method mismatch")
 
     def test_gsyn_no_constarint(self):
         synfire_run = TestRun()
