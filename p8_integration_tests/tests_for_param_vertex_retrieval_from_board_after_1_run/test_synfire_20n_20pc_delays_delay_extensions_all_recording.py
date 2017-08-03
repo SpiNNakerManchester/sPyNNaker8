@@ -43,16 +43,16 @@ class Synfire20n20pcDelaysDelayExtensionsAllRecording(BaseTestCase):
 
         self.assertEquals(n_neurons*runtime, len(gsyn_exc))
         read_gsyn = numpy.loadtxt(gysn_file, delimiter=',')
-        self.assertTrue(numpy.allclose(read_gsyn, gsyn_exc_7),
+        self.assertTrue(numpy.allclose(read_gsyn, gsyn_exc_7, rtol=1e-04),
                         "gsyn synakker method mismatch")
-        self.assertTrue(numpy.allclose(read_gsyn, gsyn_exc),
+        self.assertTrue(numpy.allclose(read_gsyn, gsyn_exc, rtol=1e-04),
                         "gsyn neo method mismatch")
 
         self.assertEquals(n_neurons*runtime, len(v))
         read_v = numpy.loadtxt(v_file, delimiter=',')
-        self.assertTrue(numpy.allclose(read_v, v_7),
+        self.assertTrue(numpy.allclose(read_v, v_7, rtol=1e-04),
                         "v synakker method mismatch")
-        self.assertTrue(numpy.allclose(read_v, v),
+        self.assertTrue(numpy.allclose(read_v, v, rtol=1e-04),
                         "v neo method mismatch")
 
         self.assertEquals(expected_spikes, len(spikes))
@@ -78,12 +78,12 @@ class Synfire20n20pcDelaysDelayExtensionsAllRecording(BaseTestCase):
 
         self.assertEquals(n_neurons*runtime, len(gsyn_exc))
         read_gsyn = numpy.loadtxt(gysn_file, delimiter=',')
-        self.assertTrue(numpy.allclose(read_gsyn, gsyn_exc),
+        self.assertTrue(numpy.allclose(read_gsyn, gsyn_exc, rtol=1e-04),
                         "gsyn neo method mismatch")
 
         self.assertEquals(n_neurons*runtime, len(v))
         read_v = numpy.loadtxt(v_file, delimiter=',')
-        self.assertTrue(numpy.allclose(read_v, v),
+        self.assertTrue(numpy.allclose(read_v, v, rtol=1e-04),
                         "v neo method mismatch")
 
         self.assertEquals(expected_spikes, len(spikes))
