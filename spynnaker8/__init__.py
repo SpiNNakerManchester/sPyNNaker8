@@ -45,7 +45,8 @@ from spynnaker8.models.connectors.from_list_connector import FromListConnector
 from spynnaker8.models.connectors.index_based_probability_connector import\
     IndexBasedProbabilityConnector
 # noinspection PyUnresolvedReferences
-from spynnaker8.models.connectors.multapse_connector import MultapseConnector
+from spynnaker8.models.connectors.multapse_connector import MultapseConnector \
+    as FixedTotalNumberConnector
 # noinspection PyUnresolvedReferences
 from spynnaker8.models.connectors.one_to_one_connector import \
     OneToOneConnector
@@ -120,7 +121,7 @@ __all__ = [
     'DistanceDependentProbabilityConnector', 'FixedNumberPostConnector',
     'FixedNumberPreConnector', 'FixedProbabilityConnector',
     'FromFileConnector', 'FromListConnector', 'IndexBasedProbabilityConnector',
-    'MultapseConnector', 'OneToOneConnector', 'SmallWorldConnector',
+    'FixedTotalNumberConnector', 'OneToOneConnector', 'SmallWorldConnector',
     # synapse structures
     'StaticSynapse',
     # plastic stuff
