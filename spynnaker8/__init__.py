@@ -10,12 +10,10 @@ from pyNN.random import NumpyRNG, RandomDistribution
 from pyNN.space import \
     distance, Space, Line, Grid2D, Grid3D, Cuboid, Sphere, RandomStructure
 
-# fec improts
+# fec imports
 from spinn_front_end_common.utilities.exceptions import ConfigurationException
 from spinn_front_end_common.utilities import globals_variables
 from spinn_front_end_common.utilities.failed_state import FAILED_STATE_MSG
-from spinn_front_end_common.utilities.notification_protocol \
-    import SocketAddress
 
 # connections
 # noinspection PyUnresolvedReferences
@@ -138,7 +136,7 @@ __all__ = [
     # Stuff that we define
     'end', 'setup', 'run', 'run_until', 'run_for', 'num_processes', 'rank',
     'reset', 'set_number_of_neurons_per_core',
-    'register_database_notification_request', 'Projection',
+    'Projection',
     'get_current_time', 'create', 'connect', 'get_time_step', 'get_min_delay',
     'get_max_delay', 'initialize', 'list_standard_models', 'name',
     'num_processes', 'record', 'record_v', 'record_gsyn']
@@ -351,18 +349,6 @@ def set_number_of_neurons_per_core(neuron_type, max_permitted):
     simulator = globals_variables.get_simulator()
     simulator.set_number_of_neurons_per_core(neuron_type.build_model(),
                                              max_permitted)
-
-
-def register_database_notification_request(hostname, notify_port, ack_port):
-    """ Adds a socket system which is registered with the notification protocol
-
-    :param hostname: hostname to connect to
-    :param notify_port: port num for the notify command
-    :param ack_port: port num for the ack command
-    :rtype: None
-    """
-    globals_variables.get_simulator().add_socket_address(
-        SocketAddress(hostname, notify_port, ack_port))
 
 
 # These methods will deffer to PyNN methods if a simulator exists
