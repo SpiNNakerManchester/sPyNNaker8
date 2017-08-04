@@ -11,6 +11,9 @@ random.seed(os.environ.get('P8_INTEGRATION_SEED', None))
 
 class BaseTestCase(unittest.TestCase):
 
+    def __init__(self):
+        pass
+
     def setUp(self):
         factor = random.random()
         if factor > p8_integration_factor:
