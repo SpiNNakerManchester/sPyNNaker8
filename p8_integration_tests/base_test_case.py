@@ -3,6 +3,7 @@ import random
 import sys
 import unittest
 from unittest import SkipTest
+from spinn_front_end_common.utilities import globals_variables
 
 p8_integration_factor = float(os.environ.get('P8_INTEGRATION_FACTOR', "1"))
 random.seed(os.environ.get('P8_INTEGRATION_SEED', None))
@@ -17,6 +18,7 @@ class BaseTestCase(unittest.TestCase):
                   "P8_INTEGRATION_FACTOR {}" \
                   "".format(factor, p8_integration_factor)
             raise SkipTest(msg)
+        globals_variables.unset_simulator()
         class_file = sys.modules[self.__module__].__file__
         path = os.path.dirname(os.path.abspath(class_file))
         os.chdir(path)
