@@ -35,5 +35,6 @@ class TestSynfirePossonIfCurrExpParameterTestSecondNone(BaseTestCase):
 
 
 if __name__ == '__main__':
-    x = TestSynfirePossonIfCurrExpParameterTestSecondNone()
+    x = TestSynfirePossonIfCurrExpParameterTestSecondNone(
+        "test_synfire_posson_if_curr_exp_parameter_test_second_none")
     x.test_synfire_posson_if_curr_exp_parameter_test_second_none()
