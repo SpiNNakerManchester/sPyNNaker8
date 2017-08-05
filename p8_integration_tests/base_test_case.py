@@ -24,12 +24,16 @@ class BaseTestCase(unittest.TestCase):
         os.chdir(path)
 
     def assert_logs_messages(
-            self, log_records, sub_message, log_level='ERROR', count=1):
+            self, log_records, sub_message, log_level='ERROR', count=1,
+            allow_more=False):
         seen = 0
         for record in log_records:
             if record.levelname == log_level:
                 if sub_message in record.msg:
                     seen += 1
+        if allow_more:
+            if seen >= count:
+                return
         if seen == count:
             return
         msg = "\"{}\" not found in any {} logs {} times, was found {} " \

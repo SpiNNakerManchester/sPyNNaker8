@@ -31,7 +31,8 @@ class ProvenanceWhenNotStartedTest(BaseTestCase):
                 do_run()
                 self.assertTrue(False)
             except:
-                self.assert_logs_messages(l.records, "Out of DTCM")
+                self.assert_logs_messages(l.records, "Out of DTCM",
+                                          allow_more=True)
 
 
 if __name__ == '__main__':
