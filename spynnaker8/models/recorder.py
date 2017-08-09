@@ -176,7 +176,8 @@ class Recorder(RecordingCommon):
             if variable == "spikes":
                 segment.read_in_spikes(
                     spikes=self._get_recorded_variable(variable),
-                    t=get_simulator().t, ids=ids, indexes=indexes,
+                    t=get_simulator().get_current_time(),
+                    ids=ids, indexes=indexes,
                     first_id=self._population._first_id,
                     recording_start_time=self._recording_start_time,
                     label=self._population.label)
