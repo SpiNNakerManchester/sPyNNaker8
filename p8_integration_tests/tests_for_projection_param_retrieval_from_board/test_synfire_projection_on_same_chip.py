@@ -20,8 +20,6 @@ get_delays = True
 
 class SynfireProjectionOnSameChip(BaseTestCase):
 
-    @unittest.skip("https://github.com/SpiNNakerManchester/sPyNNaker8/"
-                   "issues/22")
     def test_get_before_and_after(self):
         synfire_run = TestRun()
         synfire_run.do_run(n_neurons, neurons_per_core=neurons_per_core,
@@ -32,12 +30,14 @@ class SynfireProjectionOnSameChip(BaseTestCase):
         weights = synfire_run.get_weights()
         self.assertEquals(n_neurons, len(weights[0]))
         self.assertEquals(n_neurons, len(weights[1]))
-        self.assertTrue(numpy.allclose(weights[0], weights[1]))
+        for i in range(n_neurons):
+            self.assertAlmostEquals(weights[0][i], weights[1][i])
 
         delays = synfire_run .get_delay()
         self.assertEquals(n_neurons, len(delays[0]))
         self.assertEquals(n_neurons, len(delays[1]))
-        self.assertTrue(numpy.allclose(delays[0], delays[1]))
+        for i in range(n_neurons):
+            self.assertAlmostEquals(delays[0][i], delays[1][i])
 
 
 if __name__ == '__main__':
