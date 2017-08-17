@@ -1,5 +1,4 @@
 # common imports
-import atexit
 import numpy as __numpy
 
 # pynn imports
