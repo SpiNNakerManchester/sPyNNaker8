@@ -329,13 +329,6 @@ def list_standard_models():
     return results
 
 
-@atexit.register
-def _stop_on_spinnaker():
-    # Stop SpiNNaker simulation
-    if globals_variables.has_simulator():
-        globals_variables.get_simulator().stop()
-
-
 def set_number_of_neurons_per_core(neuron_type, max_permitted):
     """ Sets a ceiling on the number of neurons of a given type that can be\
         placed on a single core.
