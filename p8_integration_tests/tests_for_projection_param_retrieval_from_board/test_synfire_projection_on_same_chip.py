@@ -1,10 +1,3 @@
-#!/usr/bin/python
-"""
-Synfirechain-like example
-"""
-import numpy
-import unittest
-
 from p8_integration_tests.base_test_case import BaseTestCase
 from p8_integration_tests.scripts.synfire_run import TestRun
 

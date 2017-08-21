@@ -1,6 +1,3 @@
-import numpy
-import unittest
-
 from p8_integration_tests.base_test_case import BaseTestCase
 import spynnaker8 as p
 
@@ -20,7 +17,6 @@ def do_run():
 
     populations = list()
     projections = list()
-
 
     populations.append(
         p.Population(sources, p.IF_curr_exp, cell_params_lif, label='pop_1'))
@@ -65,8 +61,8 @@ def do_run():
 class LargePopWeightDelayRetrival(BaseTestCase):
     def test_compare_before_and_after(self):
         (pre_delays_array, pre_delays_list, pre_weights_array,
-        pre_weights_list, post_delays_array, post_delays_list,
-        post_weights_array, post_weights_list) = do_run()
+            pre_weights_list, post_delays_array, post_delays_list,
+            post_weights_array, post_weights_list) = do_run()
         self.assertEqual(3, len(pre_delays_array))
         self.assertEqual((sources, targets), pre_delays_array[0].shape)
         self.assertEqual(0, pre_delays_array[0][0][0])
@@ -149,8 +145,8 @@ class LargePopWeightDelayRetrival(BaseTestCase):
 
 
 if __name__ == '__main__':
-    (pre_delays_array, pre_delays_list, pre_weights_array, \
-        pre_weights_list, post_delays_array, post_delays_list, \
+    (pre_delays_array, pre_delays_list, pre_weights_array,
+        pre_weights_list, post_delays_array, post_delays_list,
         post_weights_array, post_weights_list) = do_run()
     print "array"
     print pre_delays_array[0].shape
