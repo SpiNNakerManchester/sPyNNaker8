@@ -28,6 +28,9 @@ logger = logging.getLogger(__name__)
 # At import time change the default FailedState
 globals_variables.set_failed_state(Spynnaker8FailedState())
 
+NAME = "SpiNNaker_under_version({}-{})".format(
+            _version.__version__, _version.__version_name__)
+
 
 class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
                 Spynnaker8SimulatorInterface):
@@ -54,8 +57,6 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
         # pynn demanded objects
         self._id_counter = 42
         self._segment_counter = 0
-        self._name = "SpiNNaker_under_version({}-{})".format(
-            _version.__version__, _version.__version_name__)
         self._recorders = set([])
 
         # main pynn interface inheritance
@@ -299,7 +300,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 
         :return: the name of the simulator.
         """
-        return self._name
+        return NAME
 
     @property
     def populations(self):
