@@ -82,7 +82,7 @@ def do_run(plot):
     populations[1].record(['v'])
 
     for pop in populations:
-        pop.record(['spikes'],to_file=False)
+        pop.record(['spikes'], to_file=False)
         # sends spike to the Monitoring application
 
     #    populations[i].record_variable('rate', save_to='eth')
