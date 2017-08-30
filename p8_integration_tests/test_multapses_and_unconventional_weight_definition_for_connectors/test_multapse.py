@@ -4,8 +4,9 @@ from p8_integration_tests.base_test_case import BaseTestCase
 
 def do_run():
     p.setup(timestep=1.0)
-    cellparams={"spike_times": [0]}
-    input_pop = p.Population(1, p.SpikeSourceArray(**cellparams), label="input")
+    cellparams = {"spike_times": [0]}
+    input_pop = p.Population(1, p.SpikeSourceArray(**cellparams),
+                             label="input")
     cell_params_lif = {'cm': 0.25,  # nF
                        'i_offset': 0.0, 'tau_m': 20.0, 'tau_refrac': 2.0,
                        'tau_syn_E': 5.0, 'tau_syn_I': 5.0, 'v_reset': -70.0,
