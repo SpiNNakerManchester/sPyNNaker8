@@ -22,11 +22,9 @@ record_input_spikes = True
 synfire_run = TestRun()
 
 
-class TestSynfirePossonIfCurrExpParameterTestSecondNone(BaseTestCase):
-    """
-    tests the printing of get gsyn given a simulation
-    """
-    def test_synfire_posson_if_curr_exp_parameter_test_second_none(self):
+class TestSynfirePoissonIfCurrExpParameterTestSecondNone(BaseTestCase):
+
+    def test_synfire_poisson_if_curr_exp_parameter_test_second_none(self):
         synfire_run.do_run(n_neurons, neurons_per_core=neurons_per_core,
                            run_times=run_times,
                            use_wrap_around_connections=wrap_around,
