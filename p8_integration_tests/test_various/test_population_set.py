@@ -13,7 +13,7 @@ def do_run():
     p1.set(cm=0.2)
 
 
-class PopulationnSet(BaseTestCase):
+class PopulationSet(BaseTestCase):
 
     def test_run(self):
         do_run()
