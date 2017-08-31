@@ -47,6 +47,6 @@ class Bug(BaseTestCase):
 if __name__ == '__main__':
     nNeurons = 100  # number of neurons in each population
     neo = do_run(nNeurons)
-    spikes = neo_convertor.convert_spikes()
+    spikes = neo_convertor.convert_spikes(neo)
     plot_utils.plot_spikes(spikes)
     print spikes

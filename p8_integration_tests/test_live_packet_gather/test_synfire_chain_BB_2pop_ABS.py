@@ -114,7 +114,7 @@ def do_run(plot):
     return shapes
 
 
-class SynfireChainBB2pop_BStest(BaseTestCase):
+class SynfireChainBB2popABStest(BaseTestCase):
 
     def test_synfire_chain_BB_2pop_ABS_test(self):
         shapes = do_run(plot=False)
