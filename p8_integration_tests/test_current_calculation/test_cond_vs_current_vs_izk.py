@@ -268,7 +268,7 @@ def plot(cond_v, cond_gsyn, cond_spikes, curr_v, curr_gsyn, curr_spikes,
         print "no izk membrane voltage is recieved "
 
 
-class CondVsCurrent(BaseTestCase):
+class CondVsCurrentIzk(BaseTestCase):
 
     def test_run(self):
         nNeurons = 200  # number of neurons in each population
