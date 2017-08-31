@@ -4,6 +4,7 @@ from spynnaker.pyNN.utilities.spynnaker_failed_state \
     import SpynnakerFailedState
 from spynnaker8.spynnaker8_simulator_interface \
     import Spynnaker8SimulatorInterface
+import spynnaker8.spinnaker
 
 
 class Spynnaker8FailedState(Spynnaker8SimulatorInterface,
@@ -21,7 +22,7 @@ class Spynnaker8FailedState(Spynnaker8SimulatorInterface,
 
     @property
     def name(self):
-        raise ConfigurationException(FAILED_STATE_MSG)
+        return spynnaker8.spinnaker.NAME
 
     @property
     def num_processes(self):
