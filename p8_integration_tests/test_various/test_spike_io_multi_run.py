@@ -119,9 +119,10 @@ def do_run():
 
     # Create injection populations
     injector_forward = Frontend.Population(
-        n_neurons, Frontend.external_devices.SpikeInjector(
+        n_neurons,
+        Frontend.external_devices.SpikeInjector(
             **cell_params_spike_injector_with_key),
-                                           label='spike_injector_forward')
+        label='spike_injector_forward')
     injector_backward = Frontend.Population(
         n_neurons, Frontend.external_devices.SpikeInjector(
             **cell_params_spike_injector), label='spike_injector_backward')
@@ -144,10 +145,12 @@ def do_run():
         loop_backward.append(((i + 1) % n_neurons, i, weight_to_spike, 3))
     Frontend.Projection(pop_forward, pop_forward,
                         Frontend.FromListConnector(loop_forward),
-                        Frontend.StaticSynapse(weight=weight_to_spike, delay=3))
+                        Frontend.StaticSynapse(weight=weight_to_spike,
+                                               delay=3))
     Frontend.Projection(pop_backward, pop_backward,
                         Frontend.FromListConnector(loop_backward),
-                        Frontend.StaticSynapse(weight=weight_to_spike, delay=3))
+                        Frontend.StaticSynapse(weight=weight_to_spike,
+                                               delay=3))
 
     # record spikes from the synfire chains so that we can read off valid
     # results in a safe way afterwards, and verify the behaviour
