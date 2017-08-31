@@ -1,7 +1,3 @@
-"""
-Synfirechain-like example
-"""
-
 # spynnaker imports
 import spynnaker8 as p
 
@@ -34,7 +30,7 @@ def read_spikefile(file_name, n_neurons):
 
 def do_run():
     """
-    test that tests the printing of v from a pre determined recording
+    test that tests reading in spike data
     :return:
     """
     p.setup(timestep=0.1, min_delay=1.0, max_delay=14.0)
@@ -87,7 +83,7 @@ def do_run():
 
 def plot(spikes):
     """
-    test that tests the printing of v from a pre determined recording
+    plot spikes
     :return:
     """
     import pylab  # deferred so unittest are not dependent on it
@@ -105,14 +101,8 @@ def plot(spikes):
 
 
 class TestReadingSpikeArrayDataAndBigSlices(BaseTestCase):
-    """
-    tests the printing of print v given a simulation
-    """
+
     def test_script(self):
-        """
-        test that tests the printing of v from a pre determined recording
-        :return:
-        """
         try:
             spikes = do_run()
             # System intentional overload so may error
