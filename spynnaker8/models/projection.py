@@ -104,7 +104,7 @@ class Projection(PyNNProjectionCommon):
 
     def _get_data(
             self, attribute_names, format,  # @ReservedAssignment
-            with_address=True, multiple_synapses='last',
+            with_address, multiple_synapses='last',
             notify=None):
         """ Internal data getter to add notify option
         """
@@ -118,6 +118,8 @@ class Projection(PyNNProjectionCommon):
             attribute_names = [attribute_names]
 
         data_items = list()
+        if format != "list":
+            with_address = False
         if with_address:
             data_items.append("source")
             data_items.append("target")
