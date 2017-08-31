@@ -149,20 +149,20 @@ def do_run():
     # Noise projections
     sim.Projection(INoisePre, pre_pop, ee_connector,
                    receptor_type='excitatory',
-                   sim.StaticSynapse(weight=JEE*0.05))
+                   synapse_type=sim.StaticSynapse(weight=JEE*0.05))
     sim.Projection(INoisePost, post_pop, ee_connector,
                    receptor_type='excitatory',
-                   sim.StaticSynapse(weight=JEE*0.05))
+                   synapse_type=sim.StaticSynapse(weight=JEE*0.05))
 
     # Additional Inputs projections
     for i in range(len(IAddPre)):
         sim.Projection(IAddPre[i], pre_pop, ee_connector,
                        receptor_type='excitatory',
-                       sim.StaticSynapse(weight=JEE*0.05))
+                       synapse_type=sim.StaticSynapse(weight=JEE*0.05))
     for i in range(len(IAddPost)):
         sim.Projection(IAddPost[i], post_pop, ee_connector,
                        receptor_type='excitatory',
-                       sim.StaticSynapse(weight=JEE*0.05))
+                       synapse_type=sim.StaticSynapse(weight=JEE*0.05))
 
     # Plastic Connections between pre_pop and post_pop
     stdp_model = sim.STDPMechanism(
