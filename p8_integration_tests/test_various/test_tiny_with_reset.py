@@ -1,7 +1,6 @@
 import spynnaker8 as p
 from p8_integration_tests.base_test_case import BaseTestCase
 from spynnaker8.utilities import neo_convertor
-import unittest
 
 
 def do_run():
