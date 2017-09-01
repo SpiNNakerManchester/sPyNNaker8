@@ -1,6 +1,8 @@
 # pynn imports
 from pyNN.common import control as pynn_control
 from pyNN.random import RandomDistribution, NumpyRNG
+from pyNN import __version__ as pynn_version
+
 from spinn_front_end_common.utilities import globals_variables
 from spynnaker.pyNN.abstract_spinnaker_common import AbstractSpiNNakerCommon
 
@@ -22,6 +24,10 @@ from _version import __version__ as version
 
 import logging
 import math
+
+from quantities import __version__ as quantities_version
+from neo import __version__ as neo_version
+from lazyarray import __version__ as lazyarray_version
 
 
 logger = logging.getLogger(__name__)
@@ -82,6 +88,12 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
             built_in_extra_mapping_inputs.update(
                 built_in_extra_mapping_inputs)
 
+        front_end_versions = [("sPyNNaker8_version", version)]
+        front_end_versions.append(("pyNN_version", pynn_version))
+        front_end_versions.append(("quantities_version", quantities_version))
+        front_end_versions.append(("neo_version", neo_version))
+        front_end_versions.append(("lazyarray_version", lazyarray_version))
+
         # spinnaker setup
         AbstractSpiNNakerCommon.__init__(
             self, database_socket_addresses=database_socket_addresses,
@@ -95,7 +107,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
             hostname=hostname, min_delay=min_delay,
             max_delay=max_delay, timestep=timestep,
             time_scale_factor=time_scale_factor,
-            front_end_name="sPyNNaker8 version {}".format(version))
+            front_end_versions=front_end_versions)
 
     def run(self, simtime):
         """ PyNN run simulation (enforced method and parameter name)
