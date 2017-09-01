@@ -1,5 +1,4 @@
 import numpy
-import unittest
 
 from p8_integration_tests.base_test_case import BaseTestCase
 import spynnaker8 as p
