@@ -18,6 +18,7 @@ from spynnaker8.utilities.random_stats import RandomStatsRandIntImpl
 from spynnaker8.utilities.random_stats import RandomStatsUniformImpl
 from spynnaker8.utilities.random_stats import RandomStatsVonmisesImpl
 from spynnaker8.utilities.random_stats import RandomStatsBinomialImpl
+from _version import __version__ as version
 
 import logging
 import math
@@ -93,7 +94,8 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
             graph_label=graph_label, n_chips_required=n_chips_required,
             hostname=hostname, min_delay=min_delay,
             max_delay=max_delay, timestep=timestep,
-            time_scale_factor=time_scale_factor)
+            time_scale_factor=time_scale_factor,
+            front_end_name="sPyNNaker8 version {}".format(version))
 
     def run(self, simtime):
         """ PyNN run simulation (enforced method and parameter name)
