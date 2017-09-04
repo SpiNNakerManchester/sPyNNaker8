@@ -61,7 +61,7 @@ setup(
     dependency_links=['http://github.com/python-quantities/python-quantities/'
                       'tarball/master#egg=quantities'],
     install_requires=[
-        'quantities',
+        'quantities >= 0.12',
         'sPyNNaker >= 1!4.0.0a5, < 1!5.0.0',
         'pynn >= 0.8, < 0.9',
         'lazyarray >= 0.2.9, <= 0.2.9',
