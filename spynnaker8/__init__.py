@@ -1,5 +1,4 @@
 # common imports
-import atexit
 import numpy as __numpy
 
 # pynn imports
@@ -327,13 +326,6 @@ def list_standard_models():
                 and not obj == DataHolder:
             results.append(key)
     return results
-
-
-@atexit.register
-def _stop_on_spinnaker():
-    # Stop SpiNNaker simulation
-    if globals_variables.has_simulator():
-        globals_variables.get_simulator().stop()
 
 
 def set_number_of_neurons_per_core(neuron_type, max_permitted):
