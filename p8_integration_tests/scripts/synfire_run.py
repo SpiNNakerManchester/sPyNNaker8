@@ -584,10 +584,12 @@ class TestRun(object):
 
     def _get_weight_delay(self, projection, get_weights, get_delays):
         if get_weights:
-            weights = projection.get(attribute_names=["weight"], format="list")
+            weights = projection.get(
+                attribute_names=["weight"], format="list", with_address=True)
             self._weights.append(weights)
         if get_delays:
-            delays = projection.get(attribute_names=["delay"], format="list")
+            delays = projection.get(
+                attribute_names=["delay"], format="list", with_address=True)
             self._delays.append(delays)
 
 
