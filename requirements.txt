@@ -1,5 +1,5 @@
 sPyNNaker >= 1!4.0.0a5, < 1!5.0.0
-git+https://github.com/python-quantities/python-quantities.git
+quantities >= 0.12.1
 pynn>=0.8, <0.9
 lazyarray >= 0.2.9, <= 0.2.9
 appdirs >=1.4.2 , < 2.0.0
