@@ -1,5 +1,4 @@
 import numpy
-import unittest
 
 from p8_integration_tests.base_test_case import BaseTestCase
 import spynnaker8 as p
@@ -56,27 +55,24 @@ def do_run():
 
 
 class LargePopWeightDelayRetrival(BaseTestCase):
-    @unittest.skip("BROKEN p8_integration_tests/"
-                   "tests_for_projection_param_retrieval_from_board/"
-                   "test_large_pop_weight_delay_retrival.py")
     def test_compare_before_and_after(self):
         (delays, weights) = do_run()
-        self.assertEquals(n_neurons * n_neurons, len(weights[0]))
-        self.assertEquals(n_neurons * n_neurons, len(weights[1]))
-        self.assertTrue(numpy.allclose(weights[0], weights[1]))
+        self.assertEquals(n_neurons * n_neurons,
+                          len(weights[0][0])*len(weights[0][0][0]))
+        self.assertEquals(n_neurons * n_neurons,
+                          len(weights[1][0])*len(weights[1][0][0]))
+        self.assertTrue(numpy.allclose(weights[0][0][0], weights[1][0][0]))
 
-        self.assertEquals(n_neurons * n_neurons, len(delays[0]))
-        self.assertEquals(n_neurons * n_neurons, len(delays[1]))
-        self.assertTrue(numpy.allclose(delays[0], delays[1]))
+        self.assertEquals(n_neurons * n_neurons,
+                          len(delays[0][0])*len(delays[0][0][0]))
+        self.assertEquals(n_neurons * n_neurons,
+                          len(delays[1][0])*len(delays[1][0][0]))
+        self.assertTrue(numpy.allclose(delays[0][0][0], delays[1][0][0]))
 
 
 if __name__ == '__main__':
     (delays, weights) = do_run()
-    print weights[0].shape
-    print weights[0]
-    print weights[1].shape
-    print weights[1]
-    print delays[0].shape
-    print delays[0]
-    print delays[1]
-    print delays[1].shape
+    print weights[0][0]
+    print weights[1][0]
+    print delays[0][0]
+    print delays[1][0]

@@ -1,5 +1,5 @@
 """
-test that a single neuron of if cur exp works as expected
+test that a single neuron of if curr exp works as expected
 """
 
 # general imports
@@ -43,7 +43,7 @@ def do_run():
     return noise_spike_times, s_pop_spikes, s_pop_voltages
 
 
-class TestIfCurExpSingleNeuron(BaseTestCase):
+class TestIfCurrExpSingleNeuron(BaseTestCase):
     """
     tests the get spikes given a simulation at 0.1 ms time steps
     """

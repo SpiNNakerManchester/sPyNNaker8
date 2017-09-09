@@ -21,11 +21,9 @@ extract_between_runs = False
 synfire_run = TestRun()
 
 
-class TestSynfirePossonIfCurrExpParameter(BaseTestCase):
-    """
-    tests the printing of get gsyn given a simulation
-    """
-    def test_synfire_posson_if_curr_exp_parameter(self):
+class TestSynfirePoissonIfCurrExpParameter(BaseTestCase):
+
+    def test_synfire_poisson_if_curr_exp_parameter(self):
         synfire_run.do_run(n_neurons, neurons_per_core=neurons_per_core,
                            run_times=run_times, input_class=input_class,
                            start_time=start_time, duration=duration, rate=rate,

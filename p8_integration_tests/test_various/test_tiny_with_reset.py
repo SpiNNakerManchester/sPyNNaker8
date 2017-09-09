@@ -1,7 +1,6 @@
 import spynnaker8 as p
 from p8_integration_tests.base_test_case import BaseTestCase
 from spynnaker8.utilities import neo_convertor
-import unittest
 
 
 def do_run():
@@ -31,27 +30,25 @@ def do_run():
 
 
 class TinyTest(BaseTestCase):
-    @unittest.skip("https://github.com/SpiNNakerManchester/sPyNNaker8/"
-                   "issues/5")
     def test_run(self):
         all1, all2 = do_run()
         spikes1 = neo_convertor.convert_spiketrains(
             all1.segments[0].spiketrains)
         spikes2 = neo_convertor.convert_spiketrains(
-            all1.segments[1].spiketrains)
-        self.assertEqual(spikes1, spikes2)
+            all2.segments[1].spiketrains)
+        self.assertEqual(spikes1.all(), spikes2.all())
         v1 = neo_convertor.convert_data(all1, name="v", run=0)
-        v2 = neo_convertor.convert_data(all1, name="v", run=1)
-        self.assertEqual(v1, v2)
+        v2 = neo_convertor.convert_data(all2, name="v", run=1)
+        self.assertEqual(v1.all(), v2.all())
 
 
 if __name__ == '__main__':
     all1, all2 = do_run()
     spikes1 = neo_convertor.convert_spiketrains(all1.segments[0].spiketrains)
     print spikes1
-    spikes2 = neo_convertor.convert_spiketrains(all1.segments[1].spiketrains)
+    spikes2 = neo_convertor.convert_spiketrains(all2.segments[1].spiketrains)
     print spikes2
     v1 = neo_convertor.convert_data(all1, name="v", run=0)
     print v1
-    v2 = neo_convertor.convert_data(all1, name="v", run=1)
+    v2 = neo_convertor.convert_data(all2, name="v", run=1)
     print v2

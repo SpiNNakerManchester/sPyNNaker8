@@ -1,9 +1,4 @@
-#!/usr/bin/python
-"""
-Synfirechain-like example
-"""
 import numpy
-import unittest
 
 from p8_integration_tests.base_test_case import BaseTestCase
 from p8_integration_tests.scripts.synfire_run import TestRun
@@ -19,9 +14,6 @@ get_delays = True
 
 
 class SynfireProjectionOnSameChip(BaseTestCase):
-
-    @unittest.skip("https://github.com/SpiNNakerManchester/sPyNNaker8/"
-                   "issues/22")
     def test_get_before_and_after(self):
         synfire_run = TestRun()
         synfire_run.do_run(n_neurons, neurons_per_core=neurons_per_core,
@@ -32,12 +24,12 @@ class SynfireProjectionOnSameChip(BaseTestCase):
         weights = synfire_run.get_weights()
         self.assertEquals(n_neurons, len(weights[0]))
         self.assertEquals(n_neurons, len(weights[1]))
-        self.assertTrue(numpy.allclose(weights[0], weights[1]))
+        self.assertTrue(numpy.allclose(weights[0][0][2], weights[1][0][2]))
 
-        delays = synfire_run .get_delay()
+        delays = synfire_run.get_delay()
         self.assertEquals(n_neurons, len(delays[0]))
         self.assertEquals(n_neurons, len(delays[1]))
-        self.assertTrue(numpy.allclose(delays[0], delays[1]))
+        self.assertTrue(numpy.allclose(delays[0][0][2], delays[1][0][2]))
 
 
 if __name__ == '__main__':

@@ -36,7 +36,7 @@ def do_run():
     return neo
 
 
-class TestSynapesExcitVsInhib(BaseTestCase):
+class TestSynapsesExcitVsInhib(BaseTestCase):
     def test_run(self):
         do_run()
 
