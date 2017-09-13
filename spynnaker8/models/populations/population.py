@@ -195,8 +195,7 @@ class Population(PyNNPopulationCommon, Recorder):
 
         context = {
             "label": self.label,
-            "celltype": descriptions.render(
-                engine, 'modeltype_default.txt', vertex_context),
+            "celltype": vertex_context,
             "structure": None,
             "size": self.size,
             "size_local": self.size,
