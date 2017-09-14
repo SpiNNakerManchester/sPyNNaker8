@@ -23,3 +23,13 @@ class RandomStatsScipyImpl(AbstractRandomStats):
 
     def var(self, dist):
         return self._scipy_stats.var(*dist.parameters)
+
+    def high(self, dist):
+        """ Return the variance of the distribution
+        """
+        return dist.parameters['high']
+
+    def low(self, dist):
+        """ Return the variance of the distribution
+        """
+        return dist.parameters['low']
