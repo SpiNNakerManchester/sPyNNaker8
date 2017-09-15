@@ -1,4 +1,4 @@
-from neo import AnalogSignal, SpikeTrain
+from neo import AnalogSignalArray, SpikeTrain
 from neo import Block, Segment
 import numpy as np
 from quantities import ms
@@ -245,14 +245,22 @@ class SpynakkerPanel(object):
         for datum, label, properties in zip(self.data, self.data_labels,
                                             self.line_properties):
             properties.update(self.options)
+            # Support lists length one
+            # for example result of segments[0].filter(name='v')
             if isinstance(datum, list):
                 if len(datum) == 0:
                     raise Exception("Can't handle empty list")
+                if len(datum) == 1 and not isinstance(datum[0], SpikeTrain):
+                    datum = datum[0]
+            if isinstance(datum, list):
                 if isinstance(datum[0], SpikeTrain):
                     plot_spiketrains(axes, datum, label=label, **properties)
                 else:
                     raise Exception("Can't handle lists of type %s"
                                     "" % type(datum))
+            # AnalogSignalArray is also a ndarray but data format different!
+            elif isinstance(datum, AnalogSignalArray):
+                heat_plot_neo(axes, datum, label=label, **properties)
             elif isinstance(datum, np.ndarray):
                 if len(datum[0]) == 2:
                     plot_spikes_numpy(axes, datum, label=label, **properties)
@@ -261,8 +269,6 @@ class SpynakkerPanel(object):
                 else:
                     raise Exception("Can't handle ndarray with %s columns"
                                     "" % len(datum[0]))
-            elif isinstance(datum, AnalogSignal):
-                heat_plot_neo(axes, datum, label=label, **properties)
             elif isinstance(datum, Block):
                 if "run" in properties:
                     run = int(properties.pop("run"))
