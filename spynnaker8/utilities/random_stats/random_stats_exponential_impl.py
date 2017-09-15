@@ -26,3 +26,13 @@ class RandomStatsExponentialImpl(AbstractRandomStats):
 
     def var(self, dist):
         return expon.var(*self._get_params(dist))
+
+    def high(self, dist):
+        """ Return the variance of the distribution
+        """
+        return dist.parameters['high']
+
+    def low(self, dist):
+        """ Return the variance of the distribution
+        """
+        return dist.parameters['low']
