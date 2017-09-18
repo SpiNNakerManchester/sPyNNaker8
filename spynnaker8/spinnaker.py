@@ -125,7 +125,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
         :return: None
         """
         # Build data
-        self._run(tstop - self._current_run_timesteps)
+        self._run(tstop - self.t)
 
     def clear(self):
         """ whats clear vs reset??????????
@@ -241,16 +241,9 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 
         :return: the current runtime already executed
         """
-        return self._current_run_timesteps
-
-    @t.setter
-    def t(self, new_value):
-        """ new current run timesteps
-
-        :param new_value: new value for current run timesteps
-        :return: None
-        """
-        self._current_run_timesteps = new_value
+        return (
+            float(self._current_run_timesteps) *
+            (float(self._machine_time_step) / 1000.0))
 
     @property
     def segment_counter(self):
