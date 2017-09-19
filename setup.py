@@ -65,12 +65,12 @@ setup(
         'SpiNNMan >= 1!4.0.0a5, < 1!5.0.0',
         'SpiNNaker_PACMAN >= 1!4.0.0a5, < 1!5.0.0',
         'SpiNNaker_DataSpecification >= 1!4.0.0a5, < 1!5.0.0',
-        'spalloc >= 0.2.2, < 1.0.0',
+        'spalloc >= v0.2.6, < 1.0.0',
         'SpiNNFrontEndCommon >= 1!4.0.0a5, < 1!5.0.0',
         'sPyNNaker >= 1!4.0.0a5, < 1!5.0.0',
         'quantities >= 0.12.1',
         'pynn >= 0.8, < 0.9',
         'lazyarray >= 0.2.9, <= 0.2.9',
-        'appdirs >=1.4.2 , < 2.0.0',
+        'appdirs >= 1.4.2 , < 2.0.0',
         'neo >= 0.3.0, <= 0.4.1']
 )
