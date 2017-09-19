@@ -4,9 +4,7 @@ from scipy.stats import expon
 
 
 class RandomStatsExponentialImpl(AbstractRandomStats):
-    """ An implementation of AbstractRandomStats for normal distributions\
-        (as scipy.stats.norm takes slightly different parameters to\
-        numpy.random.norm)
+    """ An implementation of AbstractRandomStats for exponential distributions
     """
 
     def _get_params(self, dist):
@@ -28,11 +26,7 @@ class RandomStatsExponentialImpl(AbstractRandomStats):
         return expon.var(*self._get_params(dist))
 
     def high(self, dist):
-        """ Return the variance of the distribution
-        """
-        return dist.parameters['high']
+        return None
 
     def low(self, dist):
-        """ Return the variance of the distribution
-        """
-        return dist.parameters['low']
+        return None

@@ -4,9 +4,7 @@ from scipy.stats import lognorm
 
 
 class RandomStatsLogNormalImpl(AbstractRandomStats):
-    """ An implementation of AbstractRandomStats for normal distributions\
-        (as scipy.stats.norm takes slightly different parameters to\
-        numpy.random.norm)
+    """ An implementation of AbstractRandomStats for log normal distributions
     """
 
     def _get_params(self, dist):
@@ -30,9 +28,9 @@ class RandomStatsLogNormalImpl(AbstractRandomStats):
     def high(self, dist):
         """ Return the variance of the distribution
         """
-        return dist.parameters['high']
+        return None
 
     def low(self, dist):
         """ Return the variance of the distribution
         """
-        return dist.parameters['low']
+        return None
