@@ -58,12 +58,7 @@ def do_run(plot):
             nNeurons, p.IF_curr_exp(**cell_params_lif_in), label='pop_%d' % 0))
     populations[0].initialize(v=v_distr)
 
-    p.external_devices.activate_live_output_for(
-        populations[0], port=34567, host="130.88.198.209", tag=2,
-        payload_as_time_stamps=False, use_payload_prefix=False)
-    # populations.append(Population(nNeurons,
-    #                               IF_curr_exp, cell_params_lif,
-    #                               label='pop_%d' % i))
+    p.external_devices.activate_live_output_for(populations[0])
 
     pop_external = p.Population(
         nNeurons, p.external_devices.SpikeInjector(**cell_params_ext_dev),
