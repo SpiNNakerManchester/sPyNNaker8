@@ -3,10 +3,7 @@ from scipy.stats import binom
 
 
 class RandomStatsBinomialImpl(AbstractRandomStats):
-    """ An implementation of AbstractRandomStats for binomial
-        distributions\
-        (as scipy.stats.norm takes slightly different parameters to\
-        numpy.random.binom)
+    """ An implementation of AbstractRandomStats for binomial distributions
     """
 
     def _get_params(self, dist):
@@ -28,11 +25,7 @@ class RandomStatsBinomialImpl(AbstractRandomStats):
         return binom.var(*self._get_params(dist))
 
     def high(self, dist):
-        """ Return the variance of the distribution
-        """
-        return dist.parameters['high']
+        return None
 
     def low(self, dist):
-        """ Return the variance of the distribution
-        """
-        return dist.parameters['low']
+        return None
