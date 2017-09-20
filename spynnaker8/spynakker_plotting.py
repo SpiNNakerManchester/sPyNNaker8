@@ -55,10 +55,11 @@ def plot_spikes(ax, spike_times, neurons, label='', **options):
     :param label: Label for the graph
     :param options: plotting options
     """
-    max_index = max(neurons)
-    min_index = min(neurons)
-    ax.plot(spike_times, neurons, 'b.', **options)
-    ax.set_ylim(-0.5 + min_index, max_index + 0.5)
+    if len(neurons) > 0:
+        max_index = max(neurons)
+        min_index = min(neurons)
+        ax.plot(spike_times, neurons, 'b.', **options)
+        ax.set_ylim(-0.5 + min_index, max_index + 0.5)
     if label:
         plt.text(0.95, 0.95, label,
                  transform=ax.transAxes, ha='right', va='top',

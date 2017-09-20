@@ -1,5 +1,4 @@
-import p8_integration_tests.test_buffer_manager.test_poission_with_recording.\
-    pynnBrunnelPlot as pblt
+import p8_integration_tests.scripts.pynnBrunnelPlot as pblt
 
 from p8_integration_tests.base_test_case import BaseTestCase
 import p8_integration_tests.scripts.pynnBrunnelBrianNestSpinnaker as script
