@@ -47,7 +47,7 @@ class IFCurrDualExpDataHolder(DataHolder):
              'tau_syn_E2': tau_syn_E2, 'tau_syn_I': tau_syn_I,
              'i_offset': i_offset, 'v_init': v_init,
              'isyn_exc': isyn_exc, 'isyn_inh': isyn_inh,
-             'isyn_exc': isyn_exc2})
+             'isyn_exc2': isyn_exc2})
 
     @staticmethod
     def build_model():
