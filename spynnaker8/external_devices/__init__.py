@@ -48,6 +48,11 @@ from spynnaker.pyNN.external_devices_models \
 from spynnaker.pyNN.external_devices_models \
     import AbstractEthernetSensor
 
+# General LIF control
+from spynnaker8.external_device_models\
+    import ExternalDeviceLifControlDataHolder\
+    as ExternalDeviceLifControl
+
 # PushBot Ethernet model control
 from spynnaker8.external_device_models.push_bot\
     .push_bot_control_models \
@@ -133,7 +138,7 @@ __all__ = [
     "ExternalCochleaDevice", "ExternalFPGARetinaDevice",
     "MunichRetinaDevice", "MunichMotorDevice",
     "PushBotRetinaDevice", "ArbitraryFPGADevice",
-
+    "ExternalDeviceLifControl"
 
     # Pushbot Parameters
     "MunichIoSpiNNakerLinkProtocol",
