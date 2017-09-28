@@ -1,6 +1,14 @@
-from neo import Segment, SpikeTrain, AnalogSignalArray
+from neo import Segment, SpikeTrain
 import numpy
 import quantities as pq
+import spynnaker8 as sim
+# Or neo version
+from spynnaker8.utilities.version_util import pynn8_syntax as pynn8_syntax
+if pynn8_syntax:
+    from neo import AnalogSignalArray as AnalogSignal
+else:
+    from neo import AnalogSignal as AnalogSignal
+    from neo import ChannelIndex
 
 
 class SpynnakerNeoSegment(Segment):
@@ -98,7 +106,7 @@ class SpynnakerNeoSegment(Segment):
                 self._convert_extracted_data_into_neo_expected_format(
                     signal_array, indexes)
             source_ids = numpy.fromiter(ids, dtype=int)
-            data_array = AnalogSignalArray(
+            data_array = AnalogSignal(
                     processed_data,
                     units=units,
                     t_start=t_start,
@@ -107,9 +115,17 @@ class SpynnakerNeoSegment(Segment):
                     source_population=label,
                     channel_index=indexes,
                     source_ids=source_ids)
+            if not pynn8_syntax:
+                # two issues here
+                # 1 channel_index must be an Object ChannelIndex
+                # 2 Above init is not setting .channel_index (it should)
+                data_array.channel_index = ChannelIndex(indexes)
             data_array.shape = (
                 data_array.shape[0], data_array.shape[1])
-            self.analogsignalarrays.append(data_array)
+            if pynn8_syntax:
+                self.analogsignalarrays.append(data_array)
+            else:
+                self.analogsignals.append(data_array)
 
     @property
     def analogsignalarrays(self):
