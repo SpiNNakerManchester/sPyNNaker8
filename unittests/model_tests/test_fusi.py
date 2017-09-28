@@ -1,5 +1,5 @@
 import spynnaker8 as p
-import python.plot_utils as plot_utils
+
 p.setup(1)
 
 
@@ -8,7 +8,7 @@ pop_ex = p.Population(1, p.IF_curr_exp, {}, label="test")
 
 
 syn_plas = p.STDPMechanism(
-     timing_dependence = p.PreOnly(),
+     timing_dependence = p.PreOnly(A_plus = 0.5, A_minus = 0.4, th_v_mem=-55),
         weight_dependence = p.WeightDependenceFusi(), weight=5.0, delay=5.0)
 
 proj = p.Projection(

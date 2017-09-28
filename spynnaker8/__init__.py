@@ -71,7 +71,7 @@ from spynnaker.pyNN.models.neuron.plasticity.stdp.timing_dependence \
     .timing_dependence_pre_only \
     import TimingDependencePreOnly as PreOnly
 from spynnaker.pyNN.models.neuron.plasticity.stdp.weight_dependence \
-    .timing_dependence_fusi \
+    .weight_dependence_fusi \
     import WeightDependenceFusi as WeightDependenceFusi
 
 
