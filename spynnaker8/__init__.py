@@ -67,6 +67,13 @@ from spynnaker8.models.synapse_dynamics.weight_dependence\
 from spynnaker8.models.synapse_dynamics.timing_dependence\
     .timing_dependence_spike_pair import TimingDependenceSpikePair as \
     SpikePairRule
+from spynnaker.pyNN.models.neuron.plasticity.stdp.timing_dependence \
+    .timing_dependence_pre_only \
+    import TimingDependencePreOnly as PreOnly
+from spynnaker.pyNN.models.neuron.plasticity.stdp.weight_dependence \
+    .timing_dependence_fusi \
+    import WeightDependenceFusi as WeightDependenceFusi
+
 
 # neuron stuff
 # noinspection PyUnresolvedReferences
@@ -122,8 +129,9 @@ __all__ = [
     # synapse structures
     'StaticSynapse',
     # plastic stuff
-    'STDPMechanism', 'AdditiveWeightDependence',
+    'STDPMechanism', 'AdditiveWeightDependence','WeightDependenceFusi',
     'MultiplicativeWeightDependence', 'SpikePairRule',
+    'PreOnly',
     # neuron stuff
     'IF_cond_exp', 'IF_curr_exp',
     'Izhikevich', 'SpikeSourceArray', 'SpikeSourcePoisson',
