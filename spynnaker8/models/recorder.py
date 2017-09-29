@@ -14,6 +14,7 @@ from spynnaker.pyNN.exceptions import InvalidParameterType
 from spynnaker8.models.data_cache import DataCache
 from spynnaker8.utilities.spynnaker8_neo_block import SpynnakerNeoBlock
 from spynnaker8.utilities.spynnaker8_neo_segment import SpynnakerNeoSegment
+from spynnaker8.utilities.version_util import pynn8_syntax as pynn8_syntax
 
 logger = logging.getLogger(__name__)
 
@@ -49,7 +50,7 @@ class Recorder(RecordingCommon):
             raise Exception("file extension %s not supported" % extension)
 
     def _extract_data(self, variables, clear, annotations):
-        """ extracts data from the vertices and puts them into a neo block
+        """ extracts block from the vertices and puts them into a neo block
 
         :param variables: the variables to extract
         :param clear: =if the variables should be cleared after reading
@@ -57,23 +58,22 @@ class Recorder(RecordingCommon):
         :return: The neo block
         """
 
-        data = SpynnakerNeoBlock()
+        block = SpynnakerNeoBlock()
 
         for previous in range(0, get_simulator().segment_counter):
-            data.segments.append(
-                self._get_previous_segment(previous, variables))
+            self._append_previous_segment(block, previous, variables)
 
-        # add to the segments the new data
-        data.segments.append(self._get_current_segment(variables, clear))
+        # add to the segments the new block
+        self._append_current_segment(block, variables, clear)
 
         # add fluff to the neo block
-        data.name = self._population.label
-        data.description = self._population.describe()
-        data.rec_datetime = data.segments[0].rec_datetime
-        data.annotate(**self._metadata())
+        block.name = self._population.label
+        block.description = self._population.describe()
+        block.rec_datetime = block.segments[0].rec_datetime
+        block.annotate(**self._metadata())
         if annotations:
-            data.annotate(**annotations)
-        return data
+            block.annotate(**annotations)
+        return block
 
     def _get_units(self, variable):
         """
@@ -121,12 +121,14 @@ class Recorder(RecordingCommon):
                 data = self._get_recorded_variable(variable)
                 ids = sorted(
                     self._filter_recorded(self._indices_to_record[variable]))
-                indexes = numpy.array(
-                    [self._population.id_to_index(atom_id) for atom_id in ids])
-                data_cache.save_data(
-                    variable=variable, data=data, ids=ids, indexes=indexes,
+                data_cache.save_data(variable=variable, data=data, ids=ids,
                     units=self._get_units(variable))
             self._data_cache[segment_number] = data_cache
+
+    def _get_channel_index(self, ids, block):
+        channel_index = numpy.array(
+            [self._population.id_to_index(atom_id) for atom_id in ids])
+        return channel_index
 
     def _filter_recorded(self, filter_ids):
         record_ids = list()
@@ -157,7 +159,7 @@ class Recorder(RecordingCommon):
             variables.update(self._get_all_recording_variables())
         return variables
 
-    def _get_current_segment(self, variables, clear):
+    def _append_current_segment(self, block, variables, clear):
 
         # build segment for the current data to be gathered in
         segment = SpynnakerNeoSegment(
@@ -171,29 +173,30 @@ class Recorder(RecordingCommon):
         for variable in variables:
             ids = sorted(
                 self._filter_recorded(self._indices_to_record[variable]))
-            indexes = numpy.array(
-                [self._population.id_to_index(atom_id) for atom_id in ids])
+            channel_index = self._get_channel_index(ids, block)
             if variable == "spikes":
                 segment.read_in_spikes(
                     spikes=self._get_recorded_variable(variable),
                     t=get_simulator().get_current_time(),
-                    ids=ids, indexes=indexes,
+                    ids=ids, indexes=channel_index,
                     first_id=self._population._first_id,
                     recording_start_time=self._recording_start_time,
                     label=self._population.label)
             else:
                 segment.read_in_signal(
                     signal_array=self._get_recorded_variable(variable),
-                    ids=ids, indexes=indexes, variable=variable,
+                    ids=ids, channel_index=channel_index, variable=variable,
                     recording_start_time=self._recording_start_time,
                     sampling_interval=self._sampling_interval,
                     units=self._get_units(variable),
                     label=self._population.label)
+
+        block.segments.append(segment)
+
         if clear:
             self._clear_recording(variables)
-        return segment
 
-    def _get_previous_segment(self, segment_number, variables):
+    def _append_previous_segment(self, block, segment_number, variables):
         if segment_number not in self._data_cache:
             logger.warn("No Data available for Segment {}"
                         .format(segment_number))
@@ -220,12 +223,14 @@ class Recorder(RecordingCommon):
                             "".format(segment_number, variable))
                 continue
             variable_cache = data_cache.get_data(variable)
+            ids = variable_cache.ids
+            channel_index = self._get_channel_index(ids, block)
             if variable == "spikes":
                 segment.read_in_spikes(
                     spikes=variable_cache.data,
                     t=data_cache.t,
-                    ids=variable_cache.ids,
-                    indexes=variable_cache.indexes,
+                    ids=ids,
+                    indexes=channel_index,
                     first_id=data_cache.first_id,
                     recording_start_time=data_cache.recording_start_time,
                     label=data_cache.label)
@@ -233,13 +238,14 @@ class Recorder(RecordingCommon):
                 segment.read_in_signal(
                     signal_array=variable_cache.data,
                     ids=variable_cache.ids,
-                    indexes=variable_cache.indexes,
+                    channel_index=channel_index,
                     variable=variable,
                     recording_start_time=data_cache.recording_start_time,
                     sampling_interval=data_cache.sampling_interval,
                     units=variable_cache.units,
                     label=data_cache.label)
-        return segment
+
+        block.segments.append(segment)
 
     def _get_all_possible_recordable_variables(self):
         variables = OrderedSet()

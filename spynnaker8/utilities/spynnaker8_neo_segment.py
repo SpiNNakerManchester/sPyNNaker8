@@ -87,7 +87,7 @@ class SpynnakerNeoSegment(Segment):
         processed_data = numpy.vstack(processed_data).T
         return processed_data
 
-    def read_in_signal(self, signal_array, ids, indexes, variable,
+    def read_in_signal(self, signal_array, ids, channel_index, variable,
                        recording_start_time, sampling_interval, units, label):
         """ reads in a data item that's not spikes (likely v, gsyn e, gsyn i)
 
@@ -104,7 +104,7 @@ class SpynnakerNeoSegment(Segment):
         if signal_array.size > 0:
             processed_data = \
                 self._convert_extracted_data_into_neo_expected_format(
-                    signal_array, indexes)
+                    signal_array, channel_index)
             source_ids = numpy.fromiter(ids, dtype=int)
             data_array = AnalogSignal(
                     processed_data,
@@ -113,13 +113,13 @@ class SpynnakerNeoSegment(Segment):
                     sampling_period=sampling_period,
                     name=variable,
                     source_population=label,
-                    channel_index=indexes,
+                    channel_index=channel_index,
                     source_ids=source_ids)
             if not pynn8_syntax:
                 # two issues here
                 # 1 channel_index must be an Object ChannelIndex
                 # 2 Above init is not setting .channel_index (it should)
-                data_array.channel_index = ChannelIndex(indexes)
+                data_array.channel_index = ChannelIndex(channel_index)
             data_array.shape = (
                 data_array.shape[0], data_array.shape[1])
             if pynn8_syntax:

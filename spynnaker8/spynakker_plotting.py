@@ -1,4 +1,4 @@
-from neo import AnalogSignalArray, SpikeTrain
+from neo import SpikeTrain
 from neo import Block, Segment
 import numpy as np
 from quantities import ms
@@ -8,6 +8,12 @@ try:
     matplotlib_missing = False
 except Exception as e:
     matplotlib_missing = True
+from spynnaker8.utilities.version_util import pynn8_syntax as pynn8_syntax
+if pynn8_syntax:
+    from neo import AnalogSignalArray as AnalogSignal
+else:
+    from neo import AnalogSignal as AnalogSignal
+
 
 """
 Plotting tools to be unsed together with
@@ -115,6 +121,9 @@ def heat_plot(ax, neurons, times, values, label='', **options):
     handle_options(ax, options)
     info_array = np.empty((max(neurons)+1, max(times)+1))
     info_array[:] = np.nan
+    print neurons.shape
+    print times.shape
+    print values.shape
     info_array[neurons, times] = values
     heat_map = ax.imshow(info_array, cmap='hot', interpolation='none',
                          origin='lower', aspect='auto')
@@ -149,9 +158,15 @@ def heat_plot_neo(ax, signal_array, label='', **options):
     :param label: Label for the graph
     :param options: plotting options
     """
+    print "NEO"
+    print signal_array[0,0]
     if label is None:
         label = signal_array.name
-    ids = signal_array.channel_index.astype(int)
+    if pynn8_syntax:
+        ids = signal_array.channel_index.astype(int)
+    else:
+        ids = signal_array.channel_index.index.astype(int)
+    print ids.shape
     times = signal_array.times.magnitude.astype(int)
     all_times = np.tile(times, len(ids))
     neurons = np.repeat(ids, len(times))
@@ -210,7 +225,7 @@ class SpynakkerPanel(object):
         other data is plotted as a heatmap
 
     A panel is a Matplotlib Axes or Subplot instance. A data item may be an
-    AnalogSignal, AnalogSignalArray, or a list of SpikeTrains. The Panel will
+    AnalogSignalArray, or a list of SpikeTrains. The Panel will
     automatically choose an appropriate representation. Multiple data items may
     be plotted in the same panel.
 
@@ -253,14 +268,18 @@ class SpynakkerPanel(object):
                     raise Exception("Can't handle empty list")
                 if len(datum) == 1 and not isinstance(datum[0], SpikeTrain):
                     datum = datum[0]
+            print type(datum)
+            print datum
             if isinstance(datum, list):
                 if isinstance(datum[0], SpikeTrain):
                     plot_spiketrains(axes, datum, label=label, **properties)
                 else:
                     raise Exception("Can't handle lists of type %s"
                                     "" % type(datum))
-            # AnalogSignalArray is also a ndarray but data format different!
-            elif isinstance(datum, AnalogSignalArray):
+            # AnalogSignalArray / AnalogSignal is also a ndarray
+            # but data format different!
+            # In pynn8_syntax AnalogSignalArray is imported as AnalogSignal
+            elif isinstance(datum, AnalogSignal):
                 heat_plot_neo(axes, datum, label=label, **properties)
             elif isinstance(datum, np.ndarray):
                 if len(datum[0]) == 2:
