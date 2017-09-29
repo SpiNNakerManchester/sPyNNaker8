@@ -1,8 +1,13 @@
 import spynnaker8 as p
-from pyNN.utility.plotting import Figure, Panel
+from pyNN.utility.plotting import Figure, Panel, DataTable
 import matplotlib.pyplot as plt
 import numpy as np
 from neo.core.spiketrain import SpikeTrain
+from scipy.ndimage.measurements import label
+from matplotlib.pyplot import legend
+from idna.core import _alabel_prefix
+
+
 p.setup(1)
 
 simtime = 1000
@@ -25,24 +30,34 @@ proj = p.Projection(
     )
 
 pop_ex.record(['v', 'gsyn_exc', 'gsyn_inh', 'spikes'])
-#pop_src.record(['v', 'gsyn_exc', 'gsyn_inh', 'spikes'])
+pop_src.record('spikes')
 
-p.run(simtime)
+wgts=[]
+for i in range(50):
+    p.run(1)
+    wgts.append( proj.get('weight', format='list', with_address=False)[0])
+#p.run_until(300.0, callbacks=[record_weights])
 
 v = pop_ex.get_data('v')
 curr = pop_ex.get_data('gsyn_exc')
 spikes = pop_ex.get_data('spikes')
-#pre_spikes = pop_src.get_data('spikes')
+pre_spikes = pop_src.get_data('spikes')
+
 print v.segments[0].filter(name='v')[0]
-import numpy
+
+plot_time = 50
+plot_wgt = DataTable(range(plot_time), wgts)
+
 Figure(
     # raster plot of the presynaptic neuron spike times
-#     Panel(numpy.array(mysource),
-#           yticks=True, markersize=0.5, xlim=(0, 100), xticks=True),
+     Panel(pre_spikes.segments[0].spiketrains,
+           yticks=True, markersize=0.5, xlim=(0, plot_time), xticks=True, data_labels=['pre-spikes']),
+     Panel(plot_wgt,
+           yticks=True, xlim=(0, plot_time), xticks=True, ylabel='weight'),
     Panel(v.segments[0].filter(name='v')[0],
-          yticks=True, markersize=0.5, xlim=(0, 50), xticks=True),
+          yticks=True, markersize=0.5, xlim=(0, plot_time), xticks=True, ylabel='V'),
     Panel(spikes.segments[0].spiketrains,
-          yticks=True, markersize=0.5, xlim=(0, 50), xticks=True),
+          yticks=True, markersize=0.5, xlim=(0, plot_time), xticks=True,  data_labels=['post-spikes']),
     title="fusi spikes",
     annotations="Simulated with {}".format(p.name()))
 plt.show()
