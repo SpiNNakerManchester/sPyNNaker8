@@ -2,14 +2,13 @@ import spynnaker8 as p
 
 p.setup(1)
 
-
+cell_params = {"i_offset":10}
 pop_src = p.Population(1, p.SpikeSourceArray, {'spike_times': [[1, 20]]}, label="src")
-pop_ex = p.Population(1, p.IF_curr_exp, {}, label="test")
-
+pop_ex = p.Population(1, p.IF_curr_exp, cell_params, label="test")
 
 syn_plas = p.STDPMechanism(
-     timing_dependence = p.PreOnly(A_plus = 0.5, A_minus = 0.4, th_v_mem=-55),
-        weight_dependence = p.WeightDependenceFusi(), weight=5.0, delay=5.0)
+     timing_dependence = p.PreOnly(A_plus = 0.5, A_minus = 0.4, th_v_mem=-60),
+        weight_dependence = p.WeightDependenceFusi(w_min=0.0, w_max=5.0), weight=2.5, delay=5.0)
 
 proj = p.Projection(
     pop_src, #_plastic,
