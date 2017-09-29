@@ -5,13 +5,14 @@ Synfirechain-like example
 import spynnaker8 as p
 from p8_integration_tests.base_test_case import BaseTestCase
 import spynnaker.plot_utils as plot_utils
+from spynnaker8.utilities import neo_convertor
 from unittest import SkipTest
 
 
 def do_run(nNeurons):
 
     p.setup(timestep=1.0, min_delay=1.0, max_delay=32.0)
-    p.set_number_of_neurons_per_core("IF_curr_exp", 100)
+    p.set_number_of_neurons_per_core(p.IF_curr_exp, 100)
 
     cell_params_lif = {'cm': 0.25, 'i_offset': 0.0, 'tau_m': 10.0,
                        'tau_refrac': 2.0, 'tau_syn_E': 0.5, 'tau_syn_I': 0.5,
@@ -30,21 +31,25 @@ def do_run(nNeurons):
     populations.append(p.Population(1, p.SpikeSourceArray, spikeArray,
                                     label='inputSpikes_1'))
 
-    connector = p.AllToAllConnector(weights=weight_to_spike, delays=delay)
-    projections.append(p.Projection(populations[0], populations[0], connector))
+    synapse_type = p.StaticSynapse(weight=weight_to_spike, delay=delay)
+    connector = p.AllToAllConnector()
+    projections.append(p.Projection(populations[0], populations[0], connector,
+                                    synapse_type=synapse_type))
     projections.append(p.Projection(populations[1], populations[0],
                                     p.FromListConnector([(0, 0, 4,
                                                           injection_delay)])))
 
-    populations[0].record_v()
-    populations[0].record_gsyn()
-    populations[0].record()
+    populations[0].record("v")
+    populations[0].record("gsyn_exc")
+    populations[0].record("spikes")
 
     p.run(90)
 
-    v = populations[0].get_v(compatible_output=True)
-    spikes = populations[0].getSpikes(compatible_output=True)
-    gsyn = populations[0].get_gsyn(compatible_output=True)
+    neo = populations[0].get_data(["v", "spikes", "gsyn_exc"])
+
+    v = neo_convertor.convert_data(neo, name="v")
+    gsyn = neo_convertor.convert_data(neo, name="gsyn_exc")
+    spikes = neo_convertor.convert_spikes(neo)
 
     p.end()
 
@@ -56,6 +61,7 @@ class ParamsSetAsList(BaseTestCase):
     def test_run(self):
         nNeurons = 2  # number of neurons in each population
         (v, gsyn, spikes) = do_run(nNeurons)
+        print gsyn
         try:
             self.assertLess(15, len(spikes))
             self.assertGreater(20, len(spikes))

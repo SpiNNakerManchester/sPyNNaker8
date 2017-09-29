@@ -1,6 +1,8 @@
 # pynn imports
 from pyNN.common import control as pynn_control
 from pyNN.random import RandomDistribution, NumpyRNG
+from pyNN import __version__ as pynn_version
+
 from spinn_front_end_common.utilities import globals_variables
 from spynnaker.pyNN.abstract_spinnaker_common import AbstractSpiNNakerCommon
 
@@ -18,15 +20,23 @@ from spynnaker8.utilities.random_stats import RandomStatsRandIntImpl
 from spynnaker8.utilities.random_stats import RandomStatsUniformImpl
 from spynnaker8.utilities.random_stats import RandomStatsVonmisesImpl
 from spynnaker8.utilities.random_stats import RandomStatsBinomialImpl
+from _version import __version__ as version
 
 import logging
 import math
+
+from quantities import __version__ as quantities_version
+from neo import __version__ as neo_version
+from lazyarray import __version__ as lazyarray_version
 
 
 logger = logging.getLogger(__name__)
 
 # At import time change the default FailedState
 globals_variables.set_failed_state(Spynnaker8FailedState())
+
+NAME = "SpiNNaker_under_version({}-{})".format(
+            _version.__version__, _version.__version_name__)
 
 
 class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
@@ -53,9 +63,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 
         # pynn demanded objects
         self._id_counter = 42
-        self._segment_counter = -1
-        self._name = "SpiNNaker_under_version({}-{})".format(
-            _version.__version__, _version.__version_name__)
+        self._segment_counter = 0
         self._recorders = set([])
 
         # main pynn interface inheritance
@@ -80,6 +88,12 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
             built_in_extra_mapping_inputs.update(
                 built_in_extra_mapping_inputs)
 
+        front_end_versions = [("sPyNNaker8_version", version)]
+        front_end_versions.append(("pyNN_version", pynn_version))
+        front_end_versions.append(("quantities_version", quantities_version))
+        front_end_versions.append(("neo_version", neo_version))
+        front_end_versions.append(("lazyarray_version", lazyarray_version))
+
         # spinnaker setup
         AbstractSpiNNakerCommon.__init__(
             self, database_socket_addresses=database_socket_addresses,
@@ -92,7 +106,8 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
             graph_label=graph_label, n_chips_required=n_chips_required,
             hostname=hostname, min_delay=min_delay,
             max_delay=max_delay, timestep=timestep,
-            time_scale_factor=time_scale_factor)
+            time_scale_factor=time_scale_factor,
+            front_end_versions=front_end_versions)
 
     def run(self, simtime):
         """ PyNN run simulation (enforced method and parameter name)
@@ -110,7 +125,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
         :return: None
         """
         # Build data
-        self._run(tstop - self._current_run_timesteps)
+        self._run(tstop - self.t)
 
     def clear(self):
         """ whats clear vs reset??????????
@@ -130,8 +145,10 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 
         :return: None
         """
+        for population in self._populations:
+            population.cache_data()
 
-        self._segment_counter = -1
+        self._segment_counter += 1
 
         AbstractSpiNNakerCommon.reset(self)
 
@@ -224,16 +241,9 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 
         :return: the current runtime already executed
         """
-        return self._current_run_timesteps
-
-    @t.setter
-    def t(self, new_value):
-        """ new current run timesteps
-
-        :param new_value: new value for current run timesteps
-        :return: None
-        """
-        self._current_run_timesteps = new_value
+        return (
+            float(self._current_run_timesteps) *
+            (float(self._machine_time_step) / 1000.0))
 
     @property
     def segment_counter(self):
@@ -297,7 +307,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 
         :return: the name of the simulator.
         """
-        return self._name
+        return NAME
 
     @property
     def populations(self):

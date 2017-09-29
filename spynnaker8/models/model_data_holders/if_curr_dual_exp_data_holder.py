@@ -32,7 +32,10 @@ class IFCurrDualExpDataHolder(DataHolder):
             tau_syn_I=IFCurrDualExpBase.default_parameters['tau_syn_I'],
             tau_refrac=IFCurrDualExpBase.default_parameters['tau_refrac'],
             i_offset=IFCurrDualExpBase.default_parameters['i_offset'],
-            v_init=IFCurrDualExpBase.none_pynn_default_parameters['v_init']):
+            v_init=IFCurrDualExpBase.none_pynn_default_parameters['v_init'],
+            isyn_exc=IFCurrDualExpBase.default_parameters['isyn_exc'],
+            isyn_inh=IFCurrDualExpBase.default_parameters['isyn_inh'],
+            isyn_exc2=IFCurrDualExpBase.default_parameters['isyn_exc2']):
         DataHolder.__init__(
             self,
             {'spikes_per_second': spikes_per_second,
@@ -42,7 +45,9 @@ class IFCurrDualExpDataHolder(DataHolder):
              'tau_m': tau_m, 'tau_syn_E': tau_syn_E, 'cm': cm,
              'v_rest': v_rest, 'v_reset': v_reset, 'v_thresh': v_thresh,
              'tau_syn_E2': tau_syn_E2, 'tau_syn_I': tau_syn_I,
-             'i_offset': i_offset, 'v_init': v_init})
+             'i_offset': i_offset, 'v_init': v_init,
+             'isyn_exc': isyn_exc, 'isyn_inh': isyn_inh,
+             'isyn_exc2': isyn_exc2})
 
     @staticmethod
     def build_model():

@@ -4,9 +4,7 @@ from scipy.stats import randint
 
 
 class RandomStatsRandIntImpl(AbstractRandomStats):
-    """ An implementation of AbstractRandomStats for normal distributions\
-        (as scipy.stats.norm takes slightly different parameters to\
-        numpy.random.norm)
+    """ An implementation of AbstractRandomStats for uniform distributions
     """
 
     def _get_params(self, dist):
@@ -26,3 +24,9 @@ class RandomStatsRandIntImpl(AbstractRandomStats):
 
     def var(self, dist):
         return randint.var(*self._get_params(dist))
+
+    def high(self, dist):
+        return dist.parameters['high']
+
+    def low(self, dist):
+        return dist.parameters['low']

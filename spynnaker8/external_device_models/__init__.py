@@ -5,7 +5,9 @@ from .external_spinnaker_link_fpga_retina_device \
     import ExternalFPGARetinaDeviceDataHolder
 from .munich_spinnaker_link_motor_device import MunichMotorDeviceDataHolder
 from .munich_spinnaker_link_retina_device import MunichRetinaDeviceDataHolder
+from .external_device_lif_control import ExternalDeviceLifControlDataHolder
 
 __all__ = ["ArbitraryFPGADeviceDataHolder", "ExternalCochleaDeviceDataHolder",
            "ExternalFPGARetinaDeviceDataHolder",
-           "MunichMotorDeviceDataHolder", "MunichRetinaDeviceDataHolder"]
+           "MunichMotorDeviceDataHolder", "MunichRetinaDeviceDataHolder",
+           "ExternalDeviceLifControlDataHolder"]

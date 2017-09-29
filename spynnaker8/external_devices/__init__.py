@@ -10,6 +10,7 @@ import os
 from spinn_front_end_common.abstract_models \
     import AbstractSendMeMulticastCommandsVertex
 from spinn_front_end_common.utility_models import LivePacketGather
+from spinn_utilities.socket_address import SocketAddress
 from spinnman.messages.eieio import EIEIOType
 
 # main
@@ -46,6 +47,11 @@ from spynnaker.pyNN.external_devices_models \
     import AbstractEthernetController
 from spynnaker.pyNN.external_devices_models \
     import AbstractEthernetSensor
+
+# General LIF control
+from spynnaker8.external_device_models\
+    import ExternalDeviceLifControlDataHolder\
+    as ExternalDeviceLifControl
 
 # PushBot Ethernet model control
 from spynnaker8.external_device_models.push_bot\
@@ -132,7 +138,7 @@ __all__ = [
     "ExternalCochleaDevice", "ExternalFPGARetinaDevice",
     "MunichRetinaDevice", "MunichMotorDevice",
     "PushBotRetinaDevice", "ArbitraryFPGADevice",
-
+    "ExternalDeviceLifControl",
 
     # Pushbot Parameters
     "MunichIoSpiNNakerLinkProtocol",
@@ -155,9 +161,21 @@ __all__ = [
     # Provided functions
     "activate_live_output_for",
     "activate_live_output_to",
-    "SpikeInjector"
-
+    "SpikeInjector",
+    "register_database_notification_request"
 ]
+
+
+def register_database_notification_request(hostname, notify_port, ack_port):
+    """ Adds a socket system which is registered with the notification protocol
+
+    :param hostname: hostname to connect to
+    :param notify_port: port num for the notify command
+    :param ack_port: port num for the ack command
+    :rtype: None
+    """
+    spynnaker_external_devices.add_socket_address(
+        SocketAddress(hostname, notify_port, ack_port))
 
 
 def EthernetControlPopulation(

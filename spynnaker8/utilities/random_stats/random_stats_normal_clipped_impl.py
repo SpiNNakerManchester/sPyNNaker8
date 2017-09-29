@@ -4,14 +4,13 @@ from scipy.stats import truncnorm
 
 
 class RandomStatsNormalClippedImpl(AbstractRandomStats):
-    """ An implementation of AbstractRandomStats for normal distributions\
-        (as scipy.stats.norm takes slightly different parameters to\
-        numpy.random.norm)
+    """ An implementation of AbstractRandomStats for normal distributions that\
+        are clipped to a boundary (redrawn)
     """
 
     def _get_params(self, dist):
-        return [dist.parameters['mu'], dist.parameters['sigma'],
-                dist.parameters['low'], dist.parameters['high']]
+        return [dist.parameters['low'], dist.parameters['high'],
+                dist.parameters['mu'], dist.parameters['sigma']]
 
     def cdf(self, dist, v):
         return truncnorm.cdf(v, *self._get_params(dist))
@@ -27,3 +26,9 @@ class RandomStatsNormalClippedImpl(AbstractRandomStats):
 
     def var(self, dist):
         return truncnorm.var(*self._get_params(dist))
+
+    def high(self, dist):
+        return dist.parameters['high']
+
+    def low(self, dist):
+        return dist.parameters['low']

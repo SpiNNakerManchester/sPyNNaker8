@@ -24,9 +24,8 @@ class TestGetGsyn(BaseTestCase):
         synfire_run.do_run(n_neurons, max_delay=max_delay, time_step=timestep,
                            neurons_per_core=neurons_per_core, delay=delay,
                            run_times=[runtime])
-        spikes = synfire_run.get_output_pop_spikes()
-        gsyn = synfire_run.get_output_pop_gsyn()
-
+        spikes = synfire_run.get_output_pop_spikes_numpy()
+        gsyn = synfire_run.get_output_pop_gsyn_exc_numpy()
         self.assertEquals(12, len(spikes))
         spike_checker.synfire_spike_checker(spikes, n_neurons)
         gsyn_tools.check_sister_gysn(__file__, n_neurons, runtime, gsyn)
@@ -36,9 +35,9 @@ if __name__ == '__main__':
     synfire_run.do_run(n_neurons, max_delay=max_delay, time_step=timestep,
                        neurons_per_core=neurons_per_core, delay=delay,
                        run_times=[runtime])
-    gsyn = synfire_run.get_output_pop_gsyn()
-    v = synfire_run.get_output_pop_voltage()
-    spikes = synfire_run.get_output_pop_spikes()
+    gsyn = synfire_run.get_output_pop_gsyn_exc_numpy()
+    v = synfire_run.get_output_pop_voltage_numpy()
+    spikes = synfire_run.get_output_pop_spikes_numpy()
     plot_utils.plot_spikes(spikes)
     plot_utils.heat_plot(v)
     plot_utils.heat_plot(gsyn)

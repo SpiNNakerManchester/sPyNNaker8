@@ -4,9 +4,7 @@ from scipy.stats import poisson
 
 
 class RandomStatsPoissonImpl(AbstractRandomStats):
-    """ An implementation of AbstractRandomStats for normal distributions\
-        (as scipy.stats.norm takes slightly different parameters to\
-        numpy.random.norm)
+    """ An implementation of AbstractRandomStats for poisson distributions
     """
 
     def _get_params(self, dist):
@@ -26,3 +24,9 @@ class RandomStatsPoissonImpl(AbstractRandomStats):
 
     def var(self, dist):
         return poisson.var(*self._get_params(dist))
+
+    def high(self, dist):
+        return None
+
+    def low(self, dist):
+        return None

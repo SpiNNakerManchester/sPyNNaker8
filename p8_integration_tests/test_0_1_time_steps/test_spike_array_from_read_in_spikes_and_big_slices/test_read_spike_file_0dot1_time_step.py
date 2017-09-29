@@ -1,7 +1,3 @@
-"""
-Synfirechain-like example
-"""
-
 # spynnaker imports
 import spynnaker8 as p
 
@@ -34,12 +30,12 @@ def read_spikefile(file_name, n_neurons):
 
 def do_run():
     """
-    test that tests the printing of v from a pre determined recording
+    test that tests reading in spike data
     :return:
     """
     p.setup(timestep=0.1, min_delay=1.0, max_delay=14.0)
     n_neurons = 128 * 128  # number of neurons in each population
-    p.set_number_of_neurons_per_core("IF_cond_exp", 256)
+    p.set_number_of_neurons_per_core(p.IF_cond_exp, 256)
 
     cell_params_lif = {'cm': 0.25,
                        'i_offset': 0.0,
@@ -65,21 +61,20 @@ def do_run():
 
     spikes = read_spikefile(spikes_file, n_neurons)
     print spikes
-    spike_array = {'spike_times': spikes}
 
     populations.append(p.Population(
-        n_neurons, p.SpikeSourceArray, spike_array,
+        n_neurons, p.SpikeSourceArray(spike_times=spikes),
         label='inputSpikes_1'))
     populations.append(p.Population(
-        n_neurons, p.IF_cond_exp, cell_params_lif, label='pop_1'))
+        n_neurons, p.IF_cond_exp(**cell_params_lif), label='pop_1'))
     projections.append(p.Projection(
-        populations[0], populations[1], p.OneToOneConnector(
-            weights=weight_to_spike, delays=delay)))
-    populations[1].record()
+        populations[0], populations[1], p.OneToOneConnector(),
+        synapse_type=p.StaticSynapse(weight=weight_to_spike, delay=delay)))
+    populations[1].record("spikes")
 
     p.run(100)
 
-    spikes = populations[1].getSpikes(compatible_output=True)
+    spikes = populations[1].spinnaker_get_data('spikes')
 
     p.end()
 
@@ -88,7 +83,7 @@ def do_run():
 
 def plot(spikes):
     """
-    test that tests the printing of v from a pre determined recording
+    plot spikes
     :return:
     """
     import pylab  # deferred so unittest are not dependent on it
@@ -106,14 +101,8 @@ def plot(spikes):
 
 
 class TestReadingSpikeArrayDataAndBigSlices(BaseTestCase):
-    """
-    tests the printing of print v given a simulation
-    """
+
     def test_script(self):
-        """
-        test that tests the printing of v from a pre determined recording
-        :return:
-        """
         try:
             spikes = do_run()
             # System intentional overload so may error

@@ -4,9 +4,7 @@ from scipy.stats import uniform
 
 
 class RandomStatsUniformImpl(AbstractRandomStats):
-    """ An implementation of AbstractRandomStats for uniform distributions\
-        (as scipy.stats.uniform takes slightly different parameters to\
-        numpy.random.uniform)
+    """ An implementation of AbstractRandomStats for uniform distributions
     """
 
     def _get_params(self, dist):
@@ -27,3 +25,9 @@ class RandomStatsUniformImpl(AbstractRandomStats):
 
     def var(self, dist):
         return uniform.var(*self._get_params(dist))
+
+    def high(self, dist):
+        return dist.parameters['high']
+
+    def low(self, dist):
+        return dist.parameters['low']

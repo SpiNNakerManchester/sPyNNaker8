@@ -1,6 +1,7 @@
 from p8_integration_tests.base_test_case import BaseTestCase
 
 import spynnaker8 as sim
+from spynnaker8.utilities import neo_convertor
 
 
 def do_run():
@@ -51,30 +52,35 @@ def do_run():
     # +-------------------------------------------------------------------+
     # Connection type between noise poisson generator and
     # excitatory populations
-    ee_connector = sim.OneToOneConnector(weights=2)
+    ee_connector = sim.OneToOneConnector()
+    synapse_type = sim.StaticSynapse(weight=2)
 
-    sim.Projection(pre_stim, pre_pop, ee_connector, target='excitatory')
-    sim.Projection(post_stim, post_pop, ee_connector, target='excitatory')
+    sim.Projection(pre_stim, pre_pop, ee_connector, synapse_type=synapse_type,
+                   receptor_type='excitatory')
+    sim.Projection(post_stim, post_pop, ee_connector,
+                   synapse_type=synapse_type, receptor_type='excitatory')
 
     # Plastic Connections between pre_pop and post_pop
     stdp_model = sim.STDPMechanism(
-      timing_dependence=sim.SpikePairRule(tau_plus=20.0, tau_minus=50.0),
-      weight_dependence=sim.AdditiveWeightDependence(w_min=0, w_max=1,
-                                                     A_plus=0.02,
-                                                     A_minus=0.02))
+      timing_dependence=sim.SpikePairRule(tau_plus=20.0, tau_minus=50.0,
+                                          A_plus=0.02, A_minus=0.02),
+      weight_dependence=sim.AdditiveWeightDependence(w_min=0, w_max=1))
 
     sim.Projection(pre_pop, post_pop, sim.OneToOneConnector(),
-                   synapse_dynamics=sim.SynapseDynamics(slow=stdp_model))
+                   synapse_type=stdp_model)
 
     # Record spikes
-    pre_pop.record()
-    post_pop.record()
+    pre_pop.record("spikes")
+    post_pop.record("spikes")
 
     # Run simulation
     sim.run(sim_time)
 
-    pre_spikes = pre_pop.getSpikes(compatible_output=True)
-    post_spikes = post_pop.getSpikes(compatible_output=True)
+    neo = pre_pop.get_data("spikes")
+    pre_spikes = neo_convertor.convert_spikes(neo)
+
+    neo = post_pop.get_data("spikes")
+    post_spikes = neo_convertor.convert_spikes(neo)
 
     # End simulation on SpiNNaker
     sim.end()

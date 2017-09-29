@@ -23,3 +23,13 @@ class RandomStatsScipyImpl(AbstractRandomStats):
 
     def var(self, dist):
         return self._scipy_stats.var(*dist.parameters)
+
+    def high(self, dist):
+        if "high" in dist.parameters:
+            return dist.parameters['high']
+        return None
+
+    def low(self, dist):
+        if "low" in dist.parameters:
+            return dist.parameters['low']
+        return None
