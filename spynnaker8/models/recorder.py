@@ -14,7 +14,6 @@ from spynnaker.pyNN.exceptions import InvalidParameterType
 from spynnaker8.models.data_cache import DataCache
 from spynnaker8.utilities.spynnaker8_neo_block import SpynnakerNeoBlock
 from spynnaker8.utilities.spynnaker8_neo_segment import SpynnakerNeoSegment
-from spynnaker8.utilities.version_util import pynn8_syntax as pynn8_syntax
 
 logger = logging.getLogger(__name__)
 
@@ -125,11 +124,6 @@ class Recorder(RecordingCommon):
                     units=self._get_units(variable))
             self._data_cache[segment_number] = data_cache
 
-    def _get_channel_index(self, ids, block):
-        channel_index = numpy.array(
-            [self._population.id_to_index(atom_id) for atom_id in ids])
-        return channel_index
-
     def _filter_recorded(self, filter_ids):
         record_ids = list()
         for neuron_id in range(0, len(filter_ids)):
@@ -173,19 +167,22 @@ class Recorder(RecordingCommon):
         for variable in variables:
             ids = sorted(
                 self._filter_recorded(self._indices_to_record[variable]))
-            channel_index = self._get_channel_index(ids, block)
+            indexes = numpy.array(
+                [self._population.id_to_index(atom_id) for atom_id in ids])
             if variable == "spikes":
                 segment.read_in_spikes(
                     spikes=self._get_recorded_variable(variable),
                     t=get_simulator().get_current_time(),
-                    ids=ids, indexes=channel_index,
+                    ids=ids, indexes=indexes,
                     first_id=self._population._first_id,
                     recording_start_time=self._recording_start_time,
                     label=self._population.label)
             else:
                 segment.read_in_signal(
+                    block=block,
                     signal_array=self._get_recorded_variable(variable),
-                    ids=ids, channel_index=channel_index, variable=variable,
+                    ids=ids, indexes=indexes,
+                    variable=variable,
                     recording_start_time=self._recording_start_time,
                     sampling_interval=self._sampling_interval,
                     units=self._get_units(variable),

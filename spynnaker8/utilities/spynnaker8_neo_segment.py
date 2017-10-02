@@ -58,21 +58,20 @@ class SpynnakerNeoSegment(Segment):
         t_stop = t * pq.ms
 
         for (id, index) in zip(ids, indexes):
+            spiketrain = SpikeTrain(
+                times=spikes[spikes[:, 0] == id - first_id][:, 1],
+                t_start=recording_start_time,
+                t_stop=t_stop,
+                units='ms',
+                source_population=label,
+                source_id=id,
+                source_index=index)
             # get times per atom
-            self.spiketrains.append(
-                SpikeTrain(
-                    times=spikes[spikes[:, 0] ==
-                                 id - first_id][:, 1],
-                    t_start=recording_start_time,
-                    t_stop=t_stop,
-                    units='ms',
-                    source_population=label,
-                    source_id=id,
-                    source_index=index))
+            self.spiketrains.append(spiketrain)
 
     @staticmethod
     def _convert_extracted_data_into_neo_expected_format(
-            signal_array, channel_indices):
+            signal_array, indexes):
         """
         Converts data between spynakker format and neo format
         :param signal_array: Draw data in spynakker format
@@ -83,11 +82,20 @@ class SpynnakerNeoSegment(Segment):
         """
         processed_data = [
             signal_array[:, 2][signal_array[:, 0] == index]
-            for index in channel_indices]
+            for index in indexes]
         processed_data = numpy.vstack(processed_data).T
         return processed_data
 
-    def read_in_signal(self, signal_array, ids, channel_index, variable,
+    def _get_channel_index(self, ids, block):
+        for channel_index in block.channel_indexes:
+            if channel_index == ids:
+                return channel_index
+        count = len(block.channel_indexes)
+        channel_index = ChannelIndex(name="Index {}".format(count), index=ids)
+        block.channel_indexes.append(channel_index)
+        return channel_index
+
+    def read_in_signal(self, block, signal_array, ids, indexes, variable,
                        recording_start_time, sampling_interval, units, label):
         """ reads in a data item that's not spikes (likely v, gsyn e, gsyn i)
 
@@ -104,28 +112,39 @@ class SpynnakerNeoSegment(Segment):
         if signal_array.size > 0:
             processed_data = \
                 self._convert_extracted_data_into_neo_expected_format(
-                    signal_array, channel_index)
+                    signal_array, indexes)
             source_ids = numpy.fromiter(ids, dtype=int)
-            data_array = AnalogSignal(
+            if pynn8_syntax:
+                data_array = AnalogSignal(
+                        processed_data,
+                        units=units,
+                        t_start=t_start,
+                        sampling_period=sampling_period,
+                        name=variable,
+                        source_population=label,
+                        channel_index=indexes,
+                        source_ids=source_ids)
+            else:
+                data_array = AnalogSignal(
                     processed_data,
                     units=units,
                     t_start=t_start,
                     sampling_period=sampling_period,
                     name=variable,
                     source_population=label,
-                    channel_index=channel_index,
                     source_ids=source_ids)
-            if not pynn8_syntax:
                 # two issues here
                 # 1 channel_index must be an Object ChannelIndex
                 # 2 Above init is not setting .channel_index (it should)
-                data_array.channel_index = ChannelIndex(channel_index)
+                channel_index = self._get_channel_index(ids, block)
+                data_array.channel_index = channel_index
             data_array.shape = (
                 data_array.shape[0], data_array.shape[1])
             if pynn8_syntax:
                 self.analogsignalarrays.append(data_array)
             else:
                 self.analogsignals.append(data_array)
+                channel_index.analogsignals.append(data_array)
 
     @property
     def analogsignalarrays(self):
