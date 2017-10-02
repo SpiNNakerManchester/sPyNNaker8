@@ -121,9 +121,6 @@ def heat_plot(ax, neurons, times, values, label='', **options):
     handle_options(ax, options)
     info_array = np.empty((max(neurons)+1, max(times)+1))
     info_array[:] = np.nan
-    print neurons.shape
-    print times.shape
-    print values.shape
     info_array[neurons, times] = values
     heat_map = ax.imshow(info_array, cmap='hot', interpolation='none',
                          origin='lower', aspect='auto')
@@ -158,19 +155,17 @@ def heat_plot_neo(ax, signal_array, label='', **options):
     :param label: Label for the graph
     :param options: plotting options
     """
-    print "NEO"
-    print signal_array[0,0]
     if label is None:
         label = signal_array.name
     if pynn8_syntax:
         ids = signal_array.channel_index.astype(int)
     else:
         ids = signal_array.channel_index.index.astype(int)
-    print ids.shape
+    xs = range(len(ids))
     times = signal_array.times.magnitude.astype(int)
-    all_times = np.tile(times, len(ids))
-    neurons = np.repeat(ids, len(times))
-    values = np.concatenate(map(lambda x: signal_array[:, x].magnitude, ids))
+    all_times = np.tile(times, len(xs))
+    neurons = np.repeat(xs, len(times))
+    values = np.concatenate(map(lambda x: signal_array.magnitude[:, x], xs))
     heat_plot(ax, neurons, all_times, values, label=label, **options)
 
 
@@ -268,8 +263,6 @@ class SpynakkerPanel(object):
                     raise Exception("Can't handle empty list")
                 if len(datum) == 1 and not isinstance(datum[0], SpikeTrain):
                     datum = datum[0]
-            print type(datum)
-            print datum
             if isinstance(datum, list):
                 if isinstance(datum[0], SpikeTrain):
                     plot_spiketrains(axes, datum, label=label, **properties)
