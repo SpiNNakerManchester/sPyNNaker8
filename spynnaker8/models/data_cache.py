@@ -120,5 +120,5 @@ class DataCache(object):
         :rtype None
         """
         self._rec_datetime = datetime.now()
-        variable_cache = VariableCache(data, ids, channel_index, units)
+        variable_cache = VariableCache(data, ids, units)
         self._cache[variable] = variable_cache

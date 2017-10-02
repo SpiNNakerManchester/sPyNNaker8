@@ -7,7 +7,7 @@ class VariableCache(object):
     """
     __slots__ = ("_data", "_ids", "_units")
 
-    def __init__(self, data, ids, channel_index, units):
+    def __init__(self, data, ids, units):
         """
 
         :param data: raw data in spynakker format

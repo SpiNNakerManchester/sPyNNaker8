@@ -1,7 +1,6 @@
 from neo import Segment, SpikeTrain
 import numpy
 import quantities as pq
-import spynnaker8 as sim
 # Or neo version
 from spynnaker8.utilities.version_util import pynn8_syntax as pynn8_syntax
 if pynn8_syntax:

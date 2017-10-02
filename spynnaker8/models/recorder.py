@@ -121,7 +121,7 @@ class Recorder(RecordingCommon):
                 ids = sorted(
                     self._filter_recorded(self._indices_to_record[variable]))
                 data_cache.save_data(variable=variable, data=data, ids=ids,
-                    units=self._get_units(variable))
+                                     units=self._get_units(variable))
             self._data_cache[segment_number] = data_cache
 
     def _filter_recorded(self, filter_ids):
@@ -221,21 +221,23 @@ class Recorder(RecordingCommon):
                 continue
             variable_cache = data_cache.get_data(variable)
             ids = variable_cache.ids
-            channel_index = self._get_channel_index(ids, block)
+            indexes = numpy.array(
+                [self._population.id_to_index(atom_id) for atom_id in ids])
             if variable == "spikes":
                 segment.read_in_spikes(
                     spikes=variable_cache.data,
                     t=data_cache.t,
                     ids=ids,
-                    indexes=channel_index,
+                    indexes=indexes,
                     first_id=data_cache.first_id,
                     recording_start_time=data_cache.recording_start_time,
                     label=data_cache.label)
             else:
                 segment.read_in_signal(
+                    block=block,
                     signal_array=variable_cache.data,
                     ids=variable_cache.ids,
-                    channel_index=channel_index,
+                    indexes=indexes,
                     variable=variable,
                     recording_start_time=data_cache.recording_start_time,
                     sampling_interval=data_cache.sampling_interval,
