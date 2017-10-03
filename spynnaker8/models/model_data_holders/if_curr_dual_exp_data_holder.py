@@ -34,8 +34,7 @@ class IFCurrDualExpDataHolder(DataHolder):
             i_offset=IFCurrDualExpBase.default_parameters['i_offset'],
             v_init=IFCurrDualExpBase.none_pynn_default_parameters['v_init'],
             isyn_exc=IFCurrDualExpBase.default_parameters['isyn_exc'],
-            isyn_inh=IFCurrDualExpBase.default_parameters['isyn_inh'],
-            isyn_exc2=IFCurrDualExpBase.default_parameters['isyn_exc2']):
+            isyn_inh=IFCurrDualExpBase.default_parameters['isyn_inh']):
         DataHolder.__init__(
             self,
             {'spikes_per_second': spikes_per_second,
