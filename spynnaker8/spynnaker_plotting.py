@@ -162,10 +162,12 @@ def heat_plot_neo(ax, signal_array, label='', **options):
     else:
         ids = signal_array.channel_index.index.astype(int)
     xs = range(len(ids))
-    times = signal_array.times.magnitude.astype(int)
+    times = signal_array.times / signal_array.sampling_period
+    times = np.rint(times.magnitude).astype(int)
     all_times = np.tile(times, len(xs))
     neurons = np.repeat(xs, len(times))
-    values = np.concatenate(map(lambda x: signal_array.magnitude[:, x], xs))
+    magnitude = signal_array.magnitude
+    values = np.concatenate(map(lambda x: magnitude[:, x], xs))
     heat_plot(ax, neurons, all_times, values, label=label, **options)
 
 
@@ -208,7 +210,7 @@ def plot_segment(axes, segment, label='', **options):
         raise Exception("Block does not appear to hold any data")
 
 
-class SpynakkerPanel(object):
+class Spynnakerpanel(object):
     """
     Represents a single panel in a multi-panel figure.
 
