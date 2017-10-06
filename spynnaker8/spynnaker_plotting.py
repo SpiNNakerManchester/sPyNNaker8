@@ -157,11 +157,8 @@ def heat_plot_neo(ax, signal_array, label='', **options):
     """
     if label is None:
         label = signal_array.name
-    if pynn8_syntax:
-        ids = signal_array.channel_index.astype(int)
-    else:
-        ids = signal_array.channel_index.index.astype(int)
-    xs = range(len(ids))
+    n_neurons = signal_array.shape[-1]
+    xs = range(len(n_neurons))
     times = signal_array.times / signal_array.sampling_period
     times = np.rint(times.magnitude).astype(int)
     all_times = np.tile(times, len(xs))
