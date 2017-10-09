@@ -6,7 +6,6 @@ from p8_integration_tests.scripts.synfire_run import TestRun
 
 import spynnaker.plot_utils as plot_utils
 import spynnaker.spike_checker as spike_checker
-import unittest
 
 nNeurons = 200  # number of neurons in each population
 spike_times = [[0, 1050]]
