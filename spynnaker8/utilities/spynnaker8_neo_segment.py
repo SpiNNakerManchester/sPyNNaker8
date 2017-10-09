@@ -2,7 +2,7 @@ from neo import Segment, SpikeTrain
 import numpy
 import quantities as pq
 # Or neo version
-from spynnaker8.utilities.version_util import pynn8_syntax as pynn8_syntax
+from spynnaker8.utilities.version_util import pynn8_syntax
 if pynn8_syntax:
     from neo import AnalogSignalArray as AnalogSignal
 else:

@@ -1,6 +1,6 @@
 from quantities import ms
 import numpy as np
-from spynnaker8.utilities.version_util import pynn8_syntax as pynn8_syntax
+from spynnaker8.utilities.version_util import pynn8_syntax
 
 
 def convert_analog_signal(signal_array, time_unit=ms):

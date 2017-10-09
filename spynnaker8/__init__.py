@@ -100,7 +100,7 @@ from spynnaker8.models.projection import Projection as SpiNNakerProjection
 
 from spynnaker8 import external_devices
 from spynnaker8 import extra_models
-from spynnaker8.utilities.version_util import pynn8_syntax as pynn8_syntax
+from spynnaker8.utilities.version_util import pynn8_syntax
 
 # big stuff
 from spynnaker8.spinnaker import SpiNNaker

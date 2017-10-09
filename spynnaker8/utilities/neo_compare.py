@@ -1,4 +1,4 @@
-from spynnaker8.utilities.version_util import pynn8_syntax as pynn8_syntax
+from spynnaker8.utilities.version_util import pynn8_syntax
 
 
 def compare_spiketrain(spiketrain1, spiketrain2):

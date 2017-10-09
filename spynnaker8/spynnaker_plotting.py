@@ -8,7 +8,7 @@ try:
     matplotlib_missing = False
 except Exception as e:
     matplotlib_missing = True
-from spynnaker8.utilities.version_util import pynn8_syntax as pynn8_syntax
+from spynnaker8.utilities.version_util import pynn8_syntax
 if pynn8_syntax:
     from neo import AnalogSignalArray as AnalogSignal
 else:
