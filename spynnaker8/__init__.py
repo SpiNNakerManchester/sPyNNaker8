@@ -76,7 +76,7 @@ from spynnaker8.models.model_data_holders.if_cond_exp_data_holder import \
 # noinspection PyUnresolvedReferences
 from spynnaker8.models.model_data_holders.if_curr_exp_data_holder import \
     IFCurrExpDataHolder as IF_curr_exp
-    # noinspection PyUnresolvedReferences
+# noinspection PyUnresolvedReferences
 from spynnaker8.models.model_data_holders.if_curr_alpha_data_holder import \
     IFCurrAlphaDataHolder as IF_curr_alpha
 # noinspection PyUnresolvedReferences
