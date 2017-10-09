@@ -76,6 +76,9 @@ from spynnaker8.models.model_data_holders.if_cond_exp_data_holder import \
 # noinspection PyUnresolvedReferences
 from spynnaker8.models.model_data_holders.if_curr_exp_data_holder import \
     IFCurrExpDataHolder as IF_curr_exp
+    # noinspection PyUnresolvedReferences
+from spynnaker8.models.model_data_holders.if_curr_alpha_data_holder import \
+    IFCurrAlphaDataHolder as IF_curr_alpha
 # noinspection PyUnresolvedReferences
 from spynnaker8.models.model_data_holders.izk_curr_exp_data_holder import \
     IzkCurrExpDataHolder as Izhikevich
@@ -125,7 +128,7 @@ __all__ = [
     'STDPMechanism', 'AdditiveWeightDependence',
     'MultiplicativeWeightDependence', 'SpikePairRule',
     # neuron stuff
-    'IF_cond_exp', 'IF_curr_exp',
+    'IF_cond_exp', 'IF_curr_exp', "IF_curr_alpha",
     'Izhikevich', 'SpikeSourceArray', 'SpikeSourcePoisson',
     # pops
     'Assembly', 'Population', 'PopulationView',
