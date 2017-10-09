@@ -15,7 +15,8 @@ synfire_run = TestRun()
 
 class SynfireIfCurrExp(BaseTestCase):
 
-    @unittest.skip("Live IO Broken!")
+    @unittest.skip("https://github.com/SpiNNakerManchester/"
+                   "SpiNNFrontEndCommon/issues/162")
     def test_run(self):
         synfire_run.do_run(n_neurons, neurons_per_core=neurons_per_core,
                            run_times=[runtime])
