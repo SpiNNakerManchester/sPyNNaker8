@@ -183,6 +183,10 @@ def plot_segment(axes, segment, label='', **options):
     :param label: Label for the graph
     :param options: plotting options
     """
+    if pynn8_syntax:
+        analogsignals = segment.analogsignalarrays
+    else:
+        analogsignals = segment.analogsignals
     if "name" in options:
         name = options.pop("name")
         if name == 'spikes':
@@ -191,18 +195,18 @@ def plot_segment(axes, segment, label='', **options):
             heat_plot_neo(axes, segment.filter(name=name)[0], label=label,
                           **options)
     elif len(segment.spiketrains) > 0:
-        if len(segment.analogsignalarrays) > 1:
+        if len(analogsignals) > 1:
             raise Exception("Block.segment[0] has spikes and "
                             "other data please specifiy one "
                             "to plot")
         plot_spiketrains(axes, segment.spiketrains, label=label, **options)
-    elif len(segment.analogsignalarrays) == 1:
-        heat_plot_neo(axes, segment.analogsignalarrays[0], label=label,
+    elif len(analogsignals) == 1:
+        heat_plot_neo(axes, analogsignals[0], label=label,
                       **options)
-    elif len(segment.analogsignalarrays) > 1:
+    elif len(analogsignals) > 1:
         raise Exception("Block.segment[0] has {} types of data "
                         "please specify one to plot using name="
-                        "" % len(segment.analogsignalarrays))
+                        "" % len(analogsignals))
     else:
         raise Exception("Block does not appear to hold any data")
 

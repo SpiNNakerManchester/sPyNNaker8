@@ -145,10 +145,11 @@ class SpynnakerNeoSegment(Segment):
                 self.analogsignals.append(data_array)
                 channel_index.analogsignals.append(data_array)
 
-    @property
-    def analogsignalarrays(self):
-        return self._analog_signal_arrays
+    if pynn8_syntax:
+        @property
+        def analogsignalarrays(self):
+            return self._analog_signal_arrays
 
-    @analogsignalarrays.setter
-    def analogsignalarrays(self, new_value):
-        self._analog_signal_arrays = new_value
+        @analogsignalarrays.setter
+        def analogsignalarrays(self, new_value):
+            self._analog_signal_arrays = new_value
