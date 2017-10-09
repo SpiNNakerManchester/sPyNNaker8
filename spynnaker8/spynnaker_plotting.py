@@ -211,7 +211,7 @@ def plot_segment(axes, segment, label='', **options):
         raise Exception("Block does not appear to hold any data")
 
 
-class Spynnakerpanel(object):
+class SpynnakerPanel(object):
     """
     Represents a single panel in a multi-panel figure.
 
