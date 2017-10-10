@@ -172,7 +172,7 @@ class Recorder(RecordingCommon):
             indexes = numpy.array(
                 [self._population.id_to_index(atom_id) for atom_id in ids])
             if variable == SPIKES:
-                 read_in_spikes(
+                read_in_spikes(
                     segment=segment,
                     spikes=self._get_recorded_variable(variable),
                     t=get_simulator().get_current_time(),
