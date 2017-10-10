@@ -62,8 +62,6 @@ class BigMultiProcessorSpikeSourcePrint(BaseTestCase):
             # Just in case the range failed
             raise SkipTest(ex)
 
-    @unittest.skip("https://github.com/SpiNNakerManchester/sPyNNaker/issues/"
-                   "335")
     def test_seventy(self):
         nNeurons = 600  # number of neurons in each population
         neo = do_run(nNeurons, 70)
