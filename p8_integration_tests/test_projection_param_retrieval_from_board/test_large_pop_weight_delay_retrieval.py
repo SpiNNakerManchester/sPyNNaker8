@@ -57,17 +57,13 @@ def do_run():
 class LargePopWeightDelayRetrival(BaseTestCase):
     def test_compare_before_and_after(self):
         (delays, weights) = do_run()
-        self.assertEquals(n_neurons * n_neurons,
-                          len(weights[0][0])*len(weights[0][0][0]))
-        self.assertEquals(n_neurons * n_neurons,
-                          len(weights[1][0])*len(weights[1][0][0]))
-        self.assertTrue(numpy.allclose(weights[0][0][0], weights[1][0][0]))
+        self.assertEqual((n_neurons, n_neurons), weights[0].shape)
+        self.assertEqual((n_neurons, n_neurons), weights[1].shape)
+        self.assertTrue(numpy.allclose(weights[0], weights[1]))
 
-        self.assertEquals(n_neurons * n_neurons,
-                          len(delays[0][0])*len(delays[0][0][0]))
-        self.assertEquals(n_neurons * n_neurons,
-                          len(delays[1][0])*len(delays[1][0][0]))
-        self.assertTrue(numpy.allclose(delays[0][0][0], delays[1][0][0]))
+        self.assertEqual((n_neurons, n_neurons), delays[0].shape)
+        self.assertEqual((n_neurons, n_neurons), delays[1].shape)
+        self.assertTrue(numpy.allclose(delays[0], delays[1]))
 
 
 if __name__ == '__main__':
