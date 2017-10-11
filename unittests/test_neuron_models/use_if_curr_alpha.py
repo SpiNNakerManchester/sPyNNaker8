@@ -8,10 +8,11 @@ populations = []
 title = "PyNN0.8 alpha synapse testing"
 
 pop_src1 = p.Population(1, p.SpikeSourceArray,
-                        {'spike_times': [[5, 10, 15, 20]]}, label="src1")
+                        {'spike_times': [[5, 15, 20, 30]]}, label="src1")
 
 populations.append(p.Population(1, p.IF_curr_alpha, {}, label="test"))
-populations[0].set(tau_syn_E=3)
+
+populations[0].set(tau_syn_E=2)
 populations[0].set(tau_syn_I=4)
 
 # define the projections
@@ -21,7 +22,7 @@ exc_proj = p.Projection(pop_src1, populations[0],
                         receptor_type="excitatory")
 inh_proj = p.Projection(pop_src1, populations[0],
                         p.OneToOneConnector(),
-                        p.StaticSynapse(weight=1, delay=25),
+                        p.StaticSynapse(weight=1, delay=100),
                         receptor_type="inhibitory")
 
 populations[0].record("all")
