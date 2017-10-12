@@ -7,7 +7,7 @@ from scipy.ndimage.measurements import label
 from matplotlib.pyplot import legend
 from idna.core import _alabel_prefix
 
-to_plot_wgts = False
+to_plot_wgts = True
 
 p.setup(1)
 
@@ -20,8 +20,8 @@ cell_params = {"i_offset":0, "v_reset":-70}
 pop_ex = p.Population(1, p.IF_curr_exp, cell_params, label="test")
 
 syn_plas = p.STDPMechanism(
-     timing_dependence = p.PreOnly(A_plus = 0.5, A_minus = 0.4, th_v_mem=-60),
-        weight_dependence = p.WeightDependenceFusi(w_min=1.0, w_max=50.0, w_drift=1.0, th_w=25.0), weight=25.0, delay=1.0)
+     timing_dependence = p.PreOnly(A_plus = 0.5, A_minus = 0.4, th_v_mem=-65),
+        weight_dependence = p.WeightDependenceFusi(w_min=1.0, w_max=10.0, w_drift=.1, th_w=5.0), weight=5.1, delay=1.0)
 
 proj = p.Projection(
     pop_src, #_plastic,
