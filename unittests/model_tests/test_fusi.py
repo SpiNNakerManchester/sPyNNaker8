@@ -14,10 +14,12 @@ p.setup(1)
 simtime = 1000
 
 # mysource = [10*range(1, 5)]
-mysource = [2,4, 10,14]
+mysource = [20,21, 40] #,4, 10,14]
 pop_src = p.Population(1, p.SpikeSourceArray, {'spike_times': mysource}, label="src")
-cell_params = {"i_offset":0, "v_reset":-70}
-pop_ex = p.Population(1, p.IF_curr_exp, cell_params, label="test")
+cell_params = {"i_offset":0, "v_reset":-70, "tau_ca2":40, "i_alpha":0.35}
+pop_ex = p.Population(1, p.extra_models.IFCurrExpCa2Concentration, cell_params, label="test")
+
+
 
 syn_plas = p.STDPMechanism(
      timing_dependence = p.PreOnly(A_plus = 0.5, A_minus = 0.4, th_v_mem=-65),
