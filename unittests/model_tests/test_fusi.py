@@ -8,13 +8,15 @@ from matplotlib.pyplot import legend
 from idna.core import _alabel_prefix
 
 to_plot_wgts = True
+#to_plot_wgts = False
 
 p.setup(1)
 
 simtime = 1000
 
 # mysource = [10*range(1, 5)]
-mysource = [20,21, 40] #,4, 10,14]
+#mysource = [20,21, 40] #,4, 10,14]
+mysource = [5,8,11, 14, 20, 23, 26, 40, 43] #,4, 10,14]
 pop_src = p.Population(1, p.SpikeSourceArray, {'spike_times': mysource}, label="src")
 cell_params = {"i_offset":0, "v_reset":-70, "tau_ca2":40, "i_alpha":0.35}
 pop_ex = p.Population(1, p.extra_models.IFCurrExpCa2Concentration, cell_params, label="test")
@@ -22,8 +24,8 @@ pop_ex = p.Population(1, p.extra_models.IFCurrExpCa2Concentration, cell_params, 
 
 
 syn_plas = p.STDPMechanism(
-     timing_dependence = p.PreOnly(A_plus = 0.5, A_minus = 0.4, th_v_mem=-65),
-        weight_dependence = p.WeightDependenceFusi(w_min=1.0, w_max=10.0, w_drift=.1, th_w=5.0), weight=5.1, delay=1.0)
+     timing_dependence = p.PreOnly(A_plus = 0.5, A_minus = 0.4, th_v_mem=-65, th_ca_up_l = 1.1, th_ca_up_h = 4.1, th_ca_dn_l = 1.05, th_ca_dn_h = 1.3),
+        weight_dependence = p.WeightDependenceFusi(w_min=1.0, w_max=10.0, w_drift=.1, th_w=5.0), weight=5.0, delay=1.0)
 
 proj = p.Projection(
     pop_src, #_plastic,
