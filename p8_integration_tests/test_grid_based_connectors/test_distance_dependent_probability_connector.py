@@ -2,6 +2,7 @@ import spynnaker8 as p
 from p8_integration_tests.base_test_case import BaseTestCase
 from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt
+from spynnaker8.utilities import neo_convertor
 
 
 def do_run(plot):
@@ -90,6 +91,8 @@ class DistanceDependentProbabilityConnectorTest(BaseTestCase):
     def test_run(self):
         v, spikes = do_run(plot=False)
         # any checks go here
+        spikes_test = neo_convertor.convert_spikes(spikes)
+        self.assertEquals(6101, len(spikes_test))
 
 
 if __name__ == '__main__':

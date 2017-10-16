@@ -2,6 +2,7 @@ import spynnaker8 as p
 from p8_integration_tests.base_test_case import BaseTestCase
 from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt
+from spynnaker8.utilities import neo_convertor
 
 
 def do_run(plot):
@@ -84,6 +85,8 @@ class SmallWorldConnectorTest(BaseTestCase):
     def test_run(self):
         v, spikes = do_run(plot=False)
         # any checks go here
+        v_test = neo_convertor.convert_data(v, name='v')
+        self.assertEquals(25000, len(v_test))
 
 
 if __name__ == '__main__':
