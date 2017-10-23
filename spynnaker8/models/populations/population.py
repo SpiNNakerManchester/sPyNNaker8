@@ -265,6 +265,17 @@ class Population(PyNNPopulationCommon, Recorder):
                 raise exceptions.ConfigurationException(msg)
         return self._get_recorded_variable(variable)
 
+    def get_spike_counts(self, gather=True):
+        """ Return the number of spikes for each neuron.
+        """
+        spikes = self._get_recorded_variable("spikes")
+        n_spikes = {}
+        counts = numpy.bincount(spikes[:, 0].astype(dtype=numpy.int32),
+                                minlength=self._vertex.n_atoms)
+        for i in range(self._vertex.n_atoms):
+            n_spikes[i] = counts[i]
+        return n_spikes
+
     def find_units(self, variable):
         """ supports getting the units of a variable
 
