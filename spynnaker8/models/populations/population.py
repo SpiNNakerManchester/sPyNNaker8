@@ -22,6 +22,8 @@ class Population(PyNNPopulationCommon, Recorder):
     def __init__(self, size, cellclass, cellparams=None, structure=None,
                  initial_values=None, label=None):
 
+        size = self._roundsize(size, label)
+
         # hard code initial values as required
         if initial_values is None:
             initial_values = {}
