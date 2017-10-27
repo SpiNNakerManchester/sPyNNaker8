@@ -54,7 +54,7 @@ def plot_spikes(pop_spikes, inp_spikes):
         pylab.subplot(2, 1, 2)
         pylab.plot(pop_spikes[:, 1], pop_spikes[:, 0], "b.")
         pylab.show()
-    except:
+    except Exception:
         print "matplotlib not installed so plotting skipped"
 
 
