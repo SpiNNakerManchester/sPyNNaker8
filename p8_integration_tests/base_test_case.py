@@ -1,4 +1,5 @@
 import os
+from pyNN.random import NumpyRNG
 import random
 import sys
 import unittest
@@ -12,12 +13,21 @@ random.seed(os.environ.get('P8_INTEGRATION_SEED', None))
 class BaseTestCase(unittest.TestCase):
 
     def setUp(self):
+        # Remove random effect for testing
+        # Set test_seed to None to allow random
+        self._test_seed = 1
+        if self._test_seed is None:
+            self._rng = None
+        else:
+            self._rng = NumpyRNG(seed=self._test_seed)
+
         factor = random.random()
         if factor > p8_integration_factor:
             msg = "Test skipped by random number {} above " \
                   "P8_INTEGRATION_FACTOR {}" \
                   "".format(factor, p8_integration_factor)
             raise SkipTest(msg)
+
         globals_variables.unset_simulator()
         class_file = sys.modules[self.__module__].__file__
         path = os.path.dirname(os.path.abspath(class_file))
