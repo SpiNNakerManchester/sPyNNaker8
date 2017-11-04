@@ -1,4 +1,3 @@
-import numpy
 import logging
 
 from spynnaker.pyNN.exceptions import InvalidParameterType
