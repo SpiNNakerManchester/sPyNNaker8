@@ -1,5 +1,4 @@
 import os
-from pyNN.random import NumpyRNG
 import random
 import sys
 import unittest
@@ -16,10 +15,6 @@ class BaseTestCase(unittest.TestCase):
         # Remove random effect for testing
         # Set test_seed to None to allow random
         self._test_seed = 1
-        if self._test_seed is None:
-            self._rng = None
-        else:
-            self._rng = NumpyRNG(seed=self._test_seed)
 
         factor = random.random()
         if factor > p8_integration_factor:
