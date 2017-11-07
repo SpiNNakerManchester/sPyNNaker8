@@ -14,3 +14,11 @@ class FromFileConnector(CommonFromFileConnector, PyNNFromFileConnector):
         PyNNFromFileConnector.__init__(
             self, file=file, distributed=distributed, safe=safe,
             callback=callback)
+
+    def get_reader(self, file):
+        """
+        get a filereader object using the pynn methods
+
+        :return: A pynn StandardTextFile or similar
+        """
+        return files.StandardTextFile(file, mode="r")
