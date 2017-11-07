@@ -4,6 +4,7 @@ import sys
 import unittest
 from unittest import SkipTest
 from spinn_front_end_common.utilities import globals_variables
+import spinn_utilities.conf_loader as conf_loader
 
 p8_integration_factor = float(os.environ.get('P8_INTEGRATION_FACTOR', "1"))
 random.seed(os.environ.get('P8_INTEGRATION_SEED', None))
@@ -44,3 +45,13 @@ class BaseTestCase(unittest.TestCase):
         msg = "\"{}\" not found in any {} logs {} times, was found {} " \
               "times".format(sub_message, log_level, count, seen)
         raise self.failureException(msg)
+
+    def assert_not_spin_three(self):
+        config = conf_loader.load_config(
+            filename="spynnaker.cfg", defaults=[])
+        if config.has_option("Machine", "version"):
+            version = config.get("Machine", "version")
+            if version in ["2", "3"]:
+                msg = "This test will not run on a spin {} board" \
+                      "".format(version)
+                raise SkipTest(msg)

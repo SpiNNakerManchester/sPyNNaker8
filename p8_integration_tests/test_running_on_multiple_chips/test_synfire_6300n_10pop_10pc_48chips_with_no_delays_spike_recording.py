@@ -15,6 +15,7 @@ n_pops = 630
 class Synfire6300n10pop10pc48chipsNoDelaysSpikeRecording(BaseTestCase):
 
     def test_run(self):
+        self.assert_not_spin_three()
         results = synfire_npop_run.do_run(n_neurons, n_pops=n_pops,
                                           neurons_per_core=n_neurons)
         spikes = results
