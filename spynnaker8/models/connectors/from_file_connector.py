@@ -10,7 +10,7 @@ class FromFileConnector(CommonFromFileConnector, PyNNFromFileConnector):
             self, file, callback=None,  # @ReservedAssignment
             distributed=False, safe=True, verbose=False):
         CommonFromFileConnector.__init__(
-            self, file=None, distributed=distributed, safe=safe,
+            self, file=file, distributed=distributed, safe=safe,
             verbose=verbose)
         PyNNFromFileConnector.__init__(
             self, file=file, distributed=distributed, safe=safe,
