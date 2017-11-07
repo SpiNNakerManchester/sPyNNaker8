@@ -60,9 +60,7 @@ def do_run(plot):
     current_file_path = os.path.dirname(os.path.abspath(__file__))
     file1 = os.path.join(current_file_path, path1)
     numpy.savetxt(file1, connection_list1)
-
-    #file1 = path1  # {'file': path1, 'distributed': False}
-    file_connector1 = p.FromFileConnector(file1)  # , distributed=True)
+    file_connector1 = p.FromFileConnector(file1)
 
     connection_list2 = [
                 (4, 9, 0.3, 0.12),
@@ -77,8 +75,6 @@ def do_run(plot):
 
     file2 = path2
     numpy.savetxt(file2, connection_list2)
-
-    # file2 = path2  # {'file': path2, 'distributed': False}
     file_connector2 = p.FromFileConnector(file2)
 
     # Projections within populations
@@ -124,4 +120,3 @@ class FromFileConnectorTest(BaseTestCase):
 
 if __name__ == '__main__':
     v, spikes = do_run(plot=True)
-
