@@ -40,12 +40,7 @@ class OnePopLifExample(BaseTestCase):
     def test_run(self):
         nNeurons = 255  # number of neurons in each population
         (v, gsyn, spikes) = do_run(nNeurons)
-        try:
-            self.assertLess(9500, len(spikes))
-            self.assertGreater(9800, len(spikes))
-        except Exception as ex:
-            # Just in case the range failed
-            raise SkipTest(ex)
+        self.assertEquals(9650, len(spikes))
 
 
 if __name__ == '__main__':

@@ -70,12 +70,7 @@ class MwhSynfire(BaseTestCase):
         nNeurons = 100  # number of neurons in each population
         (v, gsyn, spikes) = do_run(nNeurons)
         spike_checker.synfire_spike_checker(spikes, nNeurons)
-        try:
-            self.assertLess(180, len(spikes))
-            self.assertGreater(220, len(spikes))
-        except Exception as ex:
-            # Just in case the range failed
-            raise SkipTest(ex)
+        self.assertEquals(199, len(spikes))
 
 
 if __name__ == '__main__':

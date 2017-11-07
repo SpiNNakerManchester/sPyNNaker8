@@ -52,24 +52,14 @@ class BigMultiProcessorSpikeSourcePrint(BaseTestCase):
     def test_sixty(self):
         nNeurons = 600  # number of neurons in each population
         neo = do_run(nNeurons, 60)
-        try:
-            spike_count = neo_convertor.count_spikes(neo)
-            self.assertGreater(spike_count, 7100)
-            self.assertLess(spike_count, 7300)
-        except Exception as ex:
-            # Just in case the range failed
-            raise SkipTest(ex)
+        spike_count = neo_convertor.count_spikes(neo)
+        self.assertEquals(spike_count, 7200)
 
     def test_seventy(self):
         nNeurons = 600  # number of neurons in each population
         neo = do_run(nNeurons, 70)
-        try:
-            spike_count = neo_convertor.count_spikes(neo)
-            self.assertGreater(spike_count, 7100)
-            self.assertLess(spike_count, 7300)
-        except Exception as ex:
-            # Just in case the range failed
-            raise SkipTest(ex)
+        spike_count = neo_convertor.count_spikes(neo)
+        self.assertEquals(spike_count, 7200)
 
 
 if __name__ == '__main__':

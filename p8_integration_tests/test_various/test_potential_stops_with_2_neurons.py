@@ -61,13 +61,7 @@ class ParamsSetAsList(BaseTestCase):
     def test_run(self):
         nNeurons = 2  # number of neurons in each population
         (v, gsyn, spikes) = do_run(nNeurons)
-        print gsyn
-        try:
-            self.assertLess(15, len(spikes))
-            self.assertGreater(20, len(spikes))
-        except Exception as ex:
-            # Just in case the range failed
-            raise SkipTest(ex)
+        self.assertEquals(17, len(spikes))
 
 
 if __name__ == '__main__':

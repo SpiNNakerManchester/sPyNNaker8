@@ -65,12 +65,7 @@ class MwhSynfireWithDifferentMachineTimeSteps(BaseTestCase):
     def test_run(self):
         nNeurons = 3  # number of neurons in each population
         (v, spikes) = do_run(nNeurons)
-        try:
-            self.assertLess(45, len(spikes))
-            self.assertGreater(55, len(spikes))
-        except Exception as ex:
-            # Just in case the range failed
-            raise SkipTest(ex)
+        self.assertEquals(51, len(spikes))
 
 
 if __name__ == '__main__':
