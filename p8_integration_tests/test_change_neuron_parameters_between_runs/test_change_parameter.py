@@ -1,7 +1,5 @@
 import spynnaker8 as p
 from p8_integration_tests.base_test_case import BaseTestCase
-import numpy
-import os
 from pyNN.random import NumpyRNG
 from unittest import SkipTest
 
@@ -90,9 +88,6 @@ class TestChangeParameter(BaseTestCase):
     def test_split(self):
         results = do_run(split=True, seed=self._test_seed)
         (pop_spikes1, inp_spikes1, pop_spikes2, inp_spikes2) = results
-        current_file_path = os.path.dirname(os.path.abspath(__file__))
-        spike_file = os.path.join(current_file_path, "spikes2.csv")
-        numpy.savetxt(spike_file, inp_spikes1, delimiter=',')
         if self._test_seed == 1:
             self.assertEqual(1135, len(inp_spikes1))
             self.assertEqual(1090, len(pop_spikes1)) # 10 =  1090   1115
