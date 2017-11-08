@@ -8,7 +8,6 @@ import spynnaker.plot_utils as plot_utils
 
 from p8_integration_tests.base_test_case import BaseTestCase
 from spynnaker8.utilities import neo_convertor
-from unittest import SkipTest
 
 
 def do_run(nNeurons):

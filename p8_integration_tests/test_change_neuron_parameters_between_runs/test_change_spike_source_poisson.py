@@ -6,9 +6,8 @@ import unittest
 def do_run():
     p.setup(1.0)
 
-    inp = p.Population(100,
-        p.SpikeSourcePoisson(rate=2, seed=417),
-        label="input")
+    inp = p.Population(
+        100, p.SpikeSourcePoisson(rate=2, seed=417), label="input")
     inp.record("spikes")
 
     p.run(100)
@@ -18,7 +17,6 @@ def do_run():
     inp.set(rate=30)
 
     p.run(100)
-
 
     p.end()
 

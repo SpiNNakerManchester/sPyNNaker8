@@ -3,7 +3,6 @@ from p8_integration_tests.base_test_case import BaseTestCase
 import spynnaker8 as sim
 from spynnaker8.utilities import neo_convertor
 import spynnaker.plot_utils as plot_utils
-from unittest import SkipTest
 
 
 def do_run(seed=None):
