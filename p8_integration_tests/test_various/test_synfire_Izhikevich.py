@@ -71,12 +71,7 @@ class SynfireIzhikevich(BaseTestCase):
         nNeurons = 200  # number of neurons in each population
         (v, gsyn, spikes) = do_run(nNeurons)
         spike_checker.synfire_spike_checker(spikes, nNeurons)
-        try:
-            self.assertLess(200, len(spikes))
-            self.assertGreater(230, len(spikes))
-        except Exception as ex:
-            # Just in case the range failed
-            raise SkipTest(ex)
+        self.assertEquals(215, len(spikes))
 
 
 if __name__ == '__main__':

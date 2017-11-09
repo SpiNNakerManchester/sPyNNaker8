@@ -40,7 +40,7 @@ class OnePopLifExample(BaseTestCase):
     def test_run(self):
         nNeurons = 255  # number of neurons in each population
         (v, gsyn, spikes) = do_run(nNeurons)
-        self.assertEquals(9650, len(spikes))
+        self.assertEquals(9690, len(spikes))
 
 
 if __name__ == '__main__':

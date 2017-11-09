@@ -86,7 +86,7 @@ class MwhPopulationSynfire(BaseTestCase):
             nNeurons = 200  # number of neurons in each population
             neurons_per_core = 256
             (v, gsyn, spikes) = do_run(nNeurons, neurons_per_core)
-            print len(spikes)
+            self.assertEquals(600, len(spikes))
         except SpinnmanTimeoutException as ex:
             raise SkipTest(ex)
         self.assertEquals(600, len(spikes))
@@ -96,8 +96,7 @@ class MwhPopulationSynfire(BaseTestCase):
         nNeurons = 200  # number of neurons in each population
         neurons_per_core = 50
         (v, gsyn, spikes) = do_run(nNeurons, neurons_per_core)
-        print len(spikes)
-        self.assertLess(600, len(spikes))
+        self.assertEquals(600, len(spikes))
 
 
 if __name__ == '__main__':

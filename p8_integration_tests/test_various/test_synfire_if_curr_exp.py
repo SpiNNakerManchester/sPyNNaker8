@@ -21,12 +21,7 @@ class SynfireIfCurrExp(BaseTestCase):
                            run_times=[runtime])
         spikes = synfire_run.get_output_pop_spikes_numpy()
         spike_checker.synfire_spike_checker(spikes, n_neurons)
-        try:
-            self.assertLess(240, len(spikes))
-            self.assertGreater(290, len(spikes))
-        except Exception as ex:
-            # Just in case the range failed
-            raise SkipTest(ex)
+        self.assertEquals(263, len(spikes))
         synfire_run.get_output_pop_gsyn_exc_numpy()
 
 
