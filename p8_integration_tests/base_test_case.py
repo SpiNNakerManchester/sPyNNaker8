@@ -32,6 +32,15 @@ class BaseTestCase(unittest.TestCase):
     def assert_logs_messages(
             self, log_records, sub_message, log_level='ERROR', count=1,
             allow_more=False):
+        """
+        Tool to assert the log messages contain the sub message
+        :param log_records: list of log message
+        :param sub_message: text to look for
+        :param log_level: lvel to look for
+        :param count: number of times this message should be found
+        :param allow_more: If True ok to have more than count repeats
+        :return:
+        """
         seen = 0
         for record in log_records:
             if record.levelname == log_level:
