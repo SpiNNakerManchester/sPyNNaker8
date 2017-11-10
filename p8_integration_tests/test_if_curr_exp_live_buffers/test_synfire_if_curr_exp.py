@@ -1,7 +1,6 @@
 """
 Synfirechain-like example
 """
-import unittest
 from p8_integration_tests.base_test_case import BaseTestCase
 from p8_integration_tests.scripts.synfire_run import TestRun
 import spynnaker.plot_utils as plot_utils
