@@ -7,7 +7,7 @@ import spynnaker.plot_utils as plot_utils
 import spynnaker.spike_checker as spike_checker
 
 n_neurons = 200  # number of neurons in each population
-runtime = 1000
+runtime = 5000
 neurons_per_core = n_neurons / 2
 synfire_run = TestRun()
 
