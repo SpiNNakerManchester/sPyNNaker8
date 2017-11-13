@@ -11,9 +11,8 @@ def do_run(split, seed=None):
         p.set_number_of_neurons_per_core(p.SpikeSourcePoisson, 27)
         p.set_number_of_neurons_per_core(p.IF_curr_exp, 22)
 
-    inp = p.Population(100,
-        p.SpikeSourcePoisson(rate=100, seed=seed),
-        label="input")
+    inp = p.Population(100, p.SpikeSourcePoisson(rate=100, seed=seed),
+                       label="input")
     pop = p.Population(100, p.IF_curr_exp, {}, label="pop")
 
     p.Projection(inp, pop, p.OneToOneConnector(),
@@ -37,8 +36,8 @@ def do_run(split, seed=None):
 
     inp.set(rate=0)
     pop.set(i_offset=1.0)
-    vs = p.RandomDistribution("uniform", [-65.0, -55.0],
-                                          rng=NumpyRNG(seed=seed))
+    vs = p.RandomDistribution(
+        "uniform", [-65.0, -55.0], rng=NumpyRNG(seed=seed))
     pop.initialize(v=vs)
 
     p.run(100)
@@ -70,8 +69,8 @@ class TestChangeParameter(BaseTestCase):
         (pop_spikes1, inp_spikes1, pop_spikes2, inp_spikes2) = results
         if self._test_seed == 1:
             self.assertEqual(1158, len(inp_spikes1))
-            self.assertEqual(1111, len(pop_spikes1)) # 1111
-            self.assertEqual(300, len(pop_spikes2)) # 300
+            self.assertEqual(1111, len(pop_spikes1))
+            self.assertEqual(300, len(pop_spikes2))
         else:
             try:
                 self.assertLess(1100, len(pop_spikes1))
@@ -90,7 +89,7 @@ class TestChangeParameter(BaseTestCase):
         (pop_spikes1, inp_spikes1, pop_spikes2, inp_spikes2) = results
         if self._test_seed == 1:
             self.assertEqual(1135, len(inp_spikes1))
-            self.assertEqual(1090, len(pop_spikes1)) # 10 =  1090   1115
+            self.assertEqual(1090, len(pop_spikes1))
             self.assertEqual(300, len(pop_spikes2))
         else:
             try:

@@ -112,8 +112,6 @@ def do_run(seed=None):
                              label="Excitatory_Cells")
     inh_cells = p.Population(n_inh, celltype, cell_params,
                              label="Inhibitory_Cells")
-    #p.NativeRNG(12345)
-
     rng = NumpyRNG(seed=seed, parallel_safe=parallel_safe)
     uniform_distr = RandomDistribution('uniform', [v_reset, v_thresh], rng=rng)
     exc_cells.initialize(v=uniform_distr)
