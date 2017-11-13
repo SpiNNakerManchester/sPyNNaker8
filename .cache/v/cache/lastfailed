@@ -1,6 +1,0 @@
-{
-  "unittests/parameters_test.py": true, 
-  "unittests/test_list_standard_models.py": true, 
-  "unittests/test_using_virtual_baord/test_celltype.py": true, 
-  "unittests/utilities_tests/test_utility_calls.py": true
-}
