@@ -23,7 +23,7 @@ def do_run(nNeurons):
     pop1.record("gsyn_exc")
     pop1.record("spikes")
 
-    p.run(3000)
+    p.run(100)
 
     neo = pop1.get_data(["v", "spikes", "gsyn_exc"])
 
@@ -38,11 +38,10 @@ def do_run(nNeurons):
 
 class OnePopLifExample(BaseTestCase):
     def test_run(self):
-        nNeurons = 255  # number of neurons in each population
+        nNeurons = 5  # number of neurons in each population
         (v, gsyn, spikes) = do_run(nNeurons)
         try:
-            self.assertLess(9500, len(spikes))
-            self.assertGreater(9800, len(spikes))
+            self.assertGreater(2, len(spikes))
         except Exception as ex:
             # Just in case the range failed
             raise SkipTest(ex)
