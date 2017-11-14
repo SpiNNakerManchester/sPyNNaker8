@@ -7,7 +7,6 @@ import spynnaker8 as p
 from spynnaker8.utilities import neo_convertor
 import spynnaker.plot_utils as plot_utils
 import spynnaker.spike_checker as spike_checker
-from unittest import SkipTest
 
 
 def do_run(nNeurons):

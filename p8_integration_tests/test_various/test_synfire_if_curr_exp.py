@@ -6,7 +6,6 @@ from p8_integration_tests.base_test_case import BaseTestCase
 from p8_integration_tests.scripts.synfire_run import TestRun
 import spynnaker.plot_utils as plot_utils
 import spynnaker.spike_checker as spike_checker
-from unittest import SkipTest
 
 n_neurons = 200  # number of neurons in each population
 neurons_per_core = n_neurons / 2

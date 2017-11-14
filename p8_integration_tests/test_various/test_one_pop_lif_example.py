@@ -1,6 +1,5 @@
 #!/usr/bin/python
 import spynnaker8 as p
-from unittest import SkipTest
 from p8_integration_tests.base_test_case import BaseTestCase
 
 import spynnaker.plot_utils as plot_utils
