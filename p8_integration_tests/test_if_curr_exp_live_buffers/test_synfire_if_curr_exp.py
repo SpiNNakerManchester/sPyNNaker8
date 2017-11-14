@@ -1,7 +1,6 @@
 """
 Synfirechain-like example
 """
-import unittest
 from p8_integration_tests.base_test_case import BaseTestCase
 from p8_integration_tests.scripts.synfire_run import TestRun
 import spynnaker.plot_utils as plot_utils
@@ -15,7 +14,6 @@ synfire_run = TestRun()
 
 class SynfireIfCurrExp(BaseTestCase):
 
-    @unittest.skip("Live IO Broken!")
     def test_run(self):
         synfire_run.do_run(n_neurons, neurons_per_core=neurons_per_core,
                            run_times=[runtime])
