@@ -1,4 +1,3 @@
-import numpy
 import logging
 
 from spynnaker.pyNN.exceptions import InvalidParameterType
@@ -7,7 +6,7 @@ from spinn_front_end_common.utilities import exceptions
 from spinn_front_end_common.utilities import globals_variables
 
 from spynnaker8.models import Recorder
-from spynnaker8.utilities import DataHolder, ID
+from spynnaker8.utilities import DataHolder
 
 from pyNN import descriptions
 
@@ -60,15 +59,6 @@ class Population(PyNNPopulationCommon, Recorder):
             structure=structure, initial_values=initial_values)
         Recorder.__init__(self, population=self)
 
-        # things for pynn demands
-        self._all_ids = self._get_all_ids()
-        self._first_id = self._all_ids[0]
-        self._last_id = self._all_ids[-1]
-
-        # update the simulators id_counter for giving a unique id for every
-        # atom
-        globals_variables.get_simulator().id_counter += size
-
         # annotations used by neo objects
         self._annotations = dict()
 
@@ -87,25 +77,6 @@ class Population(PyNNPopulationCommon, Recorder):
         :return: The celltype this property has been set to
         """
         return self._vertex
-
-    def id_to_index(self, id):  # @ReservedAssignment
-        """
-        Given the ID(s) of cell(s) in the Population, return its (their) index
-        (order in the Population).
-        """
-        if not numpy.iterable(id):
-            if not self._first_id <= id <= self._last_id:
-                raise ValueError(
-                    "id should be in the range [{},{}], actually {}".format(
-                        self._first_id, self._last_id, id))
-            return int(id - self._first_id)  # this assumes ids are consecutive
-
-    def _get_all_ids(self):
-        id_range = numpy.arange(
-            globals_variables.get_simulator().id_counter,
-            globals_variables.get_simulator().id_counter + self.size)
-        return numpy.array(
-            [ID(atom_id) for atom_id in id_range], dtype=ID)
 
     def record(self, variables, to_file=None, sampling_interval=None):
         """
