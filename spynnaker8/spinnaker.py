@@ -62,7 +62,6 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
         self._projections = list()
 
         # pynn demanded objects
-        self._id_counter = 42
         self._segment_counter = 0
         self._recorders = set([])
 
@@ -133,7 +132,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
         :return: None
         """
         self.recorders = set([])
-        self._id_counter = 42
+        self._id_counter = 0
         self._segment_counter = -1
         self.reset()
 
@@ -261,25 +260,6 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
         :return: None
         """
         self._segment_counter = new_value
-
-    @property
-    def id_counter(self):
-        """ property for id_counter, currently used by the populations.
-        (maybe it could live in the pop class???)
-
-        :return:
-        """
-        return self._id_counter
-
-    @id_counter.setter
-    def id_counter(self, new_value):
-        """ setter for id_counter, currently used by the populations.
-        (maybe it could live in the pop class???)
-
-        :param new_value: new value for id_counter
-        :return:
-        """
-        self._id_counter = new_value
 
     @property
     def running(self):
