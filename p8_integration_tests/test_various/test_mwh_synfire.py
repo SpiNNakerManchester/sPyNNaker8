@@ -7,7 +7,6 @@ from p8_integration_tests.base_test_case import BaseTestCase
 import spynnaker.plot_utils as plot_utils
 import spynnaker.spike_checker as spike_checker
 from spynnaker8.utilities import neo_convertor
-from unittest import SkipTest
 
 
 def do_run(nNeurons):
@@ -70,12 +69,7 @@ class MwhSynfire(BaseTestCase):
         nNeurons = 100  # number of neurons in each population
         (v, gsyn, spikes) = do_run(nNeurons)
         spike_checker.synfire_spike_checker(spikes, nNeurons)
-        try:
-            self.assertLess(180, len(spikes))
-            self.assertGreater(220, len(spikes))
-        except Exception as ex:
-            # Just in case the range failed
-            raise SkipTest(ex)
+        self.assertEquals(199, len(spikes))
 
 
 if __name__ == '__main__':
