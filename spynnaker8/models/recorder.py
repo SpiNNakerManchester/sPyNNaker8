@@ -331,7 +331,7 @@ def read_in_spikes(segment, spikes, t, ids, indexes, first_id,
 
     :param segment: Segment to add spikes to
     :type segment: neo.Segment
-    :param spikes: Spike data in raw spynnakker format
+    :param spikes: Spike data in raw spynnaker format
     :type spikes: nparray
     :param t: last simulation time
     :type t: int
@@ -406,7 +406,7 @@ def read_in_signal(segment, block, signal_array, ids, indexes, variable,
     :param sampling_interval: how often a neuron is recorded
     :param units: the units of the recorded value
     :param label: human readable label
-    
+
     :return: None
     """
     t_start = recording_start_time * quantities.ms
