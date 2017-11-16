@@ -1,8 +1,9 @@
 from quantities import ms
 import numpy as np
+from spynnaker8.utilities.version_util import pynn8_syntax
 
 
-def convert_analog_signalarray(signal_array, time_unit=ms):
+def convert_analog_signal(signal_array, time_unit=ms):
     """
     Converts part of a NEO object into told spynakker7 format
 
@@ -10,15 +11,18 @@ def convert_analog_signalarray(signal_array, time_unit=ms):
     :param time_unit: Data time unit for time index
     :rtype ndarray
     """
-    ids = signal_array.channel_index
+    if pynn8_syntax:
+        ids = signal_array.channel_index.astype(int)
+    else:
+        ids = signal_array.channel_index.index.astype(int)
+    xs = range(len(ids))
     if time_unit == ms:
         times = signal_array.times.magnitude
     else:
         times = signal_array.times.rescale(time_unit).magnitude
-    all_times = np.tile(times, len(ids))
-    neurons = np.repeat(ids, len(times))
-    # I am unsure of what happens if ids is not a contious list of integers
-    values = np.concatenate(map(lambda x: signal_array[:, x].magnitude, ids))
+    all_times = np.tile(times, len(xs))
+    neurons = np.repeat(xs, len(times))
+    values = np.concatenate(map(lambda x: signal_array.magnitude[:, x], xs))
     return np.column_stack((neurons, all_times, values))
 
 
@@ -44,7 +48,8 @@ def convert_data(data, name, run=0):
                          "as result would be comparing apples and oranges.")
     if name == "spikes":
         return convert_spikes(data, run)
-    return convert_analog_signalarray(data.segments[run].filter(name=name)[0])
+    return convert_analog_signal(
+        data.segments[run].filter(name=name)[0])
 
 
 def convert_data_list(data, name, runs=None):

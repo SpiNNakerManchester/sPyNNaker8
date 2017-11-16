@@ -2,6 +2,7 @@ import logging
 
 from spynnaker.pyNN.exceptions import InvalidParameterType
 from spynnaker.pyNN.models.pynn_population_common import PyNNPopulationCommon
+from spynnaker.pyNN.utilities.constants import SPIKES
 from spinn_front_end_common.utilities import exceptions
 from spinn_front_end_common.utilities import globals_variables
 
@@ -147,7 +148,7 @@ class Population(PyNNPopulationCommon, Recorder):
         if isinstance(io, basestring):
             io = self._get_io(io)
 
-        data = self._extract_data(variables, clear, annotations)
+        data = self._extract_neo_block(variables, clear, annotations)
         # write the neo block to the file
         io.write(data)
 
@@ -212,7 +213,7 @@ class Population(PyNNPopulationCommon, Recorder):
             logger.warn("Spinnaker only supports gather=True. We will run as "
                         "if gather was set to True.")
 
-        return self._extract_data(variables, clear, annotations)
+        return self._extract_neo_block(variables, clear, annotations)
 
     def spinnaker_get_data(self, variable):
         """ public assessor for getting data as a numpy array, instead of
@@ -239,7 +240,7 @@ class Population(PyNNPopulationCommon, Recorder):
     def get_spike_counts(self, gather=True):
         """ Return the number of spikes for each neuron.
         """
-        spikes = self._get_recorded_variable("spikes")
+        spikes = self._get_recorded_variable(SPIKES)
         return PyNNPopulationCommon.get_spike_counts(self, spikes, gather)
 
     def find_units(self, variable):
