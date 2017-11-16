@@ -63,7 +63,12 @@ class BigMultiProcessorSpikeSourcePrint(BaseTestCase):
 
 if __name__ == '__main__':
     nNeurons = 600  # number of neurons in each population
-    neo = do_run(nNeurons)
-    spikes = neo_convertor.convert_spikes()
+    neo = do_run(nNeurons, 60)
+    spikes = neo_convertor.convert_spikes(neo)
+    plot_utils.plot_spikes(spikes)
+    print spikes
+
+    neo = do_run(nNeurons, 70)
+    spikes = neo_convertor.convert_spikes(neo)
     plot_utils.plot_spikes(spikes)
     print spikes
