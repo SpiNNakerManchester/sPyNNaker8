@@ -404,7 +404,7 @@ def read_in_signal(segment, block, signal_array, ids, indexes, variable,
     :param sampling_interval: how often a neuron is recorded
     :param units: the units of the recorded value
     :param label: human readable label
-    
+
     :return: None
     """
     t_start = recording_start_time * quantities.ms
