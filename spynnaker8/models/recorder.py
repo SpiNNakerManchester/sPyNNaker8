@@ -18,7 +18,6 @@ from spynnaker8.models.data_cache import DataCache
 from spynnaker8.utilities.version_util import pynn8_syntax
 
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -52,7 +51,7 @@ class Recorder(RecordingCommon):
         else:  # function to be improved later
             raise Exception("file extension %s not supported" % extension)
 
-    def _extract_data(self, variables, clear, annotations):
+    def _extract_neo_block(self, variables, clear, annotations):
         """ extracts block from the vertices and puts them into a neo block
 
         :param variables: the variables to extract
