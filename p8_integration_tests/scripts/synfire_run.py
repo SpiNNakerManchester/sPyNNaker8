@@ -5,6 +5,7 @@ import spynnaker8 as p
 from spynnaker8 import IF_curr_exp
 from spynnaker8 import SpikeSourceArray
 from spynnaker8.utilities import neo_convertor
+from pyNN.random import NumpyRNG
 
 CELL_PARAMS_LIF = {'cm': 0.25, 'i_offset': 0.0, 'tau_m': 20.0,
                    'tau_refrac': 2.0, 'tau_syn_E': 5.0, 'tau_syn_I': 5.0,
@@ -30,7 +31,8 @@ class TestRun(object):
     def do_run(
             self, n_neurons, time_step=1, max_delay=144.0,
             input_class=SpikeSourceArray, spike_times=None, rate=None,
-            start_time=None, duration=None, spike_times_list=None,
+            start_time=None, duration=None, seed=None,
+            spike_times_list=None,
             placement_constraint=None, weight_to_spike=2.0, delay=17,
             neurons_per_core=10, cell_class=IF_curr_exp, constraint=None,
             cell_params=CELL_PARAMS_LIF, run_times=None, reset=False,
@@ -58,6 +60,8 @@ class TestRun(object):
         :type start_time: float
         :param duration: the length of time for the SSP to fire for
         :type duration: float
+        :param seed: Random seed
+        :type seed: int
         :param input_class: the class for inputs spikes (SSA or SSP)
         :type input_class: SpikeSourceArray, SpikeSourcePoisson
         :param spike_times: times the SSA sends in spikes
@@ -294,8 +298,11 @@ class TestRun(object):
                 populations[0].add_placement_constraint(x=x, y=y, p=proc)
 
         if randomise_v_init:
-            rng = p.NumpyRNG(seed=28375)
-            v_init = p.RandomDistribution('uniform', [-60, -40], rng)
+            if seed is None:
+                v_init = p.RandomDistribution('uniform', [-60, -40])
+            else:
+                v_init = p.RandomDistribution('uniform', [-60, -40],
+                                              NumpyRNG(seed=seed))
             populations[0].initialize(v=v_init)
 
         if constraint is not None:
@@ -304,10 +311,16 @@ class TestRun(object):
         if input_class == SpikeSourceArray:
             populations.append(p.Population(
                 1, input_class(**spike_array), label='inputSSA_1'))
-        else:
+        elif seed is None:
             populations.append(p.Population(
                 1, input_class(
                     rate=rate, start=start_time, duration=duration),
+                label='inputSSP_1'))
+        else:
+            populations.append(p.Population(
+                1, input_class(
+                    rate=rate, start=start_time, duration=duration,
+                    seed=seed),
                 label='inputSSP_1'))
 
         # handle projections
@@ -584,10 +597,12 @@ class TestRun(object):
 
     def _get_weight_delay(self, projection, get_weights, get_delays):
         if get_weights:
-            weights = projection.get(attribute_names=["weight"], format="list")
+            weights = projection.get(
+                attribute_names=["weight"], format="list", with_address=True)
             self._weights.append(weights)
         if get_delays:
-            delays = projection.get(attribute_names=["delay"], format="list")
+            delays = projection.get(
+                attribute_names=["delay"], format="list", with_address=True)
             self._delays.append(delays)
 
 
