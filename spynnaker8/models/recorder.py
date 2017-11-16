@@ -329,19 +329,19 @@ def read_in_spikes(segment, spikes, t, ids, indexes, first_id,
 
     :param segment: Segment to add spikes to
     :type segment: neo.Segment
-    :param spikes: Spike data in raw spynakker format
+    :param spikes: Spike data in raw spynnakker format
     :type spikes: nparray
     :param t: last simulation time
     :type t: int
     :param ids: list of the ids to save spikes for
     :type ids: nparray
-    :param indexes: list of the channle indexes
+    :param indexes: list of the channel indexes
     :type indexes: nparray
     :param first_id: id of first neuron
     :type first_id: int
     :param recording_start_time: time recording started
     :type  recording_start_time: int
-    :param label: rocing elements label
+    :param label: recording elements label
     :type label: str
     :rtype None
     """
@@ -374,11 +374,9 @@ def _get_channel_index(ids, block):
 def _convert_extracted_data_into_neo_expected_format(
         signal_array, indexes):
     """
-    Converts data between spynakker format and neo format
-    :param signal_array: Draw data in spynakker format
+    Converts data between spynnaker format and neo format
+    :param signal_array: Draw data in spynnaker format
     :type signal_array: nparray
-    :param channel_indices: indexes to each neuron
-    :type channel_indices: nparray
     :rtype nparray
     """
     processed_data = [
@@ -400,6 +398,13 @@ def read_in_signal(segment, block, signal_array, ids, indexes, variable,
     :param segment: the segment to put the data into
     :param ids: the recorded ids
     :param variable: the variable name
+    :param block: neo block
+    :param indexes: the channel index's
+    :param recording_start_time: when recording started
+    :param sampling_interval: how often a neuron is recorded
+    :param units: the units of the recorded value
+    :param label: human readable label
+    
     :return: None
     """
     t_start = recording_start_time * quantities.ms
@@ -419,6 +424,9 @@ def read_in_signal(segment, block, signal_array, ids, indexes, variable,
                     source_population=label,
                     channel_index=indexes,
                     source_ids=source_ids)
+            data_array.shape = (data_array.shape[0], data_array.shape[1])
+            segment.analogsignalarrays.append(data_array)
+
         else:
             data_array = neo.AnalogSignal(
                 processed_data,
@@ -430,10 +438,6 @@ def read_in_signal(segment, block, signal_array, ids, indexes, variable,
                 source_ids=source_ids)
             channel_index = _get_channel_index(ids, block)
             data_array.channel_index = channel_index
-        data_array.shape = (
-            data_array.shape[0], data_array.shape[1])
-        if pynn8_syntax:
-            segment.analogsignalarrays.append(data_array)
-        else:
+            data_array.shape = (data_array.shape[0], data_array.shape[1])
             segment.analogsignals.append(data_array)
             channel_index.analogsignals.append(data_array)
