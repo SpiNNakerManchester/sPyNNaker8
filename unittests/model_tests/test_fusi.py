@@ -12,20 +12,20 @@ to_plot_wgts = True
 
 p.setup(1)
 
-simtime = 1000
+simtime = 100
 
 # mysource = [10*range(1, 5)]
 #mysource = [20,21, 40] #,4, 10,14]
 mysource = [5,8,11, 14, 20, 23, 26, 40, 43] #,4, 10,14]
 pop_src = p.Population(1, p.SpikeSourceArray, {'spike_times': mysource}, label="src")
-cell_params = {"i_offset":0, "v_reset":-70, "tau_ca2":40, "i_alpha":0.35}
+cell_params = {"i_offset":0, "v_reset":-65, "tau_ca2":60, "i_alpha":1.0}
 pop_ex = p.Population(1, p.extra_models.IFCurrExpCa2Concentration, cell_params, label="test")
 
 
 
 syn_plas = p.STDPMechanism(
-     timing_dependence = p.PreOnly(A_plus = 0.5, A_minus = 0.4, th_v_mem=-65, th_ca_up_l = 1.1, th_ca_up_h = 4.1, th_ca_dn_l = 1.05, th_ca_dn_h = 1.3),
-        weight_dependence = p.WeightDependenceFusi(w_min=1.0, w_max=10.0, w_drift=.1, th_w=5.0), weight=5.0, delay=1.0)
+     timing_dependence = p.PreOnly(A_plus = 1.0, A_minus = 1.0, th_v_mem=-56, th_ca_up_l = 3.0, th_ca_up_h = 13.0, th_ca_dn_l = 3.0, th_ca_dn_h = 4.0),
+        weight_dependence = p.WeightDependenceFusi(w_min=0.0, w_max=10.0, w_drift=.035, th_w=5.0), weight=5.0, delay=1.0)
 
 proj = p.Projection(
     pop_src, #_plastic,
