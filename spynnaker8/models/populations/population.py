@@ -2,6 +2,7 @@ import logging
 
 from spynnaker.pyNN.exceptions import InvalidParameterType
 from spynnaker.pyNN.models.pynn_population_common import PyNNPopulationCommon
+from spynnaker.pyNN.utilities.constants import SPIKES
 from spinn_front_end_common.utilities import exceptions
 from spinn_front_end_common.utilities import globals_variables
 
@@ -239,7 +240,7 @@ class Population(PyNNPopulationCommon, Recorder):
     def get_spike_counts(self, gather=True):
         """ Return the number of spikes for each neuron.
         """
-        spikes = self._get_recorded_variable("spikes")
+        spikes = self._get_recorded_variable(SPIKES)
         return PyNNPopulationCommon.get_spike_counts(self, spikes, gather)
 
     def find_units(self, variable):

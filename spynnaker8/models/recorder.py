@@ -10,12 +10,14 @@ from spynnaker.pyNN.models.common import AbstractNeuronRecordable
 from spynnaker.pyNN.models.common import AbstractSpikeRecordable
 from spynnaker.pyNN.models.recording_common import RecordingCommon
 from spynnaker.pyNN.utilities import utility_calls
+from spynnaker.pyNN.utilities.constants import \
+    SPIKES, MEMBRANE_POTENTIAL, GSYN_EXCIT, GSYN_INHIB
 from spinn_front_end_common.utilities.globals_variables import get_simulator
 from spynnaker.pyNN.exceptions import InvalidParameterType
 from spynnaker8.models.data_cache import DataCache
 from spynnaker8.utilities.version_util import pynn8_syntax
 
-SPIKES = 'spikes'
+
 
 logger = logging.getLogger(__name__)
 
@@ -92,11 +94,11 @@ class Recorder(RecordingCommon):
                         "".format(self._population.label, variable))
             if variable == SPIKES:
                 return "spikes"
-            if variable == "v":
+            if variable == MEMBRANE_POTENTIAL:
                 return "mV"
-            if variable == "gsyn_exc":
+            if variable == GSYN_EXCIT:
                 return "uS"
-            if variable == "gsyn_inh":
+            if variable == GSYN_INHIB:
                 return "uS"
             raise ex
 
@@ -298,17 +300,17 @@ class Recorder(RecordingCommon):
                     get_simulator().buffer_manager,
                     get_simulator().placements,
                     get_simulator().graph_mapper)
-            elif variable == "v":
+            elif variable == MEMBRANE_POTENTIAL:
                 self._population._vertex.clear_v_recording(
                     get_simulator().buffer_manager,
                     get_simulator().placements,
                     get_simulator().graph_mapper)
-            elif variable == "gsyn_inh":
+            elif variable == GSYN_EXCIT:
                 self._population._vertex.clear_gsyn_inhibitory_recording(
                     get_simulator().buffer_manager,
                     get_simulator().placements,
                     get_simulator().graph_mapper)
-            elif variable == "gsyn_exc":
+            elif variable == GSYN_INHIB:
                 self._population._vertex.clear_gsyn_excitatory_recording(
                     get_simulator().buffer_manager,
                     get_simulator().placements,
