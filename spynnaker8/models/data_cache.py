@@ -106,7 +106,7 @@ class DataCache(object):
         """
         return self._cache[variable]
 
-    def save_data(self, variable, data, ids, indexes, units):
+    def save_data(self, variable, data, ids, units):
         """
         Saves the data for one variable in this segment
         :param variable: name of variable data applies to
@@ -115,12 +115,10 @@ class DataCache(object):
         :type data: nparray
         :param ids: ids for which data should be returned
         :type nparray
-        :param indexes: indexes for whcih data should be retreived
-        :type indexes: nparray
         :param units: the units in which the data is
         :type units: str
         :rtype None
         """
         self._rec_datetime = datetime.now()
-        variable_cache = VariableCache(data, ids, indexes, units)
+        variable_cache = VariableCache(data, ids, units)
         self._cache[variable] = variable_cache

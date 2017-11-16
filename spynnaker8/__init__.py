@@ -100,6 +100,7 @@ from spynnaker8.models.projection import Projection as SpiNNakerProjection
 
 from spynnaker8 import external_devices
 from spynnaker8 import extra_models
+from spynnaker8.utilities.version_util import pynn8_syntax
 
 # big stuff
 from spynnaker8.spinnaker import SpiNNaker
@@ -181,8 +182,12 @@ def setup(timestep=pynn_control.DEFAULT_TIMESTEP,
     :return: rank thing
     """
 
-    # setup PyNN common stuff
-    pynn_common.setup(timestep, min_delay, max_delay, **extra_params)
+    if pynn8_syntax:
+        # setup PyNN common stuff
+        pynn_common.setup(timestep, min_delay, max_delay, **extra_params)
+    else:
+        # setup PyNN common stuff
+        pynn_common.setup(timestep, min_delay, **extra_params)
 
     # create stuff simulator
     if globals_variables.has_simulator():

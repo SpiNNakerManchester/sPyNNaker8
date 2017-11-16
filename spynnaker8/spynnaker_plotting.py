@@ -1,4 +1,4 @@
-from neo import AnalogSignalArray, SpikeTrain
+from neo import SpikeTrain
 from neo import Block, Segment
 import numpy as np
 from quantities import ms
@@ -8,6 +8,12 @@ try:
     matplotlib_missing = False
 except Exception as e:
     matplotlib_missing = True
+from spynnaker8.utilities.version_util import pynn8_syntax
+if pynn8_syntax:
+    from neo import AnalogSignalArray as AnalogSignal
+else:
+    from neo import AnalogSignal as AnalogSignal
+
 
 """
 Plotting tools to be unsed together with
@@ -151,11 +157,14 @@ def heat_plot_neo(ax, signal_array, label='', **options):
     """
     if label is None:
         label = signal_array.name
-    ids = signal_array.channel_index.astype(int)
-    times = signal_array.times.magnitude.astype(int)
-    all_times = np.tile(times, len(ids))
-    neurons = np.repeat(ids, len(times))
-    values = np.concatenate(map(lambda x: signal_array[:, x].magnitude, ids))
+    n_neurons = signal_array.shape[-1]
+    xs = range(len(n_neurons))
+    times = signal_array.times / signal_array.sampling_period
+    times = np.rint(times.magnitude).astype(int)
+    all_times = np.tile(times, len(xs))
+    neurons = np.repeat(xs, len(times))
+    magnitude = signal_array.magnitude
+    values = np.concatenate(map(lambda x: magnitude[:, x], xs))
     heat_plot(ax, neurons, all_times, values, label=label, **options)
 
 
@@ -174,6 +183,10 @@ def plot_segment(axes, segment, label='', **options):
     :param label: Label for the graph
     :param options: plotting options
     """
+    if pynn8_syntax:
+        analogsignals = segment.analogsignalarrays
+    else:
+        analogsignals = segment.analogsignals
     if "name" in options:
         name = options.pop("name")
         if name == 'spikes':
@@ -182,23 +195,23 @@ def plot_segment(axes, segment, label='', **options):
             heat_plot_neo(axes, segment.filter(name=name)[0], label=label,
                           **options)
     elif len(segment.spiketrains) > 0:
-        if len(segment.analogsignalarrays) > 1:
+        if len(analogsignals) > 1:
             raise Exception("Block.segment[0] has spikes and "
                             "other data please specifiy one "
                             "to plot")
         plot_spiketrains(axes, segment.spiketrains, label=label, **options)
-    elif len(segment.analogsignalarrays) == 1:
-        heat_plot_neo(axes, segment.analogsignalarrays[0], label=label,
+    elif len(analogsignals) == 1:
+        heat_plot_neo(axes, analogsignals[0], label=label,
                       **options)
-    elif len(segment.analogsignalarrays) > 1:
+    elif len(analogsignals) > 1:
         raise Exception("Block.segment[0] has {} types of data "
                         "please specify one to plot using name="
-                        "" % len(segment.analogsignalarrays))
+                        "" % len(analogsignals))
     else:
         raise Exception("Block does not appear to hold any data")
 
 
-class SpynakkerPanel(object):
+class SpynnakerPanel(object):
     """
     Represents a single panel in a multi-panel figure.
 
@@ -210,7 +223,7 @@ class SpynakkerPanel(object):
         other data is plotted as a heatmap
 
     A panel is a Matplotlib Axes or Subplot instance. A data item may be an
-    AnalogSignal, AnalogSignalArray, or a list of SpikeTrains. The Panel will
+    AnalogSignalArray, or a list of SpikeTrains. The Panel will
     automatically choose an appropriate representation. Multiple data items may
     be plotted in the same panel.
 
@@ -259,8 +272,10 @@ class SpynakkerPanel(object):
                 else:
                     raise Exception("Can't handle lists of type %s"
                                     "" % type(datum))
-            # AnalogSignalArray is also a ndarray but data format different!
-            elif isinstance(datum, AnalogSignalArray):
+            # AnalogSignalArray / AnalogSignal is also a ndarray
+            # but data format different!
+            # In pynn8_syntax AnalogSignalArray is imported as AnalogSignal
+            elif isinstance(datum, AnalogSignal):
                 heat_plot_neo(axes, datum, label=label, **properties)
             elif isinstance(datum, np.ndarray):
                 if len(datum[0]) == 2:
