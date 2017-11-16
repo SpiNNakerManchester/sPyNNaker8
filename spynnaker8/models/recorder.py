@@ -329,7 +329,7 @@ def read_in_spikes(segment, spikes, t, ids, indexes, first_id,
 
     :param segment: Segment to add spikes to
     :type segment: neo.Segment
-    :param spikes: Spike data in raw spynnakker format
+    :param spikes: Spike data in raw spynnaker format
     :type spikes: nparray
     :param t: last simulation time
     :type t: int
