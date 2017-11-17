@@ -70,7 +70,7 @@ def poisson_generator(rate, rng, t_start=0.0, t_stop=1000.0, array=True,
         return [round(x) for x in spikes]
 
 
-def do_run(Neurons, sim_time, record):
+def do_run(Neurons, sim_time, record, seed=None):
     """
 
     :param Neurons: Number of Neurons
@@ -121,11 +121,6 @@ def do_run(Neurons, sim_time, record):
     pynn.set_number_of_neurons_per_core(pynn.IF_curr_exp, 100)
     pynn.set_number_of_neurons_per_core(pynn.SpikeSourcePoisson, 100)
 
-    rng = NumpyRNG(seed=1)
-
-    RandomDistribution('uniform', [-10.0, 0.0], rng)
-    RandomDistribution('uniform', [-10.0, 0.0], rng)
-
     exc_cell_params = {
         'cm': 1.0,  # pf
         'tau_m': tau_m,
@@ -157,10 +152,20 @@ def do_run(Neurons, sim_time, record):
     i_pop = pynn.Population(n_i, pynn.IF_curr_exp, inh_cell_params,
                             label="i_pop")
 
-    poisson_ext_e = pynn.Population(
-        n_e, pynn.SpikeSourcePoisson, {'rate': 10.0}, label="Poisson_pop_E")
-    poisson_ext_i = pynn.Population(
-        n_i, pynn.SpikeSourcePoisson, {'rate': 10.0}, label="Poisson_pop_I")
+    if seed is None:
+        poisson_ext_e = pynn.Population(
+            n_e, pynn.SpikeSourcePoisson(rate=10.0),
+            label="Poisson_pop_E")
+        poisson_ext_i = pynn.Population(
+            n_i, pynn.SpikeSourcePoisson(rate=10.0),
+            label="Poisson_pop_I")
+    else:
+        poisson_ext_e = pynn.Population(
+            n_e, pynn.SpikeSourcePoisson(rate=10.0, seed=seed),
+            label="Poisson_pop_E")
+        poisson_ext_i = pynn.Population(
+            n_i, pynn.SpikeSourcePoisson(rate=10.0, seed=seed+1),
+            label="Poisson_pop_I")
 
     # Connectors
     e_conn = pynn.FixedProbabilityConnector(epsilon)
@@ -169,11 +174,11 @@ def do_run(Neurons, sim_time, record):
     # Use random delays for the external noise and
     # set the initial membrane voltage below the resting potential
     # to avoid the overshoot of activity in the beginning of the simulation
-    rng = NumpyRNG(seed=1)
+    rng = NumpyRNG(seed=seed)
     delay_distr = RandomDistribution('uniform', [1.0, 16.0], rng=rng)
     ext_conn = pynn.OneToOneConnector()
 
-    uniform_distr = RandomDistribution('uniform', [-10, 0], rng)
+    uniform_distr = RandomDistribution('uniform', [-10, 0], rng=rng)
     e_pop.initialize(v=uniform_distr)
     i_pop.initialize(v=uniform_distr)
 

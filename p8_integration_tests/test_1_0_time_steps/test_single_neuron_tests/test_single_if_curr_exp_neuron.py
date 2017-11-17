@@ -25,13 +25,14 @@ simtime = 4000
 noise_rate = 200
 
 
-def do_run():
+def do_run(seed=None):
 
     # Simulate using both simulators
     synfire_run = TestRun()
     synfire_run.do_run(
         n_neurons=1, input_class=SpikeSourcePoisson, rate=noise_rate,
-        start_time=0, duration=simtime, use_spike_connections=False,
+        start_time=0, duration=simtime, seed=seed,
+        use_spike_connections=False,
         cell_params=cell_params, run_times=[simtime], record=True,
         record_v=True, randomise_v_init=True, record_input_spikes=True,
         weight_to_spike=0.4)
@@ -48,16 +49,20 @@ class TestIfCurrExpSingleNeuron(BaseTestCase):
     tests the get spikes given a simulation at 0.1 ms time steps
     """
     def test_single_neuron(self):
-        results = do_run()
+        results = do_run(seed=self._test_seed)
         (noise_spike_times, s_pop_spikes, s_pop_voltages) = results
-        try:
-            self.assertLess(800, len(noise_spike_times))
-            self.assertGreater(900, len(noise_spike_times))
-            self.assertLess(2, len(s_pop_spikes))
-            self.assertGreater(25, len(s_pop_spikes))
-        except Exception as ex:
-            # Just in case the range failed
-            raise SkipTest(ex)
+        if self._test_seed == 1:
+            self.assertEquals(797, len(noise_spike_times))
+            self.assertEquals(16, len(s_pop_spikes))
+        else:
+            try:
+                self.assertLess(800, len(noise_spike_times))
+                self.assertGreater(900, len(noise_spike_times))
+                self.assertLess(2, len(s_pop_spikes))
+                self.assertGreater(25, len(s_pop_spikes))
+            except Exception as ex:
+                # Just in case the range failed
+                raise SkipTest(ex)
 
 
 if __name__ == '__main__':

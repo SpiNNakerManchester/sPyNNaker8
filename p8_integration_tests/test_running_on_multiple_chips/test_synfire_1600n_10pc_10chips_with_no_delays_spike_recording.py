@@ -18,6 +18,7 @@ synfire_run = TestRun()
 class Synfire1600n10pc10chipsWithNoDelaysSpikeRecording(BaseTestCase):
 
     def test_run(self):
+        self.assert_not_spin_three()
         synfire_run.do_run(nNeurons, run_times=run_times, record_v=record_v,
                            record_gsyn_exc=record_gsyn,
                            record_gsyn_inh=record_gsyn)
