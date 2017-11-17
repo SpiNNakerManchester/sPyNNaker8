@@ -1,0 +1,12 @@
+simtime = 1000
+w_min = 0.0
+w_max = 1.0
+w_drift = .0035
+th_w = 0.50
+w0 = 0.51
+w_mult = 8.0
+weight_scale = 2048.0*8
+V_th = -53
+Ca_th_l = 3.0
+Ca_th_h1 = 4.0
+Ca_th_h2 = 13.0
