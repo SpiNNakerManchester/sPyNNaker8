@@ -30,6 +30,8 @@ w_time = csv[:,0]
 wgts = csv[:,1]
 print w_time, wgts
 
+print post_spikes.spiketrains[0].shape
+
 #import sys
 #sys.exit(1)
 
@@ -43,6 +45,7 @@ fig_settings = {
 }
 plt.rcParams.update(fig_settings)
 plt.figure(1, figsize=(6, 8))
+plt.suptitle("Synaptic transitions")
 
 
 def plot_spiketrains(segment, label):
@@ -73,6 +76,7 @@ plt.ylabel("V")
 plt.subplot(n_panels, 1, 3)
 plt.plot(w_time, wgts/weight_scale, 'b')
 plt.ylabel("weights")
+plt.ylim([0,1.000])
 
 plt.subplot(n_panels, 1, 4)
 plt.plot(range(simtime), Ca, 'b')
