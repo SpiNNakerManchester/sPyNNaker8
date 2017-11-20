@@ -136,11 +136,16 @@ __all__ = [
     'external_devices', 'extra_models',
     # Stuff that we define
     'end', 'setup', 'run', 'run_until', 'run_for', 'num_processes', 'rank',
-    'reset', 'set_number_of_neurons_per_core',
+    'reset', 'set_number_of_neurons_per_core', 'get_projections_data',
     'Projection',
     'get_current_time', 'create', 'connect', 'get_time_step', 'get_min_delay',
     'get_max_delay', 'initialize', 'list_standard_models', 'name',
     'num_processes', 'record', 'record_v', 'record_gsyn']
+
+
+def get_projections_data(projection_data):
+    return globals_variables.get_simulator().get_projections_data(
+        projection_data)
 
 
 def setup(timestep=pynn_control.DEFAULT_TIMESTEP,
