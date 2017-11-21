@@ -5,6 +5,7 @@ from spynnaker.pyNN.models.pynn_population_common import PyNNPopulationCommon
 from spynnaker.pyNN.utilities.constants import SPIKES
 from spinn_front_end_common.utilities import exceptions
 from spinn_front_end_common.utilities import globals_variables
+from spinn_front_end_common.utilities.exceptions import ConfigurationException
 
 from spynnaker8.models import Recorder
 from spynnaker8.utilities import DataHolder
@@ -33,7 +34,6 @@ class Population(PyNNPopulationCommon, Recorder):
             vertex_holder.add_item(
                 'label', self.create_label(
                     vertex_holder.data_items['label'], label))
-            vertex_holder.add_item('n_neurons', size)
             assert cellparams is None
         # cellparams being retained for backwards compatibility, but use
         # is deprecated
@@ -44,12 +44,27 @@ class Population(PyNNPopulationCommon, Recorder):
                 cell_label = internal_params['label']
             internal_params['label'] = self.create_label(cell_label, label)
             vertex_holder = cellclass(**internal_params)
-            vertex_holder.add_item('n_neurons', size)
             # emit deprecation warning
         else:
             raise TypeError(
                 "cellclass must be an instance or subclass of BaseCellType,"
                 " not a %s" % type(cellclass))
+
+        if 'n_neurons' in vertex_holder.data_items:
+            if size is None:
+                size = vertex_holder.data_items['n_neurons']
+            else:
+                if size != vertex_holder.data_items['n_neurons']:
+                    raise ConfigurationException(
+                        "Size parameter is {} but the {} expects a size of {}"
+                        "".format(size, cellclass,
+                                  vertex_holder.data_items['n_neurons']))
+        else:
+            if size is None:
+                raise ConfigurationException(
+                    "Size parameter can not be None for {}".format(cellclass))
+            else:
+                vertex_holder.add_item('n_neurons', size)
 
         # convert between data holder and model (uses ** so that its taken
         # the dictionary to be the parameters themselves)
