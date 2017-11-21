@@ -5,6 +5,6 @@ filen=$fn
 echo $filen
 outdir='data'
 cat $filen |grep "calcium" | awk '{print $10}' > $outdir/ca.txt
-cat $filen |grep "Neuron" -A 8  | paste - - - - - - - - - -  | awk '{print $67-1, $60}' > $outdir/wgt.txt
+cat $filen |grep "Neuron" -A 8  | paste - - - - - - - - - -  | awk '{print $65, $60}' > $outdir/wgt.txt
 
 
