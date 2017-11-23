@@ -103,6 +103,7 @@ from spynnaker8.models.projection import Projection as SpiNNakerProjection
 
 from spynnaker8 import external_devices
 from spynnaker8 import extra_models
+from spynnaker8.utilities.version_util import pynn8_syntax
 
 # big stuff
 from spynnaker8.spinnaker import SpiNNaker
@@ -138,11 +139,16 @@ __all__ = [
     'external_devices', 'extra_models',
     # Stuff that we define
     'end', 'setup', 'run', 'run_until', 'run_for', 'num_processes', 'rank',
-    'reset', 'set_number_of_neurons_per_core',
+    'reset', 'set_number_of_neurons_per_core', 'get_projections_data',
     'Projection',
     'get_current_time', 'create', 'connect', 'get_time_step', 'get_min_delay',
     'get_max_delay', 'initialize', 'list_standard_models', 'name',
     'num_processes', 'record', 'record_v', 'record_gsyn']
+
+
+def get_projections_data(projection_data):
+    return globals_variables.get_simulator().get_projections_data(
+        projection_data)
 
 
 def setup(timestep=pynn_control.DEFAULT_TIMESTEP,
@@ -179,8 +185,12 @@ def setup(timestep=pynn_control.DEFAULT_TIMESTEP,
     :return: rank thing
     """
 
-    # setup PyNN common stuff
-    pynn_common.setup(timestep, min_delay, max_delay, **extra_params)
+    if pynn8_syntax:
+        # setup PyNN common stuff
+        pynn_common.setup(timestep, min_delay, max_delay, **extra_params)
+    else:
+        # setup PyNN common stuff
+        pynn_common.setup(timestep, min_delay, **extra_params)
 
     # create stuff simulator
     if globals_variables.has_simulator():

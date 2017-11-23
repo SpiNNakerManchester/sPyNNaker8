@@ -7,8 +7,6 @@ from p8_integration_tests.base_test_case import BaseTestCase
 import spynnaker.plot_utils as plot_utils
 from spynnaker8.utilities import neo_convertor
 
-from unittest import SkipTest
-
 
 def do_run(nNeurons):
 
@@ -62,12 +60,7 @@ class MwhSynfire(BaseTestCase):
     def test_run(self):
         nNeurons = 3  # number of neurons in each population
         (v, spikes) = do_run(nNeurons)
-        try:
-            self.assertLess(10, len(spikes))
-            self.assertGreater(15, len(spikes))
-        except Exception as ex:
-            # Just in case the range failed
-            raise SkipTest(ex)
+        self.assertEquals(12, len(spikes))
 
 
 if __name__ == '__main__':

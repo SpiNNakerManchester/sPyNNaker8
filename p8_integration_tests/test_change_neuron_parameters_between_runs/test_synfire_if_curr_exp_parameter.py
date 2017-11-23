@@ -23,7 +23,8 @@ class TestGetGsyn(BaseTestCase):
         spikes = synfire_run.get_output_pop_spikes_numpy()
         # Check spikes increase in second half by at least a factor of ten
         hist = numpy.histogram(spikes[:, 1], bins=[0, 5000, 10000])
-        self.assertLess(hist[0][0] * 10, hist[0][1])
+        self.assertEquals(263, hist[0][0])
+        self.assertEquals(333400, hist[0][1])
 
 
 if __name__ == '__main__':
