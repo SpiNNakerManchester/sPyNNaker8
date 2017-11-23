@@ -77,6 +77,7 @@ plt.subplot(n_panels, 1, 3)
 plt.plot(w_time, wgts/weight_scale, 'b')
 plt.ylabel("weights")
 plt.ylim([0,1.000])
+plt.xlim([0,1000])
 
 plt.subplot(n_panels, 1, 4)
 plt.plot(range(simtime), Ca, 'b')
