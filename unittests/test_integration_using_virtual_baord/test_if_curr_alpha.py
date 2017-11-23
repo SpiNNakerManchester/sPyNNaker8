@@ -1,7 +1,8 @@
 import spynnaker8 as p
+from p8_integration_tests.base_test_case import BaseTestCase
 
 
-def test_alpha():
+def do_run():
     p.setup(0.1)
     runtime = 50
     populations = []
@@ -25,3 +26,13 @@ def test_alpha():
     populations[0].record("all")
     p.run(runtime)
     p.end()
+
+
+class TestAlpha(BaseTestCase):
+
+    def test_run(self):
+        do_run()
+
+
+if __name__ == '__main__':
+    do_run()
