@@ -22,7 +22,7 @@ p.setup(1)
 
 
 pop_src = p.Population(1, p.SpikeSourcePoisson(rate=50), label="src")
-pop_src2 = p.Population(1, p.SpikeSourcePoisson(rate=100), label="drive")
+pop_src2 = p.Population(1, p.SpikeSourcePoisson(rate=50), label="drive")
 cell_params = {"i_offset":0.0,  "tau_ca2":60, "i_alpha":1., "i_ca2":3.5,  'tau_m': 50.0, 'v_reset':-65}
 pop_ex = p.Population(1, p.extra_models.IFCurrExpCa2Concentration, cell_params, label="test")
 
@@ -72,9 +72,9 @@ v = pop_ex.get_data('v')
 pre_spikes = pop_src.get_data('spikes')
 spikes = pop_ex.get_data('spikes')
 
-print v.segments[0].filter(name='v')[0]
-print pre_spikes.segments[0].spiketrains
-print spikes.segments[0].spiketrains
+#print v.segments[0].filter(name='v')[0]
+#print pre_spikes.segments[0].spiketrains
+#print spikes.segments[0].spiketrains
 
 plot_time = simtime
 if to_plot_wgts:
