@@ -43,4 +43,3 @@ class FixedNumberPostConnector(CommonFixedNumberPostConnector,
 
     def get_rng_parameters(self, n_post_neurons):
         return {"low": 0, "high": n_post_neurons}
-
