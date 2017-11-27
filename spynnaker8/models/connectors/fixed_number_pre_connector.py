@@ -35,13 +35,14 @@ class FixedNumberPreConnector(CommonFixedNumberPreConnector,
         :param rng:
         :param callback:
         """
+        self.with_replacement = with_replacement
         CommonFixedNumberPreConnector.__init__(
             self, n=n, safe=safe,
             allow_self_connections=allow_self_connections, verbose=verbose)
-        PyNNFixedNumberPreConnector.__init__(
-            self, n=n, allow_self_connections=allow_self_connections,
-            with_replacement=with_replacement, rng=rng, safe=safe,
-            callback=callback)
+#        PyNNFixedNumberPreConnector.__init__(
+#            self, n=n, allow_self_connections=allow_self_connections,
+#            with_replacement=with_replacement, rng=rng, safe=safe,
+#            callback=callback)
 
     @property
     def n(self):
