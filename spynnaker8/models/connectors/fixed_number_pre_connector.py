@@ -51,3 +51,6 @@ class FixedNumberPreConnector(CommonFixedNumberPreConnector,
     @n.setter
     def n(self, new_value):
         self._n_pre = new_value
+
+    def get_rng_parameters(self, n_pre_neurons):
+        return {"low": 0, "high": n_pre_neurons}
