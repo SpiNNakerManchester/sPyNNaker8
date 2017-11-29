@@ -1,9 +1,6 @@
 import spynnaker8 as p
 from p8_integration_tests.base_test_case import BaseTestCase
 import pylab
-from spynnaker8.utilities import neo_convertor
-
-import os
 import numpy
 import pyNN.random
 
@@ -13,9 +10,7 @@ def do_run(plot):
     p.setup(timestep=1.0, min_delay=1.0, max_delay=144.0)
     p.set_number_of_neurons_per_core(p.IF_cond_exp, 100)
 
-    ########################
-    ## Experiment Parameters
-    ########################
+    # Experiment Parameters
 
     rng = pyNN.random.NumpyRNG(seed=124578)
 
@@ -31,18 +26,17 @@ def do_run(plot):
     pp_start = 50.  # start = center of pulse-packet
 
     # Neuron Parameters as in Kremkow et al. paper
-    cell_params={
-        'cm'         : 0.290,      # nF
-        'tau_m'      : 290.0/29.0, # pF / nS = ms
-        'v_rest'     : -70.0,      # mV
-        'v_thresh'   : -57.0,      # mV
-        'tau_syn_E'  : 1.5,        # ms
-        'tau_syn_I'  : 10.0,       # ms
-        'tau_refrac' : 2.0,        # ms
-        'v_reset'    : -70.0,      # mV
-        'e_rev_E'    : 0.0,        # mV
-        'e_rev_I'    : -75.0,      # mV
-    }
+    cell_params={'cm': 0.290,  # nF
+                 'tau_m': 290.0/29.0,  # pF / nS = ms
+                 'v_rest': -70.0,  # mV
+                 'v_thresh': -57.0,  # mV
+                 'tau_syn_E': 1.5,  # ms
+                 'tau_syn_I': 10.0,  # ms
+                 'tau_refrac': 2.0,  # ms
+                 'v_reset': -70.0,  # mV
+                 'e_rev_E': 0.0,  # mV
+                 'e_rev_I': -75.0,  # mV
+                 }
 
     weight_exc = 0.001  # uS weight for excitatory to excitatory connections
     weight_inh = 0.002  # uS weight for inhibitory to excitatory connections
@@ -54,9 +48,7 @@ def do_run(plot):
     # and Assembly of all populations
     all_populations = []
 
-    ################
-    ## Create Groups
-    ################
+    # Create Groups
     print "Creating ", n_groups, " SynfireGroups"
     for group_index in range(n_groups):
         # create the excitatory Population
@@ -64,7 +56,7 @@ def do_run(plot):
                                label=("pop_exc_%s" % group_index))
 
         exc_pops.append(exc_pop)  # append to excitatory populations
-        all_populations += [ exc_pop ]  # and to the Assembly
+        all_populations += [exc_pop]  # and to the Assembly
 
         # create the inhibitory Population
         inh_pop = p.Population(n_inh, p.IF_cond_exp(**cell_params),
@@ -76,11 +68,9 @@ def do_run(plot):
         p.Projection(inh_pop, exc_pop,
                      p.AllToAllConnector(),
                      synapse_type=p.StaticSynapse(weight=weight_inh, delay=8.),
-                     receptor_type='inhibitory')  #, rng=rng)
+                     receptor_type='inhibitory')
 
-    ###################################################
-    ## Create Stimulus and connect it to first group
-    ###################################################
+    # Create Stimulus and connect it to first group
     print "Create Stimulus Population"
     # We create a Population of SpikeSourceArrays of the same dimension
     # as excitatory neurons in a synfire group
@@ -97,17 +87,16 @@ def do_run(plot):
             spiketimes.append(rd.next())  # draw from the random distribution
         spiketimes.sort()
         all_spiketimes.append(spiketimes)
-    all_spiketimes=numpy.array(all_spiketimes)  # convert into a numpy array
+
+    # convert into a numpy array
+    all_spiketimes=numpy.array(all_spiketimes)
     # 'topographic' setting of parameters.
     # all_spiketimes must have the same dimension as the Population
     pop_stim.set(spike_times=all_spiketimes)
 
-    ###########################################
-    ## Connect Groups with the subsequent ones
-    ###########################################
+    # Connect Groups with the subsequent ones
     print "Connecting Groups with subsequent ones"
     for group_index in range(n_groups-1):
-    #for group_index in range(n_groups):
         p.Projection(exc_pops[group_index%n_groups],
                      exc_pops[(group_index+1)%n_groups],
                      p.FixedNumberPostConnector(60, rng=rng,
@@ -129,41 +118,31 @@ def do_run(plot):
                                             allow_self_connections=False),
                  synapse_type=p.StaticSynapse(weight=weight_exc,
                                               delay=10.),
-                 receptor_type='excitatory')  # , rng = rng)
+                 receptor_type='excitatory')
 
-
-    ##########################################
-    ## Connect the Stimulus to the first group
-    ##########################################
+    # Connect the Stimulus to the first group
     print "Connecting Stimulus to first group"
     p.Projection(pop_stim, inh_pops[0],
                  p.FixedNumberPostConnector(20, rng=rng),
                  synapse_type=p.StaticSynapse(weight=weight_exc, delay=20.),
-               receptor_type='excitatory')
+                 receptor_type='excitatory')
     p.Projection(pop_stim, exc_pops[0],
                  p.FixedNumberPostConnector(60, rng=rng),
                  synapse_type=p.StaticSynapse(weight=weight_exc, delay=20.),
                  receptor_type='excitatory')
 
-    ###################
-    ## Recording spikes
-    ###################
+    # Recording spikes
     pop_stim.record('spikes')
 
     for pop in all_populations:
         pop.record('spikes')
 
-    ###############
-    ## Run
-    ###############
+    # Run
     print "Run the simulation"
     p.run(sim_duration)
 
-    ###############
-    ## Get data
-    ###############
+    # Get data
     print "Simulation finished, now collect all spikes and plot them"
-
     stim_spikes = pop_stim.spinnaker_get_data('spikes')
     stim_spikes[:,0] -= n_exc
 
@@ -171,16 +150,14 @@ def do_run(plot):
     spklist_exc = []
     spklist_inh = []
     for group in range(n_groups):
-        EXC_spikes=exc_pops[group].spinnaker_get_data('spikes')
-        INH_spikes=inh_pops[group].spinnaker_get_data('spikes')
-        EXC_spikes[:,0]+=group*(n_exc+n_inh)
-        INH_spikes[:,0]+=group*(n_exc+n_inh) + n_exc
-        spklist_exc+=EXC_spikes.tolist()
-        spklist_inh+=INH_spikes.tolist()
+        EXC_spikes = exc_pops[group].spinnaker_get_data('spikes')
+        INH_spikes = inh_pops[group].spinnaker_get_data('spikes')
+        EXC_spikes[:,0] += group*(n_exc+n_inh)
+        INH_spikes[:,0] += group*(n_exc+n_inh) + n_exc
+        spklist_exc += EXC_spikes.tolist()
+        spklist_inh += INH_spikes.tolist()
 
-    ###############
-    ## Plot
-    ###############
+    # Plot
     if plot:
         pylab.figure()
         pylab.plot([i[1] for i in spklist_exc],
@@ -197,7 +174,7 @@ def do_run(plot):
             pylab.axhline(y=(group+1)*(n_exc+n_inh), color="lightgrey")
             pylab.axhline(y=(group+1)*(n_exc+n_inh)-n_inh, color="lightgrey")
 
-        pylab.axhline(y=0, color="grey",linewidth=1.5)
+        pylab.axhline(y=0, color="grey", linewidth=1.5)
         pylab.show()
 
     p.end()
