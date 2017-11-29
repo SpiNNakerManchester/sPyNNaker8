@@ -11,7 +11,6 @@ def do_run(plot):
     p.set_number_of_neurons_per_core(p.IF_cond_exp, 100)
 
     # Experiment Parameters
-
     rng = pyNN.random.NumpyRNG(seed=124578)
 
     n_groups = 6  # Number of Synfire Groups
@@ -26,17 +25,17 @@ def do_run(plot):
     pp_start = 50.  # start = center of pulse-packet
 
     # Neuron Parameters as in Kremkow et al. paper
-    cell_params={'cm': 0.290,  # nF
-                 'tau_m': 290.0/29.0,  # pF / nS = ms
-                 'v_rest': -70.0,  # mV
-                 'v_thresh': -57.0,  # mV
-                 'tau_syn_E': 1.5,  # ms
-                 'tau_syn_I': 10.0,  # ms
-                 'tau_refrac': 2.0,  # ms
-                 'v_reset': -70.0,  # mV
-                 'e_rev_E': 0.0,  # mV
-                 'e_rev_I': -75.0,  # mV
-                 }
+    cell_params = {'cm': 0.290,  # nF
+                   'tau_m': 290.0/29.0,  # pF / nS = ms
+                   'v_rest': -70.0,  # mV
+                   'v_thresh': -57.0,  # mV
+                   'tau_syn_E': 1.5,  # ms
+                   'tau_syn_I': 10.0,  # ms
+                   'tau_refrac': 2.0,  # ms
+                   'v_reset': -70.0,  # mV
+                   'e_rev_E': 0.0,  # mV
+                   'e_rev_I': -75.0,  # mV
+                   }
 
     weight_exc = 0.001  # uS weight for excitatory to excitatory connections
     weight_inh = 0.002  # uS weight for inhibitory to excitatory connections
@@ -74,7 +73,7 @@ def do_run(plot):
     print "Create Stimulus Population"
     # We create a Population of SpikeSourceArrays of the same dimension
     # as excitatory neurons in a synfire group
-    pop_stim = p.Population(n_exc, p.SpikeSourceArray({}), label= "pop_stim")
+    pop_stim = p.Population(n_exc, p.SpikeSourceArray({}), label="pop_stim")
 
     # We create a normal distribution around pp_start with sigma = pp_sigma
     rd = pyNN.random.RandomDistribution('normal', [pp_start, pp_sigma])
@@ -89,7 +88,7 @@ def do_run(plot):
         all_spiketimes.append(spiketimes)
 
     # convert into a numpy array
-    all_spiketimes=numpy.array(all_spiketimes)
+    all_spiketimes = numpy.array(all_spiketimes)
     # 'topographic' setting of parameters.
     # all_spiketimes must have the same dimension as the Population
     pop_stim.set(spike_times=all_spiketimes)
@@ -97,15 +96,15 @@ def do_run(plot):
     # Connect Groups with the subsequent ones
     print "Connecting Groups with subsequent ones"
     for group_index in range(n_groups-1):
-        p.Projection(exc_pops[group_index%n_groups],
-                     exc_pops[(group_index+1)%n_groups],
+        p.Projection(exc_pops[group_index % n_groups],
+                     exc_pops[(group_index+1) % n_groups],
                      p.FixedNumberPostConnector(60, rng=rng,
                                                 with_replacement=True),
                      synapse_type=p.StaticSynapse(weight=weight_exc,
                                                   delay=10.),
                      receptor_type='excitatory')
-        p.Projection(exc_pops[group_index%n_groups],
-                     inh_pops[(group_index+1)%n_groups],
+        p.Projection(exc_pops[group_index % n_groups],
+                     inh_pops[(group_index+1) % n_groups],
                      p.FixedNumberPostConnector(60, rng=rng,
                                                 with_replacement=True),
                      synapse_type=p.StaticSynapse(weight=weight_exc,
@@ -144,7 +143,7 @@ def do_run(plot):
     # Get data
     print "Simulation finished, now collect all spikes and plot them"
     stim_spikes = pop_stim.spinnaker_get_data('spikes')
-    stim_spikes[:,0] -= n_exc
+    stim_spikes[:, 0] -= n_exc
 
     # collect all spikes and make a raster_plot
     spklist_exc = []
@@ -152,8 +151,8 @@ def do_run(plot):
     for group in range(n_groups):
         EXC_spikes = exc_pops[group].spinnaker_get_data('spikes')
         INH_spikes = inh_pops[group].spinnaker_get_data('spikes')
-        EXC_spikes[:,0] += group*(n_exc+n_inh)
-        INH_spikes[:,0] += group*(n_exc+n_inh) + n_exc
+        EXC_spikes[:, 0] += group*(n_exc+n_inh)
+        INH_spikes[:, 0] += group*(n_exc+n_inh) + n_exc
         spklist_exc += EXC_spikes.tolist()
         spklist_inh += INH_spikes.tolist()
 
