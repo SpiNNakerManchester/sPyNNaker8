@@ -188,7 +188,7 @@ class Recorder(RecordingCommon):
                     ids=ids, indexes=indexes,
                     variable=variable,
                     recording_start_time=self._recording_start_time,
-                     units=self._get_units(variable),
+                    units=self._get_units(variable),
                     label=self._population.label)
 
         block.segments.append(segment)
