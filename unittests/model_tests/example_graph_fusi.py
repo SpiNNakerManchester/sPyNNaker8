@@ -70,6 +70,7 @@ else:
 v = pop_ex.get_data('v')
 #curr = pop_ex.get_data('gsyn_exc')
 pre_spikes = pop_src.get_data('spikes')
+pre_spikes_static = pop_src2.get_data('spikes')
 spikes = pop_ex.get_data('spikes')
 
 #print v.segments[0].filter(name='v')[0]
@@ -110,6 +111,8 @@ io = PyNNTextIO(filename="data/data.txt")
 pop_ex.write_data(io)
 io = AsciiSpikeTrainIO(filename="data/pre_spikes.txt")
 pop_src.write_data(io)
+io = AsciiSpikeTrainIO(filename="data/pre_spikes_static.txt")
+pop_src2.write_data(io)
 io = AsciiSpikeTrainIO(filename="data/post_spikes.txt")
 pop_ex.write_data(io)
 p.end()
