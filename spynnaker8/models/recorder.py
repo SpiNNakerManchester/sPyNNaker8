@@ -23,8 +23,7 @@ logger = logging.getLogger(__name__)
 
 class Recorder(RecordingCommon):
     def __init__(self, population):
-        RecordingCommon.__init__(
-            self, population, get_simulator().machine_time_step / 1000.0)
+        RecordingCommon.__init__(self, population)
         self._recording_start_time = get_simulator().t
         self._data_cache = {}
 
@@ -116,7 +115,7 @@ class Recorder(RecordingCommon):
                 description=self._population.describe(),
                 segment_number=segment_number,
                 recording_start_time=self._recording_start_time,
-                t=get_simulator().t, sampling_interval=self._sampling_interval,
+                t=get_simulator().t,
                 first_id=self._population._first_id)
 
             for variable in variables:
@@ -189,7 +188,6 @@ class Recorder(RecordingCommon):
                     ids=ids, indexes=indexes,
                     variable=variable,
                     recording_start_time=self._recording_start_time,
-                    sampling_interval=self._sampling_interval,
                     units=self._get_units(variable),
                     label=self._population.label)
 
@@ -247,7 +245,6 @@ class Recorder(RecordingCommon):
                     indexes=indexes,
                     variable=variable,
                     recording_start_time=data_cache.recording_start_time,
-                    sampling_interval=data_cache.sampling_interval,
                     units=variable_cache.units,
                     label=data_cache.label)
 
@@ -388,7 +385,7 @@ def _convert_extracted_data_into_neo_expected_format(
 
 
 def read_in_signal(segment, block, signal_array, ids, indexes, variable,
-                   recording_start_time, sampling_interval, units, label):
+                   recording_start_time, units, label):
     """ reads in a data item that's not spikes (likely v, gsyn e, gsyn i)
 
     Saves this data to the segment.
@@ -402,13 +399,13 @@ def read_in_signal(segment, block, signal_array, ids, indexes, variable,
     :param block: neo block
     :param indexes: the channel index's
     :param recording_start_time: when recording started
-    :param sampling_interval: how often a neuron is recorded
     :param units: the units of the recorded value
     :param label: human readable label
 
     :return: None
     """
     t_start = recording_start_time * quantities.ms
+    sampling_interval = get_simulator().machine_time_step / 1000.0
     sampling_period = sampling_interval * quantities.ms
     if signal_array.size > 0:
         processed_data = \
