@@ -168,28 +168,32 @@ class Recorder(RecordingCommon):
         variables = self._clean_variables(variables)
 
         for variable in variables:
-            ids = sorted(
-                self._filter_recorded(self._indices_to_record[variable]))
-            indexes = numpy.array(
-                [self._population.id_to_index(atom_id) for atom_id in ids])
             if variable == SPIKES:
+                ids = sorted(
+                    self._filter_recorded(self._indices_to_record[variable]))
+                indexes = numpy.array(
+                    [self._population.id_to_index(atom_id) for atom_id in ids])
                 read_in_spikes(
                     segment=segment,
-                    spikes=self._get_recorded_variable(variable),
+                    spikes=self._get_spikes(),
                     t=get_simulator().get_current_time(),
                     ids=ids, indexes=indexes,
                     first_id=self._population._first_id,
                     recording_start_time=self._recording_start_time,
                     label=self._population.label)
             else:
+                (data, ids, sampling_interval) = self._get_recorded_matrix(
+                    variable)
+                indexes = numpy.array(
+                    [self._population.id_to_index(atom_id) for atom_id in ids])
                 read_in_signal(
                     segment=segment,
                     block=block,
-                    signal_array=self._get_recorded_variable(variable),
+                    signal_array=data,
                     ids=ids, indexes=indexes,
                     variable=variable,
                     recording_start_time=self._recording_start_time,
-                    sampling_interval=self._sampling_interval,
+                    sampling_interval=sampling_interval,
                     units=self._get_units(variable),
                     label=self._population.label)
 
@@ -411,13 +415,10 @@ def read_in_signal(segment, block, signal_array, ids, indexes, variable,
     t_start = recording_start_time * quantities.ms
     sampling_period = sampling_interval * quantities.ms
     if signal_array.size > 0:
-        processed_data = \
-            _convert_extracted_data_into_neo_expected_format(
-                signal_array, indexes)
         source_ids = numpy.fromiter(ids, dtype=int)
         if pynn8_syntax:
             data_array = neo.AnalogSignalArray(
-                    processed_data,
+                    signal_array,
                     units=units,
                     t_start=t_start,
                     sampling_period=sampling_period,
@@ -430,7 +431,7 @@ def read_in_signal(segment, block, signal_array, ids, indexes, variable,
 
         else:
             data_array = neo.AnalogSignal(
-                processed_data,
+                signal_array,
                 units=units,
                 t_start=t_start,
                 sampling_period=sampling_period,
