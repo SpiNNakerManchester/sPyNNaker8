@@ -120,11 +120,11 @@ class Recorder(RecordingCommon):
                 first_id=self._population._first_id)
 
             for variable in variables:
-                data = self._get_recorded_variable(variable)
-                ids = sorted(
-                    self._filter_recorded(self._indices_to_record[variable]))
+                (data, ids, sampling_interval) = self._get_recorded_matrix(
+                    variable)
                 data_cache.save_data(variable=variable, data=data, ids=ids,
-                                     units=self._get_units(variable))
+                                     units=self._get_units(variable),
+                                     sampling_interval=sampling_interval)
             self._data_cache[segment_number] = data_cache
 
     def _filter_recorded(self, filter_ids):

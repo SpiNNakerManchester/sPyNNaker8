@@ -106,7 +106,7 @@ class DataCache(object):
         """
         return self._cache[variable]
 
-    def save_data(self, variable, data, ids, units):
+    def save_data(self, variable, data, ids, units, sampling_interval):
         """
         Saves the data for one variable in this segment
         :param variable: name of variable data applies to
@@ -120,5 +120,5 @@ class DataCache(object):
         :rtype None
         """
         self._rec_datetime = datetime.now()
-        variable_cache = VariableCache(data, ids, units)
+        variable_cache = VariableCache(data, ids, units, sampling_interval)
         self._cache[variable] = variable_cache

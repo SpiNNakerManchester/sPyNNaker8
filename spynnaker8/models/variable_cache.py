@@ -7,7 +7,7 @@ class VariableCache(object):
     """
     __slots__ = ("_data", "_ids", "_units")
 
-    def __init__(self, data, ids, units):
+    def __init__(self, data, ids, units, sampling_interval):
         """
 
         :param data: raw data in spynakker format
@@ -20,6 +20,7 @@ class VariableCache(object):
         self._data = data
         self._ids = ids
         self._units = units
+        self._sampling_interval = sampling_interval
 
     @property
     def data(self):
