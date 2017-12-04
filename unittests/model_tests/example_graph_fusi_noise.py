@@ -24,7 +24,7 @@ p.setup(1)
 pop_src = p.Population(1, p.SpikeSourcePoisson(rate=50), label="src")
 pop_src2 = p.Population(1, p.SpikeSourcePoisson(rate=40), label="drive")
 pop_ns = p.Population(10, p.SpikeSourcePoisson(rate=100), label="noise")
-cell_params = {"i_offset":0.0,  "tau_ca2":60, "i_alpha":1., "i_ca2":3.,  'tau_m': 20.0, 'v_reset':-65}
+cell_params = {"i_offset":0.0,  "tau_ca2":60, "i_alpha":1., "i_ca2":3.,  'tau_m': 50.0, 'v_reset':-65}
 pop_ex = p.Population(1, p.extra_models.IFCurrExpCa2Concentration, cell_params, label="test")
 
 
@@ -43,7 +43,7 @@ proj = p.Projection(
     )
 
 proj2 = p.Projection(pop_src2,  pop_ex,  p.OneToOneConnector(),
-               synapse_type=p.StaticSynapse(weight=2.0),  receptor_type='excitatory')
+               synapse_type=p.StaticSynapse(weight=8.0),  receptor_type='excitatory')
 proj3 = p.Projection(pop_ns,  pop_ex,  p.AllToAllConnector(),
                synapse_type=p.StaticSynapse(weight=.1),  receptor_type='excitatory')
 # proj2 = p.Projection(
