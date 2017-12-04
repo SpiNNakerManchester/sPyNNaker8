@@ -33,3 +33,7 @@ class VariableCache(object):
     @property
     def units(self):
         return self._units
+
+    @property
+    def sampling_interval(self):
+        return self._sampling_interval

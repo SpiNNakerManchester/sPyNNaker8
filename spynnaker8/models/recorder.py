@@ -250,6 +250,7 @@ class Recorder(RecordingCommon):
                     indexes=indexes,
                     variable=variable,
                     recording_start_time=data_cache.recording_start_time,
+                    sampling_interval=data_cache.sampling_interval,
                     units=variable_cache.units,
                     label=data_cache.label)
 
