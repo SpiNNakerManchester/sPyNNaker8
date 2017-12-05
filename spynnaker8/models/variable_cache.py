@@ -5,7 +5,7 @@ class VariableCache(object):
     Typically used to recreate the neo object for one type of variable for
     one segment
     """
-    __slots__ = ("_data", "_ids", "_units")
+    __slots__ = ("_data", "_ids", "_units", "_sampling_interval")
 
     def __init__(self, data, ids, units, sampling_interval):
         """

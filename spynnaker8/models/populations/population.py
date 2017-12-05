@@ -253,13 +253,13 @@ class Population(PyNNPopulationCommon, Recorder):
                 msg = "Only one type of data at a time is supported"
                 raise exceptions.ConfigurationException(msg)
         if variable == SPIKES:
-            return self._get_spikes(SPIKES)
+            return self._get_spikes()
         return self._get_recorded_pynn7(variable)
 
     def get_spike_counts(self, gather=True):
         """ Return the number of spikes for each neuron.
         """
-        spikes = self._get_spikes(SPIKES)
+        spikes = self._get_spikes()
         return PyNNPopulationCommon.get_spike_counts(self, spikes, gather)
 
     def find_units(self, variable):

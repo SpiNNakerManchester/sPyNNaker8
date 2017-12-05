@@ -119,8 +119,15 @@ class Recorder(RecordingCommon):
                 first_id=self._population._first_id)
 
             for variable in variables:
-                (data, ids, sampling_interval) = self._get_recorded_matrix(
-                    variable)
+                if variable == SPIKES:
+                    data = self._get_spikes()
+                    sampling_interval = self._population._vertex. \
+                        get_sampling_interval(variable)
+                    ids = sorted(self._filter_recorded(
+                        self._indices_to_record[variable]))
+                else:
+                    (data, ids, sampling_interval) = self._get_recorded_matrix(
+                        variable)
                 data_cache.save_data(variable=variable, data=data, ids=ids,
                                      units=self._get_units(variable),
                                      sampling_interval=sampling_interval)
@@ -172,6 +179,8 @@ class Recorder(RecordingCommon):
                     self._filter_recorded(self._indices_to_record[variable]))
                 indexes = numpy.array(
                     [self._population.id_to_index(atom_id) for atom_id in ids])
+                sampling_interval = self._population._vertex. \
+                    get_sampling_interval(variable)
                 read_in_spikes(
                     segment=segment,
                     spikes=self._get_spikes(),
@@ -179,6 +188,7 @@ class Recorder(RecordingCommon):
                     ids=ids, indexes=indexes,
                     first_id=self._population._first_id,
                     recording_start_time=self._recording_start_time,
+                    sampling_interval=sampling_interval,
                     label=self._population.label)
             else:
                 (data, ids, sampling_interval) = self._get_recorded_matrix(
@@ -240,6 +250,7 @@ class Recorder(RecordingCommon):
                     indexes=indexes,
                     first_id=data_cache.first_id,
                     recording_start_time=data_cache.recording_start_time,
+                    sampling_interval=variable_cache.sampling_interval,
                     label=data_cache.label)
             else:
                 read_in_signal(
@@ -250,7 +261,7 @@ class Recorder(RecordingCommon):
                     indexes=indexes,
                     variable=variable,
                     recording_start_time=data_cache.recording_start_time,
-                    sampling_interval=data_cache.sampling_interval,
+                    sampling_interval=variable_cache.sampling_interval,
                     units=variable_cache.units,
                     label=data_cache.label)
 
@@ -327,7 +338,7 @@ class Recorder(RecordingCommon):
 
 
 def read_in_spikes(segment, spikes, t, ids, indexes, first_id,
-                   recording_start_time, label):
+                   recording_start_time, sampling_interval, label):
     """
     Converts the data into SpikeTrains and saves them to the segment
 
@@ -345,6 +356,7 @@ def read_in_spikes(segment, spikes, t, ids, indexes, first_id,
     :type first_id: int
     :param recording_start_time: time recording started
     :type  recording_start_time: int
+    :param sampling_interval: how often a neuron is recorded
     :param label: recording elements label
     :type label: str
     :rtype None
@@ -357,6 +369,7 @@ def read_in_spikes(segment, spikes, t, ids, indexes, first_id,
             t_start=recording_start_time,
             t_stop=t_stop,
             units='ms',
+            sampling_rate=sampling_interval,
             source_population=label,
             source_id=id,
             source_index=index)
@@ -391,7 +404,7 @@ def _convert_extracted_data_into_neo_expected_format(
 
 
 def read_in_signal(segment, block, signal_array, ids, indexes, variable,
-                   recording_start_time, units, label):
+                   recording_start_time, sampling_interval, units, label):
     """ reads in a data item that's not spikes (likely v, gsyn e, gsyn i)
 
     Saves this data to the segment.
@@ -405,13 +418,13 @@ def read_in_signal(segment, block, signal_array, ids, indexes, variable,
     :param block: neo block
     :param indexes: the channel index's
     :param recording_start_time: when recording started
+    :param sampling_interval: how often a neuron is recorded
     :param units: the units of the recorded value
     :param label: human readable label
 
     :return: None
     """
     t_start = recording_start_time * quantities.ms
-    sampling_interval = get_simulator().machine_time_step / 1000.0
     sampling_period = sampling_interval * quantities.ms
     if signal_array.size > 0:
         source_ids = numpy.fromiter(ids, dtype=int)
