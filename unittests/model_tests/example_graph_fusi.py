@@ -22,14 +22,14 @@ p.setup(1)
 
 
 pop_src = p.Population(1, p.SpikeSourcePoisson(rate=50), label="src")
-pop_src2 = p.Population(1, p.SpikeSourcePoisson(rate=100), label="drive")
+pop_src2 = p.Population(1, p.SpikeSourcePoisson(rate=5), label="drive")
 cell_params = {"i_offset":0.0,  "tau_ca2":150, "i_alpha":1., "i_ca2":3.5,  'tau_m': 50.0, 'v_reset':-65}
 pop_ex = p.Population(1, p.extra_models.IFCurrExpCa2Concentration, cell_params, label="test")
 
 
 
 syn_plas = p.STDPMechanism(
-     timing_dependence = p.PreOnly(A_plus = 0.1*w_max*w_mult, A_minus = 0.1*w_max*w_mult, th_v_mem=V_th, th_ca_up_l = Ca_th_l, th_ca_up_h = Ca_th_h2, th_ca_dn_l = Ca_th_l, th_ca_dn_h = Ca_th_h1),
+     timing_dependence = p.PreOnly(A_plus = 0.15*w_max*w_mult, A_minus = 0.15*w_max*w_mult, th_v_mem=V_th, th_ca_up_l = Ca_th_l, th_ca_up_h = Ca_th_h2, th_ca_dn_l = Ca_th_l, th_ca_dn_h = Ca_th_h1),
         weight_dependence = p.WeightDependenceFusi(w_min=w_min*w_mult, w_max=w_max*w_mult, w_drift=w_drift*w_mult, th_w=th_w * w_mult), weight=w0*w_mult, delay=1.0)
 
 #syn = p.StaticSynapse(weight=1.0, delay=1.0)
