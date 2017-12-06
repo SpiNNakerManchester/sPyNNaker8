@@ -122,7 +122,7 @@ class Recorder(RecordingCommon):
                 if variable == SPIKES:
                     data = self._get_spikes()
                     sampling_interval = self._population._vertex. \
-                        get_sampling_interval(variable)
+                        get_spikes_sampling_interval()
                     ids = sorted(self._filter_recorded(
                         self._indices_to_record[variable]))
                 else:
@@ -180,7 +180,7 @@ class Recorder(RecordingCommon):
                 indexes = numpy.array(
                     [self._population.id_to_index(atom_id) for atom_id in ids])
                 sampling_interval = self._population._vertex. \
-                    get_sampling_interval(variable)
+                    get_spikes_sampling_interval()
                 read_in_spikes(
                     segment=segment,
                     spikes=self._get_spikes(),
