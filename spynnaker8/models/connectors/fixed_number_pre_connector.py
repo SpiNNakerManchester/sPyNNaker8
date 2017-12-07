@@ -25,24 +25,19 @@ class FixedNumberPreConnector(CommonFixedNumberPreConnector,
             Population to itself, this flag determines whether a neuron is
             allowed to connect to itself, or only to other neurons in the
             Population.
-        :param `pyNN.Space` space:
-            a Space object, needed if you wish to specify distance-
-            dependent weights or delays - not implemented
         :param safe: if True, check that weights and delays have valid values.
         If False, this check is skipped.
         :param verbose:
         :param with_replacement:
+            if False, once a connection is made, it can't be
+            made again; if True, multiple connections between the same pair
+            of neurons are allowed
         :param rng:
         :param callback:
         """
-        self.with_replacement = with_replacement
         CommonFixedNumberPreConnector.__init__(
-            self, n=n, safe=safe,
-            allow_self_connections=allow_self_connections, verbose=verbose)
-#        PyNNFixedNumberPreConnector.__init__(
-#            self, n=n, allow_self_connections=allow_self_connections,
-#            with_replacement=with_replacement, rng=rng, safe=safe,
-#            callback=callback)
+            self, n=n, allow_self_connections=allow_self_connections,
+            with_replacement=with_replacement, safe=safe, verbose=verbose)
 
     @property
     def n(self):
@@ -51,6 +46,3 @@ class FixedNumberPreConnector(CommonFixedNumberPreConnector,
     @n.setter
     def n(self, new_value):
         self._n_pre = new_value
-
-    def get_rng_parameters(self, n_pre_neurons):
-        return {"low": 0, "high": n_pre_neurons}
