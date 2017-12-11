@@ -161,7 +161,7 @@ class TestVABenchmarkSpikes(BaseTestCase):
         exc_spikes = do_run(seed=self._test_seed)
         spike_count = neo_convertor.count_spikes(exc_spikes)
         if self._test_seed == 1:
-            self.assertEquals(2196, spike_count)
+            self.assertEquals(2287, spike_count)
         else:
             try:
                 self.assertLess(1900, spike_count)
