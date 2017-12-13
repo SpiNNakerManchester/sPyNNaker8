@@ -191,10 +191,10 @@ class Recorder(RecordingCommon):
                     sampling_interval=sampling_interval,
                     label=self._population.label)
             else:
-                (data, ids, sampling_interval) = self._get_recorded_matrix(
+                (data, indexes, sampling_interval) = self._get_recorded_matrix(
                     variable)
-                indexes = numpy.array(
-                    [self._population.id_to_index(atom_id) for atom_id in ids])
+                ids = numpy.array(
+                    [self._population.index_to_id(index) for index in indexes])
                 read_in_signal(
                     segment=segment,
                     block=block,
