@@ -23,10 +23,10 @@ to_plot_wgts = False
 p.setup(1)
 
 simtime = 300
-n_runs = 10
+n_runs = 1000
 w0 = 0.0
 pre_rate = 50
-drive_rates = np.arange(50, 300, 10) # driving source rates
+drive_rates = np.arange(0, 300, 10) # driving source rates
 max_out_rate = 200
 output_file = "data/fig2_"+timestr
 output_ext = ".txt"
@@ -70,18 +70,22 @@ pop_ex.record(['spikes'])
 #pop_src.record('spikes')
 pop_src2.record('spikes')
 nseg = 0
-for dr_r in drive_rates:
-    pop_src2.set(rate=dr_r)
-    for r in range(n_runs):
+save_train = []
+for r in range(n_runs):
+    for dr_r in drive_rates:
+        pop_src2.set(rate=dr_r) # this has to happen before every run because of the poisson souce bug
         p.run(simtime)
         n_spikes = pop_ex.get_data('spikes').segments[nseg].spiketrains[0].shape[0]
-        print pop_ex.get_data('spikes').segments[nseg].spiketrains
-        print nseg
-        print pop_ex.get_data('spikes').segments[0].spiketrains
-        print pop_ex.get_data('spikes').segments
+#         print pop_ex.get_data('spikes').segments[nseg].spiketrains
+#         if(nseg==0):
+#             save_train = pop_ex.get_data('spikes').segments[nseg].spiketrains
+#         print save_train
+        print nseg, dr_r
+#         for i in range(nseg+1):
+#             print i, pop_ex.get_data('spikes').segments[i].spiketrains
 
-        n_spikes2 = pop_src2.get_data('spikes').segments[nseg].spiketrains[0].shape[0]
-        print "drive spikes", n_spikes2
+#         n_spikes2 = pop_src2.get_data('spikes').segments[nseg].spiketrains[0].shape[0]
+#         print "drive spikes", n_spikes2
         nseg = nseg+1
         print n_spikes
         new_rate = int(round( n_spikes*1000.0/simtime ))
@@ -95,7 +99,7 @@ for dr_r in drive_rates:
 
         p.reset()
     probs = n_trans / n_tot
-    probs.tofile(output_file+"_"+str(dr_r)+output_ext, sep='\t', format='%10.5f')
+    probs.tofile(output_file+"_"+str(r)+output_ext, sep='\t', format='%10.5f')
 
 
 
