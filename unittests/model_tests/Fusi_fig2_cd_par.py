@@ -23,10 +23,11 @@ to_plot_wgts = False
 p.setup(1)
 
 simtime = 300
-n_runs = 1000
+n_runs = 10
 w0 = 0.0
 pre_rate = 50
-drive_rates = np.arange(0, 300, 10) # driving source rates
+drive_rates = np.arange(50, 70, 10) # driving source rates
+n_rates = drive_rates.size
 max_out_rate = 200
 output_file = "data/fig2_"+timestr
 output_ext = ".txt"
@@ -34,12 +35,12 @@ output_ext = ".txt"
 n_trans = np.zeros(max_out_rate+1) # number of weight transitions for each spiking rate of the output neuron for 0 to 200
 n_tot = np.zeros(max_out_rate+1) # number of sims ran for each spiking rate of the output neuron (needed to calculate transition probability)
 
+n_nrn = 5  # total number of neurons in each run
 
-
-pop_src = p.Population(1, p.SpikeSourcePoisson(rate=pre_rate), label="src")
-pop_src2 = p.Population(1, p.SpikeSourcePoisson(rate=100), label="drive")
+pop_src = p.Population(n_nrn, p.SpikeSourcePoisson(rate=pre_rate), label="src")
+pop_src2 = p.Population(n_nrn, p.SpikeSourcePoisson(rate=100), label="drive")
 cell_params = {"i_offset":0.0,  "tau_ca2":150, "i_alpha":1., "i_ca2":3.5,  'tau_m': 50.0, 'v_reset':-65}
-pop_ex = p.Population(1, p.extra_models.IFCurrExpCa2Concentration, cell_params, label="test")
+pop_ex = p.Population(n_nrn, p.extra_models.IFCurrExpCa2Concentration, cell_params, label="test")
 
 
 
@@ -75,27 +76,35 @@ for r in range(n_runs):
     for dr_r in drive_rates:
         pop_src2.set(rate=dr_r) # this has to happen before every run because of the poisson souce bug
         p.run(simtime)
-        n_spikes = pop_ex.get_data('spikes').segments[nseg].spiketrains[0].shape[0]
-#         print pop_ex.get_data('spikes').segments[nseg].spiketrains
+        new_rates = np.zeros(n_nrn, dtype=int)
+        for n in range(n_nrn):
+            n_spikes = pop_ex.get_data('spikes').segments[nseg].spiketrains[n].shape[0]
+            new_rates[n] = int(round( n_spikes*1000.0/simtime ))
+            print n,":",n_spikes, new_rates[n]
 #         if(nseg==0):
 #             save_train = pop_ex.get_data('spikes').segments[nseg].spiketrains
 #         print save_train
-        print nseg, dr_r, n_spikes
+        print nseg, dr_r
 #         for i in range(nseg+1):
 #             print i, pop_ex.get_data('spikes').segments[i].spiketrains
 
-#         n_spikes2 = pop_src2.get_data('spikes').segments[nseg].spiketrains[0].shape[0]
-#         print "drive spikes", n_spikes2
+        for n in range(n_nrn):
+            n_spikes2 = pop_src2.get_data('spikes').segments[nseg].spiketrains[n].shape[0]
+            print "drive spikes ",n, ":", n_spikes2
         nseg = nseg+1
         print n_spikes
         new_rate = int(round( n_spikes*1000.0/simtime ))
         if new_rate>max_out_rate:
             continue
-        new_w = proj.get('weight', format='list', with_address=False)[0]
+        new_w = proj.get('weight', format='list', with_address=False)
+
         print "new w", new_w
-        if((w0*w_mult-th_w*w_mult)*(new_w - th_w*w_mult)<0):
-            n_trans[new_rate] = n_trans[new_rate] + 1
-        n_tot[new_rate] = n_tot[new_rate] + 1
+        for n in range(n_nrn):
+            if new_rates[n]>max_out_rate:
+                continue
+            if((w0*w_mult-th_w*w_mult)*(new_w[n] - th_w*w_mult)<0):
+                n_trans[new_rates[n]] = n_trans[new_rates[n]] + 1
+            n_tot[new_rates[n]] = n_tot[new_rates[n]] + 1
 
         p.reset()
     probs = n_trans / n_tot
