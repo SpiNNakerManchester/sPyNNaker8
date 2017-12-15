@@ -35,7 +35,7 @@ output_ext = ".txt"
 n_trans = np.zeros(max_out_rate+1) # number of weight transitions for each spiking rate of the output neuron for 0 to 200
 n_tot = np.zeros(max_out_rate+1) # number of sims ran for each spiking rate of the output neuron (needed to calculate transition probability)
 
-n_nrn = 5  # total number of neurons in each run
+n_nrn = 10  # total number of neurons in each run
 
 pop_src = p.Population(n_nrn, p.SpikeSourcePoisson(rate=pre_rate), label="src")
 pop_src2 = p.Population(n_nrn, p.SpikeSourcePoisson(rate=100), label="drive")
@@ -68,13 +68,14 @@ proj2 = p.Projection(pop_src2,  pop_ex,  p.OneToOneConnector(),
 #     )
 
 pop_ex.record(['spikes'])
-#pop_src.record('spikes')
+pop_src.record('spikes')
 pop_src2.record('spikes')
 nseg = 0
 save_train = []
 for r in range(n_runs):
     for dr_r in drive_rates:
         pop_src2.set(rate=dr_r) # this has to happen before every run because of the poisson souce bug
+        pop_src.set(rate=pre_rate) # this has to happen before every run because of the poisson souce bug
         p.run(simtime)
         new_rates = np.zeros(n_nrn, dtype=int)
         for n in range(n_nrn):
@@ -88,14 +89,13 @@ for r in range(n_runs):
 #         for i in range(nseg+1):
 #             print i, pop_ex.get_data('spikes').segments[i].spiketrains
 
-        for n in range(n_nrn):
-            n_spikes2 = pop_src2.get_data('spikes').segments[nseg].spiketrains[n].shape[0]
-            print "drive spikes ",n, ":", n_spikes2
+#         for n in range(n_nrn):
+#             n_spikes2 = pop_src2.get_data('spikes').segments[nseg].spiketrains[n].shape[0]
+#             print "drive spikes ",n, ":", n_spikes2
+#         for n in range(n_nrn):
+#             n_spikes0 = pop_src.get_data('spikes').segments[nseg].spiketrains[n].shape[0]
+#             print "input spikes ",n, ":", n_spikes0
         nseg = nseg+1
-        print n_spikes
-        new_rate = int(round( n_spikes*1000.0/simtime ))
-        if new_rate>max_out_rate:
-            continue
         new_w = proj.get('weight', format='list', with_address=False)
 
         print "new w", new_w
