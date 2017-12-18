@@ -1,18 +1,16 @@
 import spynnaker8 as p
 from p8_integration_tests.base_test_case import BaseTestCase
-from pyNN.utility.plotting import Figure, Panel
 import numpy
-import matplotlib.pyplot as plt
 import math
 import unittest
+
 
 class TestSTDPNearestPairAdditive(BaseTestCase):
 
     def test_potentiation_and_depression(self):
         p.setup(1)
-        runtime = 40
-        initial_run = 1000 # to negate any initial conditions
-        populations = []
+        runtime = 100
+        initial_run = 1000  # to negate any initial conditions
 
         # STDP parameters
         a_plus = 0.01
@@ -42,7 +40,7 @@ class TestSTDPNearestPairAdditive(BaseTestCase):
         pop_src2 = p.Population(1, p.SpikeSourceArray,
                                 {'spike_times': spike_times2}, label="src2")
 
-        #post-plastic-synapse population
+        # Post-plastic-synapse population
         pop_exc = p.Population(1, p.IF_curr_exp(),  label="test")
 
         # Create projections
@@ -55,29 +53,28 @@ class TestSTDPNearestPairAdditive(BaseTestCase):
             p.StaticSynapse(weight=5.0, delay=1), receptor_type="excitatory")
 
         syn_plas = p.STDPMechanism(
-            timing_dependence = p.SpikeNearestPairRule(),
-            weight_dependence = p.AdditiveWeightDependence(w_min=min_weight,
-                                                           w_max=max_weight),
-            weight=initial_weight, delay=plastic_delay)
+                                timing_dependence=p.SpikeNearestPairRule(),
+                                weight_dependence=p.AdditiveWeightDependence(
+                                        w_min=min_weight, w_max=max_weight),
+                                    weight=initial_weight, delay=plastic_delay)
 
         plastic_synapse = p.Projection(pop_src1, pop_exc,
-                            p.OneToOneConnector(),
-                                synapse_type=syn_plas)
+                                        p.OneToOneConnector(),
+                                        synapse_type=syn_plas)
 
         pop_src1.record('all')
         pop_exc.record("all")
-        p.run(initial_run + 100)
-        total_time = initial_run
+        p.run(initial_run + runtime)
         weights = []
 
         weights.append(plastic_synapse.get('weight', 'list',
-                                            with_address=False)[0])
+                        with_address=False)[0])
 
-        pre_spikes = pop_src1.get_data('spikes')
-        v = pop_exc.get_data('v')
+        # pre_spikes = pop_src1.get_data('spikes')
+        # v = pop_exc.get_data('v')
         spikes = pop_exc.get_data('spikes')
 
-        potentiation_time =  (spikes.segments[0].spiketrains[0].magnitude[0] +
+        potentiation_time = (spikes.segments[0].spiketrains[0].magnitude[0] +
                               plastic_delay) - spike_times[0]
         depression_time = spike_times[1] - (
             spikes.segments[0].spiketrains[0].magnitude[1] + plastic_delay)

@@ -11,7 +11,7 @@ class TestSTDPPairAdditive(BaseTestCase):
     def test_potentiation_and_depression(self):
         p.setup(1)
         runtime = 40
-        initial_run = 1000 # to negate any initial conditions
+        initial_run = 1000  # to negate any initial conditions
         populations = []
 
         # STDP parameters
@@ -73,11 +73,11 @@ class TestSTDPPairAdditive(BaseTestCase):
         weights.append(plastic_synapse.get('weight', 'list',
                                             with_address=False)[0])
 
-        pre_spikes = pop_src1.get_data('spikes')
-        v = pop_exc.get_data('v')
+        # pre_spikes = pop_src1.get_data('spikes')
+        # v = pop_exc.get_data('v')
         spikes = pop_exc.get_data('spikes')
 
-        potentiation_time_1 =  (spikes.segments[0].spiketrains[0].magnitude[0] +
+        potentiation_time_1 = (spikes.segments[0].spiketrains[0].magnitude[0] +
                               plastic_delay) - spike_times[0]
         potentiation_time_2 =  (spikes.segments[0].spiketrains[0].magnitude[1] +
                               plastic_delay) - spike_times[0]
