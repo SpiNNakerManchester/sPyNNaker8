@@ -1,10 +1,9 @@
 import spynnaker8 as p
 from p8_integration_tests.base_test_case import BaseTestCase
-from pyNN.utility.plotting import Figure, Panel
 import numpy
-import matplotlib.pyplot as plt
 import math
 import unittest
+
 
 class TestSTDPPairAdditive(BaseTestCase):
 
@@ -12,7 +11,6 @@ class TestSTDPPairAdditive(BaseTestCase):
         p.setup(1)
         runtime = 40
         initial_run = 1000  # to negate any initial conditions
-        populations = []
 
         # STDP parameters
         a_plus = 0.01
@@ -42,7 +40,7 @@ class TestSTDPPairAdditive(BaseTestCase):
         pop_src2 = p.Population(1, p.SpikeSourceArray,
                                 {'spike_times': spike_times2}, label="src2")
 
-        #post-plastic-synapse population
+        # Post-plastic-synapse population
         pop_exc = p.Population(1, p.IF_curr_exp(),  label="test")
 
         # Create projections
@@ -55,32 +53,31 @@ class TestSTDPPairAdditive(BaseTestCase):
             p.StaticSynapse(weight=5.0, delay=1), receptor_type="excitatory")
 
         syn_plas = p.STDPMechanism(
-            timing_dependence = p.SpikePairRule(),
-            weight_dependence = p.AdditiveWeightDependence(w_min=min_weight,
-                                                           w_max=max_weight),
+            timing_dependence=p.SpikePairRule(),
+            weight_dependence=p.AdditiveWeightDependence(w_min=min_weight,
+                                                         w_max=max_weight),
             weight=initial_weight, delay=plastic_delay)
 
         plastic_synapse = p.Projection(pop_src1, pop_exc,
-                            p.OneToOneConnector(),
-                                synapse_type=syn_plas)
+                                       p.OneToOneConnector(),
+                                       synapse_type=syn_plas)
 
         pop_src1.record('all')
         pop_exc.record("all")
-        p.run(initial_run + 100)
-        total_time = initial_run
+        p.run(initial_run + runtime)
         weights = []
 
         weights.append(plastic_synapse.get('weight', 'list',
-                                            with_address=False)[0])
+                                           with_address=False)[0])
 
         # pre_spikes = pop_src1.get_data('spikes')
         # v = pop_exc.get_data('v')
         spikes = pop_exc.get_data('spikes')
 
         potentiation_time_1 = (spikes.segments[0].spiketrains[0].magnitude[0] +
-                              plastic_delay) - spike_times[0]
-        potentiation_time_2 =  (spikes.segments[0].spiketrains[0].magnitude[1] +
-                              plastic_delay) - spike_times[0]
+                               plastic_delay) - spike_times[0]
+        potentiation_time_2 = (spikes.segments[0].spiketrains[0].magnitude[1] +
+                               plastic_delay) - spike_times[0]
 
         depression_time_1 = spike_times[1] - (
             spikes.segments[0].spiketrains[0].magnitude[0] + plastic_delay)
@@ -88,25 +85,25 @@ class TestSTDPPairAdditive(BaseTestCase):
             spikes.segments[0].spiketrains[0].magnitude[1] + plastic_delay)
 
         potentiation_1 = max_weight * a_plus * \
-                        math.exp(-potentiation_time_1/tau_plus)
+            math.exp(-potentiation_time_1/tau_plus)
         potentiation_2 = max_weight * a_plus * \
-                        math.exp(-potentiation_time_2/tau_plus)
+            math.exp(-potentiation_time_2/tau_plus)
 
         depression_1 = max_weight * a_minus * \
-                        math.exp(-depression_time_1/tau_minus)
+            math.exp(-depression_time_1/tau_minus)
         depression_2 = max_weight * a_minus * \
-                        math.exp(-depression_time_2/tau_minus)
+            math.exp(-depression_time_2/tau_minus)
 
-        new_weight_exact = (initial_weight + potentiation_1 + potentiation_2 \
+        new_weight_exact = (initial_weight + potentiation_1 + potentiation_2
                             - depression_1 - depression_2)
 
         print "Pre neuron spikes at: {}".format(spike_times)
-        print "Post-neuron spikes at: {}".format(\
+        print "Post-neuron spikes at: {}".format(
                         spikes.segments[0].spiketrains[0].magnitude)
         print "Potentiation time differences: {}, {},\
              \nDepression time difference: {}, {}".format(
                     potentiation_time_1, potentiation_time_2,
-                        depression_time_1, depression_time_2)
+                    depression_time_1, depression_time_2)
         print "Ammounts to potentiate: {}, {},\
             \nAmount to depress: {}, {},".format(
             potentiation_1, potentiation_2, depression_1, depression_2)
@@ -114,7 +111,7 @@ class TestSTDPPairAdditive(BaseTestCase):
         print "New weight SpiNNaker: {}".format(weights[0])
 
         self.assertTrue(numpy.allclose(weights[0],
-                            new_weight_exact, atol=0.001))
+                                       new_weight_exact, atol=0.001))
         p.end()
 
 
