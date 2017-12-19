@@ -23,10 +23,10 @@ to_plot_wgts = False
 p.setup(1)
 
 simtime = 300
-n_runs = 1
+n_runs = 1000
 w0 = 0.0
 pre_rate = 50
-drive_rates = np.arange(50, 60, 10) # driving source rates
+drive_rates = np.arange(0, 200, 10) # driving source rates
 n_rates = drive_rates.size
 max_out_rate = 200
 output_file = "data/fig2_"+timestr
@@ -35,11 +35,12 @@ output_ext = ".txt"
 n_trans = np.zeros(max_out_rate+1) # number of weight transitions for each spiking rate of the output neuron for 0 to 200
 n_tot = np.zeros(max_out_rate+1) # number of sims ran for each spiking rate of the output neuron (needed to calculate transition probability)
 
-n_nrn = 3  # total number of neurons in each run
+n_nrn = 1  # total number of neurons in each run
 
 pop_src = p.Population(n_nrn, p.SpikeSourcePoisson(rate=pre_rate), label="src")
 pop_src2 = p.Population(n_nrn, p.SpikeSourcePoisson(rate=100), label="drive")
-cell_params = {"i_offset":0.0,  "tau_ca2":150, "i_alpha":1., "i_ca2":3.5,  'tau_m': 50.0, 'v_reset':-65}
+#cell_params = {"i_offset":0.0,  "tau_ca2":150, "i_alpha":1., "i_ca2":3.5,  'tau_m': 50.0, 'v_reset':-65}
+cell_params = {"i_offset":0.0,  "tau_ca2":150, "i_alpha":1., "i_ca2":3.,  'v_reset':-65}
 pop_ex = p.Population(n_nrn, p.extra_models.IFCurrExpCa2Concentration, cell_params, label="test")
 
 
