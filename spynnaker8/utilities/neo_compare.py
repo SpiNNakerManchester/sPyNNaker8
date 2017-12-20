@@ -1,3 +1,6 @@
+from spynnaker8.utilities.version_util import pynn8_syntax
+
+
 def compare_spiketrain(spiketrain1, spiketrain2):
     """
     Checks two Spiketrains have the exact same data
@@ -53,55 +56,61 @@ def compare_spiketrains(spiketrains1, spiketrains2, same_data=True):
         compare_spiketrain(spiketrain1, spiketrain2)
 
 
-def compare_analogsignalarray(asa1, asa2):
+def compare_analogsignal(as1, as2):
     """
     Compares two analogsignalarray Objects to see if they are the same
-    :param asa1: first analogsignalarray
-        holding list of individnal analogsignalarray Objects
-    :type asa1 Analogsignalarray
-    :param asa2: second analogsignalarray
-        holding list of individnal analogsignalarray Objects
-    :type asa2 Analogsignalarray
+    :param as1: first analogsignal
+        holding list of individual analogsignal Objects
+    :type as1 Analogsignal
+    :param as2: second analogsignal
+        holding list of individual analogsignal Objects
+    :type as2 Analogsignal
     :raises AssertionError
     """
-    if asa1.name != asa2.name:
+    if pynn8_syntax:
+        as1_index = as1.channel_index
+        as2_index = as2.channel_index
+    else:
+        as1_index = as1.channel_index.index
+        as2_index = as2.channel_index.index
+    if as1.name != as2.name:
         msg = "analogsignalarray1 has name {} while analogsignalarray1 has " \
-              "{} ".format(asa1.name, asa2.name)
+              "{} ".format(as1.name, as2.name)
         raise AssertionError(msg)
-    if len(asa1.channel_index) != len(asa2.channel_index):
+    if len(as1_index) != len(as2_index):
         msg = "channel_index 1 has len {} while channel_index 2 has {} " \
-              "for {}".format(len(asa1.channel_index),
-                              len(asa2.channel_index), asa1.name)
+              "for {}".format(len(as1_index),
+                              len(as2_index), as1.name)
         raise AssertionError(msg)
-    for channel1, channel2 in zip(asa1.channel_index, asa2.channel_index):
-        if channel1 != channel2:
-            msg = "channel 1 is  while channel 2 is {} " \
-                  "for {}".format(channel1, channel2, asa1.name)
+    for id1, id2 in zip(as1_index, as2_index):
+        if id1 != id2:
+            msg = "id 1 is  while id 2 is {} " \
+                  "for {}".format(id1, id2, as1.name)
             raise AssertionError(msg)
-    if len(asa1.times) != len(asa2.times):
+    if len(as1.times) != len(as2.times):
         msg = "times 1 has len {} while times 2 has {} " \
-              "for {}".format(len(asa1.times),
-                              len(asa2.times), asa1.name)
+              "for {}".format(len(as1.times),
+                              len(as2.times), as1.name)
         raise AssertionError(msg)
-    for time1, time2 in zip(asa1.times, asa2.times):
+    for time1, time2 in zip(as1.times, as2.times):
         if time1 != time2:
             msg = "time 1 is  while time 2 is {} " \
-                  "for {}".format(time1, time2, asa1.name)
+                  "for {}".format(time1, time2, as1.name)
             raise AssertionError(msg)
-    if len(asa1) != len(asa2):
-        msg = "analogsignalarray 1 has len {} while analogsignalarray 2 has " \
-              "{} for {}".format(len(asa1), len(asa2), asa1.name)
+    if len(as1) != len(as2):
+        msg = "analogsignal 1 has len {} while analogsignal 2 has " \
+              "{} for {}".format(len(as1), len(as2), as1.name)
         raise AssertionError(msg)
-    for signal1, signal2 in zip(asa1, asa2):
+    for signal1, signal2 in zip(as1, as2):
         # print signal1, signal2
         if len(signal1) != len(signal2):
             msg = "signal 1 has len {} while signal 2 has " \
-                  "{} for {}".format(len(signal1), len(signal2), asa1.name)
+                  "{} for {}".format(len(signal1), len(signal2), as1.name)
             raise AssertionError(msg)
         for value1, value2 in zip(signal1, signal2):
             if value1 != value2:
                 msg = "value 1 is  while value2 is {} " \
-                      "for {}".format(value1, value2, asa1.name)
+                      "for {}".format(value1, value2, as1.name)
                 raise AssertionError(msg)
 
 
@@ -119,14 +128,21 @@ def compare_segments(seg1, seg2, same_data=True):
     :raises AssertionError
     """
     compare_spiketrains(seg1.spiketrains, seg2.spiketrains, same_data)
+    if pynn8_syntax:
+        seg1_analogsignals = seg1.analogsignalarrays
+        seg2_analogsignals = seg2.analogsignalarrays
+    else:
+        seg1_analogsignals = seg1.analogsignals
+        seg2_analogsignals = seg2.analogsignals
+
     if same_data and \
-            len(seg1.analogsignalarrays) != len(seg2.analogsignalarrays):
+            len(seg1_analogsignals) != len(seg2_analogsignals):
         msg = "Segment1 has {} analogsignalarrays while Segment2 as {} " \
-              "analogsignalarrays".format(len(seg1.analogsignalarrays),
-                                          len(seg1.analogsignalarrays))
+              "analogsignalarrays".format(len(seg1_analogsignals),
+                                          len(seg1_analogsignals))
         raise AssertionError(msg)
-    for analogsignalarray1 in seg1.analogsignalarrays:
-        name = analogsignalarray1.name
+    for analogsignal1 in seg1_analogsignals:
+        name = analogsignal1.name
         filtered = seg2.filter(name=name)
         if len(filtered) == 0:
             if same_data:
@@ -134,8 +150,8 @@ def compare_segments(seg1, seg2, same_data=True):
                       "".format(name)
                 raise AssertionError(msg)
         else:
-            analogsignalarray2 = seg2.filter(name=name)[0]
-            compare_analogsignalarray(analogsignalarray1, analogsignalarray2)
+            analogsignal2 = seg2.filter(name=name)[0]
+            compare_analogsignal(analogsignal1, analogsignal2)
 
 
 def compare_blocks(neo1, neo2, same_runs=True, same_data=True):

@@ -49,18 +49,16 @@ class TestSetTOffset(BaseTestCase):
         n_cores = 1
         neo = do_run(n_neurons, n_cores, 0.1875)
         spiketrains = neo.segments[0].spiketrains
-        length = len(spiketrains[0])
         for spiketrain in spiketrains:
-            self.assertEquals(length,  len(spiketrain))
+            self.assertEquals(9,  len(spiketrain))
 
     def test_three_cores(self):
         n_neurons = 40
         n_cores = 3
         neo = do_run(n_neurons, n_cores, 0.1875)
         spiketrains = neo.segments[0].spiketrains
-        length = len(spiketrains[0])
         for spiketrain in spiketrains:
-            self.assertEquals(length,  len(spiketrain))
+            self.assertEquals(9,  len(spiketrain))
 
 
 if __name__ == '__main__':

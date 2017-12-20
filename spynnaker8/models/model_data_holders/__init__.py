@@ -19,4 +19,5 @@ __all__ = ["IFCondExpDataHolder", "IFCurrDualExpDataHolder",
            "SpikeSourcePoissonDataHolder", "SpikeInjectorDataHolder",
            "IfCondExpStocDataHolder", "IfCurrDeltaDataHolder",
            "IfCurrExpCa2AdaptiveDataHolder",
-           "IfCurrExpCa2ConcentrationDataHolder"]
+           "IfCurrExpCa2ConcentrationDataHolder",
+           "IFCurrAlphaDataHolder"]

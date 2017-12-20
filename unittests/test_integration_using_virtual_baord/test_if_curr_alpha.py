@@ -7,10 +7,10 @@ def do_run():
     runtime = 50
     populations = []
 
-    pop_src1 = p.Population(32, p.SpikeSourceArray,
-                            {'spike_times': [5, 15, 20, 30]}, label="src1")
+    pop_src1 = p.Population(1, p.SpikeSourceArray,
+                            {'spike_times': [[5, 15, 20, 30]]}, label="src1")
 
-    populations.append(p.Population(32, p.IF_curr_alpha, {}, label="test"))
+    populations.append(p.Population(1, p.IF_curr_alpha, {}, label="test"))
 
     populations[0].set(tau_syn_E=2)
     populations[0].set(tau_syn_I=4)
