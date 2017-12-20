@@ -41,10 +41,6 @@ class FixedNumberPostConnector(CommonFixedNumberPostConnector,
         CommonFixedNumberPostConnector.__init__(
             self, n=n, allow_self_connections=allow_self_connections,
             with_replacement=with_replacement, safe=safe, verbose=verbose)
-#        PyNNFixedNumberPostConnector.__init__(
-#            self, n=n, allow_self_connections=allow_self_connections,
-#            with_replacement=with_replacement, rng=rng, safe=safe,
-#            callback=callback)
 
     def get_rng_parameters(self, n_post_neurons):
         return {"low": 0, "high": n_post_neurons}
