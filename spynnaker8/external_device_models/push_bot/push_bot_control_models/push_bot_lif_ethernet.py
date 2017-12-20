@@ -36,19 +36,27 @@ class PushBotLifEthernetDataHolder(DataHolder):
                 'tau_refrac'],
             i_offset=ExternalDeviceLifControl.default_parameters['i_offset'],
             v_init=PushBotLifEthernet.none_pynn_default_parameters['v_init']):
+        # pylint: disable=too-many-arguments, too-many-locals
+        super(PushBotLifEthernetDataHolder, self).__init__({
+            'constraints': constraints,
+            'devices': devices,
+            'incoming_spike_buffer_size': incoming_spike_buffer_size,
+            'label': label,
+            'protocol': protocol,
+            'pushbot_ip_address': pushbot_ip_address,
+            'pushbot_port': pushbot_port,
+            'ring_buffer_sigma': ring_buffer_sigma,
+            'spikes_per_second': spikes_per_second,
 
-        DataHolder.__init__(
-            self,
-            {'protocol': protocol, 'devices': devices,
-             'spikes_per_second': spikes_per_second,
-             'ring_buffer_sigma': ring_buffer_sigma, 'label': label,
-             'incoming_spike_buffer_size': incoming_spike_buffer_size,
-             'constraints': constraints,
-             'tau_m': tau_m, 'cm': cm, 'v_rest': v_rest, 'v_reset': v_reset,
-             'tau_syn_E': tau_syn_E, 'tau_syn_I': tau_syn_I,
-             'tau_refrac': tau_refrac, 'i_offset': i_offset, 'v_init': v_init,
-             'pushbot_ip_address': pushbot_ip_address,
-             'pushbot_port': pushbot_port})
+            'cm': cm,
+            'i_offset': i_offset,
+            'tau_m': tau_m,
+            'tau_refrac': tau_refrac,
+            'tau_syn_E': tau_syn_E,
+            'tau_syn_I': tau_syn_I,
+            'v_init': v_init,
+            'v_reset': v_reset,
+            'v_rest': v_rest})
 
     @staticmethod
     def build_model():

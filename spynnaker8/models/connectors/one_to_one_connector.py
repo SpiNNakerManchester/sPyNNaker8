@@ -7,9 +7,9 @@ from spynnaker.pyNN.models.neural_projections.connectors \
 
 class OneToOneConnector(CommonOneToOneConnector, PyNNOneToOneConnector):
     """
-    Where the pre- and postsynaptic populations have the same size, connect
-    cell i in the presynaptic pynn_population.py to cell i in the postsynaptic
-    pynn_population.py for all i.
+    Where the pre- and postsynaptic populations have the same size, connect\
+    cell i in the presynaptic population to cell i in the postsynaptic\
+    population for all i.
     """
 
     def __init__(self, safe=True, callback=None):

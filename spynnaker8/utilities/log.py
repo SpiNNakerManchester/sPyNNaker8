@@ -57,7 +57,8 @@ class ConfiguredFormatter(logging.Formatter):
                 )
                 if '' not in modules:
                     _levels.update(
-                        dict(map(lambda m: (m, level), modules)))
+                        dict(map(lambda m, lv=level: (m, lv),
+                                 modules)))
         return _levels
 
     @staticmethod

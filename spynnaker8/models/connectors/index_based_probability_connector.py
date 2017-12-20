@@ -10,6 +10,7 @@ class IndexBasedProbabilityConnector(
     def __init__(
             self, index_expression, allow_self_connections=True, rng=None,
             safe=True, callback=None):
+        # pylint: disable=too-many-arguments
         AbstractConnector.__init__(self, safe=safe)
         PyNNIndexBasedProbabilityConnector.__init__(
             self, index_expression=index_expression,

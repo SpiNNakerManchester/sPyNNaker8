@@ -535,10 +535,9 @@ def run(simtime, callbacks=None):
 run_for = run
 
 
-def run_until(self, tstop):
+def run_until(tstop):
     """ run until that time period has completed
 
-    :param self: ????
     :param tstop: the time to stop at
     :return: ??????
     """

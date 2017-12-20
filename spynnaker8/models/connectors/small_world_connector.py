@@ -10,6 +10,7 @@ class SmallWorldConnector(CommonSmallWorldConnector):
             self, degree, rewiring, allow_self_connections=True, space=Space(),
             safe=True, verbose=False, n_connections=None, weights=0.0,
             delays=1):
+        # pylint: disable=too-many-arguments
         CommonSmallWorldConnector.__init__(
             self, degree=degree, rewiring=rewiring,
             allow_self_connections=allow_self_connections,
