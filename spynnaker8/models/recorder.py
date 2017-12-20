@@ -22,6 +22,8 @@ logger = logging.getLogger(__name__)
 
 
 class Recorder(RecordingCommon):
+    # pylint: disable=protected-access
+
     def __init__(self, population):
         RecordingCommon.__init__(self, population)
         self._recording_start_time = get_simulator().t
@@ -29,11 +31,10 @@ class Recorder(RecordingCommon):
 
     @staticmethod
     def _get_io(filename):
+        """ Return a Neo IO instance, guessing the type based on the filename\
+            suffix.
         """
-        Return a Neo IO instance, guessing the type based on the filename
-        suffix.
-        """
-        logger.debug("Creating Neo IO for filename %s" % filename)
+        logger.debug("Creating Neo IO for filename %s", filename)
         directory = os.path.dirname(filename)
         utility_calls.check_directory_exists_and_create_if_not(directory)
         extension = os.path.splitext(filename)[1]
@@ -77,8 +78,7 @@ class Recorder(RecordingCommon):
         return block
 
     def _get_units(self, variable):
-        """
-        Get units with some safety code if the population has trouble
+        """ Get units with some safety code if the population has trouble
 
         :param variable: name of the variable
         :type variable: str
@@ -88,8 +88,8 @@ class Recorder(RecordingCommon):
         try:
             return self._population.find_units(variable)
         except Exception as ex:
-            logger.warn("Population: {} Does not support units for {}"
-                        "".format(self._population.label, variable))
+            logger.warn("Population: %s Does not support units for %s",
+                        self._population.label, variable)
             if variable == SPIKES:
                 return "spikes"
             if variable == MEMBRANE_POTENTIAL:
@@ -106,9 +106,9 @@ class Recorder(RecordingCommon):
         :rtype: None
         """
         variables = self._get_all_recording_variables()
-        if len(variables) != 0:
+        if variables:
             segment_number = get_simulator().segment_counter
-            logger.info("Caching data for segment {}".format(segment_number))
+            logger.info("Caching data for segment %d", segment_number)
 
             data_cache = DataCache(
                 label=self._population.label,
@@ -198,8 +198,7 @@ class Recorder(RecordingCommon):
 
     def _append_previous_segment(self, block, segment_number, variables):
         if segment_number not in self._data_cache:
-            logger.warn("No Data available for Segment {}"
-                        .format(segment_number))
+            logger.warn("No Data available for Segment %d", segment_number)
             segment = neo.Segment(
                 name="segment{}".format(segment_number),
                 description="Empty",
@@ -219,8 +218,8 @@ class Recorder(RecordingCommon):
 
         for variable in variables:
             if variable not in data_cache.variables:
-                logger.warn("No Data available for Segment {} variable {}"
-                            "".format(segment_number, variable))
+                logger.warn("No Data available for Segment %d variable %s",
+                            segment_number, variable)
                 continue
             variable_cache = data_cache.get_data(variable)
             ids = variable_cache.ids
@@ -322,8 +321,7 @@ class Recorder(RecordingCommon):
 
 def read_in_spikes(segment, spikes, t, ids, indexes, first_id,
                    recording_start_time, label):
-    """
-    Converts the data into SpikeTrains and saves them to the segment
+    """ Converts the data into SpikeTrains and saves them to the segment
 
     :param segment: Segment to add spikes to
     :type segment: neo.Segment
@@ -345,14 +343,14 @@ def read_in_spikes(segment, spikes, t, ids, indexes, first_id,
     """
     t_stop = t * quantities.ms
 
-    for (id, index) in zip(ids, indexes):
+    for (_id, index) in zip(ids, indexes):
         spiketrain = neo.SpikeTrain(
-            times=spikes[spikes[:, 0] == id - first_id][:, 1],
+            times=spikes[spikes[:, 0] == _id - first_id][:, 1],
             t_start=recording_start_time,
             t_stop=t_stop,
             units='ms',
             source_population=label,
-            source_id=id,
+            source_id=_id,
             source_index=index)
         # get times per atom
         segment.spiketrains.append(spiketrain)
@@ -371,8 +369,8 @@ def _get_channel_index(ids, block):
 
 def _convert_extracted_data_into_neo_expected_format(
         signal_array, indexes):
-    """
-    Converts data between spynnaker format and neo format
+    """ Converts data between spynnaker format and neo format
+
     :param signal_array: Draw data in spynnaker format
     :type signal_array: nparray
     :rtype nparray
@@ -407,10 +405,9 @@ def read_in_signal(segment, block, signal_array, ids, indexes, variable,
     t_start = recording_start_time * quantities.ms
     sampling_interval = get_simulator().machine_time_step / 1000.0
     sampling_period = sampling_interval * quantities.ms
-    if signal_array.size > 0:
-        processed_data = \
-            _convert_extracted_data_into_neo_expected_format(
-                signal_array, indexes)
+    if signal_array.size:
+        processed_data = _convert_extracted_data_into_neo_expected_format(
+            signal_array, indexes)
         source_ids = numpy.fromiter(ids, dtype=int)
         if pynn8_syntax:
             data_array = neo.AnalogSignalArray(

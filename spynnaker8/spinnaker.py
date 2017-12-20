@@ -115,7 +115,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
         :return: None
         """
 
-        self._run(simtime)
+        self._run_wait(simtime)
 
     def run_until(self, tstop):
         """ functions demanded by pynn level api
@@ -124,7 +124,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
         :return: None
         """
         # Build data
-        self._run(tstop - self.t)
+        self._run_wait(tstop - self.t)
 
     def clear(self):
         """ whats clear vs reset??????????
@@ -151,7 +151,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 
         AbstractSpiNNakerCommon.reset(self)
 
-    def _run(self, duration_ms):
+    def _run_wait(self, duration_ms):
         """ main interface for the starting of stuff
 
         :param duration_ms:

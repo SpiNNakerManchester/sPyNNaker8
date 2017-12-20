@@ -160,31 +160,31 @@ def setup(timestep=pynn_control.DEFAULT_TIMESTEP,
           extra_pre_run_algorithms=None, extra_post_run_algorithms=None,
           extra_load_algorithms=None, time_scale_factor=None,
           n_chips_required=None, **extra_params):
-    """ main method needed to be called to make the PyNN 0.8 setup. Needs to
-    be called before any other function
+    """ main method needed to be called to make the PyNN 0.8 setup. Needs to\
+        be called before any other function
 
     :param timestep:  the time step of the simulations
     :param min_delay: the min delay of the simulation
     :param max_delay: the max delay of the simulation
     :param graph_label: the label for the graph
-    :param database_socket_addresses: the sockets used by external devices
-    for the database notification protocol
-    :param extra_algorithm_xml_paths: list of paths to where other xml are
-    located
+    :param database_socket_addresses: the sockets used by external devices\
+        for the database notification protocol
+    :param extra_algorithm_xml_paths: list of paths to where other xml are\
+        located
     :param extra_mapping_inputs: other inputs used by the mapping process
-    :param extra_mapping_algorithms: other algorithms to be used by the
-    mapping process
+    :param extra_mapping_algorithms: other algorithms to be used by the\
+        mapping process
     :param extra_pre_run_algorithms: extra algorithms to use before a run
     :param extra_post_run_algorithms: extra algorithms to use after a run
-    :param extra_load_algorithms: extra algorithms to use within the loading
-    phase
-    :param time_scale_factor: multiplicative factor to the machine time step
-    (does not affect the neuron models accuracy)
+    :param extra_load_algorithms: extra algorithms to use within the loading\
+        phase
+    :param time_scale_factor: multiplicative factor to the machine time step\
+        (does not affect the neuron models accuracy)
     :param n_chips_required: The number of chips needed by the simulation
     :param extra_params:  other stuff
     :return: rank thing
     """
-
+    # pylint: disable=too-many-arguments
     if pynn8_syntax:
         # setup PyNN common stuff
         pynn_common.setup(timestep, min_delay, max_delay, **extra_params)
@@ -215,9 +215,9 @@ def setup(timestep=pynn_control.DEFAULT_TIMESTEP,
         n_chips_required=n_chips_required)
 
     # warn about kwargs arguments
-    if len(extra_params) > 0:
-        logger.warn("Extra params {} have been applied to the setup "
-                    "command which we do not consider".format(extra_params))
+    if extra_params:
+        logger.warn("Extra params %s have been applied to the setup "
+                    "command which we do not consider", extra_params)
 
     # get overloaded functions from PyNN in relation of our simulator object
     _create_overloaded_functions(globals_variables.get_simulator())
@@ -258,8 +258,8 @@ def Projection(
 
 
 def _create_overloaded_functions(spinnaker_simulator):
-    """ creates functions that the main PyNN interface supports (
-    given from PyNN)
+    """ creates functions that the main PyNN interface supports\
+        (given from PyNN)
     :param spinnaker_simulator: the simulator object we use underneath
     :rtype: None
     """
@@ -275,9 +275,9 @@ def _create_overloaded_functions(spinnaker_simulator):
     # phase.
     __pynn_run, __pynn_run_until = pynn_common.build_run(spinnaker_simulator)
 
-    tuple = pynn_common.build_state_queries(spinnaker_simulator)
     __pynn_get_current_time, __pynn_get_time_step, __pynn_get_min_delay, \
-        __pynn_get_max_delay, __pynn_num_processes, __pynn_rank = tuple
+        __pynn_get_max_delay, __pynn_num_processes, __pynn_rank = \
+        pynn_common.build_state_queries(spinnaker_simulator)
 
     __pynn_reset = pynn_common.build_reset(spinnaker_simulator)
     __pynn_create = pynn_common.build_create(Population)
@@ -291,8 +291,8 @@ def _create_overloaded_functions(spinnaker_simulator):
 def end(_=True):
     """ cleans up the spinnaker machine and software
 
-    :param _: was named compatible_output, which we dont care about,
-    so is a none existent parameter
+    :param _: was named compatible_output, which we dont care about,\
+        so is a none existent parameter
     :rtype:  None
     """
     for (population, variables, filename) in \
@@ -304,8 +304,9 @@ def end(_=True):
 
 
 def record_v(source, filename):
-    """ depreciated method for getting voltage
-    this is not documented in the public facing api
+    """ depreciated method for getting voltage.\
+        This is not documented in the public facing api
+
     :param source: the population / view / assembly to record
     :param filename: the neo file to write to
     :rtype: None
@@ -316,14 +317,13 @@ def record_v(source, filename):
 
 
 def record_gsyn(source, filename):
-    """depreciated method for getting both types of gsyn
-    this is not documented in the public facing api
+    """ depreciated method for getting both types of gsyn.\
+        This is not documented in the public facing api
 
     :param source: the population / view / assembly to record
     :param filename: the neo file to write to
     :rtype: None
     """
-
     logger.warn(
         "Using record_gsyn is deprecated.  Use record('gsyn_exc') and/or"
         " record('gsyn_inh') function instead")
@@ -331,8 +331,9 @@ def record_gsyn(source, filename):
 
 
 def list_standard_models():
-    """Return a list of all the StandardCellType
-    classes available for this simulator."""
+    """ Return a list of all the StandardCellType classes available for this\
+        simulator.
+    """
     results = list()
     for (key, obj) in globals().iteritems():
         if isinstance(obj, type) and issubclass(obj, DataHolder)  \
@@ -353,8 +354,8 @@ def set_number_of_neurons_per_core(neuron_type, max_permitted):
               "neuron_typeas a class instead of as a str"
         raise ConfigurationException(msg)
     simulator = globals_variables.get_simulator()
-    simulator.set_number_of_neurons_per_core(neuron_type.build_model(),
-                                             max_permitted)
+    simulator.set_number_of_neurons_per_core(
+        neuron_type.build_model(), max_permitted)
 
 
 # These methods will deffer to PyNN methods if a simulator exists
@@ -380,7 +381,7 @@ def connect(pre, post, weight=0.0, delay=None, receptor_type=None, p=1,
 
 
 def create(cellclass, cellparams=None, n=1):
-    """ builds a population with certian params
+    """ builds a population with certain params
 
     :param cellclass: population class
     :param cellparams: population params.
@@ -395,6 +396,7 @@ def create(cellclass, cellparams=None, n=1):
 
 def NativeRNG(seed_value):
     """ Fixes the random number generator's seed
+
     :param seed_value:
     :rtype: None
     """
@@ -548,6 +550,7 @@ def run_until(self, tstop):
 
 def get_machine():
     """ Get the spinnaker machine in use
+
     :return: the machine object
     """
     if not globals_variables.has_simulator():

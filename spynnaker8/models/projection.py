@@ -20,8 +20,8 @@ logger = logging.getLogger(__name__)
 
 class Projection(PyNNProjectionCommon):
     """ spynnaker 8 projection class
-
     """
+    # pylint: disable=redefined-builtin
 
     _simulator = None
     _static_synapse_class = SynapseDynamicsStatic
@@ -210,9 +210,9 @@ class Projection(PyNNProjectionCommon):
             self, attribute_names, file, format='list',  # @ReservedAssignment
             gather=True, with_address=True):
         """
-        Print synaptic attributes (weights, delays, etc.) to file. In the array
-        format, zeros are printed for non-existent connections.
-        Values will be expressed in the standard PyNN units (i.e. millivolts,
+        Print synaptic attributes (weights, delays, etc.) to file. In the\
+        array format, zeros are printed for non-existent connections.\
+        Values will be expressed in the standard PyNN units (i.e. millivolts,\
         nanoamps, milliseconds, microsiemens, nanofarads, event per second).
         """
 

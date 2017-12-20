@@ -192,18 +192,18 @@ def EthernetControlPopulation(
     :param model: Class of a model that implements AbstractEthernetController
     :param label: An optional label for the population
     :param local_host:\
-            The optional local host IP address to listen on for commands
+        The optional local host IP address to listen on for commands
     :param local_port: The optional local port to listen on for commands
     :param database_ack_port_num:\
-            The optional port to which responses to the database notification\
-            protocol are to be sent
+        The optional port to which responses to the database notification\
+        protocol are to be sent
     :param database_notify_port_num:\
-            The optional port to which notifications from the database\
-            notification protocol are to be sent
+        The optional port to which notifications from the database\
+        notification protocol are to be sent
     :return:\
-            A pyNN Population which can be used as the target of a Projection.\
-            Note that the Population can also be used as the source of a\
-            Projection, but it might not send spikes.
+        A pyNN Population which can be used as the target of a Projection.\
+        Note that the Population can also be used as the source of a\
+        Projection, but it might not send spikes.
     """
     if not issubclass(model.build_model(), AbstractEthernetController):
         raise Exception(
@@ -215,9 +215,8 @@ def EthernetControlPopulation(
         translator, local_host, local_port)
     devices_with_commands = [
         device for device in vertex.get_external_devices()
-        if isinstance(device, AbstractSendMeMulticastCommandsVertex)
-    ]
-    if len(devices_with_commands) > 0:
+        if isinstance(device, AbstractSendMeMulticastCommandsVertex)]
+    if devices_with_commands:
         ethernet_command_connection = EthernetCommandConnection(
             translator, devices_with_commands, local_host,
             database_notify_port_num)
@@ -243,18 +242,17 @@ def EthernetSensorPopulation(
         receive spikes from a device connected to the host
     :param device: Class of a model that implements AbstractEthernetController
     :param local_host:\
-            The optional local host IP address to listen on for database\
-            notification
+        The optional local host IP address to listen on for database\
+        notification
     :param database_ack_port_num:\
-            The optional port to which responses to the database notification\
-            protocol are to be sent
+        The optional port to which responses to the database notification\
+        protocol are to be sent
     :param database_notify_port_num:\
-            The optional port to which notifications from the database\
-            notification protocol are to be sent
+        The optional port to which notifications from the database\
+        notification protocol are to be sent
     :return:\
-            A pyNN Population which can be used as the source of a Projection.\
-            Note that the Population cannot be used as the target of a\
-            Projection.
+        A pyNN Population which can be used as the source of a Projection.\
+        Note that the Population cannot be used as the target of a Projection.
     """
     if not isinstance(device, AbstractEthernetSensor):
         raise Exception("Model must be an instance of AbstractEthernetSensor")
@@ -294,14 +292,14 @@ def SpikeInjector(
     :param virtual_key: the virtual key used in the routing system
     :type virtual_key: int
     :param database_notify_host: the hostname for the device which is\
-            listening to the database notification.
+        listening to the database notification.
     :type database_notify_host: str
     :param database_ack_port_num: the port number to which a external device\
-            will acknowledge that they have finished reading the database and\
-            are ready for it to start execution
+        will acknowledge that they have finished reading the database and are\
+        ready for it to start execution
     :type database_ack_port_num: int
     :param database_notify_port_num: The port number to which a external\
-            device will receive the database is ready command
+        device will receive the database is ready command
     :type database_notify_port_num: int
     """
     if notify:
