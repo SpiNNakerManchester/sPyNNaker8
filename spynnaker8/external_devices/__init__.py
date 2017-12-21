@@ -32,6 +32,7 @@ from spynnaker8.external_device_models \
 # injector for spynnaker 8
 from spynnaker8.models.model_data_holders \
     import SpikeInjectorDataHolder as ExternalDeviceSpikeInjector
+import spynnaker8
 
 # connections
 from spynnaker.pyNN import model_binaries
@@ -174,7 +175,7 @@ __all__ = [
 def run_forever():
     """ supports running forever in pynn 0.8/0.9 format
 
-    :return: returns when the application has started running on the 
+    :return: returns when the application has started running on the\
     SpiNNaker platform.
     """
     AbstractSpiNNakerCommon.run(globals_variables.get_simulator(), None)
