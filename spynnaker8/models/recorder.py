@@ -425,6 +425,7 @@ def read_in_signal(segment, block, signal_array, ids, indexes, variable,
     """
     t_start = recording_start_time * quantities.ms
     sampling_period = sampling_interval * quantities.ms
+    indexes = numpy.array(indexes)
     if signal_array.size > 0:
         # source_ids = numpy.fromiter(ids, dtype=int)
         if pynn8_syntax:
