@@ -173,7 +173,7 @@ __all__ = [
 
 def run_forever():
     """ supports running forever in pynn 0.8/0.9 format
-    
+
     :return: returns when the application has started running on the 
     SpiNNaker platform.
     """
