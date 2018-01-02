@@ -20,17 +20,19 @@ p.setup(1)
 
 inp_nrn = 2000
 inh_nrn = 1000
-inp_inh_conn_prob = 1.0/inh_nrn
-w0=0.51
+inp_inh_conn_prob = 8.7/inp_nrn
+w0=1
+w_mult=2.0
 #w_mult = w_mult/inp_nrn
 #simtime=300
 
 #simtime = 1000
-#p.set_number_of_neurons_per_core(p.IF_curr_exp, 100)
+p.set_number_of_neurons_per_core(p.IF_curr_exp, 150)
 # p.set_number_of_neurons_per_core(p.extra_models.IFCurrExpCa2Concentration, 100)
 # p.extra_models.IFCurrExpCa2Concentration.set_max_atoms_per_core(100)
 
-pop_src = p.Population(inp_nrn, p.SpikeSourcePoisson(rate=5), label="src")
+pop_src = p.Population(inp_nrn, p.SpikeSourcePoisson(rate=50), label="src")
+pop_inp = p.Population(inp_nrn, p.IF_curr_exp(), label="inp")
 pop_teacher = p.Population(1, p.SpikeSourcePoisson(rate=0), label="teacher")
 cell_params = {"i_offset":0.0,  "tau_ca2":150, "i_alpha":1., "i_ca2":3.,   'v_reset':-65}
 #pop_inh = p.Population(inh_nrn, p.extra_models.IFCurrExpCa2Concentration, cell_params, label="inhibitory")
@@ -46,13 +48,15 @@ syn_plas = p.STDPMechanism(
 #syn = p.StaticSynapse(weight=1.0, delay=1.0)
 
 proj = p.Projection(
-    pop_src,
+    pop_inp,
     pop_ex,
     p.AllToAllConnector(),
     synapse_type=syn_plas, receptor_type='excitatory'
     )
 
-proj_inp_inh = p.Projection(pop_src,  pop_inh,  p.FixedProbabilityConnector(inp_inh_conn_prob),
+proj_inp_inh = p.Projection(pop_inp,  pop_inh,  p.FixedProbabilityConnector(inp_inh_conn_prob),
+               synapse_type=p.StaticSynapse(weight=2.0),  receptor_type='excitatory')
+proj_src_inp = p.Projection(pop_src,  pop_inp,  p.OneToOneConnector(),
                synapse_type=p.StaticSynapse(weight=2.0),  receptor_type='excitatory')
 proj_inh_ex = p.Projection(pop_inh,  pop_ex,  p.AllToAllConnector(),
                synapse_type=p.StaticSynapse(weight=2.0),  receptor_type='inhibitory')
@@ -62,7 +66,8 @@ proj_teach_ex = p.Projection(pop_teacher,  pop_ex,  p.AllToAllConnector(),
 
 
 pop_ex.record(['v',  'spikes'])
-pop_src.record('spikes')
+pop_inp.record('spikes')
+pop_inh.record('spikes')
 
 wgts=[]
 if to_plot_wgts:
@@ -78,9 +83,21 @@ else:
 
 v = pop_ex.get_data('v')
 #curr = pop_ex.get_data('gsyn_exc')
-pre_spikes = pop_src.get_data('spikes')
+pre_spikes = pop_inp.get_data('spikes')
+inh_spikes = pop_inh.get_data('spikes')
 spikes = pop_ex.get_data('spikes')
 
+avg_pre_rate=0.0;
+avg_inh_rate=0.0;
+for i in range(len(pre_spikes.segments[0].spiketrains)):
+    avg_pre_rate+=pre_spikes.segments[0].spiketrains[i].shape[0]
+for i in range(len(inh_spikes.segments[0].spiketrains)):
+    avg_inh_rate+=inh_spikes.segments[0].spiketrains[i].shape[0]
+avg_pre_rate = avg_pre_rate / len(pre_spikes.segments[0].spiketrains)
+avg_inh_rate = avg_inh_rate / len(inh_spikes.segments[0].spiketrains)
+
+print "pre", avg_pre_rate
+print "inh", avg_inh_rate
 print spikes.segments[0].spiketrains[0].shape
 
 #print v.segments[0].filter(name='v')[0]
@@ -108,6 +125,8 @@ else:
     # raster plot of the presynaptic neuron spike times
      Panel(pre_spikes.segments[0].spiketrains[0:20],
            yticks=True, markersize=0.5, xlim=(0, plot_time), xticks=True, data_labels=['pre-spikes']),
+     Panel(inh_spikes.segments[0].spiketrains[0:10],
+           yticks=True, markersize=0.5, xlim=(0, plot_time), xticks=True, data_labels=['inhibitory spikes']),
     Panel(v.segments[0].filter(name='v')[0],
           yticks=True, markersize=0.5, xlim=(0, plot_time), xticks=True, ylabel='V'),
     Panel(spikes.segments[0].spiketrains,
