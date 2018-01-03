@@ -1,9 +1,9 @@
 import pyNN
 import os
 
-if not pyNN.__version__.startswith("0.8"):
+if not pyNN.__version__.startswith("0.9"):
     raise Exception(
-        "PyNN version {} found; SpyNNaker 8 requires PyNN version 0.8".format(
+        "PyNN version {} found; SpyNNaker 9 requires PyNN version 0.9".format(
             pyNN.__version__))
 
 pynn_path = os.path.dirname(pyNN.__file__)

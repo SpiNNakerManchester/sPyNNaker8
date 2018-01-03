@@ -1,13 +1,14 @@
-import numpy
 import logging
 
 from spynnaker.pyNN.exceptions import InvalidParameterType
 from spynnaker.pyNN.models.pynn_population_common import PyNNPopulationCommon
+from spynnaker.pyNN.utilities.constants import SPIKES
 from spinn_front_end_common.utilities import exceptions
 from spinn_front_end_common.utilities import globals_variables
+from spinn_front_end_common.utilities.exceptions import ConfigurationException
 
 from spynnaker8.models import Recorder
-from spynnaker8.utilities import DataHolder, ID
+from spynnaker8.utilities import DataHolder
 
 from pyNN import descriptions
 
@@ -22,6 +23,8 @@ class Population(PyNNPopulationCommon, Recorder):
     def __init__(self, size, cellclass, cellparams=None, structure=None,
                  initial_values=None, label=None):
 
+        size = self._roundsize(size, label)
+
         # hard code initial values as required
         if initial_values is None:
             initial_values = {}
@@ -31,7 +34,6 @@ class Population(PyNNPopulationCommon, Recorder):
             vertex_holder.add_item(
                 'label', self.create_label(
                     vertex_holder.data_items['label'], label))
-            vertex_holder.add_item('n_neurons', size)
             assert cellparams is None
         # cellparams being retained for backwards compatibility, but use
         # is deprecated
@@ -42,12 +44,27 @@ class Population(PyNNPopulationCommon, Recorder):
                 cell_label = internal_params['label']
             internal_params['label'] = self.create_label(cell_label, label)
             vertex_holder = cellclass(**internal_params)
-            vertex_holder.add_item('n_neurons', size)
             # emit deprecation warning
         else:
             raise TypeError(
                 "cellclass must be an instance or subclass of BaseCellType,"
                 " not a %s" % type(cellclass))
+
+        if 'n_neurons' in vertex_holder.data_items:
+            if size is None:
+                size = vertex_holder.data_items['n_neurons']
+            else:
+                if size != vertex_holder.data_items['n_neurons']:
+                    raise ConfigurationException(
+                        "Size parameter is {} but the {} expects a size of {}"
+                        "".format(size, cellclass,
+                                  vertex_holder.data_items['n_neurons']))
+        else:
+            if size is None:
+                raise ConfigurationException(
+                    "Size parameter can not be None for {}".format(cellclass))
+            else:
+                vertex_holder.add_item('n_neurons', size)
 
         # convert between data holder and model (uses ** so that its taken
         # the dictionary to be the parameters themselves)
@@ -59,15 +76,6 @@ class Population(PyNNPopulationCommon, Recorder):
             size=size, vertex=vertex,
             structure=structure, initial_values=initial_values)
         Recorder.__init__(self, population=self)
-
-        # things for pynn demands
-        self._all_ids = self._get_all_ids()
-        self._first_id = self._all_ids[0]
-        self._last_id = self._all_ids[-1]
-
-        # update the simulators id_counter for giving a unique id for every
-        # atom
-        globals_variables.get_simulator().id_counter += size
 
         # annotations used by neo objects
         self._annotations = dict()
@@ -87,25 +95,6 @@ class Population(PyNNPopulationCommon, Recorder):
         :return: The celltype this property has been set to
         """
         return self._vertex
-
-    def id_to_index(self, id):  # @ReservedAssignment
-        """
-        Given the ID(s) of cell(s) in the Population, return its (their) index
-        (order in the Population).
-        """
-        if not numpy.iterable(id):
-            if not self._first_id <= id <= self._last_id:
-                raise ValueError(
-                    "id should be in the range [{},{}], actually {}".format(
-                        self._first_id, self._last_id, id))
-            return int(id - self._first_id)  # this assumes ids are consecutive
-
-    def _get_all_ids(self):
-        id_range = numpy.arange(
-            globals_variables.get_simulator().id_counter,
-            globals_variables.get_simulator().id_counter + self.size)
-        return numpy.array(
-            [ID(atom_id) for atom_id in id_range], dtype=ID)
 
     def record(self, variables, to_file=None, sampling_interval=None):
         """
@@ -176,7 +165,7 @@ class Population(PyNNPopulationCommon, Recorder):
         if isinstance(io, basestring):
             io = self._get_io(io)
 
-        data = self._extract_data(variables, clear, annotations)
+        data = self._extract_neo_block(variables, clear, annotations)
         # write the neo block to the file
         io.write(data)
 
@@ -241,7 +230,7 @@ class Population(PyNNPopulationCommon, Recorder):
             logger.warn("Spinnaker only supports gather=True. We will run as "
                         "if gather was set to True.")
 
-        return self._extract_data(variables, clear, annotations)
+        return self._extract_neo_block(variables, clear, annotations)
 
     def spinnaker_get_data(self, variable):
         """ public assessor for getting data as a numpy array, instead of
@@ -264,6 +253,12 @@ class Population(PyNNPopulationCommon, Recorder):
                 msg = "Only one type of data at a time is supported"
                 raise exceptions.ConfigurationException(msg)
         return self._get_recorded_variable(variable)
+
+    def get_spike_counts(self, gather=True):
+        """ Return the number of spikes for each neuron.
+        """
+        spikes = self._get_recorded_variable(SPIKES)
+        return PyNNPopulationCommon.get_spike_counts(self, spikes, gather)
 
     def find_units(self, variable):
         """ supports getting the units of a variable

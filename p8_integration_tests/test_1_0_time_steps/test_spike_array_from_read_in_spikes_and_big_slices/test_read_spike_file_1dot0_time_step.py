@@ -104,6 +104,7 @@ class TestReadingSpikeArrayDataAndBigSlices(BaseTestCase):
         test that tests the printing of v from a pre determined recording
         :return:
         """
+        self.assert_not_spin_three()
         spikes = do_run()
         try:
             self.assertLess(8400, len(spikes))

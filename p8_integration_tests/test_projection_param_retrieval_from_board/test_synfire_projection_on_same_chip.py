@@ -14,6 +14,7 @@ get_delays = True
 
 
 class SynfireProjectionOnSameChip(BaseTestCase):
+
     def test_get_before_and_after(self):
         synfire_run = TestRun()
         synfire_run.do_run(n_neurons, neurons_per_core=neurons_per_core,
