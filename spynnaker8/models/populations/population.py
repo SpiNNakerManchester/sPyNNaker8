@@ -96,7 +96,8 @@ class Population(PyNNPopulationCommon, Recorder):
         """
         return self._vertex
 
-    def record(self, variables, to_file=None, sampling_interval=None):
+    def record(self, variables, to_file=None, sampling_interval=None,
+               indexes=None):
         """
         Record the specified variable or variables for all cells in the
         Population or view.
@@ -111,6 +112,11 @@ class Population(PyNNPopulationCommon, Recorder):
         `sampling_interval` should be a value in milliseconds, and an integer
         multiple of the simulation timestep.
         """
+        if indexes is not None:
+            logger.warn(
+                "record indexes parameter is not standard PyNN so will not "
+                "work on other other simulators. "
+                "In the future this will be replaced with views")
         if variables is None:  # reset the list of things to record
             # note that if record(None) is called, its a reset
             Recorder._turn_off_all_recording(self)
@@ -128,16 +134,16 @@ class Population(PyNNPopulationCommon, Recorder):
                 # iterate though them
                 for variable in variables:
                     self._record(variable, self._all_ids,
-                                 sampling_interval, to_file)
+                                 sampling_interval, to_file, indexes)
             else:
                 # record variable
-                self._record(
-                    variables, self._all_ids, sampling_interval, to_file)
+                self._record(variables, self._all_ids, sampling_interval,
+                             to_file, indexes)
 
         else:  # list of variables, so just iterate though them
             for variable in variables:
-                self._record(
-                    variable, self._all_ids, sampling_interval, to_file)
+                self._record(variable, self._all_ids, sampling_interval,
+                             to_file, indexes)
 
     def write_data(self, io, variables='all', gather=True, clear=False,
                    annotations=None):
