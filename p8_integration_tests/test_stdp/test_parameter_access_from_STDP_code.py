@@ -3,7 +3,8 @@
 
 import spynnaker8 as p
 p.setup(1)
-cell_params = {"v_thresh":[-50.1, -50.2, -50.3, -50.4, -50.5, -50.6, -50.7, -50.8, -50.9, -51.0]}
+cell_params = {"v_thresh":[-50.1, -50.2, -50.3, -50.4, -50.5, -50.6, -50.7, -50.8, -50.9, -51.0],
+               "i_offset": [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]}
 pop_ex = p.Population(10, p.IF_curr_exp(**cell_params), label="test")
 
 pop_src1 = p.Population(10, p.SpikeSourceArray, {'spike_times': [[1, 15], [2, 15], [3, 15], [4,15], [5, 15], [6,15], [7,15] ,[8,15], [9,15] ,[10, 15]]}, label="src1")
