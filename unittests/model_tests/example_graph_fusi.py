@@ -14,17 +14,22 @@ from example_graph_params import *
 
 
 to_plot_wgts = True
-to_plot_wgts = False
+#to_plot_wgts = False
+
+dr_r = 100
+pre_rate = 50
+nrn = 3
+dt=50
 
 p.setup(1)
 
 #simtime = 1000
 
 
-pop_src = p.Population(1, p.SpikeSourcePoisson(rate=50), label="src")
-pop_src2 = p.Population(1, p.SpikeSourcePoisson(rate=5), label="drive")
-cell_params = {"i_offset":0.0,  "tau_ca2":150, "i_alpha":1., "i_ca2":3.5,  'tau_m': 50.0, 'v_reset':-65}
-pop_ex = p.Population(1, p.extra_models.IFCurrExpCa2Concentration, cell_params, label="test")
+pop_src = p.Population(nrn, p.SpikeSourcePoisson(rate=pre_rate), label="src")
+pop_src2 = p.Population(nrn, p.SpikeSourcePoisson(rate=dr_r), label="drive")
+cell_params = {"i_offset":0.0,  "tau_ca2":150, "i_alpha":1., "i_ca2":3.,  'v_reset':-65}
+pop_ex = p.Population(nrn, p.extra_models.IFCurrExpCa2Concentration, cell_params, label="test")
 
 
 
@@ -57,9 +62,9 @@ pop_src2.record('spikes')
 
 wgts=[]
 if to_plot_wgts:
-    for i in range(simtime):
+    for i in range(simtime/dt):
         print i
-        p.run(1)
+        p.run(dt)
         wgts.append( proj.get('weight', format='list', with_address=False)[0])
 #        wgts.append( proj.get('weight', format='list', with_address=False)[0])
 else:
@@ -79,14 +84,14 @@ spikes = pop_ex.get_data('spikes')
 
 plot_time = simtime
 if to_plot_wgts:
-    plot_wgt = DataTable(range(plot_time), wgts)
+    plot_wgt = DataTable(range(0, plot_time, dt), wgts)
 
     Figure(
     # raster plot of the presynaptic neuron spike times
      Panel(pre_spikes.segments[0].spiketrains,
            yticks=True, markersize=0.5, xlim=(0, plot_time), xticks=True, data_labels=['pre-spikes']),
- #   Panel(plot_wgt,
- #         yticks=True, xlim=(0, plot_time), xticks=True, ylabel='weight'),
+    Panel(plot_wgt,
+          yticks=True, xlim=(0, plot_time), xticks=True, ylabel='weight'),
     Panel(v.segments[0].filter(name='v')[0],
           yticks=True, markersize=0.5, xlim=(0, plot_time), xticks=True, ylabel='V'),
     Panel(spikes.segments[0].spiketrains,

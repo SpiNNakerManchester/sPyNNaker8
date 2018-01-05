@@ -26,7 +26,7 @@ simtime = 300
 n_runs = 1000
 w0 = 0.0
 pre_rate = 50
-drive_rates = np.arange(0, 200, 10) # driving source rates
+drive_rates = np.arange(20, 200, 10) # driving source rates
 n_rates = drive_rates.size
 max_out_rate = 200
 output_file = "data/fig2_"+timestr
@@ -35,11 +35,11 @@ output_ext = ".txt"
 n_trans = np.zeros(max_out_rate+1) # number of weight transitions for each spiking rate of the output neuron for 0 to 200
 n_tot = np.zeros(max_out_rate+1) # number of sims ran for each spiking rate of the output neuron (needed to calculate transition probability)
 
-n_nrn = 1  # total number of neurons in each run
+n_nrn = 50  # total number of neurons in each run
 
 pop_src = p.Population(n_nrn, p.SpikeSourcePoisson(rate=pre_rate), label="src")
 pop_src2 = p.Population(n_nrn, p.SpikeSourcePoisson(rate=100), label="drive")
-#cell_params = {"i_offset":0.0,  "tau_ca2":150, "i_alpha":1., "i_ca2":3.5,  'tau_m': 50.0, 'v_reset':-65}
+#cell_params = {"i_offset":0.0,  "tau_ca2":150, "i_alpha":1., "i_ca2":3.5,  'tau_m': 11.0, 'v_reset':-65}
 cell_params = {"i_offset":0.0,  "tau_ca2":150, "i_alpha":1., "i_ca2":3.,  'v_reset':-65}
 pop_ex = p.Population(n_nrn, p.extra_models.IFCurrExpCa2Concentration, cell_params, label="test")
 
@@ -79,11 +79,15 @@ for r in range(n_runs):
         pop_src.set(rate=pre_rate) # this has to happen before every run because of the poisson souce bug
         p.run(simtime)
         new_rates = np.zeros(n_nrn, dtype=int)
+
+
         trains = pop_ex.get_data('spikes').segments[nseg].spiketrains
         for n in range(n_nrn):
             n_spikes = trains[n].shape[0]
             new_rates[n] = int(round( n_spikes*1000.0/simtime ))
             print n,":",n_spikes, new_rates[n]
+
+
 #         if(nseg==0):
 #             save_train = pop_ex.get_data('spikes').segments[nseg].spiketrains
 #         print save_train
@@ -91,8 +95,9 @@ for r in range(n_runs):
 #         for i in range(nseg+1):
 #             print i, pop_ex.get_data('spikes').segments[i].spiketrains
 
+#         drive_s = pop_src2.get_data('spikes').segments[nseg].spiketrains
 #         for n in range(n_nrn):
-#             n_spikes2 = pop_src2.get_data('spikes').segments[nseg].spiketrains[n].shape[0]
+#             n_spikes2 = drive_s[n].shape[0]
 #             print "drive spikes ",n, ":", n_spikes2
 #         for n in range(n_nrn):
 #             n_spikes0 = pop_src.get_data('spikes').segments[nseg].spiketrains[n].shape[0]
