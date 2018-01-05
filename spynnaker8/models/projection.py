@@ -30,7 +30,7 @@ class Projection(PyNNProjectionCommon):
             self, pre_synaptic_population, post_synaptic_population,
             connector, synapse_type=None, source=None,
             receptor_type=None, space=None, label=None):
-
+        # pylint: disable=too-many-arguments
         if source is not None:
             raise InvalidParameterType(
                 "spynnaker8 {} does not yet support multi-compartmental "
@@ -66,8 +66,8 @@ class Projection(PyNNProjectionCommon):
         if hasattr(connector, "rng"):
             rng = connector.rng
 
-        PyNNProjectionCommon.__init__(
-            self, connector=connector, synapse_dynamics_stdp=synapse_type,
+        super(Projection, self).__init__(
+            connector=connector, synapse_dynamics_stdp=synapse_type,
             target=receptor_type, spinnaker_control=self._simulator,
             pre_synaptic_population=pre_synaptic_population,
             post_synaptic_population=post_synaptic_population, rng=rng,
@@ -96,6 +96,7 @@ class Projection(PyNNProjectionCommon):
             "last" is supported
         :return: values selected
         """
+        # pylint: disable=too-many-arguments
         if not gather:
             logger.warn("Spynnaker always gathers from every core.")
 
@@ -108,7 +109,7 @@ class Projection(PyNNProjectionCommon):
             notify=None):
         """ Internal data getter to add notify option
         """
-
+        # pylint: disable=too-many-arguments
         if multiple_synapses != 'last':
             raise ConfigurationException(
                 "Spynnaker only recognises multiple_synapses == last")
@@ -175,8 +176,8 @@ class Projection(PyNNProjectionCommon):
     def printDelays(self, file, format='list',  # @ReservedAssignment
                     gather=True):
         """
-        Print synaptic weights to file. In the array format, zeros are printed
-        for non-existent connections.
+        Print synaptic weights to file. In the array format, zeros are\
+        printed for non-existent connections.
         """
         logger.warn("printDelays is deprecated.  Use save('delay') instead")
         self.save('delay', file, format, gather)
@@ -184,14 +185,15 @@ class Projection(PyNNProjectionCommon):
     def weightHistogram(self, min=None, max=None,  # @ReservedAssignment
                         nbins=10):
         """
-        Return a histogram of synaptic weights.
-        If min and max are not given, the minimum and maximum weights are
+        Return a histogram of synaptic weights.\
+        If min and max are not given, the minimum and maximum weights are\
         calculated automatically.
         """
         logger.warn(
             "weightHistogram is deprecated.  Use numpy.histogram function"
             " instead")
-        pynn_common.Projection.weightHistogram(min=min, max=max, nbins=nbins)
+        pynn_common.Projection.weightHistogram(
+            self, min=min, max=max, nbins=nbins)
 
     def _save_callback(
             self, save_file, format,  # @ReservedAssignment
@@ -215,7 +217,7 @@ class Projection(PyNNProjectionCommon):
         Values will be expressed in the standard PyNN units (i.e. millivolts,\
         nanoamps, milliseconds, microsiemens, nanofarads, event per second).
         """
-
+        # pylint: disable=too-many-arguments
         if attribute_names in ('all', 'connections'):
             attribute_names = \
                 self._projection_edge.post_vertex.synapse_dynamics.\

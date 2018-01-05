@@ -3,6 +3,7 @@ from neo import Block, Segment
 import numpy as np
 from quantities import ms
 try:
+    # pylint: disable=import-error
     from pyNN.utility.plotting import repeat
     import matplotlib.pyplot as plt
     matplotlib_missing = False
@@ -257,39 +258,51 @@ class SpynnakerPanel(object):
                     datum = datum[0]
 
             if isinstance(datum, list):
-                if not isinstance(datum[0], SpikeTrain):
-                    raise Exception("Can't handle lists of type {}"
-                                    "".format(type(datum)))
-                plot_spiketrains(axes, datum, label=label, **properties)
+                self.__plot_list(axes, datum, label, properties)
             # AnalogSignalArray / AnalogSignal is also a ndarray
             # but data format different!
             # In pynn8_syntax AnalogSignalArray is imported as AnalogSignal
             elif isinstance(datum, AnalogSignal):
                 heat_plot_neo(axes, datum, label=label, **properties)
             elif isinstance(datum, np.ndarray):
-                if len(datum[0]) == 2:
-                    plot_spikes_numpy(axes, datum, label=label, **properties)
-                elif len(datum[0]) == 3:
-                    heat_plot_numpy(axes, datum, label=label, **properties)
-                else:
-                    raise Exception("Can't handle ndarray with {} columns"
-                                    "".format(len(datum[0])))
+                self.__plot_array(axes, datum, label, properties)
             elif isinstance(datum, Block):
-                if "run" in properties:
-                    run = int(properties.pop("run"))
-                    if len(datum.segments) <= run:
-                        raise Exception("Block only has {} segments"
-                                        "".format(len(datum.segments)))
-                    segment = datum.segments[run]
-                else:
-                    if len(datum.segments) != 1:
-                        raise Exception("Block has {} segments please "
-                                        "specify one to plot using run="
-                                        "".format(len(datum.segments)))
-                    segment = datum.segments[0]
-                plot_segment(axes, segment, label=label, **properties)
+                self.__plot_block(axes, datum, label, properties)
             elif isinstance(datum, Segment):
                 plot_segment(axes, datum, label=label, **properties)
             else:
-                raise Exception("Can't handle type {} Consider using "
+                raise Exception("Can't handle type {}; consider using "
                                 "pyNN.utility.plotting".format(type(datum)))
+
+    @staticmethod
+    def __plot_list(axes, datum, label, properties):
+        if not isinstance(datum[0], SpikeTrain):
+            raise Exception("Can't handle lists of type {}"
+                            "".format(type(datum)))
+        plot_spiketrains(axes, datum, label=label, **properties)
+
+    @staticmethod
+    def __plot_array(axes, datum, label, properties):
+        if len(datum[0]) == 2:
+            plot_spikes_numpy(axes, datum, label=label, **properties)
+        elif len(datum[0]) == 3:
+            heat_plot_numpy(axes, datum, label=label, **properties)
+        else:
+            raise Exception("Can't handle ndarray with {} columns".format(
+                len(datum[0])))
+
+    @staticmethod
+    def __plot_block(axes, datum, label, properties):
+        if "run" in properties:
+            run = int(properties.pop("run"))
+            if len(datum.segments) <= run:
+                raise Exception("Block only has {} segments".format(
+                    len(datum.segments)))
+            segment = datum.segments[run]
+        elif len(datum.segments) != 1:
+            raise Exception(
+                "Block has {} segments please specify one to plot using run="
+                .format(len(datum.segments)))
+        else:
+            segment = datum.segments[0]
+        plot_segment(axes, segment, label=label, **properties)

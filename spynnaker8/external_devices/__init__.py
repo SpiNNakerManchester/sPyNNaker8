@@ -205,6 +205,7 @@ def EthernetControlPopulation(
         Note that the Population can also be used as the source of a\
         Projection, but it might not send spikes.
     """
+    # pylint: disable=protected-access, too-many-arguments, too-many-locals
     if not issubclass(model.build_model(), AbstractEthernetController):
         raise Exception(
             "Model must be a subclass of AbstractEthernetController")
@@ -302,6 +303,7 @@ def SpikeInjector(
         device will receive the database is ready command
     :type database_notify_port_num: int
     """
+    # pylint: disable=too-many-arguments
     if notify:
         add_database_socket_address(database_notify_host,
                                     database_notify_port_num,

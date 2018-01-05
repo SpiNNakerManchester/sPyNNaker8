@@ -11,9 +11,10 @@ NUM_PRE_SYNAPTIC_EVENTS = 4
 class SynapseDynamicsSTDP(CommonSynapseDynamicsSTDP):
 
     def __init__(
-            self, timing_dependence=None, weight_dependence=None,
+            self, timing_dependence, weight_dependence,
             voltage_dependence=None, dendritic_delay_fraction=1.0,
             weight=0.0, delay=None):
+        # pylint: disable=too-many-arguments
 
         # move data from timing to weight dependence over as needed to reflect
         # standard structure underneath
@@ -26,8 +27,8 @@ class SynapseDynamicsSTDP(CommonSynapseDynamicsSTDP):
             delay = globals_variables.get_simulator().min_delay
 
         # instantiate common functionality.
-        CommonSynapseDynamicsSTDP.__init__(
-            self, timing_dependence=timing_dependence,
+        super(SynapseDynamicsSTDP, self).__init__(
+            timing_dependence=timing_dependence,
             weight_dependence=weight_dependence,
             voltage_dependence=voltage_dependence,
             dendritic_delay_fraction=dendritic_delay_fraction)

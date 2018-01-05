@@ -3,7 +3,6 @@ import logging
 from spynnaker.pyNN.exceptions import InvalidParameterType
 from spynnaker.pyNN.models.pynn_population_common import PyNNPopulationCommon
 from spynnaker.pyNN.utilities.constants import SPIKES
-from spinn_front_end_common.utilities import exceptions
 from spinn_front_end_common.utilities import globals_variables
 from spinn_front_end_common.utilities.exceptions import ConfigurationException
 
@@ -22,7 +21,7 @@ class Population(PyNNPopulationCommon, Recorder):
 
     def __init__(self, size, cellclass, cellparams=None, structure=None,
                  initial_values=None, label=None):
-
+        # pylint: disable=too-many-arguments
         size = self._roundsize(size, label)
 
         # hard code initial values as required
@@ -53,26 +52,24 @@ class Population(PyNNPopulationCommon, Recorder):
         if 'n_neurons' in vertex_holder.data_items:
             if size is None:
                 size = vertex_holder.data_items['n_neurons']
-            else:
-                if size != vertex_holder.data_items['n_neurons']:
-                    raise ConfigurationException(
-                        "Size parameter is {} but the {} expects a size of {}"
-                        "".format(size, cellclass,
-                                  vertex_holder.data_items['n_neurons']))
+            elif size != vertex_holder.data_items['n_neurons']:
+                raise ConfigurationException(
+                    "Size parameter is {} but the {} expects a size of {}"
+                    "".format(size, cellclass,
+                              vertex_holder.data_items['n_neurons']))
         else:
             if size is None:
                 raise ConfigurationException(
                     "Size parameter can not be None for {}".format(cellclass))
-            else:
-                vertex_holder.add_item('n_neurons', size)
+            vertex_holder.add_item('n_neurons', size)
 
         # convert between data holder and model (uses ** so that its taken
         # the dictionary to be the parameters themselves)
         vertex = vertex_holder.build_model()(**vertex_holder.data_items)
 
         # build our initial objects
-        PyNNPopulationCommon.__init__(
-            self, spinnaker_control=globals_variables.get_simulator(),
+        super(Population, self).__init__(
+            spinnaker_control=globals_variables.get_simulator(),
             size=size, vertex=vertex,
             structure=structure, initial_values=initial_values)
         Recorder.__init__(self, population=self)
@@ -98,17 +95,17 @@ class Population(PyNNPopulationCommon, Recorder):
 
     def record(self, variables, to_file=None, sampling_interval=None):
         """
-        Record the specified variable or variables for all cells in the
+        Record the specified variable or variables for all cells in the\
         Population or view.
 
-        `variables` may be either a single variable name or a list of variable
-        names. For a given celltype class, `celltype.recordable` contains a
+        `variables` may be either a single variable name or a list of variable\
+        names. For a given celltype class, `celltype.recordable` contains a\
         list of variables that can be recorded for that celltype.
 
-        If specified, `to_file` should be a Neo IO instance and `write_data()`
+        If specified, `to_file` should be a Neo IO instance and `write_data()`\
         will be automatically called when `end()` is called.
 
-        `sampling_interval` should be a value in milliseconds, and an integer
+        `sampling_interval` should be a value in milliseconds, and an integer\
         multiple of the simulation timestep.
         """
         if variables is None:  # reset the list of things to record
@@ -142,22 +139,22 @@ class Population(PyNNPopulationCommon, Recorder):
     def write_data(self, io, variables='all', gather=True, clear=False,
                    annotations=None):
         """
-        Write recorded data to file, using one of the file formats supported by
-        Neo.
+        Write recorded data to file, using one of the file formats supported\
+        by Neo.
 
         :param io: a Neo IO instance
         :type io: neo instance or a string for where to put a neo instance
-        :param variables:
-            either a single variable name or a list of variable names.
-            Variables must have been previously recorded, otherwise an
+        :param variables: \
+            either a single variable name or a list of variable names.\
+            Variables must have been previously recorded, otherwise an\
             Exception will be raised.
         :type variables: string or list of string
         :param gather: pointless in spynnaker
-        :param clear:
-        clears the storage data if set to true after reading it back
+        :param clear: \
+            clears the storage data if set to true after reading it back
         :param annotations: ???????????
         """
-
+        # pylint: disable=too-many-arguments
         if not gather:
             logger.warn("Spinnaker only supports gather=True. We will run as "
                         "if gather was set to True.")
@@ -203,7 +200,7 @@ class Population(PyNNPopulationCommon, Recorder):
     def _end(self):
         """ Do final steps at the end of the simulation
         """
-        for variable in self._write_to_files_indicators.keys():
+        for variable in self._write_to_files_indicators:
             if self._write_to_files_indicators[variable] is not None:
                 self.write_data(
                     io=self._write_to_files_indicators[variable],
@@ -212,19 +209,25 @@ class Population(PyNNPopulationCommon, Recorder):
     def get_data(
             self, variables='all', gather=True, clear=False, annotations=None):
         """
-        Return a Neo `Block` containing the data (spikes, state variables)
+        Return a Neo `Block` containing the data (spikes, state variables)\
         recorded from the Assembly.
 
-        `variables` - either a single variable name or a list of variable names
-                      Variables must have been previously recorded,
+        `variables` - either a single variable name or a list of variable\
+                      names. Variables must have been previously recorded,\
                       otherwise an Exception will be raised.
 
-        For parallel simulators, if `gather` is True, all data will be gathered
-        to all nodes and the Neo `Block` will contain data from all nodes.
-        Otherwise, the Neo `Block` will contain only data from the cells
-        simulated on the local node.
+        For parallel simulators, if `gather` is True, all data will be\
+        gathered to all nodes and the Neo `Block` will contain data from all\
+        nodes. Otherwise, the Neo `Block` will contain only data from the\
+        cells simulated on the local node.
 
         If `clear` is True, recorded data will be deleted from the `Assembly`.
+
+        :type variables: str or list
+        :type gather: bool
+        :type clear: bool
+        :type annotations: dict
+        :rtype: neo.Block
         """
         if not gather:
             logger.warn("Spinnaker only supports gather=True. We will run as "
@@ -233,13 +236,13 @@ class Population(PyNNPopulationCommon, Recorder):
         return self._extract_neo_block(variables, clear, annotations)
 
     def spinnaker_get_data(self, variable):
-        """ public assessor for getting data as a numpy array, instead of
+        """ public accessor for getting data as a numpy array, instead of\
         the neo based object
 
-        :param variable:
-        either a single variable name or a list of variable names
-        Variables must have been previously recorded, otherwise an
-        Exception will be raised.
+        :param variable: \
+            either a single variable name or a list of variable names.\
+            Variables must have been previously recorded, otherwise an\
+            Exception will be raised.
         :return: numpy array of the data
         """
         logger.warn(
@@ -247,18 +250,17 @@ class Population(PyNNPopulationCommon, Recorder):
             "compatible between simulators. Nor do we guarantee that this "
             "function will exist in future releases.")
         if isinstance(variable, list):
-            if len(variable) == 1:
-                variable = variable[0]
-            else:
-                msg = "Only one type of data at a time is supported"
-                raise exceptions.ConfigurationException(msg)
+            if len(variable) != 1:
+                raise ConfigurationException(
+                    "Only one type of data at a time is supported")
+            variable = variable[0]
         return self._get_recorded_variable(variable)
 
     def get_spike_counts(self, gather=True):
         """ Return the number of spikes for each neuron.
         """
         spikes = self._get_recorded_variable(SPIKES)
-        return PyNNPopulationCommon.get_spike_counts(self, spikes, gather)
+        return super(Population, self).get_spike_counts(spikes, gather)
 
     def find_units(self, variable):
         """ supports getting the units of a variable
@@ -271,15 +273,15 @@ class Population(PyNNPopulationCommon, Recorder):
     def set(self, **kwargs):
         for parameter, value in kwargs.iteritems():
             try:
-                PyNNPopulationCommon.set(self, parameter, value)
+                super(Population, self).set(parameter, value)
             except InvalidParameterType:
-                PyNNPopulationCommon.initialize(self, parameter, value)
+                super(Population, self).initialize(parameter, value)
 
     def initialize(self, **kwargs):
         for parameter, value in kwargs.iteritems():
-            PyNNPopulationCommon.initialize(self, parameter, value)
+            super(Population, self).initialize(parameter, value)
 
     def get(self, parameter_names, gather=False, simplify=True):
         if simplify is not True:
             logger.warn("The simplify value is ignored if not set to true")
-        return PyNNPopulationCommon.get(self, parameter_names, gather)
+        return super(Population, self).get(parameter_names, gather)

@@ -6,6 +6,7 @@ from spynnaker.pyNN.external_devices_models import ExternalDeviceLifControl
 
 import logging
 
+_apv_defaults = AbstractPopulationVertex.none_pynn_default_parameters
 logger = logging.getLogger(__name__)
 
 
@@ -16,16 +17,12 @@ class PushBotLifSpinnakerLinkDataHolder(DataHolder):
     def __init__(
             self, protocol, devices,
 
-            spikes_per_second=AbstractPopulationVertex.
-            none_pynn_default_parameters['spikes_per_second'],
-            label=AbstractPopulationVertex.none_pynn_default_parameters[
-                'label'],
-            ring_buffer_sigma=AbstractPopulationVertex.
-            none_pynn_default_parameters['ring_buffer_sigma'],
-            incoming_spike_buffer_size=AbstractPopulationVertex.
-            none_pynn_default_parameters['incoming_spike_buffer_size'],
-            constraints=AbstractPopulationVertex.
-            none_pynn_default_parameters['constraints'],
+            spikes_per_second=_apv_defaults['spikes_per_second'],
+            label=_apv_defaults['label'],
+            ring_buffer_sigma=_apv_defaults['ring_buffer_sigma'],
+            incoming_spike_buffer_size=_apv_defaults[
+                'incoming_spike_buffer_size'],
+            constraints=_apv_defaults['constraints'],
 
             # default params for the neuron model type
             tau_m=ExternalDeviceLifControl.default_parameters['tau_m'],
@@ -39,7 +36,7 @@ class PushBotLifSpinnakerLinkDataHolder(DataHolder):
             i_offset=ExternalDeviceLifControl.default_parameters['i_offset'],
             v_init=ExternalDeviceLifControl.none_pynn_default_parameters[
                 'v_init']):
-        # pylint: disable=too-many-arguments
+        # pylint: disable=too-many-arguments, too-many-locals
         super(PushBotLifSpinnakerLinkDataHolder, self).__init__({
             'protocol': protocol, 'devices': devices,
             'spikes_per_second': spikes_per_second,

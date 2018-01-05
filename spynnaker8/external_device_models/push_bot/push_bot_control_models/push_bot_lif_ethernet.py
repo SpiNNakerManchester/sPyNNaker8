@@ -4,6 +4,8 @@ from spynnaker.pyNN.external_devices_models.push_bot.push_bot_control_modules \
     import PushBotLifEthernet
 from spynnaker.pyNN.external_devices_models import ExternalDeviceLifControl
 
+_apv_defaults = AbstractPopulationVertex.none_pynn_default_parameters
+
 
 class PushBotLifEthernetDataHolder(DataHolder):
     """ Leaky integrate and fire neuron with an exponentially decaying \
@@ -14,16 +16,12 @@ class PushBotLifEthernetDataHolder(DataHolder):
             self, protocol, devices, pushbot_ip_address, pushbot_port=56000,
 
             # default params from abstract pop vertex
-            spikes_per_second=AbstractPopulationVertex.
-            none_pynn_default_parameters['spikes_per_second'],
-            label=AbstractPopulationVertex.none_pynn_default_parameters[
-                'label'],
-            ring_buffer_sigma=AbstractPopulationVertex.
-            none_pynn_default_parameters['ring_buffer_sigma'],
-            incoming_spike_buffer_size=AbstractPopulationVertex.
-            none_pynn_default_parameters['incoming_spike_buffer_size'],
-            constraints=AbstractPopulationVertex.
-            none_pynn_default_parameters['constraints'],
+            spikes_per_second=_apv_defaults['spikes_per_second'],
+            label=_apv_defaults['label'],
+            ring_buffer_sigma=_apv_defaults['ring_buffer_sigma'],
+            incoming_spike_buffer_size=_apv_defaults[
+                'incoming_spike_buffer_size'],
+            constraints=_apv_defaults['constraints'],
 
             # default params for the neuron model type
             tau_m=ExternalDeviceLifControl.default_parameters['tau_m'],

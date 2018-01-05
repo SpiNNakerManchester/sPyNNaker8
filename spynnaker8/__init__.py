@@ -249,7 +249,7 @@ def Projection(
     :param label: the label
     :return:  a projection object for SpiNNaker
     """
-
+    # pylint: disable=too-many-arguments
     return SpiNNakerProjection(
         pre_synaptic_population=presynaptic_population,
         post_synaptic_population=postsynaptic_population, connector=connector,
@@ -268,8 +268,7 @@ def _create_overloaded_functions(spinnaker_simulator):
     global __pynn_run, __pynn_run_until
     global __pynn_get_current_time, __pynn_get_time_step, __pynn_get_min_delay
     global __pynn_get_max_delay, __pynn_num_processes, __pynn_rank
-    global __pynn_reset, __pynn_initialize, __pynn_create, __pynn_connect
-    global __pynn_record
+    global __pynn_reset, __pynn_create, __pynn_connect, __pynn_record
 
     # overload the failed ones with now valid ones, now that we're in setup
     # phase.
@@ -374,6 +373,7 @@ def connect(pre, post, weight=0.0, delay=None, receptor_type=None, p=1,
     :param rng: random number generator
     :rtype: None
     """
+    # pylint: disable=too-many-arguments
     global __pynn_connect
     if not globals_variables.has_simulator():
         raise ConfigurationException(FAILED_STATE_MSG)

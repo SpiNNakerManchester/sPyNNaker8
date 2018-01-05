@@ -8,8 +8,7 @@ class SynapseDynamicsStatic(CommonSynapseDynamicsStatic):
     def __init__(
             self, weight=PyNNStaticSynapse.default_parameters['weight'],
             delay=None):
-
-        CommonSynapseDynamicsStatic.__init__(self)
+        super(SynapseDynamicsStatic, self).__init__()
         self._weight = weight
 
         if delay is None:

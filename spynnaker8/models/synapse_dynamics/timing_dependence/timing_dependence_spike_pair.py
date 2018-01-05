@@ -10,9 +10,8 @@ class TimingDependenceSpikePair(CommonTimingDependenceSpikePair):
 
     def __init__(
             self, tau_plus=20.0, tau_minus=20.0, A_plus=0.01, A_minus=0.01):
-        CommonTimingDependenceSpikePair.__init__(
-            self, tau_plus=tau_plus, tau_minus=tau_minus)
-
+        super(TimingDependenceSpikePair, self).__init__(
+            tau_plus=tau_plus, tau_minus=tau_minus)
         self._a_plus = A_plus
         self._a_minus = A_minus
 

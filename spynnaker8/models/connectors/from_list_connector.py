@@ -32,7 +32,7 @@ class FromListConnector(CommonFromListConnector, Connector):
         :param callback:
             if True, display a progress bar on the terminal.
         """
-
+        # pylint: disable=too-many-arguments
         if conn_list is None or not conn_list:
             raise InvalidParameterType(
                 "The connection list for the FromListConnector must contain"
