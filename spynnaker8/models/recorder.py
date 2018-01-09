@@ -359,8 +359,9 @@ def read_in_spikes(segment, spikes, t, ids, indexes, first_id,
 
 
 def _get_channel_index(ids, block):
+    # Note this code is only called if not pynn8_syntax
     for channel_index in block.channel_indexes:
-        if channel_index == ids:
+        if numpy.array_equal(channel_index.index, ids):
             return channel_index
     count = len(block.channel_indexes)
     channel_index = neo.ChannelIndex(
