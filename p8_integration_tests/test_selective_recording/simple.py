@@ -5,12 +5,17 @@ import spynnaker8 as sim
 from p8_integration_tests.base_test_case import BaseTestCase
 
 current_file_path = os.path.dirname(os.path.abspath(__file__))
-spike_file = os.path.join(current_file_path, "master_spikes.csv")
-v_file = os.path.join(current_file_path, "master_v.csv")
-exc_file = os.path.join(current_file_path, "master_exc.csv")
-inh_file = os.path.join(current_file_path, "master_inh.csv")
+spike_file = os.path.join(current_file_path, "spikes.csv")
+v_file = os.path.join(current_file_path, "v.csv")
+exc_file = os.path.join(current_file_path, "exc.csv")
+inh_file = os.path.join(current_file_path, "inh.csv")
+master_spike_file = os.path.join(current_file_path, "master_spikes.csv")
+master_v_file = os.path.join(current_file_path, "master_v.csv")
+master_exc_file = os.path.join(current_file_path, "master_exc.csv")
+master_inh_file = os.path.join(current_file_path, "master_inh.csv")
 
 SIMTIME = 10000
+
 
 def run_script(
         record_spikes=False, spike_rate=None, spike_indexes=None,
@@ -64,6 +69,7 @@ def run_script(
 
     return spikes, v,  exc, inh
 
+
 def write_spikes(spikes):
     with open(spike_file, "w") as f:
         for i, spiketrain in enumerate(spikes):
@@ -72,11 +78,10 @@ def write_spikes(spikes):
                 f.write(",{}".format(time.magnitude))
             f.write("\n")
 
+
 def ordered_rounded_set(in_list, factor):
     out_list = []
     added = set()
-    #if in_list[0] == "224":
-    #    print in_list[-1]
     for s in in_list[1:]:
         raw = float(s)
         val = round(raw + (raw % factor), 5)
@@ -86,6 +91,7 @@ def ordered_rounded_set(in_list, factor):
     out_list.insert(0, in_list[0])
     return out_list
 
+
 def read_spikes(name, rate=1):
     spikes = []
     with open(name) as f:
@@ -93,6 +99,7 @@ def read_spikes(name, rate=1):
             parts = line.split(",")
             spikes.append(ordered_rounded_set(parts, rate))
     return spikes
+
 
 def compare(f1, f2):
     print f1
@@ -104,31 +111,26 @@ def compare(f1, f2):
     print numpy.array_equal(d1, d2)
 
 
-
 if __name__ == '__main__':
     spikes, v, exc, inh = run_script(
-        record_spikes=True, spike_rate=2, spike_indexes=None,
-        record_v=True, v_rate=2, v_indexes=None,
-        record_exc=True, exc_rate=2, exc_indexes=None,
-        record_inh=True, inh_rate=2, inh_indexes=None)
+        record_spikes=True, spike_rate=1, spike_indexes=None,
+        record_v=True, v_rate=1, v_indexes=None,
+        record_exc=True, exc_rate=1, exc_indexes=None,
+        record_inh=True, inh_rate=1, inh_indexes=None)
     write_spikes(spikes)
-    #print spikes[224][-1]
     numpy.savetxt(v_file, v, delimiter=',')
     numpy.savetxt(exc_file, exc, delimiter=',')
     numpy.savetxt(inh_file, inh, delimiter=',')
     spikes = read_spikes(spike_file)
-    spikes2 = read_spikes("master_spikes.csv", rate=2)
+    spikes2 = read_spikes(master_spike_file, rate=1)
     for s1, s2 in zip(spikes, spikes2):
         if not numpy.array_equal(s1, s2):
-            #for ss1, ss2 in zip(s1, s2):
-            #   if ss1 != ss2:
-            #        print ss1, ss2
             print s1
             print s2
             print len(s1)
             print len(s2)
             raise Exception("Spikes not equal")
     print "Spikes equal"
-    #compare(v_file, "master_v.csv")
-    #compare(exc_file, "master_exc.csv")
-    #compare(inh_file, "master_inh.csv")
+    compare(v_file, master_v_file)
+    compare(exc_file, master_exc_file)
+    compare(inh_file, master_inh_file)
