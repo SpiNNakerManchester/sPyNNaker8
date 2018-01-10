@@ -25,5 +25,5 @@ class MultapseConnector(CommonMultapseConnector):
         # equivalent PyNN 0.7 call with the allowed "multinomial"
         # returns an array, this with "binomial" only returns a single value...
         return self._rng.next(1, distribution="binomial",
-                              parameters = {'n': num_synapses,
-                                            'p': prob_connect[0]})
+                              parameters={'n': num_synapses,
+                                          'p': prob_connect[0]})
