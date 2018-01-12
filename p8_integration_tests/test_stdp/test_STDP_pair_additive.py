@@ -9,7 +9,7 @@ class TestSTDPPairAdditive(BaseTestCase):
 
     def test_potentiation_and_depression(self):
         p.setup(1)
-        runtime = 40
+        runtime = 100
         initial_run = 1000  # to negate any initial conditions
 
         # STDP parameters
