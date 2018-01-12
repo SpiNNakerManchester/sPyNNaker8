@@ -1,4 +1,3 @@
-import numpy
 from p8_integration_tests.base_test_case import BaseTestCase
 import spynnaker8 as p
 
@@ -31,12 +30,14 @@ def do_run():
 
     return source, proj_source, dest, proj_dest, test_label, proj_label
 
+
 class TestProps(BaseTestCase):
     def test_props(self):
         source, proj_source, dest, proj_dest, test_label, proj_label = do_run()
         self.assertEqual(source, proj_source)
         self.assertEqual(dest, proj_dest)
         self.assertEqual(test_label, proj_label)
+
 
 if __name__ == '__main__':
     source, proj_source, dest, proj_dest, test_label, proj_label = do_run()
