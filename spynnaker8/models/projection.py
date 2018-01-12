@@ -228,5 +228,17 @@ class Projection(PyNNProjectionCommon):
             notify=functools.partial(
                 self._save_callback, args=[file, format, metadata]))
 
+    @property
+    def pre(self):
+        return self._synapse_information.connector.pre_population
+
+    @property
+    def post(self):
+        return self._synapse_information.connector.post_population
+
+    @property
+    def label(self):
+        return self._projection_edge.label
+
     def __repr__(self):
         return "projection {}".format(self._projection_edge.label)
