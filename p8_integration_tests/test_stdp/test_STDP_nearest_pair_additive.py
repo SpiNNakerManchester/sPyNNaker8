@@ -53,7 +53,8 @@ class TestSTDPNearestPairAdditive(BaseTestCase):
             p.StaticSynapse(weight=5.0, delay=1), receptor_type="excitatory")
 
         syn_plas = p.STDPMechanism(
-                                timing_dependence=p.SpikeNearestPairRule(),
+                                timing_dependence=
+                                    p.extra_models.SpikeNearestPairRule(),
                                 weight_dependence=p.AdditiveWeightDependence(
                                     w_min=min_weight, w_max=max_weight),
                                 weight=initial_weight, delay=plastic_delay)
