@@ -132,7 +132,6 @@ __all__ = [
     # plastic stuff
     'STDPMechanism', 'AdditiveWeightDependence',
     'MultiplicativeWeightDependence', 'SpikePairRule',
-    'SpikeNearestPairRule',
     # neuron stuff
     'IF_cond_exp', 'IF_curr_exp', "IF_curr_alpha",
     'Izhikevich', 'SpikeSourceArray', 'SpikeSourcePoisson',
