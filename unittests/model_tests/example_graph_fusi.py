@@ -18,12 +18,12 @@ to_plot_wgts = True
 
 dr_r = 100
 pre_rate = 50
-nrn = 3
-dt=50
+nrn = 1
+dt=20
 
 p.setup(1)
 
-#simtime = 1000
+simtime = 1000
 
 
 pop_src = p.Population(nrn, p.SpikeSourcePoisson(rate=pre_rate), label="src")
@@ -60,12 +60,15 @@ pop_ex.record(['v',  'spikes'])
 pop_src.record('spikes')
 pop_src2.record('spikes')
 
-wgts=[]
+wgts=np.zeros((simtime/dt, nrn))
 if to_plot_wgts:
     for i in range(simtime/dt):
         print i
         p.run(dt)
-        wgts.append( proj.get('weight', format='list', with_address=False)[0])
+        wgts[ i, :] = proj.get('weight', format='list', with_address=False)
+        #wgts.append( proj.get('weight', format='list', with_address=False))
+        #print proj.get('weight', format='list', with_address=False)
+        print wgts
 #        wgts.append( proj.get('weight', format='list', with_address=False)[0])
 else:
         p.run(simtime)
@@ -81,10 +84,13 @@ spikes = pop_ex.get_data('spikes')
 #print v.segments[0].filter(name='v')[0]
 #print pre_spikes.segments[0].spiketrains
 #print spikes.segments[0].spiketrains
-
+print type(pre_spikes.segments[0].spiketrains)
+print len(range(0, simtime, dt))
+wgts.shape
 plot_time = simtime
 if to_plot_wgts:
-    plot_wgt = DataTable(range(0, plot_time, dt), wgts)
+    plot_wgt = DataTable(range(0, plot_time, dt), wgts[:,nrn-1])
+    print plot_wgt
 
     Figure(
     # raster plot of the presynaptic neuron spike times
