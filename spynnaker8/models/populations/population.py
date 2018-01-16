@@ -133,17 +133,14 @@ class Population(PyNNPopulationCommon, Recorder):
 
                 # iterate though them
                 for variable in variables:
-                    self._record(variable, self._all_ids,
-                                 sampling_interval, to_file, indexes)
+                    self._record(variable, sampling_interval, to_file, indexes)
             else:
                 # record variable
-                self._record(variables, self._all_ids, sampling_interval,
-                             to_file, indexes)
+                self._record(variables, sampling_interval, to_file, indexes)
 
         else:  # list of variables, so just iterate though them
             for variable in variables:
-                self._record(variable, self._all_ids, sampling_interval,
-                             to_file, indexes)
+                self._record(variable, sampling_interval, to_file, indexes)
 
     def write_data(self, io, variables='all', gather=True, clear=False,
                    annotations=None):

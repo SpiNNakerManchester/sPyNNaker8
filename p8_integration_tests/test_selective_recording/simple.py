@@ -15,6 +15,7 @@ master_exc_file = os.path.join(current_file_path, "master_exc.csv")
 master_inh_file = os.path.join(current_file_path, "master_inh.csv")
 
 SIMTIME = 20000
+N_NEURONS = 500
 
 
 def run_script(
@@ -22,17 +23,16 @@ def run_script(
         record_v=False, v_rate=None, v_indexes=None,
         record_exc=False, exc_rate=None, exc_indexes=None,
         record_inh=False, inh_rate=None, inh_indexes=None):
-    n_neurons = 500
     simtime = SIMTIME
 
     sim.setup(timestep=1)
 
-    pop_1 = sim.Population(n_neurons, sim.IF_curr_exp(), label="pop_1")
+    pop_1 = sim.Population(N_NEURONS, sim.IF_curr_exp(), label="pop_1")
     input1 = sim.Population(1, sim.SpikeSourceArray(spike_times=[0]),
                             label="input")
     sim.Projection(input1, pop_1, sim.AllToAllConnector(),
                    synapse_type=sim.StaticSynapse(weight=5, delay=1))
-    input2 = sim.Population(n_neurons, sim.SpikeSourcePoisson(
+    input2 = sim.Population(N_NEURONS, sim.SpikeSourcePoisson(
         rate=100.0, seed=1),  label="Stim_Exc")
     sim.Projection(input2, pop_1, sim.OneToOneConnector(),
                    synapse_type=sim.StaticSynapse(weight=5, delay=1))
@@ -51,9 +51,11 @@ def run_script(
     if record_spikes:
         spikes = neo.segments[0].spiketrains
         write_spikes(spikes)
-        print spikes[0]
+        print len(spikes[0])
+        print spikes[0][-1]
         spikes = read_spikes(spike_file)
-        spikes2 = read_spikes(master_spike_file, rate=spike_rate)
+        spikes2 = read_spikes(
+            master_spike_file, rate=spike_rate, indexes=spike_indexes)
         if len(spikes) != len(spikes2):
             print len(spikes)
             print len(spikes2)
@@ -117,12 +119,18 @@ def ordered_rounded_set(in_list, factor):
     return out_list
 
 
-def read_spikes(name, rate=1):
+def read_spikes(name, rate=1, indexes=None):
     spikes = []
     with open(name) as f:
         for line in f:
             parts = line.split(",")
-            spikes.append(ordered_rounded_set(parts, rate))
+            if len(parts) > 1:
+                if indexes is None:
+                    if int(parts[0]) < N_NEURONS:
+                        spikes.append(ordered_rounded_set(parts, rate))
+                else:
+                    if int(parts[0]) in indexes:
+                        spikes.append(ordered_rounded_set(parts, rate))
     return spikes
 
 
@@ -147,8 +155,8 @@ def compare(f1, f2, rate):
 
 if __name__ == '__main__':
     spikes, v, exc, inh = run_script(
-        record_spikes=True, spike_rate=3, spike_indexes=None,
-        record_v=True, v_rate=4, v_indexes=None,
-        record_exc=True, exc_rate=1, exc_indexes=None,
-        record_inh=True, inh_rate=2, inh_indexes=None)
+        record_spikes=True, spike_rate=1, spike_indexes=range(0, N_NEURONS, 2),
+        record_v=False, v_rate=1, v_indexes=None,
+        record_exc=False, exc_rate=1, exc_indexes=None,
+        record_inh=False, inh_rate=1, inh_indexes=None)
 

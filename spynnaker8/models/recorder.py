@@ -123,9 +123,7 @@ class Recorder(RecordingCommon):
                     data = self._get_spikes()
                     sampling_interval = self._population._vertex. \
                         get_spikes_sampling_interval()
-                    ids = sorted(self._filter_recorded(
-                        self._indices_to_record[variable]))
-                    indexes = map(self._population.id_to_index, ids)
+                    indexes = self._population.size
                 else:
                     results = self._get_recorded_matrix(variable)
                     (data, indexes, sampling_interval) = results
@@ -177,16 +175,13 @@ class Recorder(RecordingCommon):
 
         for variable in variables:
             if variable == SPIKES:
-                ids = sorted(
-                    self._filter_recorded(self._indices_to_record[variable]))
-                indexes = map(self._population.id_to_index, ids)
                 sampling_interval = self._population._vertex. \
                     get_spikes_sampling_interval()
                 read_in_spikes(
                     segment=segment,
                     spikes=self._get_spikes(),
                     t=get_simulator().get_current_time(),
-                    ids=ids, indexes=indexes,
+                    n_neurons=self._population.size,
                     first_id=self._population._first_id,
                     recording_start_time=self._recording_start_time,
                     sampling_interval=sampling_interval,
@@ -239,19 +234,19 @@ class Recorder(RecordingCommon):
                 continue
             variable_cache = data_cache.get_data(variable)
             indexes = variable_cache.indexes
-            ids = map(self._population.index_to_id, indexes)
             if variable == SPIKES:
                 read_in_spikes(
                     segment=segment,
                     spikes=variable_cache.data,
                     t=data_cache.t,
-                    ids=ids,
-                    indexes=indexes,
+                    # In this case indexes saved self._population.size
+                    n_neurons=indexes,
                     first_id=data_cache.first_id,
                     recording_start_time=data_cache.recording_start_time,
                     sampling_interval=variable_cache.sampling_interval,
                     label=data_cache.label)
             else:
+                ids = map(self._population.index_to_id, indexes)
                 read_in_signal(
                     segment=segment,
                     block=block,
@@ -336,7 +331,7 @@ class Recorder(RecordingCommon):
 # The only reason the are listed here is that this is currently the only use
 
 
-def read_in_spikes(segment, spikes, t, ids, indexes, first_id,
+def read_in_spikes(segment, spikes, t, n_neurons, first_id,
                    recording_start_time, sampling_interval, label):
     """
     Converts the data into SpikeTrains and saves them to the segment
@@ -347,10 +342,8 @@ def read_in_spikes(segment, spikes, t, ids, indexes, first_id,
     :type spikes: nparray
     :param t: last simulation time
     :type t: int
-    :param ids: list of the ids to save spikes for
-    :type ids: nparray
-    :param indexes: list of the channel indexes
-    :type indexes: nparray
+    :param n_neurons: total number of neurons including ones not recording
+    :type n_neurons: int
     :param first_id: id of first neuron
     :type first_id: int
     :param recording_start_time: time recording started
@@ -362,15 +355,15 @@ def read_in_spikes(segment, spikes, t, ids, indexes, first_id,
     """
     t_stop = t * quantities.ms
 
-    for (id, index) in zip(ids, indexes):
+    for index in xrange(n_neurons):
         spiketrain = neo.SpikeTrain(
-            times=spikes[spikes[:, 0] == id - first_id][:, 1],
+            times=spikes[spikes[:, 0] == index][:, 1],
             t_start=recording_start_time,
             t_stop=t_stop,
             units='ms',
             sampling_rate=sampling_interval,
             source_population=label,
-            source_id=id,
+            source_id=index + first_id,
             source_index=index)
         # get times per atom
         segment.spiketrains.append(spiketrain)
