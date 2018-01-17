@@ -20,26 +20,31 @@ p.setup(1)
 
 inp_nrn = 2000
 inh_nrn = 1000
-inp_inh_conn_prob = 8.7/inp_nrn
+inp_inh_conn_prob = 0.0/inp_nrn
 w0=1
 w_mult=2.0
 #w_mult = w_mult/inp_nrn
 #simtime=300
 
 #simtime = 1000
-p.set_number_of_neurons_per_core(p.IF_curr_exp, 150)
+# p.set_number_of_neurons_per_core(p.IF_curr_exp, 50)
+# p.set_number_of_neurons_per_core(p.SpikeSourcePoisson, 50)
 # p.set_number_of_neurons_per_core(p.extra_models.IFCurrExpCa2Concentration, 100)
 # p.extra_models.IFCurrExpCa2Concentration.set_max_atoms_per_core(100)
 
-pop_src = p.Population(inp_nrn, p.SpikeSourcePoisson(rate=50), label="src")
-pop_inp = p.Population(inp_nrn, p.IF_curr_exp(), label="inp")
-pop_teacher = p.Population(1, p.SpikeSourcePoisson(rate=0), label="teacher")
+pop_src = p.Population(inp_nrn, p.SpikeSourcePoisson(rate=10), label="src")
+#pop_inp = p.Population(inp_nrn, p.IF_curr_exp(), label="inp")
+pop_teacher = p.Population(1, p.SpikeSourcePoisson(rate=100), label="teacher")
 cell_params = {"i_offset":0.0,  "tau_ca2":150, "i_alpha":1., "i_ca2":3.,   'v_reset':-65}
 #pop_inh = p.Population(inh_nrn, p.extra_models.IFCurrExpCa2Concentration, cell_params, label="inhibitory")
 pop_inh = p.Population(inh_nrn, p.IF_curr_exp(), label="inhibitory")
 pop_ex = p.Population(1, p.extra_models.IFCurrExpCa2Concentration, cell_params, label="test")
+#pop_ex = p.Population(1, p.IF_curr_exp(), label="test")
 
-
+rates = [10.0]*inp_nrn
+rates[0]=50
+rates[10] = 100
+pop_src.set(rate=rates)
 
 syn_plas = p.STDPMechanism(
      timing_dependence = p.PreOnly(A_plus = 0.15*w_max*w_mult, A_minus = 0.15*w_max*w_mult, th_v_mem=V_th, th_ca_up_l = Ca_th_l, th_ca_up_h = Ca_th_h2, th_ca_dn_l = Ca_th_l, th_ca_dn_h = Ca_th_h1),
@@ -48,25 +53,23 @@ syn_plas = p.STDPMechanism(
 #syn = p.StaticSynapse(weight=1.0, delay=1.0)
 
 proj = p.Projection(
-    pop_inp,
+    pop_src,
     pop_ex,
     p.AllToAllConnector(),
     synapse_type=syn_plas, receptor_type='excitatory'
     )
 
-proj_inp_inh = p.Projection(pop_inp,  pop_inh,  p.FixedProbabilityConnector(inp_inh_conn_prob),
-               synapse_type=p.StaticSynapse(weight=2.0),  receptor_type='excitatory')
-proj_src_inp = p.Projection(pop_src,  pop_inp,  p.OneToOneConnector(),
-               synapse_type=p.StaticSynapse(weight=2.0),  receptor_type='excitatory')
+proj_inp_inh = p.Projection(pop_src,  pop_inh,  p.FixedProbabilityConnector(inp_inh_conn_prob),
+               synapse_type=p.StaticSynapse(weight=1.0),  receptor_type='excitatory')
 proj_inh_ex = p.Projection(pop_inh,  pop_ex,  p.AllToAllConnector(),
-               synapse_type=p.StaticSynapse(weight=2.0),  receptor_type='inhibitory')
+               synapse_type=p.StaticSynapse(weight=1.0),  receptor_type='inhibitory')
 proj_teach_ex = p.Projection(pop_teacher,  pop_ex,  p.AllToAllConnector(),
-               synapse_type=p.StaticSynapse(weight=2.0),  receptor_type='excitatory')
+               synapse_type=p.StaticSynapse(weight=1.0),  receptor_type='excitatory')
 
 
 
 pop_ex.record(['v',  'spikes'])
-pop_inp.record('spikes')
+pop_src.record('spikes')
 pop_inh.record('spikes')
 
 wgts=[]
@@ -83,7 +86,7 @@ else:
 
 v = pop_ex.get_data('v')
 #curr = pop_ex.get_data('gsyn_exc')
-pre_spikes = pop_inp.get_data('spikes')
+pre_spikes = pop_src.get_data('spikes')
 inh_spikes = pop_inh.get_data('spikes')
 spikes = pop_ex.get_data('spikes')
 
