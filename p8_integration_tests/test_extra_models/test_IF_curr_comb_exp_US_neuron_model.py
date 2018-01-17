@@ -11,7 +11,7 @@ US_cell = sim.Population(1, sim.extra_models.IF_curr_comb_exp_US(**param_dict))
 
 
 
-spike_sourceE = sim.Population(1, sim.SpikeSourceArray(**{
+spike_sourceE = sim.Population(1000, sim.SpikeSourceArray(**{
     'spike_times': [5, 10, 15]}))
 spike_sourceI = sim.Population(1, sim.SpikeSourceArray(**{
     'spike_times': [float(i) for i in range(155,166, 5)]}))
@@ -28,12 +28,12 @@ spike_sourceI = sim.Population(1, sim.SpikeSourceArray(**{
 
 # Dendrite projections
 sim.Projection(spike_sourceE, US_cell,
-               sim.OneToOneConnector(),
-               synapse_type=sim.StaticSynapse(weight=1.5, delay=2.0),
+               sim.AllToAllConnector(),
+               synapse_type=sim.StaticSynapse(weight=0.5, delay=2.0),
                receptor_type='excitatory2')
 sim.Projection(spike_sourceI, US_cell,
                sim.OneToOneConnector(),
-               synapse_type=sim.StaticSynapse(weight=1.5, delay=4.0),
+               synapse_type=sim.StaticSynapse(weight=0.5, delay=4.0),
                receptor_type='inhibitory2')
 
 US_cell.record('all')
