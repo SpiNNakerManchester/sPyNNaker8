@@ -200,7 +200,6 @@ class Recorder(RecordingCommon):
                     sampling_interval=sampling_interval,
                     units=self._get_units(variable),
                     label=self._population.label)
-
         block.segments.append(segment)
 
         if clear:
