@@ -14,7 +14,7 @@ from example_graph_params import *
 
 
 to_plot_wgts = True
-#to_plot_wgts = False
+to_plot_wgts = False
 
 dr_r = 100
 pre_rate = 50
