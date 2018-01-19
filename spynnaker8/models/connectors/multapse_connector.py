@@ -17,6 +17,6 @@ class MultapseConnector(CommonMultapseConnector):
     def __init__(self, num_synapses, weights=0.0, delays=1, safe=True,
                  verbose=False):
         # pylint: disable=too-many-arguments
-        CommonMultapseConnector.__init__(
-            self, num_synapses=num_synapses, safe=safe, verbose=verbose)
+        super(MultapseConnector, self).__init__(
+            num_synapses=num_synapses, safe=safe, verbose=verbose)
         self.set_weights_and_delays(weights, delays)

@@ -44,8 +44,8 @@ class FixedNumberPostConnector(CommonFixedNumberPostConnector,
         :param callback: list of callbacks to run
         """
         # pylint: disable=too-many-arguments
-        CommonFixedNumberPostConnector.__init__(
-            self, n=n, allow_self_connections=allow_self_connections,
+        super(FixedNumberPostConnector, self).__init__(
+            n=n, allow_self_connections=allow_self_connections,
             with_replacement=with_replacement, safe=safe, verbose=verbose)
 
     def get_rng_parameters(self, n_post_neurons):

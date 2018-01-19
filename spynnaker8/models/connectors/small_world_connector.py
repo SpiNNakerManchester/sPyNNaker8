@@ -11,8 +11,8 @@ class SmallWorldConnector(CommonSmallWorldConnector):
             safe=True, verbose=False, n_connections=None, weights=0.0,
             delays=1):
         # pylint: disable=too-many-arguments
-        CommonSmallWorldConnector.__init__(
-            self, degree=degree, rewiring=rewiring,
+        super(SmallWorldConnector, self).__init__(
+            degree=degree, rewiring=rewiring,
             allow_self_connections=allow_self_connections,
             safe=safe, verbose=verbose, n_connections=n_connections)
         self.set_weights_and_delays(weights, delays)

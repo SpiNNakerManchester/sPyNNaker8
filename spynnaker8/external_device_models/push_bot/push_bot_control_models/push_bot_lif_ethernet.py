@@ -4,7 +4,7 @@ from spynnaker.pyNN.external_devices_models.push_bot.push_bot_control_modules \
     import PushBotLifEthernet
 from spynnaker.pyNN.external_devices_models import ExternalDeviceLifControl
 
-_apv_defaults = AbstractPopulationVertex.none_pynn_default_parameters
+_apv_defs = AbstractPopulationVertex.none_pynn_default_parameters
 
 
 class PushBotLifEthernetDataHolder(DataHolder):
@@ -16,12 +16,12 @@ class PushBotLifEthernetDataHolder(DataHolder):
             self, protocol, devices, pushbot_ip_address, pushbot_port=56000,
 
             # default params from abstract pop vertex
-            spikes_per_second=_apv_defaults['spikes_per_second'],
-            label=_apv_defaults['label'],
-            ring_buffer_sigma=_apv_defaults['ring_buffer_sigma'],
-            incoming_spike_buffer_size=_apv_defaults[
+            spikes_per_second=_apv_defs['spikes_per_second'],
+            label=_apv_defs['label'],
+            ring_buffer_sigma=_apv_defs['ring_buffer_sigma'],
+            incoming_spike_buffer_size=_apv_defs[
                 'incoming_spike_buffer_size'],
-            constraints=_apv_defaults['constraints'],
+            constraints=_apv_defs['constraints'],
 
             # default params for the neuron model type
             tau_m=ExternalDeviceLifControl.default_parameters['tau_m'],
