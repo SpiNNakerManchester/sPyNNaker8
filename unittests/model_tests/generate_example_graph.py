@@ -13,21 +13,23 @@ from example_graph_params import *
 # pre_spikes.txt is input spikes
 #######################################
 
+folder='data.st2'
+
 xbuf = 20
 
-r_pre = io.AsciiSpikeTrainIO(filename='data/pre_spikes.txt')
-r_post = io.PyNNTextIO(filename='data/data.txt')
-r_post_spikes = io.AsciiSpikeTrainIO(filename='data/post_spikes.txt')
+r_pre = io.AsciiSpikeTrainIO(filename=folder+'/pre_spikes.txt')
+r_post = io.PyNNTextIO(filename=folder+'/data.txt')
+r_post_spikes = io.AsciiSpikeTrainIO(filename=folder+'/post_spikes.txt')
 
 
 pre_spikes = r_pre.read_segment()
 post_spikes = r_post_spikes.read_segment()
 V_data = r_post.read_segment() #.analogsignals[0]
 
-csv = np.genfromtxt ('data/ca.txt')
+csv = np.genfromtxt (folder+'/ca.txt')
 Ca = csv[:]
 print Ca
-csv = np.genfromtxt ('data/wgt.txt')
+csv = np.genfromtxt (folder+'/wgt.txt')
 w_time = csv[:,1]
 wgts = csv[:,0]
 print w_time, wgts
@@ -43,11 +45,11 @@ fig_settings = {
     'axes.linewidth': 0.5,
     'axes.labelsize': 'small',
     'legend.fontsize': 'small',
-    'font.size': 8
+    'font.size': 12
 }
 plt.rcParams.update(fig_settings)
 plt.figure(1, figsize=(6, 8))
-plt.suptitle("Synaptic transitions")
+#plt.suptitle("Synaptic transitions")
 
 
 def plot_spiketrains(segment, label):
@@ -55,7 +57,7 @@ def plot_spiketrains(segment, label):
         y = np.ones_like(spiketrain) #* spiketrain.annotations['source_id']
         plt.plot(spiketrain, y, '|')
     plt.ylabel(label)
-    plt.setp(plt.gca().get_xticklabels(), visible=False)
+    #plt.setp(plt.gca().get_xticklabels(), visible=False)
     plt.xlim([0.0-xbuf,1000.0+xbuf])
 
 
@@ -94,5 +96,6 @@ plt.xlim([0.0-xbuf,1000.0+xbuf])
 #plot_signal(V_data, 0)
 #plt.xlabel("time (%s)" % array.times.units._dimensionality.string)
 #plt.setp(plt.gca().get_xticklabels(), visible=True)
+plt.tight_layout()
 
 plt.show()

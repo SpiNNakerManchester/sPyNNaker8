@@ -51,20 +51,20 @@ pop_ex = p.Population(n_nrn, p.extra_models.IFCurrExpCa2Concentration, cell_para
 #pop_ex = p.Population(n_nrn, p.IF_curr_exp(), label="test")
 
 
-# syn_plas = p.STDPMechanism(
-#      timing_dependence = p.PreOnly(A_plus = 0.15*w_max*w_mult, A_minus = 0.15*w_max*w_mult, th_v_mem=V_th, th_ca_up_l = Ca_th_l, th_ca_up_h = Ca_th_h2, th_ca_dn_l = Ca_th_l, th_ca_dn_h = Ca_th_h1),
-#         weight_dependence = p.WeightDependenceFusi(w_min=w_min*w_mult, w_max=w_max*w_mult, w_drift=w_drift*w_mult, th_w=th_w * w_mult), weight=w0*w_mult, delay=1.0)
-#
-#
-# proj = p.Projection(
-#     pop_src,
-#     pop_ex,
-#     p.OneToOneConnector(),
-#     synapse_type=syn_plas, receptor_type='excitatory'
-#     )
+syn_plas = p.STDPMechanism(
+     timing_dependence = p.PreOnly(A_plus = 0.15*w_max*w_mult, A_minus = 0.15*w_max*w_mult, th_v_mem=V_th, th_ca_up_l = Ca_th_l, th_ca_up_h = Ca_th_h2, th_ca_dn_l = Ca_th_l, th_ca_dn_h = Ca_th_h1),
+        weight_dependence = p.WeightDependenceFusi(w_min=w_min*w_mult, w_max=w_max*w_mult, w_drift=w_drift*w_mult, th_w=th_w * w_mult), weight=w0*w_mult, delay=1.0)
 
-# proj2 = p.Projection(pop_src2,  pop_ex,  p.OneToOneConnector(),
-#                synapse_type=p.StaticSynapse(weight=2.0),  receptor_type='excitatory')
+
+proj = p.Projection(
+    pop_src,
+    pop_ex,
+    p.OneToOneConnector(),
+    synapse_type=syn_plas, receptor_type='excitatory'
+    )
+
+proj2 = p.Projection(pop_src2,  pop_ex,  p.OneToOneConnector(),
+               synapse_type=p.StaticSynapse(weight=2.0),  receptor_type='excitatory')
 
 
 # proj2 = p.Projection(
