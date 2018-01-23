@@ -14,11 +14,13 @@ class MultapseConnector(CommonMultapseConnector):
         Integer. This is the total number of synapses in the connection.
 
     """
-    def __init__(self, num_synapses, weights=0.0, delays=1, safe=True,
-                 verbose=False):
+    def __init__(self, num_synapses, allow_self_connections=True,
+                 with_replacement=True, safe=True, verbose=False):
         CommonMultapseConnector.__init__(
-            self, num_synapses=num_synapses, safe=safe, verbose=verbose)
-        self.set_weights_and_delays(weights, delays)
+            self, num_synapses=num_synapses,
+            allow_self_connections=allow_self_connections,
+            with_replacement=with_replacement, safe=safe, verbose=verbose)
+        #self.set_weights_and_delays(weights, delays)
 
     def get_rng_next(self, num_synapses, prob_connect):
         # This needs to be edited to work with PyNN 0.8+
