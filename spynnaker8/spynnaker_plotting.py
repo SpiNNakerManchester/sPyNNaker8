@@ -13,7 +13,7 @@ from spynnaker8.utilities.version_util import pynn8_syntax
 if pynn8_syntax:
     from neo import AnalogSignalArray as AnalogSignal
 else:
-    from neo import AnalogSignal as AnalogSignal
+    from neo import AnalogSignal
 
 
 """

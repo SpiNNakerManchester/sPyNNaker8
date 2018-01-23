@@ -95,8 +95,8 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
         front_end_versions.append(("lazyarray_version", lazyarray_version))
 
         # spinnaker setup
-        AbstractSpiNNakerCommon.__init__(
-            self, database_socket_addresses=database_socket_addresses,
+        super(SpiNNaker, self).__init__(
+            database_socket_addresses=database_socket_addresses,
             user_extra_algorithm_xml_path=built_in_extra_xml_paths,
             user_extra_mapping_inputs=built_in_extra_mapping_inputs,
             extra_mapping_algorithms=extra_mapping_algorithms,
@@ -161,18 +161,18 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 
         # Convert dt into microseconds and divide by
         # realtime proportion to get hardware timestep
-        hardware_timestep_us = int(round((1000.0 * float(self.dt)) /
-                                         float(self.timescale_factor)))
+        hardware_timestep_us = int(round(
+            (1000.0 * float(self.dt)) / float(self.timescale_factor)))
 
         # Determine how long simulation is in timesteps
-        duration_timesteps = \
-            int(math.ceil(float(duration_ms) / float(self.dt)))
+        duration_timesteps = int(math.ceil(
+            float(duration_ms) / float(self.dt)))
 
         logger.info("Simulating for %u %fms timesteps "
                     "using a hardware timestep of %uus",
                     duration_timesteps, self.dt, hardware_timestep_us)
 
-        AbstractSpiNNakerCommon.run(self, duration_ms)
+        super(SpiNNaker, self).run(duration_ms)
 
     @property
     def state(self):
@@ -264,8 +264,8 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 
     @property
     def running(self):
-        """ property method required from the base state object (ties into
-        our has_ran parameter for auto pause and resume
+        """ property method required from the base state object (ties into\
+            our has_ran parameter for auto pause and resume
 
         :return: the has_ran variable from the spinnaker main interface
         """
@@ -273,8 +273,8 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 
     @running.setter
     def running(self, new_value):
-        """ setter for the has_ran parameter, only used by the pynn interface,
-        supports tracking where it thinks its setting this parameter.
+        """ setter for the has_ran parameter, only used by the pynn interface,\
+            supports tracking where it thinks its setting this parameter.
 
         :param new_value: the new value for the simulation
         :return: None
@@ -283,8 +283,8 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 
     @property
     def name(self):
-        """ interface function needed to ensure pynn recoridng neo blocks are
-        correctly labelled.
+        """ interface function needed to ensure pynn recording neo blocks are\
+            correctly labelled.
 
         :return: the name of the simulator.
         """
