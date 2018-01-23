@@ -24,6 +24,12 @@ class MultapseConnector(CommonMultapseConnector):
         # This needs to be edited to work with PyNN 0.8+
         # equivalent PyNN 0.7 call with the allowed "multinomial"
         # returns an array, this with "binomial" only returns a single value...
-        return self._rng.next(1, distribution="binomial",
-                              parameters={'n': num_synapses,
-                                          'p': prob_connect[0]})
+
+        # loop over prob connect and do a binomial for each for now
+        n_prob = len(prob_connect)
+        rngs = [
+            self._rng.next(1, distribution="binomial",
+                           parameters={'n': num_synapses,
+                                       'p': prob_connect[i]})[0]
+            for i in range(n_prob)]
+        return rngs
