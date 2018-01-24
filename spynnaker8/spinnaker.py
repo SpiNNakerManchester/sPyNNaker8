@@ -71,22 +71,18 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 
         # handle the extra load algorithms and the built in ones
         built_in_extra_load_algorithms = list()
-
         if extra_load_algorithms is not None:
             built_in_extra_load_algorithms.extend(extra_load_algorithms)
 
         # handle extra xmls and the ones needed by default
         built_in_extra_xml_paths = list()
-
         if extra_algorithm_xml_paths is not None:
             built_in_extra_xml_paths.extend(extra_algorithm_xml_paths)
 
         # handle the extra mapping inputs and the built in ones
         built_in_extra_mapping_inputs = dict()
-
         if extra_mapping_inputs is not None:
-            built_in_extra_mapping_inputs.update(
-                built_in_extra_mapping_inputs)
+            built_in_extra_mapping_inputs.update(extra_mapping_inputs)
 
         front_end_versions = [("sPyNNaker8_version", version)]
         front_end_versions.append(("pyNN_version", pynn_version))
