@@ -20,7 +20,6 @@ class MultapseConnector(CommonMultapseConnector):
             self, num_synapses=num_synapses,
             allow_self_connections=allow_self_connections,
             with_replacement=with_replacement, safe=safe, verbose=verbose)
-        #self.set_weights_and_delays(weights, delays)
 
     def get_rng_next(self, num_synapses, prob_connect):
         # This needs to be edited to work with PyNN 0.8+
