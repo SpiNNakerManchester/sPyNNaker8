@@ -4,12 +4,15 @@ from pyNN.random import RandomDistribution, NumpyRNG
 from pyNN import __version__ as pynn_version
 
 from spinn_front_end_common.utilities import globals_variables
+from spinn_front_end_common.utilities.exceptions import ConfigurationException
+from spinn_front_end_common.utilities.failed_state import FAILED_STATE_MSG
 from spynnaker.pyNN.abstract_spinnaker_common import AbstractSpiNNakerCommon
+from spynnaker.pyNN.utilities.spynnaker_failed_state \
+    import SpynnakerFailedState
 
 from spynnaker8 import _version
 from spynnaker8.spynnaker8_simulator_interface \
     import Spynnaker8SimulatorInterface
-from spynnaker8.utilities.spynnaker8_failed_state import Spynnaker8FailedState
 from spynnaker8.utilities.random_stats import RandomStatsExponentialImpl
 from spynnaker8.utilities.random_stats import RandomStatsGammaImpl
 from spynnaker8.utilities.random_stats import RandomStatsLogNormalImpl
@@ -32,11 +35,8 @@ from lazyarray import __version__ as lazyarray_version
 
 logger = logging.getLogger(__name__)
 
-# At import time change the default FailedState
-globals_variables.set_failed_state(Spynnaker8FailedState())
-
 NAME = "SpiNNaker_under_version({}-{})".format(
-            _version.__version__, _version.__version_name__)
+    _version.__version__, _version.__version_name__)
 
 
 class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
@@ -344,3 +344,41 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 
     def get_pynn_NumpyRNG(self):
         return NumpyRNG()
+
+
+# Defined in this file to prevent an import loop
+class Spynnaker8FailedState(SpynnakerFailedState,
+                            Spynnaker8SimulatorInterface):
+    __slots__ = ()
+
+    @property
+    def dt(self):
+        raise ConfigurationException(FAILED_STATE_MSG)
+
+    @property
+    def mpi_rank(self):
+        raise ConfigurationException(FAILED_STATE_MSG)
+
+    @property
+    def name(self):
+        return NAME
+
+    @property
+    def num_processes(self):
+        raise ConfigurationException(FAILED_STATE_MSG)
+
+    @property
+    def recorders(self):
+        raise ConfigurationException(FAILED_STATE_MSG)
+
+    @property
+    def segment_counter(self):
+        raise ConfigurationException(FAILED_STATE_MSG)
+
+    @property
+    def t(self):
+        raise ConfigurationException(FAILED_STATE_MSG)
+
+
+# At import time change the default FailedState
+globals_variables.set_failed_state(Spynnaker8FailedState())
