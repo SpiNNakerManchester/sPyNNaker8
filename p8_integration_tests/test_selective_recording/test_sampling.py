@@ -33,9 +33,11 @@ def run_script(
     if record_v:
         pop_1.record(['v'], sampling_interval=v_rate, indexes=v_indexes)
     if record_exc:
-        pop_1.record(['gsyn_exc'], sampling_interval=exc_rate, indexes=exc_indexes)
+        pop_1.record(['gsyn_exc'], sampling_interval=exc_rate,
+                     indexes=exc_indexes)
     if record_inh:
-        pop_1.record(['gsyn_inh'], sampling_interval=inh_rate, indexes=inh_indexes)
+        pop_1.record(['gsyn_inh'], sampling_interval=inh_rate,
+                     indexes=inh_indexes)
     sim.run(simtime)
 
     neo = pop_1.get_data()
@@ -96,19 +98,22 @@ def compare_spikearrays(this, full):
             if lowest is None:
                 lowest = full[i2]
     while i1 < len(this):
-        print "trailing extra spike {} has spike at {}".format(this[0], this[i1])
+        print "trailing extra spike {} has spike at {}" \
+              "".format(this[0], this[i1])
         i1 += 1
     while i2 < len(full):
-        print "trailing spike missing {} no spike at {}".format(this[0], full[i2])
+        print "trailing spike missing {} no spike at {}" \
+              "".format(this[0], full[i2])
         i2 += 1
     return lowest
     # raise Exception("Spikes not equal")
 
 
-def compare_spikes(file_path, full_path, spike_rate=1, spike_indexes=None):
-    this_spikes = read_spikes(file_path, n_neurons, simtime)
-    full_spikes = read_spikes(full_path, n_neurons, simtime,
-                              rate=spike_rate, indexes=spike_indexes)
+def compare_spikes(file_path, full_path, simtime, n_neurons, spike_rate=1,
+                   spike_indexes=None):
+    this_spikes = read_spikes(file_path, simtime, n_neurons)
+    full_spikes = read_spikes(full_path, simtime, n_neurons, rate=spike_rate,
+                              indexes=spike_indexes)
     if len(this_spikes) != len(full_spikes):
         raise Exception("Spikes different length this {} full {}"
                         "".format(len(this_spikes), len(full_spikes)))
@@ -130,7 +135,8 @@ def compare_results(
     if record_spikes:
         file_path = os.path.join(current_file_path, "spikes.csv")
         full_path = os.path.join(current_file_path, full_prefix+"spikes.csv")
-        compare_spikes(file_path, full_path, spike_rate, spike_indexes)
+        compare_spikes(file_path, full_path, simtime, n_neurons, spike_rate,
+                       spike_indexes)
     if record_v:
         file_path = os.path.join(current_file_path, "v.csv")
         full_path = os.path.join(current_file_path, full_prefix+"v.csv")
@@ -204,14 +210,14 @@ def ordered_rounded_set(in_list, factor, simtime):
             val = round(raw + factor - (raw % factor), 5)
         else:
             val = raw
-        if val < simtime and not val in added:
+        if val < simtime and val not in added:
             out_list.append(val)
             added.add(val)
     out_list.insert(0, in_list[0])
     return out_list
 
 
-def read_spikes(name, n_neurons, simtime, rate=1, indexes=None):
+def read_spikes(name, simtime, n_neurons, rate=1, indexes=None):
     spikes = []
     with open(name) as f:
         for line in f:
@@ -262,7 +268,7 @@ def compare(current, full, rate, indexes):
                 print d2_rate[i]
                 raise Exception("not equal")
 
-"""
+
 class TestSampling(BaseTestCase):
 
     def test_big_with_rate(self):
@@ -274,10 +280,32 @@ class TestSampling(BaseTestCase):
             record_v=True, v_rate=3, v_indexes=None,
             record_exc=True, exc_rate=4, exc_indexes=None,
             record_inh=True, inh_rate=5, inh_indexes=None)
-"""
+
+    def test_big_with_index(self):
+        simtime = 20000
+        n_neurons = 500
+        run_and_compare_script(
+            simtime, n_neurons,
+            record_spikes=True, spike_rate=1,
+            spike_indexes=range(0, n_neurons, 2),
+            record_v=True, v_rate=1, v_indexes=range(0, n_neurons, 2),
+            record_exc=True, exc_rate=1, exc_indexes=range(0, n_neurons, 3),
+            record_inh=True, inh_rate=1, inh_indexes=range(0, n_neurons, 4))
+
+    def test_big_with_both(self):
+        simtime = 20000
+        n_neurons = 500
+        run_and_compare_script(
+            simtime, n_neurons,
+            record_spikes=True, spike_rate=5,
+            spike_indexes=range(0, n_neurons, 2),
+            record_v=True, v_rate=4, v_indexes=range(0, n_neurons, 2),
+            record_exc=True, exc_rate=3, exc_indexes=range(0, n_neurons, 3),
+            record_inh=True, inh_rate=2, inh_indexes=range(0, n_neurons, 4))
+
 
 if __name__ == '__main__':
-    simtime = 20100
+    simtime = 20000
     n_neurons = 500
 
     run_and_compare_script(
@@ -286,7 +314,8 @@ if __name__ == '__main__':
         record_v=True, v_rate=3, v_indexes=None,
         record_exc=True, exc_rate=4, exc_indexes=None,
         record_inh=True, inh_rate=5, inh_indexes=None)
-
+    """
     file_path = os.path.join(current_file_path, "20000_500_spikes.csv")
     full_path = os.path.join(current_file_path, "master_20000_500_spikes.csv")
     compare_spikes(file_path, full_path)
+    """

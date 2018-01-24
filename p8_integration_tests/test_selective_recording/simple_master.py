@@ -2,7 +2,6 @@ import numpy
 import os
 
 import spynnaker8 as sim
-from p8_integration_tests.base_test_case import BaseTestCase
 
 current_file_path = os.path.dirname(os.path.abspath(__file__))
 spike_file = os.path.join(current_file_path, "master_spikes.csv")
@@ -11,7 +10,6 @@ exc_file = os.path.join(current_file_path, "master_exc.csv")
 inh_file = os.path.join(current_file_path, "master_inh.csv")
 
 SIMTIME = 20000
-
 
 
 def run_script():
