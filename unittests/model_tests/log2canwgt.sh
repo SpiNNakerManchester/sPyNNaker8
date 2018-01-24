@@ -2,9 +2,9 @@
 dirn=$(ls -t reports | head -1)
 fn=$(ls -S reports/$dirn/run_1/provenance_data/*.txt | head -1)
 filen=$fn
-echo $filen
+#echo $filen
 outdir='data'
-cat $filen |grep "calcium" | awk '{print $10}' > $outdir/ca.txt
-cat $filen |grep "Neuron" -A 8  | paste - - - - - - - - - -  | awk '{print $62-1, $52 "\n"$62, $57}' > $outdir/wgt.txt
+cat $filen |python log_ca.py > $outdir/ca.txt
+cat $filen |python log_wgt.py > $outdir/wgt.txt
 
 
