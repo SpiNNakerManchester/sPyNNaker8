@@ -1,5 +1,6 @@
 import numpy
 import os
+import sys
 
 import spynnaker8 as sim
 from p8_integration_tests.base_test_case import BaseTestCase
@@ -69,6 +70,57 @@ def run_script(
     return spikes, v,  exc, inh
 
 
+def compare_spikearrays(this, full):
+    if numpy.array_equal(this, full):
+        return sys.maxint
+    if this[0] != full[0]:
+        raise Exception("Index missmatch")
+    if len(this) != len(full):
+        print "{} spikes length differ. {} != {}" \
+              "".format(this[0], len(this), len(full))
+    i1 = 0
+    i2 = 0
+    lowest = None
+    while i1 < len(this) and i2 < len(full):
+        if this[i1] == full[i2]:
+            i1 += 1
+            i2 += 1
+        elif this[i1] < full[i2]:
+            print "extra spike {} has spike at {}".format(this[0], this[i1])
+            i1 += 1
+            if lowest is None:
+                lowest = this[i1]
+        elif this[i1] > full[i2]:
+            print "spike missing {} no spike at {}".format(this[0], full[i2])
+            i2 += 1
+            if lowest is None:
+                lowest = full[i2]
+    while i1 < len(this):
+        print "trailing extra spike {} has spike at {}".format(this[0], this[i1])
+        i1 += 1
+    while i2 < len(full):
+        print "trailing spike missing {} no spike at {}".format(this[0], full[i2])
+        i2 += 1
+    return lowest
+    # raise Exception("Spikes not equal")
+
+
+def compare_spikes(file_path, full_path, spike_rate=1, spike_indexes=None):
+    this_spikes = read_spikes(file_path, n_neurons, simtime)
+    full_spikes = read_spikes(full_path, n_neurons, simtime,
+                              rate=spike_rate, indexes=spike_indexes)
+    if len(this_spikes) != len(full_spikes):
+        raise Exception("Spikes different length this {} full {}"
+                        "".format(len(this_spikes), len(full_spikes)))
+    lowest = sys.maxint
+    for this, full in zip(this_spikes, full_spikes):
+        low = compare_spikearrays(this, full)
+        lowest = min(lowest, low)
+    if lowest < sys.maxint:
+        raise Exception("Spikes different from {}".format(lowest))
+    print "Spikes equal"
+
+
 def compare_results(
         simtime, n_neurons,
         record_spikes=False, spike_rate=None, spike_indexes=None,
@@ -77,24 +129,8 @@ def compare_results(
         record_inh=False, inh_rate=None, inh_indexes=None, full_prefix=""):
     if record_spikes:
         file_path = os.path.join(current_file_path, "spikes.csv")
-        spikes = read_spikes(file_path, n_neurons, simtime)
         full_path = os.path.join(current_file_path, full_prefix+"spikes.csv")
-        spikes2 = read_spikes(full_path, n_neurons, simtime,
-                              rate=spike_rate, indexes=spike_indexes)
-        if len(spikes) != len(spikes2):
-            print "spike length differ"
-            print len(spikes)
-            print len(spikes2)
-            raise Exception("Spikes different length")
-        for s1, s2 in zip(spikes, spikes2):
-            if not numpy.array_equal(s1, s2):
-                print "spikes length differ"
-                print s1
-                print s2
-                print len(s1)
-                print len(s2)
-                raise Exception("Spikes not equal")
-        print "Spikes equal"
+        compare_spikes(file_path, full_path, spike_rate, spike_indexes)
     if record_v:
         file_path = os.path.join(current_file_path, "v.csv")
         full_path = os.path.join(current_file_path, full_prefix+"v.csv")
@@ -241,7 +277,7 @@ class TestSampling(BaseTestCase):
 """
 
 if __name__ == '__main__':
-    simtime = 20000
+    simtime = 20100
     n_neurons = 500
 
     run_and_compare_script(
@@ -251,3 +287,6 @@ if __name__ == '__main__':
         record_exc=True, exc_rate=4, exc_indexes=None,
         record_inh=True, inh_rate=5, inh_indexes=None)
 
+    file_path = os.path.join(current_file_path, "20000_500_spikes.csv")
+    full_path = os.path.join(current_file_path, "master_20000_500_spikes.csv")
+    compare_spikes(file_path, full_path)
