@@ -98,19 +98,19 @@ class DataCache(object):
         """
         return self._cache[variable]
 
-    def save_data(self, variable, data, ids, units):
+    def save_data(self, variable, data, indexes, units, sampling_interval):
         """
         Saves the data for one variable in this segment
         :param variable: name of variable data applies to
         :type variable: str
         :param data: raw data in spynakker format
         :type data: nparray
-        :param ids: ids for which data should be returned
+        :param indexes: population indexes for which data should be returned
         :type nparray
         :param units: the units in which the data is
         :type units: str
         :rtype None
         """
         self._rec_datetime = datetime.now()
-        variable_cache = VariableCache(data, ids, units)
+        variable_cache = VariableCache(data, indexes, units, sampling_interval)
         self._cache[variable] = variable_cache
