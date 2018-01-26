@@ -9,6 +9,8 @@ from spynnaker8.models.model_data_holders\
 from spynnaker8.models.model_data_holders\
     import IfCurrExpCa2ConcentrationDataHolder as IFCurrExpCa2Concentration
 from spynnaker8.models.model_data_holders\
+    import IfCondExpCa2ConcentrationDataHolder as IFCondExpCa2Concentration
+from spynnaker8.models.model_data_holders\
     import IFCurrDualExpDataHolder as IF_curr_dual_exp
 from spynnaker8.models.model_data_holders.izk_cond_exp_data_holder import \
     IzkCondExpDataHolder as Izhikevich_cond

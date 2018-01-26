@@ -12,6 +12,8 @@ from .if_curr_exp_ca2_adaptive_data_holder \
     import IfCurrExpCa2AdaptiveDataHolder
 from .if_curr_exp_ca2_concentration_data_holder \
     import IfCurrExpCa2ConcentrationDataHolder
+from .if_cond_exp_ca2_concentration_data_holder \
+    import IfCondExpCa2ConcentrationDataHolder
 
 __all__ = ["IFCondExpDataHolder", "IFCurrDualExpDataHolder",
            "IFCurrExpDataHolder", "IzkCondExpDataHolder",
@@ -19,4 +21,5 @@ __all__ = ["IFCondExpDataHolder", "IFCurrDualExpDataHolder",
            "SpikeSourcePoissonDataHolder", "SpikeInjectorDataHolder",
            "IfCondExpStocDataHolder", "IfCurrDeltaDataHolder",
            "IfCurrExpCa2AdaptiveDataHolder", "IFCurrAlphaDataHolder",
-           "IfCurrExpCa2ConcentrationDataHolder"]
+           "IfCurrExpCa2ConcentrationDataHolder",
+           "IfCondExpCa2ConcentrationDataHolder"]
