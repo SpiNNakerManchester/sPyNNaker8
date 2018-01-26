@@ -118,11 +118,9 @@ class TestSetRecord(BaseTestCase):
     def test_set_spikes_indexes3(self):
         sim.setup(timestep=1)
         if_curr = sim.Population(5, sim.IF_curr_exp())
-        recorder = if_curr._vertex._neuron_recorder
         if_curr.record("spikes")
         self.assertItemsEqual(
             ["spikes"], if_curr._get_all_recording_variables())
-        self.assertItemsEqual([2, 4, 5], recorder._indexes["spikes"])
 
     # These test are currently directly on NeuronRecorder as no pynn way
     # to do this
