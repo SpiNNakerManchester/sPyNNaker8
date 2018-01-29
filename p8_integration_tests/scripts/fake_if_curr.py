@@ -13,6 +13,8 @@ from spynnaker.pyNN.models.neuron.abstract_population_vertex \
 from spynnaker.pyNN.abstract_spinnaker_common import AbstractSpiNNakerCommon
 import os
 
+BINARY = "Fake_IF_curr_exp.aplx"
+
 
 class FakeIFCurrExp(AbstractPopulationVertex):
     """ Leaky integrate and fire neuron with an exponentially decaying \
@@ -53,9 +55,8 @@ class FakeIFCurrExp(AbstractPopulationVertex):
         input_type = InputTypeCurrent()
         threshold_type = ThresholdTypeStatic(n_neurons, v_thresh)
 
-        AbstractPopulationVertex.__init__(
-            self, n_neurons=n_neurons, binary="Fake_IF_curr_exp.aplx",
-            label=label,
+        super(FakeIFCurrExp, self).__init__(
+            n_neurons=n_neurons, binary=BINARY, label=label,
             max_atoms_per_core=FakeIFCurrExp._model_based_max_atoms_per_core,
             spikes_per_second=spikes_per_second,
             ring_buffer_sigma=ring_buffer_sigma,
