@@ -24,6 +24,15 @@ def gen_poisson_spikes(rate, simtime):
             spiketimes.append(i)
     return spiketimes
 
+def print_spikes(trains):
+    nseg = len(trains.segments)
+    for i in range(nseg):
+        trains1 = trains.segments[i].spiketrains
+        print "segment ", i,
+        for j in range(len(trains1)):
+            print "nrn ", j, " ", trains1[j]
+
+
 timestr = time.strftime("%Y%m%d-%H%M%S")
 
 to_plot_wgts = False
@@ -31,10 +40,10 @@ to_plot_wgts = False
 p.setup(1)
 
 simtime = 300
-n_runs = 1
+n_runs = 3
 w0 = 0.0
 pre_rate = 50
-drive_rates = np.arange(100, 180, 20) # driving source rates
+drive_rates = np.arange(100, 150, 10) # driving source rates
 n_rates = drive_rates.size
 max_out_rate = 200
 output_file = "data/dr2out_"+timestr
@@ -42,7 +51,11 @@ output_ext = ".txt"
 
 avg_out_rate = np.zeros(n_rates) # number of weight transitions for each spiking rate of the output neuron for 0 to 200
 
-n_nrn = 1  # total number of neurons in each run
+n_nrn = 1000  # total number of neurons in each run
+
+p.set_number_of_neurons_per_core(p.extra_models.IFCurrExpCa2Concentration, 100)
+p.set_number_of_neurons_per_core(p.SpikeSourcePoisson, 100)
+
 
 pop_src = p.Population(n_nrn, p.SpikeSourcePoisson(rate=pre_rate), label="src")
 pop_src2 = p.Population(n_nrn, p.SpikeSourcePoisson(rate=100), label="drive")
@@ -84,12 +97,12 @@ save_train = []
 
 for ri in range(n_rates):
     dr_r = drive_rates[ri]
-    pop_src2.set(rate=dr_r)
     for r in range(n_runs):
+        pop_src2.set(rate=dr_r)
         p.run(simtime)
         new_rates = np.zeros(n_nrn, dtype=int)
 
-
+        #print_spikes(pop_src2.get_data('spikes'))
 #        trains = pop_ex.get_data('spikes').segments[nseg].spiketrains
         trains = pop_ex.get_data('spikes').segments[nseg].spiketrains
 #         trains2 = pop_src2.get_data('spikes')
@@ -97,7 +110,7 @@ for ri in range(n_rates):
 
         for n in range(n_nrn):
             n_spikes = trains[n].shape[0]
-            print dr_r, n,":", trains[n]
+            #print dr_r, n,":", trains[n]
             print n_spikes
             #n_spikes2 = trains2[n].shape[0]
             #print n_spikes2
