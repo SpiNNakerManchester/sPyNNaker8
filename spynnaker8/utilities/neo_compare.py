@@ -8,7 +8,8 @@ def compare_spiketrain(spiketrain1, spiketrain2):
     :type spiketrain1: SpikeTrain
     :param spiketrain2: second spiketrain
     :type spiketrain: SpikeTrain
-    :raises AssertionError
+    :rtype: None
+    :raises AssertionError: If the spiketrains are not equal
     """
     id1 = spiketrain1.annotations['source_index']
     id2 = spiketrain2.annotations['source_index']
@@ -31,16 +32,17 @@ def compare_spiketrain(spiketrain1, spiketrain2):
 def compare_spiketrains(spiketrains1, spiketrains2, same_data=True):
     """ Check two Lists of SpikeTrains have the exact same data
 
-    :param spiketrains1: First list SpikeTrains to comapre
+    :param spiketrains1: First list SpikeTrains to compare
     :type spiketrains1: List[SpikeTrain]
-    :param spiketrains2: Second list of SpikeTrains to comapre
+    :param spiketrains2: Second list of SpikeTrains to compare
     :type spiketrains2: List[SpikeTrain]
     :param same_data: Flag to indicate if the same type of data is held.\
-        Ie: Same spikes, v, gsyn_exc and gsyn_inh.\
+        I.e.: Same spikes, v, gsyn_exc and gsyn_inh.\
         If False allows one or both lists to be Empty.\
         Even if False none empty lists must be the same length
     :type same_data: bool
-    :raises AssertionError
+    :rtype: Non
+    :raises AssertionError: If the spiketrains are not equal
     """
     if not same_data and (not spiketrains1 or not spiketrains2):
         return
@@ -54,15 +56,16 @@ def compare_spiketrains(spiketrains1, spiketrains2, same_data=True):
 
 
 def compare_analogsignal(as1, as2):
-    """
-    Compares two analogsignalarray Objects to see if they are the same
-    :param as1: first analogsignal
+    """ Compares two analogsignalarray Objects to see if they are the same
+
+    :param as1: first analogsignal\
         holding list of individual analogsignal Objects
-    :type as1 Analogsignal
-    :param as2: second analogsignal
+    :type as1: Analogsignal
+    :param as2: second analogsignal\
         holding list of individual analogsignal Objects
-    :type as2 Analogsignal
-    :raises AssertionError
+    :type as2: Analogsignal
+    :rtype: None
+    :raises AssertionError: If the analogsignalarrays are not equal
     """
     if pynn8_syntax:
         as1_index = as1.channel_index
@@ -123,10 +126,11 @@ def compare_segments(seg1, seg2, same_data=True):
     :param seg2: Second Segment to check
     :type seg2: Segment
     :param same_data: Flag to indicate if the same type of data is held.\
-        Ie: Same spikes, v, gsyn_exc and gsyn_inh.\
+        I.e.: Same spikes, v, gsyn_exc and gsyn_inh.\
         If False only data in both blocks is compared
     :type same_data: bool
-    :raises AssertionError
+    :rtype: None
+    :raises AssertionError: If the segments are not equal
     """
     compare_spiketrains(seg1.spiketrains, seg2.spiketrains, same_data)
     if pynn8_syntax:
@@ -166,10 +170,11 @@ def compare_blocks(neo1, neo2, same_runs=True, same_data=True):
         If False extra segments in the larger block are ignored
     :type same_runs: bool
     :param same_data: Flag to indicate if the same type of data is held.\
-        Ie: Same spikes, v, gsyn_exc and gsyn_inh.\
+        I.e.: Same spikes, v, gsyn_exc and gsyn_inh.\
         If False only data in both blocks is compared
     :type same_data: bool
-    :raises AssertionError
+    :rtype: None
+    :raises AssertionError: If the blocks are not equal
     """
     if same_runs and len(neo1.segments) != len(neo2.segments):
         raise AssertionError(

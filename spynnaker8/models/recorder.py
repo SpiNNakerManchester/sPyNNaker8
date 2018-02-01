@@ -316,6 +316,7 @@ class Recorder(RecordingCommon):
                     "The variable {} is not a recordable value".format(
                         variable))
 
+
 # These functions are neo utilities.
 # The only reason the are listed here is that this is currently the only use
 

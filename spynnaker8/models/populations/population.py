@@ -87,16 +87,15 @@ class Population(PyNNPopulationCommon, Recorder):
 
     @property
     def celltype(self):
-        """
-        Implements the pynn expected celltype propery
+        """ Implements the pynn expected celltype property
+
         :return: The celltype this property has been set to
         """
         return self._vertex
 
     def record(self, variables, to_file=None, sampling_interval=None):
-        """
-        Record the specified variable or variables for all cells in the\
-        Population or view.
+        """ Record the specified variable or variables for all cells in the\
+            Population or view.
 
         `variables` may be either a single variable name or a list of variable\
         names. For a given celltype class, `celltype.recordable` contains a\
@@ -138,9 +137,8 @@ class Population(PyNNPopulationCommon, Recorder):
 
     def write_data(self, io, variables='all', gather=True, clear=False,
                    annotations=None):
-        """
-        Write recorded data to file, using one of the file formats supported\
-        by Neo.
+        """ Write recorded data to file, using one of the file formats\
+            supported by Neo.
 
         :param io: a Neo IO instance
         :type io: neo instance or a string for where to put a neo instance
@@ -167,15 +165,14 @@ class Population(PyNNPopulationCommon, Recorder):
         io.write(data)
 
     def describe(self, template='population_default.txt', engine='default'):
-        """
-        Returns a human-readable description of the population.
+        """ Returns a human-readable description of the population.
 
-        The output may be customized by specifying a different template
-        together with an associated template engine (
-        see :mod:`pyNN.descriptions`).
+        The output may be customized by specifying a different template\
+        together with an associated template engine (see\
+        :mod:`pyNN.descriptions`).
 
-        If template is None, then a dictionary containing the template context
-        will be returned.
+        If template is None, then a dictionary containing the template\
+        context will be returned.
         """
         vertex_context = self._vertex.describe()
 
@@ -208,9 +205,8 @@ class Population(PyNNPopulationCommon, Recorder):
 
     def get_data(
             self, variables='all', gather=True, clear=False, annotations=None):
-        """
-        Return a Neo `Block` containing the data (spikes, state variables)\
-        recorded from the Assembly.
+        """ Return a Neo `Block` containing the data\
+            (spikes, state variables) recorded from the Assembly.
 
         `variables` - either a single variable name or a list of variable\
                       names. Variables must have been previously recorded,\
@@ -237,7 +233,7 @@ class Population(PyNNPopulationCommon, Recorder):
 
     def spinnaker_get_data(self, variable):
         """ public accessor for getting data as a numpy array, instead of\
-        the neo based object
+            the neo based object
 
         :param variable: \
             either a single variable name or a list of variable names.\

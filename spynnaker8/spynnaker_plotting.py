@@ -167,7 +167,8 @@ def plot_segment(axes, segment, label='', **options):
         If there is more than ode type of Data in the segment options must\
         include the name of the data to plot
 
-        Note: method signature defined by pynn plotting.\
+    .. note::
+        method signature defined by pynn plotting.\
         This allows mixing of this plotting tool and pynn's
 
     :param axes: An Axes in a matplot lib figure
@@ -208,8 +209,8 @@ class SpynnakerPanel(object):
     Compatible with pyNN.utility.plotting's Frame and\
         can be mixed with pyNN.utility.plotting's Panel
 
-    Unlike pyNN.utility.plotting Panel
-        Spikes are plotted faster
+    Unlike pyNN.utility.plotting.Panel,\
+        Spikes are plotted faster,\
         other data is plotted as a heatmap
 
     A panel is a Matplotlib Axes or Subplot instance. A data item may be an\

@@ -42,7 +42,6 @@ NAME = "SpiNNaker_under_version({}-{})".format(
 class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
                 Spynnaker8SimulatorInterface):
     """ main interface for the stuff software for PyNN 0.8
-
     """
 
     def __init__(
@@ -124,7 +123,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
         self._run_wait(tstop - self.t)
 
     def clear(self):
-        """ whats clear vs reset??????????
+        """ Clear the current recordings and reset the simulation
 
         :return: None
         """
@@ -172,16 +171,18 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 
     @property
     def state(self):
-        """ used to bypass the stupid duel level object
+        """ used to bypass the stupid dual level object
 
         :return: the stuff object
         """
-
         return self
 
     @property
     def mpi_rank(self):
-        """ method demanded by PyNN due to MPI assumptions
+        """ Gets the MPI rank of the simulator
+
+        .. note::
+            Meaningless on SpiNNaker
 
         :return: ??????????
         """
@@ -198,7 +199,10 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 
     @property
     def num_processes(self):
-        """ method demanded by PyNN due to MPI assumptions
+        """ Gets the number of MPI worker processes
+
+        .. note::
+            Meaningless on SpiNNaker
 
         :return: ???????
         """

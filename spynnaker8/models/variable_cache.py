@@ -1,15 +1,13 @@
 class VariableCache(object):
-    """
-    Simple holder method to keep data, ids, indexes and units together
+    """ Simple holder method to keep data, IDs, indexes and units together
 
-    Typically used to recreate the neo object for one type of variable for
+    Typically used to recreate the neo object for one type of variable for\
     one segment
     """
     __slots__ = ("_data", "_ids", "_units")
 
     def __init__(self, data, ids, units):
         """
-
         :param data: raw data in spynakker format
         :type data: nparray
         :param ids: ids for which data should be returned

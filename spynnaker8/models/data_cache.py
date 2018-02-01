@@ -29,8 +29,8 @@ class DataCache(object):
         :param label: cache label
         :param description: cache description
         :param segment_number: cache segment number
-        :param recording_start_time: when this cache was started in\
-            recording space.
+        :param recording_start_time: \
+            when this cache was started in recording space.
         :param t: time
         :param first_id: first atom
         """
@@ -44,7 +44,7 @@ class DataCache(object):
 
     @property
     def variables(self):
-        """Provides a list of which variables data has been cached for
+        """ Provides a list of which variables data has been cached for
 
         :rtype: Iterator (str)
         """
@@ -79,8 +79,7 @@ class DataCache(object):
         return self._rec_datetime
 
     def has_data(self, variable):
-        """
-        Checks if data for a variable has been cached
+        """ Checks if data for a variable has been cached
 
         :param variable: Name of variable
         :type variable: str
