@@ -25,6 +25,7 @@ class TestRun(object):
         self._recorded_gsyn_inh_7 = None
         self._input_spikes_recorded_list = None
         self._input_spikes_recorded_7 = None
+        self._default_report_folder = None
         self._weights = None
         self._delays = None
 
@@ -198,6 +199,7 @@ class TestRun(object):
         self._input_spikes_recorded_7 = []
         self._weights = []
         self._delays = []
+        self._default_report_folder = None
 
         if run_times is None:
             run_times = [1000]
@@ -388,6 +390,9 @@ class TestRun(object):
 
         p.run(run_times[-1])
 
+        self._default_report_folder = \
+            p.globals_variables.get_simulator()._report_default_directory
+
         self._get_data(populations[0], populations[1], get_spikes, record_7,
                        get_v, record_v_7, get_gsyn_exc, record_gsyn_exc_7,
                        get_gsyn_inh, record_gsyn_inh_7, record_input_spikes,
@@ -413,6 +418,9 @@ class TestRun(object):
         p.end()
 
         return results
+
+    def get_default_report_folder(self):
+        return self._default_report_folder
 
     def get_output_pop_gsyn_exc_neo(self):
         return self._recorded_gsyn_exc_list[0]
