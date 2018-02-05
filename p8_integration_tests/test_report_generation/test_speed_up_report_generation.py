@@ -10,7 +10,6 @@ from pacman.model.constraints.placer_constraints \
 from spinn_front_end_common.utility_models.\
     data_speed_up_packet_gatherer_machine_vertex import\
     DataSpeedUpPacketGatherMachineVertex
-import spynnaker8 as p
 import os
 
 
@@ -33,6 +32,7 @@ class Synfire200n10pc2chipsWithNoDelaysSpikeRecording(BaseTestCase):
             report_folder,
             DataSpeedUpPacketGatherMachineVertex.REPORT_NAME)
         self.assertTrue(os.path.exists(file_path))
+
 
 if __name__ == '__main__':
     synfire_run.do_run(nNeurons, delay=delay,
