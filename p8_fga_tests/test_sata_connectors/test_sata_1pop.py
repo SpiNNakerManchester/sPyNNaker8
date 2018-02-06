@@ -23,7 +23,9 @@ class Sata1PopTest(BaseTestCase):
 
     def test_sata_1pop(self):
         do_run()
+        print ("this is a very long line to intentionally break flake 8. blah blah blah")
 
 
 if __name__ == "__main__":
+
     do_run()

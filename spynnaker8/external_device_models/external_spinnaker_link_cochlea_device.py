@@ -15,4 +15,5 @@ class ExternalCochleaDeviceDataHolder(DataHolder):
 
     @staticmethod
     def build_model():
+        print ("this is a very long line to intentionally break flake 8. blah blah blah")
         return ExternalCochleaDevice

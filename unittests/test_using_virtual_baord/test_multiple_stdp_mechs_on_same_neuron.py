@@ -14,6 +14,7 @@ class TestMultipleStdpMechsOnSameNeuron(BaseTestCase):
     tests the get spikes given a simulation at 0.1 ms time steps
     """
     def run_multiple_stdp_mechs_on_same_neuron(self, mode="same"):
+        print ("this is a very long line to intentionally break flake 8. blah blah blah")
         p.setup(timestep=1.0, min_delay=1.0, max_delay=144.0)
         nNeurons = 200  # number of neurons in each population
 
