@@ -72,7 +72,7 @@ def run_script(
     return spikes, v,  exc, inh
 
 
-def compare_spikearrays(this, full):
+def compare_spikearrays(this, full, tollerance=False):
     if numpy.array_equal(this, full):
         return sys.maxint
     if this[0] != full[0]:
@@ -100,17 +100,23 @@ def compare_spikearrays(this, full):
     while i1 < len(this):
         print "trailing extra spike {} has spike at {}" \
               "".format(this[0], this[i1])
+        if lowest is None:
+            lowest = this[i1]
         i1 += 1
     while i2 < len(full):
         print "trailing spike missing {} no spike at {}" \
               "".format(this[0], full[i2])
+        if lowest is None:
+            lowest = full[i2]
         i2 += 1
+    if lowest is None:
+        lowest = sys.maxint
     return lowest
     # raise Exception("Spikes not equal")
 
 
 def compare_spikes(file_path, full_path, simtime, n_neurons, spike_rate=1,
-                   spike_indexes=None):
+                   spike_indexes=None, tollerance=sys.maxint):
     this_spikes = read_spikes(file_path, simtime, n_neurons)
     full_spikes = read_spikes(full_path, simtime, n_neurons, rate=spike_rate,
                               indexes=spike_indexes)
@@ -121,9 +127,10 @@ def compare_spikes(file_path, full_path, simtime, n_neurons, spike_rate=1,
     for this, full in zip(this_spikes, full_spikes):
         low = compare_spikearrays(this, full)
         lowest = min(lowest, low)
-    if lowest < sys.maxint:
+    if lowest < tollerance:
         raise Exception("Spikes different from {}".format(lowest))
     print "Spikes equal"
+    return lowest
 
 
 def compare_results(
@@ -131,12 +138,13 @@ def compare_results(
         record_spikes=False, spike_rate=None, spike_indexes=None,
         record_v=False, v_rate=None, v_indexes=None,
         record_exc=False, exc_rate=None, exc_indexes=None,
-        record_inh=False, inh_rate=None, inh_indexes=None, full_prefix=""):
+        record_inh=False, inh_rate=None, inh_indexes=None, full_prefix="",
+        tollerance=sys.maxint):
     if record_spikes:
         file_path = os.path.join(current_file_path, "spikes.csv")
         full_path = os.path.join(current_file_path, full_prefix+"spikes.csv")
-        compare_spikes(file_path, full_path, simtime, n_neurons, spike_rate,
-                       spike_indexes)
+        lowest = compare_spikes(file_path, full_path, simtime, n_neurons,
+                                spike_rate, spike_indexes, tollerance)
     if record_v:
         file_path = os.path.join(current_file_path, "v.csv")
         full_path = os.path.join(current_file_path, full_prefix+"v.csv")
@@ -156,7 +164,8 @@ def run_and_compare_script(
         record_spikes=False, spike_rate=None, spike_indexes=None,
         record_v=False, v_rate=None, v_indexes=None,
         record_exc=False, exc_rate=None, exc_indexes=None,
-        record_inh=False, inh_rate=None, inh_indexes=None):
+        record_inh=False, inh_rate=None, inh_indexes=None,
+        tollerance=sys.maxint):
     full_prefix = "{}_{}_".format(simtime, n_neurons)
     if (not os.path.exists(
             os.path.join(current_file_path, full_prefix + "spikes.csv")) or
@@ -189,7 +198,7 @@ def run_and_compare_script(
         record_v=record_v, v_rate=v_rate, v_indexes=v_indexes,
         record_exc=record_exc, exc_rate=exc_rate, exc_indexes=exc_indexes,
         record_inh=record_inh, inh_rate=inh_rate, inh_indexes=inh_indexes,
-        full_prefix=full_prefix)
+        full_prefix=full_prefix, tollerance=tollerance)
 
 
 def write_spikes(spikes, spike_file):
@@ -279,7 +288,8 @@ class TestSampling(BaseTestCase):
             record_spikes=True, spike_rate=2, spike_indexes=None,
             record_v=True, v_rate=3, v_indexes=None,
             record_exc=True, exc_rate=4, exc_indexes=None,
-            record_inh=True, inh_rate=5, inh_indexes=None)
+            record_inh=True, inh_rate=5, inh_indexes=None,
+            tollerance=simtime-2)
 
     def test_big_with_index(self):
         simtime = 20000
