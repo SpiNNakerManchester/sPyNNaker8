@@ -6,6 +6,7 @@ __version__ = None
 exec(open("spynnaker8/_version.py").read())
 assert __version__
 
+print ("this is a very long line to intentionally break flake 8. blah blah blah")
 
 # Build a list of all project modules, as well as supplementary files
 main_package = "spynnaker8"

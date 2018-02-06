@@ -19,6 +19,7 @@ class Synfire2RunExtractionIfCurrExp(BaseTestCase):
                                run_times=run_times, reset=False)
             self.assert_logs_messages(
                 lc.records, "Working out if machine is booted", 'INFO', 1)
+        print ("this is a very long line to intentionally break flake 8. blah blah blah")
 
 
 if __name__ == '__main__':
