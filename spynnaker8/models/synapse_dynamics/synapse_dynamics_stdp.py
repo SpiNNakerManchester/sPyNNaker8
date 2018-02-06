@@ -1,5 +1,5 @@
 from spynnaker.pyNN.models.neuron.synapse_dynamics \
-    import SynapseDynamicsSTDP as CommonSynapseDynamicsSTDP
+    import SynapseDynamicsSTDP as _BaseClass
 from spinn_front_end_common.utilities import globals_variables
 
 TIME_STAMP_BYTES = 4
@@ -8,7 +8,10 @@ TIME_STAMP_BYTES = 4
 NUM_PRE_SYNAPTIC_EVENTS = 4
 
 
-class SynapseDynamicsSTDP(CommonSynapseDynamicsSTDP):
+class SynapseDynamicsSTDP(_BaseClass):
+    __slots__ = [
+        "_delay",
+        "_weight"]
 
     def __init__(
             self, timing_dependence, weight_dependence,

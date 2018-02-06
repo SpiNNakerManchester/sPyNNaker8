@@ -11,6 +11,7 @@ class OneToOneConnector(CommonOneToOneConnector, PyNNOneToOneConnector):
     cell i in the presynaptic population to cell i in the postsynaptic\
     population for all i.
     """
+    __slots__ = []
 
     def __init__(self, safe=True, callback=None):
         """ the one to one connector constructor

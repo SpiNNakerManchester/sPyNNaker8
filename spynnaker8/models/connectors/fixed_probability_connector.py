@@ -8,6 +8,7 @@ class FixedProbabilityConnector(
         CommonFixedProbabilityConnector, PyNNFixedProbabilityConnector):
     """
     """
+    __slots__ = []
 
     def __init__(
             self, p_connect, allow_self_connections=True, safe=True,

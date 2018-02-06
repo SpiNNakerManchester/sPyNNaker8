@@ -5,6 +5,8 @@ _defaults = SpikeSourceArray.none_pynn_default_parameters
 
 
 class SpikeSourceArrayDataHolder(DataHolder):
+    __slots__ = []
+
     def __init__(
             self,
             spike_times=SpikeSourceArray.default_parameters['spike_times'],

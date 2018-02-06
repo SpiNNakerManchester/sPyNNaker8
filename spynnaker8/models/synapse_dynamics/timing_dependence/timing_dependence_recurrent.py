@@ -1,10 +1,13 @@
 from spynnaker.pyNN.models.neuron.plasticity.stdp.timing_dependence \
-    import TimingDependenceRecurrent as CommonTimingDependenceRecurrent
+    import TimingDependenceRecurrent as _BaseClass
 
-_defaults = CommonTimingDependenceRecurrent.default_parameters
+_defaults = _BaseClass.default_parameters
 
 
-class TimingDependenceRecurrent(CommonTimingDependenceRecurrent):
+class TimingDependenceRecurrent(_BaseClass):
+    __slots__ = [
+        "_a_plus",
+        "_a_minus"]
 
     def __init__(
             self, accumulator_depression=_defaults['accumulator_depression'],

@@ -5,6 +5,7 @@ _defaults = SpikeInjector.default_parameters
 
 
 class SpikeInjectorDataHolder(DataHolder):
+    __slots__ = []
 
     def __init__(
             self, label=_defaults['label'], port=_defaults['port'],

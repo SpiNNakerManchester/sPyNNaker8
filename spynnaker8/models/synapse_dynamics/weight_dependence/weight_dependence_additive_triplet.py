@@ -1,9 +1,8 @@
 from spynnaker.pyNN.models.neuron.plasticity.stdp.weight_dependence\
-    import WeightDependenceAdditiveTriplet \
-    as CommonWeightDependenceAdditiveTriplet
+    import WeightDependenceAdditiveTriplet as _BaseClass
 
 
-class WeightDependenceAdditiveTriplet(CommonWeightDependenceAdditiveTriplet):
+class WeightDependenceAdditiveTriplet(_BaseClass):
 
     # noinspection PyPep8Naming
     def __init__(

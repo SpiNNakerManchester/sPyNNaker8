@@ -13,6 +13,7 @@ class FixedNumberPreConnector(CommonFixedNumberPreConnector,
     """ Connects a fixed number of pre-synaptic neurons selected at random,\
         to all post-synaptic neurons
     """
+    __slots__ = []
 
     def __init__(
             self, n, allow_self_connections=True, safe=True, verbose=False,
@@ -22,10 +23,9 @@ class FixedNumberPreConnector(CommonFixedNumberPreConnector,
             number of random pre-synaptic neurons connected to output
         :type n: int
         :param allow_self_connections: \
-            if the connector is used to connect a\
-            Population to itself, this flag determines whether a neuron is\
-            allowed to connect to itself, or only to other neurons in the\
-            Population.
+            if the connector is used to connect a Population to itself, this\
+            flag determines whether a neuron is allowed to connect to itself,\
+            or only to other neurons in the Population.
         :type allow_self_connections: bool
         :param safe: \
             Whether to check that weights and delays have valid values.\
@@ -37,8 +37,8 @@ class FixedNumberPreConnector(CommonFixedNumberPreConnector,
         :type verbose: bool
         :param with_replacement:\
             if False, once a connection is made, it can't be made again; if\
-            True, multiple connections between the same pair\
-            of neurons are allowed
+            True, multiple connections between the same pair of neurons are\
+            allowed
         :type with_replacement: bool
         :param rng:
         :param callback:

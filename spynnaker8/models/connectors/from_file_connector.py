@@ -18,9 +18,8 @@ class FromFileConnector(CommonFromFileConnector, PyNNFromFileConnector):
             self, file=file, distributed=distributed, safe=safe,
             callback=callback)
 
-    def get_reader(self, file):
-        """
-        get a filereader object using the pynn methods
+    def get_reader(self, file):  # @ReservedAssignment
+        """ Get a file reader object using the PyNN methods.
 
         :return: A pynn StandardTextFile or similar
         """

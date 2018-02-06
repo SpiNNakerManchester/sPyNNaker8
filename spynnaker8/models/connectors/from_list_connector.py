@@ -9,6 +9,8 @@ from pyNN.connectors import Connector
 class FromListConnector(CommonFromListConnector, Connector):
     """ Make connections according to a list.
     """
+    __slots__ = [
+        "_extra_conn_data"]
 
     def __init__(
             self, conn_list, safe=True, verbose=False, column_names=None,

@@ -13,6 +13,7 @@ class FixedNumberPostConnector(CommonFixedNumberPostConnector,
     """ pynn connector that puts a fixed number of connections on each of the\
         post neurons
     """
+    __slots__ = []
 
     def __init__(
             self, n, allow_self_connections=True, safe=True, verbose=False,

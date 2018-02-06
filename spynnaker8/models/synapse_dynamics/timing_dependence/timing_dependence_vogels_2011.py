@@ -1,10 +1,13 @@
 from spynnaker.pyNN.models.neuron.plasticity.stdp.timing_dependence\
-    import TimingDependenceVogels2011 as CommonTimingDependenceVogels2011
+    import TimingDependenceVogels2011 as _BaseClass
 
-_defaults = CommonTimingDependenceVogels2011.default_parameters
+_defaults = _BaseClass.default_parameters
 
 
-class TimingDependenceVogels2011(CommonTimingDependenceVogels2011):
+class TimingDependenceVogels2011(_BaseClass):
+    __slots__ = [
+        "_a_plus",
+        "_a_minus"]
 
     def __init__(
             self, alpha, tau=_defaults['tau'], A_plus=0.01, A_minus=0.01):

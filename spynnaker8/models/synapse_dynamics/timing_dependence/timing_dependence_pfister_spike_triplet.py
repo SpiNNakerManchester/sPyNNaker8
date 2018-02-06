@@ -1,10 +1,11 @@
 from spynnaker.pyNN.models.neuron.plasticity.stdp.timing_dependence \
-    import TimingDependencePfisterSpikeTriplet as \
-    CommonTimingDependencePfisterSpikeTriplet
+    import TimingDependencePfisterSpikeTriplet as _BaseClass
 
 
-class TimingDependencePfisterSpikeTriplet(
-        CommonTimingDependencePfisterSpikeTriplet):
+class TimingDependencePfisterSpikeTriplet(_BaseClass):
+    __slots__ = [
+        "_a_plus",
+        "_a_minus"]
 
     # noinspection PyPep8Naming
     def __init__(

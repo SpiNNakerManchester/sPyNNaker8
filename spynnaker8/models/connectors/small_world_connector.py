@@ -1,10 +1,11 @@
 from pyNN.space import Space
 
 from spynnaker.pyNN.models.neural_projections.connectors \
-    import SmallWorldConnector as CommonSmallWorldConnector
+    import SmallWorldConnector as _BaseClass
 
 
-class SmallWorldConnector(CommonSmallWorldConnector):
+class SmallWorldConnector(_BaseClass):
+    __slots__ = []
 
     def __init__(
             self, degree, rewiring, allow_self_connections=True, space=Space(),

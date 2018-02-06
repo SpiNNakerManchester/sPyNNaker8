@@ -6,6 +6,7 @@ _apv_defs = AbstractPopulationVertex.none_pynn_default_parameters
 
 
 class IfCondExpStocDataHolder(DataHolder):
+    __slots__ = []
 
     def __init__(
             self,

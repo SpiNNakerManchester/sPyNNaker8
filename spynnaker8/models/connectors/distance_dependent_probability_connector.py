@@ -11,6 +11,7 @@ class DistanceDependentProbabilityConnector(
         PyNNDistanceDependentProbabilityConnector):
     """ Make connections using a distribution which varies with distance.
     """
+    __slots__ = []
 
     def __init__(
             self, d_expression, allow_self_connections=True,  safe=True,

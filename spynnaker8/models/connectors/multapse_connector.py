@@ -1,8 +1,8 @@
 from spynnaker.pyNN.models.neural_projections.connectors \
-    import MultapseConnector as CommonMultapseConnector
+    import MultapseConnector as _BaseClass
 
 
-class MultapseConnector(CommonMultapseConnector):
+class MultapseConnector(_BaseClass):
     """
     Create a multapse connector. The size of the source and destination\
     populations are obtained when the projection is connected. The number of\
@@ -10,10 +10,12 @@ class MultapseConnector(CommonMultapseConnector):
     is created by selecting at random from the source and target populations\
     with replacement. Uniform selection probability is assumed.
 
-    :param num_synapses:
+    :param num_synapses: \
         The total number of synapses in the connection.
     :type num_synapses: int
     """
+    __slots__ = []
+
     def __init__(self, num_synapses, weights=0.0, delays=1, safe=True,
                  verbose=False):
         # pylint: disable=too-many-arguments

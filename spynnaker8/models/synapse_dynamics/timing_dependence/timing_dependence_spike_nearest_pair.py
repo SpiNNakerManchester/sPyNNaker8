@@ -1,12 +1,13 @@
 from spynnaker.pyNN.models.neuron.plasticity.stdp.timing_dependence \
-    import TimingDependenceSpikeNearestPair as \
-    CommonTimingDependanceSpikeNearestPair
+    import TimingDependenceSpikeNearestPair as _BaseClass
 
-_defaults = CommonTimingDependanceSpikeNearestPair.default_parameters
+_defaults = _BaseClass.default_parameters
 
 
-class TimingDependenceSpikeNearestPair(
-        CommonTimingDependanceSpikeNearestPair):
+class TimingDependenceSpikeNearestPair(_BaseClass):
+    __slots__ = [
+        "_a_plus",
+        "_a_minus"]
 
     def __init__(
             self, tau_plus=_defaults['tau_plus'],

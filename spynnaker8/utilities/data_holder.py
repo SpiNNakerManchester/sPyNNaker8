@@ -10,6 +10,9 @@ class ClassProperty(property):
 
 @add_metaclass(AbstractBase)
 class DataHolder(object):
+    __slots__ = [
+        "_data_items"]
+
     def __init__(self, data_items):
         self._data_items = data_items
 

@@ -40,6 +40,7 @@ class FakeIFCurrExp(AbstractPopulationVertex):
             tau_syn_I=default_parameters['tau_syn_I'],
             tau_refrac=default_parameters['tau_refrac'],
             i_offset=default_parameters['i_offset'], v_init=None):
+        # pylint: disable=protected-access
 
         # add to the path the location of the dodgy binary
         # (if_cur_exp with the c_main bodged to result in it
