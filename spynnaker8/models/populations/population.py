@@ -1,4 +1,5 @@
 import logging
+import numpy
 
 from spynnaker.pyNN.exceptions import InvalidParameterType
 from spynnaker.pyNN.models.pynn_population_common import PyNNPopulationCommon
@@ -290,3 +291,20 @@ class Population(PyNNPopulationCommon, Recorder):
         if simplify is not True:
             logger.warn("The simplify value is ignored if not set to true")
         return PyNNPopulationCommon.get(self, parameter_names, gather)
+
+    @property
+    def all_cells(self):
+        # TODO: Return a List of ID Objects which have getters and setters
+        raise NotImplementedError
+
+    @property
+    def local_cells(self):
+        # TODO: Return a List of ID Objects which have getters and setters
+        raise NotImplementedError
+
+    @property
+    def position_generator(self):
+        # As we do not support structure this make no sense.
+        raise NotImplementedError
+
+
