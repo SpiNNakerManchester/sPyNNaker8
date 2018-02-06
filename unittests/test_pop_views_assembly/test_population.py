@@ -1,3 +1,5 @@
+from unittest import SkipTest
+
 from p8_integration_tests.base_test_case import BaseTestCase
 import spynnaker8 as sim
 
@@ -33,9 +35,18 @@ class Test_Population(BaseTestCase):
 
             self.assertEquals(n_neurons, pop_1.local_size)
 
-            try:
-                print pop_1.position_generator
-            except NotImplementedError:
-                pass
-
             print pop_1.structure
+
+        def test_position_generator(self):
+            n_neurons = 5
+            label = "pop_1"
+            sim.setup(timestep=1.0)
+            pop_1 = sim.Population(n_neurons, sim.IF_curr_exp(), label=label)
+            try:
+                gen = pop_1.position_generator
+                print gen(0)
+            except AttributeError:
+                msg = "Depends on https://github.com/SpiNNakerManchester" \
+                      "/sPyNNaker8/pull/73"
+                raise SkipTest(msg)
+            sim.end()

@@ -304,7 +304,7 @@ class Population(PyNNPopulationCommon, Recorder):
 
     @property
     def position_generator(self):
-        # As we do not support structure this make no sense.
-        raise NotImplementedError
-
+        def gen(i):
+            return self.positions[:, i]
+        return gen
 
