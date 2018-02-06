@@ -279,6 +279,13 @@ class Population(PyNNPopulationCommon, Recorder):
         for parameter, value in kwargs.iteritems():
             PyNNPopulationCommon.initialize(self, parameter, value)
 
+    @property
+    def initial_values(self):
+        if not self._vertex_population_initializable:
+            raise KeyError(
+                "Population does not support the initialisation")
+        return self._vertex.initial_values
+
     def get(self, parameter_names, gather=False, simplify=True):
         if simplify is not True:
             logger.warn("The simplify value is ignored if not set to true")
