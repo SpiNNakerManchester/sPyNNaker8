@@ -43,12 +43,15 @@ n_nrn = 200 # total number of neurons in each population
 if do_LTP:
     w0 = 0.0 #initial weight for LTP
     drive_rates = np.arange(0, 400, 10) # driving source rates for LTPS
+    #drive_rates = np.arange(100, 200, 20) # driving source rates for LTPS
 else:
     w0 = 1.0 #initial weight for LTD
     drive_rates = np.arange(0, 200, 5) # driving source rates for LTDS
+    #drive_rates = np.arange(0, 200, 10) # driving source rates for LTDS
 
 w_mult  = 2.0
 pre_rates = np.arange(5, 55, 5) # pre-synaptic neuron rates
+#pre_rates = np.arange(30, 55, 10) # pre-synaptic neuron rates
 n_pre_rates = pre_rates.shape[0]
 n_drive_rates = drive_rates.shape[0]
 n_rates = drive_rates.size
@@ -175,6 +178,9 @@ for i in range(n_pre_rates):
 
     plt.plot(np.append([0], xs), np.append([0], probs[i, :]), linestyle='-', marker='o')
 
+plt.show()
+
+plt.plot(pre_rates, np.amax(probs, 1), linestyle='-', marker='o')
 plt.show()
 
 
