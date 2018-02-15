@@ -1,9 +1,9 @@
 # Figure 2 with output frequency calculated as expected value of drive and input frequency
 import spynnaker8 as p
-from pyNN.utility.plotting import Figure, Panel, DataTable
 
 import matplotlib
 matplotlib.use('Agg')
+from pyNN.utility.plotting import Figure, Panel, DataTable
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -13,7 +13,6 @@ from scipy.interpolate import interp1d
 from matplotlib.pyplot import legend
 from idna.core import _alabel_prefix
 
-import matplotlib.pyplot as plt
 
 from neo.io import PyNNNumpyIO
 from neo.io import AsciiSpikeTrainIO
