@@ -147,8 +147,9 @@ for r in range(n_runs):
     nseg = nseg+1
 
     p.reset()
-    probs = n_trans / n_tot
-    probs.tofile(output_file+"_"+str(r)+output_ext, sep='\t', format='%10.5f')
+    if do_save:
+        probs = n_trans / n_tot
+        probs.tofile(output_file+"_"+str(r)+output_ext, sep='\t', format='%10.5f')
 
     # need to reset the poisson sources, otherwise spike trains repeat too often
     for i in range(npops):
