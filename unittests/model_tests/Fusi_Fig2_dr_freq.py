@@ -179,10 +179,12 @@ for i in range(n_pre_rates):
 
     plt.plot(np.append([0], xs), np.append([0], probs[i, :]), linestyle='-', marker='o')
 
-plt.show()
+# plt.show()
 
 plt.plot(pre_rates, np.amax(probs, 1), linestyle='-', marker='o')
-plt.show()
+plt.savefig('./' + "figure_2"+'.png', format="png")
+plt.close()
+# plt.show()
 
 
 
