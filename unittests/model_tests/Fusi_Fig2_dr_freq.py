@@ -1,6 +1,10 @@
 # Figure 2 with output frequency calculated as expected value of drive and input frequency
 import spynnaker8 as p
 from pyNN.utility.plotting import Figure, Panel, DataTable
+
+import matplotlib
+matplotlib.use('Agg')
+
 import matplotlib.pyplot as plt
 import numpy as np
 from neo.core.spiketrain import SpikeTrain
