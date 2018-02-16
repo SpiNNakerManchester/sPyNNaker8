@@ -18,7 +18,8 @@ class Test_Population(BaseTestCase):
             v_init = -60
             pop_1.initialize(v=v_init)
             initial_values = pop_1.initial_values
-            self.assertDictContainsSubset(dict({"v": v_init}), initial_values)
+            self.assertDictContainsSubset(
+                dict({"v": [-60, -60, -60, -60, -60]}), initial_values)
             v_init = [60 + index for index in xrange(n_neurons)]
             pop_1.initialize(v=v_init)
             initial_values = pop_1.initial_values
