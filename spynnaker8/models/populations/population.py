@@ -118,7 +118,7 @@ class Population(PyNNPopulationCommon, Recorder):
         elif isinstance(variables, basestring):
             # handle special case of 'all'
             if variables == "all":
-                logger.warn(
+                logger.warning(
                     "This is not currently standard PyNN, and therefore "
                     "may not work in other simulators.")
 
@@ -159,8 +159,8 @@ class Population(PyNNPopulationCommon, Recorder):
         """
 
         if not gather:
-            logger.warn("Spinnaker only supports gather=True. We will run as "
-                        "if gather was set to True.")
+            logger.warning("Spinnaker only supports gather=True. We will run "
+                           "as if gather was set to True.")
 
         if isinstance(io, basestring):
             io = self._get_io(io)
@@ -227,8 +227,8 @@ class Population(PyNNPopulationCommon, Recorder):
         If `clear` is True, recorded data will be deleted from the `Assembly`.
         """
         if not gather:
-            logger.warn("Spinnaker only supports gather=True. We will run as "
-                        "if gather was set to True.")
+            logger.warning("Spinnaker only supports gather=True. We will run "
+                           "as if gather was set to True.")
 
         return self._extract_neo_block(variables, clear, annotations)
 
@@ -242,7 +242,7 @@ class Population(PyNNPopulationCommon, Recorder):
         Exception will be raised.
         :return: numpy array of the data
         """
-        logger.warn(
+        logger.warning(
             "This call is not standard pynn and therefore will not be "
             "compatible between simulators. Nor do we guarantee that this "
             "function will exist in future releases.")
@@ -281,5 +281,5 @@ class Population(PyNNPopulationCommon, Recorder):
 
     def get(self, parameter_names, gather=False, simplify=True):
         if simplify is not True:
-            logger.warn("The simplify value is ignored if not set to true")
+            logger.warning("The simplify value is ignored if not set to true")
         return PyNNPopulationCommon.get(self, parameter_names, gather)
