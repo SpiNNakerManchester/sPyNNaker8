@@ -31,10 +31,10 @@ class Population(PyNNPopulationCommon, Recorder):
             initial_values = {}
 
         if isinstance(cellclass, DataHolder):
-            vertex_holder = cellclass
-            vertex_holder.add_item(
+            self._vertex_holder = cellclass
+            self._vertex_holder.add_item(
                 'label', self.create_label(
-                    vertex_holder.data_items['label'], label))
+                    self._vertex_holder.data_items['label'], label))
             assert cellparams is None
         # cellparams being retained for backwards compatibility, but use
         # is deprecated
@@ -44,32 +44,33 @@ class Population(PyNNPopulationCommon, Recorder):
             if 'label' in internal_params:
                 cell_label = internal_params['label']
             internal_params['label'] = self.create_label(cell_label, label)
-            vertex_holder = cellclass(**internal_params)
+            self._vertex_holder = cellclass(**internal_params)
             # emit deprecation warning
         else:
             raise TypeError(
                 "cellclass must be an instance or subclass of BaseCellType,"
                 " not a %s" % type(cellclass))
 
-        if 'n_neurons' in vertex_holder.data_items:
+        if 'n_neurons' in self._vertex_holder.data_items:
             if size is None:
-                size = vertex_holder.data_items['n_neurons']
+                size = self._vertex_holder.data_items['n_neurons']
             else:
-                if size != vertex_holder.data_items['n_neurons']:
+                if size != self._vertex_holder.data_items['n_neurons']:
                     raise ConfigurationException(
                         "Size parameter is {} but the {} expects a size of {}"
                         "".format(size, cellclass,
-                                  vertex_holder.data_items['n_neurons']))
+                                  self._vertex_holder.data_items['n_neurons']))
         else:
             if size is None:
                 raise ConfigurationException(
                     "Size parameter can not be None for {}".format(cellclass))
             else:
-                vertex_holder.add_item('n_neurons', size)
+                self._vertex_holder.add_item('n_neurons', size)
 
         # convert between data holder and model (uses ** so that its taken
         # the dictionary to be the parameters themselves)
-        vertex = vertex_holder.build_model()(**vertex_holder.data_items)
+        vertex = self._vertex_holder.build_model()(
+            **self._vertex_holder.data_items)
 
         # build our initial objects
         PyNNPopulationCommon.__init__(
@@ -95,7 +96,7 @@ class Population(PyNNPopulationCommon, Recorder):
         Implements the pynn expected celltype propery
         :return: The celltype this property has been set to
         """
-        return self._vertex
+        return self._vertex_holder
 
     def record(self, variables, to_file=None, sampling_interval=None):
         """
