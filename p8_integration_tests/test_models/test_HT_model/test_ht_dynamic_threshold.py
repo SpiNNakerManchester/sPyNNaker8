@@ -1,3 +1,6 @@
+# Note: this script requires switching of the g_syn_inh recording channel to
+# instead record the threshold
+
 import spynnaker8 as p
 import numpy
 import math
