@@ -23,7 +23,7 @@ pop_exc = p.Population(1, p.extra_models.HillTononi(),  label="test")
 # Create projections
 synapse = p.Projection(
     pop_src1, pop_exc, p.AllToAllConnector(),
-    p.StaticSynapse(weight=5, delay=1), receptor_type="excitatory")
+    p.StaticSynapse(weight=10, delay=1), receptor_type="AMPA")
 
 
 pop_src1.record('all')
