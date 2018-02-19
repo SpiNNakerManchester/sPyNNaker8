@@ -9,6 +9,7 @@ from spinn_front_end_common.utilities import globals_variables
 from spinn_front_end_common.utilities.exceptions import ConfigurationException
 
 from spynnaker8.models import Recorder
+from spynnaker8.models.populations import IDMixin
 from spynnaker8.utilities import DataHolder
 
 from pyNN import descriptions
@@ -295,13 +296,16 @@ class Population(PyNNPopulationCommon, Recorder):
 
     @property
     def all_cells(self):
-        # TODO: Return a List of ID Objects which have getters and setters
-        raise NotImplementedError
+        cells = []
+        for id in xrange(self._size):
+            cells.append(IDMixin(self, id))
+        return cells
 
     @property
     def local_cells(self):
-        # TODO: Return a List of ID Objects which have getters and setters
-        raise NotImplementedError
+        logger.warning("local calls do not really make sense on sPyNNaker so "
+                       "local_cells just returns all_cells")
+        return self.all_cells()
 
     @property
     def position_generator(self):
@@ -309,3 +313,7 @@ class Population(PyNNPopulationCommon, Recorder):
             return self.positions[:, i]
         return gen
 
+    def is_local(self, id):
+        logger.warning("local calls do not really make sense on sPyNNaker so "
+                       "is_local always retruns True")
+        return True

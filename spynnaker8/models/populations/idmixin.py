@@ -54,7 +54,7 @@ class IDMixin(object):
         Set the cell position in 3D space.
         Cell positions are stored in an array in the parent Population.
         """
-        self._population.positions[self._id] = pos
+        self._population.positions[self._id] = pos   # pragma: no cover
 
     def _get_position(self):
         """
@@ -63,13 +63,13 @@ class IDMixin(object):
         or within the ID object otherwise. Positions are generated the first
         time they are requested and then cached.
         """
-        return self._population.self.positions[:, self._id]
+        return self._population.positions[:, self._id]   # pragma: no cover
 
     position = property(_get_position, _set_position)
 
     @property
     def local(self):
-        return self._population.is_local(self)
+        return self._population.is_local(self._id)
 
     def inject(self, current_source):
         """Inject current from a current source object into the cell."""
