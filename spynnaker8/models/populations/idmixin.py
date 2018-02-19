@@ -9,14 +9,20 @@ class IDMixin(object):
         self._population = population
 
     def __getattr__(self, name):
-        if name == "population":
-            return self._population
-        if name == "id":
-            return self._id
+        #if name in self.__slots__:
+        #    object.__getattr__(self, name)
         return self._population.get_by_selector(self._id, name)
 
+#    @property
+#    def _population(self):
+#        return object.__getattr__(self, "_population")
+
+#    @property
+#    def _id(self):
+#        return object.__getattr__(self, "_id")
+
     def __setattr__(self, name, value):
-        if name == self.__slots__:
+        if name in self.__slots__:
             object.__setattr__(self, name, value)
         else:
             self._population.set_by_selector(self._id, name, value)
@@ -41,7 +47,7 @@ class IDMixin(object):
 
     @property
     def is_standard_cell(self):
-        raise NotImplementedError
+        raise NotImplementedError  # pragma: no cover
 
     def _set_position(self, pos):
         """
@@ -67,7 +73,7 @@ class IDMixin(object):
 
     def inject(self, current_source):
         """Inject current from a current source object into the cell."""
-        raise NotImplementedError
+        raise NotImplementedError  # pragma: no cover
 
     def get_initial_value(self, variable):
         """Get the initial value of a state variable of the cell."""
