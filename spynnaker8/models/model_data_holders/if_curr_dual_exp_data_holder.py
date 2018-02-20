@@ -8,16 +8,16 @@ class IFCurrDualExpDataHolder(DataHolder):
             self,
 
             spikes_per_second=AbstractPopulationVertex.
-                non_pynn_default_parameters['spikes_per_second'],
+            non_pynn_default_parameters['spikes_per_second'],
 
             ring_buffer_sigma=AbstractPopulationVertex.
-                non_pynn_default_parameters['ring_buffer_sigma'],
+            non_pynn_default_parameters['ring_buffer_sigma'],
 
             incoming_spike_buffer_size=AbstractPopulationVertex.
-                non_pynn_default_parameters['incoming_spike_buffer_size'],
+            non_pynn_default_parameters['incoming_spike_buffer_size'],
 
             constraints=AbstractPopulationVertex.
-                non_pynn_default_parameters['constraints'],
+            non_pynn_default_parameters['constraints'],
 
             label=AbstractPopulationVertex.non_pynn_default_parameters[
                 'label'],

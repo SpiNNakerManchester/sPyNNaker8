@@ -6,16 +6,23 @@ from spynnaker.pyNN.models.neuron.builds import IFCurrExpCa2Adaptive
 class IfCurrExpCa2AdaptiveDataHolder(DataHolder):
 
     def __init__(
-            self, spikes_per_second=AbstractPopulationVertex.
-                non_pynn_default_parameters['spikes_per_second'],
+            self,
+
+            spikes_per_second=AbstractPopulationVertex.
+            non_pynn_default_parameters['spikes_per_second'],
+
             ring_buffer_sigma=AbstractPopulationVertex.
-                non_pynn_default_parameters['ring_buffer_sigma'],
+            non_pynn_default_parameters['ring_buffer_sigma'],
+
             incoming_spike_buffer_size=AbstractPopulationVertex.
-                non_pynn_default_parameters['incoming_spike_buffer_size'],
+            non_pynn_default_parameters['incoming_spike_buffer_size'],
+
             constraints=AbstractPopulationVertex.non_pynn_default_parameters[
                 'constraints'],
+
             label=AbstractPopulationVertex.non_pynn_default_parameters[
                 'label'],
+
             tau_m=IFCurrExpCa2Adaptive.default_parameters['tau_m'],
             cm=IFCurrExpCa2Adaptive.default_parameters['cm'],
             v_rest=IFCurrExpCa2Adaptive.default_parameters['v_rest'],

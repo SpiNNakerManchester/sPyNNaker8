@@ -10,10 +10,10 @@ class FakeIFCurrExpDataHolder(DataHolder):
             self,
 
             spikes_per_second=AbstractPopulationVertex.
-                non_pynn_default_parameters['spikes_per_second'],
+            non_pynn_default_parameters['spikes_per_second'],
 
             ring_buffer_sigma=AbstractPopulationVertex.
-                non_pynn_default_parameters['ring_buffer_sigma'],
+            non_pynn_default_parameters['ring_buffer_sigma'],
 
             constraints=AbstractPopulationVertex.non_pynn_default_parameters[
                 'constraints'],

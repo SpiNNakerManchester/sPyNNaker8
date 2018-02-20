@@ -16,11 +16,11 @@ class SpikeSourceArrayDataHolder(DataHolder):
                 'board_address'],
 
             max_on_chip_memory_usage_for_spikes_in_bytes=SpikeSourceArray.
-                non_pynn_default_parameters[
+            non_pynn_default_parameters[
                 'max_on_chip_memory_usage_for_spikes_in_bytes'],
 
             space_before_notification=SpikeSourceArray.
-                non_pynn_default_parameters['space_before_notification'],
+            non_pynn_default_parameters['space_before_notification'],
 
             constraints=SpikeSourceArray.non_pynn_default_parameters[
                 'constraints'],
@@ -29,10 +29,10 @@ class SpikeSourceArrayDataHolder(DataHolder):
                 'label'],
 
             spike_recorder_buffer_size=SpikeSourceArray.
-                non_pynn_default_parameters['spike_recorder_buffer_size'],
+            non_pynn_default_parameters['spike_recorder_buffer_size'],
 
             buffer_size_before_receive=SpikeSourceArray.
-                non_pynn_default_parameters['buffer_size_before_receive']):
+            non_pynn_default_parameters['buffer_size_before_receive']):
 
         DataHolder.__init__(
             self, {
