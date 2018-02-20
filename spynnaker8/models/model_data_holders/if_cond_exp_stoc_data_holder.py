@@ -29,7 +29,7 @@ class IfCondExpStocDataHolder(DataHolder):
             e_rev_I=IFCondExpStoc.default_parameters['e_rev_I'],
             du_th=IFCondExpStoc.default_parameters['du_th'],
             tau_th=IFCondExpStoc.default_parameters['tau_th'],
-            v_init=IFCondExpStoc.none_pynn_default_parameters['v_init'],
+            v_init=IFCondExpStoc.initialize_parameters['v_init'],
             isyn_exc=IFCondExpStoc.default_parameters['isyn_exc'],
             isyn_inh=IFCondExpStoc.default_parameters['isyn_inh']):
         DataHolder.__init__(

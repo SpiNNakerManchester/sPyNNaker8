@@ -28,7 +28,7 @@ class IfCurrExpCa2AdaptiveDataHolder(DataHolder):
             tau_ca2=IFCurrExpCa2Adaptive.default_parameters["tau_ca2"],
             i_ca2=IFCurrExpCa2Adaptive.default_parameters["i_ca2"],
             i_alpha=IFCurrExpCa2Adaptive.default_parameters["i_alpha"],
-            v_init=IFCurrExpCa2Adaptive.none_pynn_default_parameters['v_init'],
+            v_init=IFCurrExpCa2Adaptive.initialize_parameters['v_init'],
             isyn_exc=IFCurrExpCa2Adaptive.default_parameters['isyn_exc'],
             isyn_inh=IFCurrExpCa2Adaptive.default_parameters['isyn_inh']):
         DataHolder.__init__(

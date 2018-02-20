@@ -37,7 +37,7 @@ class PushBotLifSpinnakerLinkDataHolder(DataHolder):
             tau_refrac=ExternalDeviceLifControl.default_parameters[
                 'tau_refrac'],
             i_offset=ExternalDeviceLifControl.default_parameters['i_offset'],
-            v_init=ExternalDeviceLifControl.none_pynn_default_parameters[
+            v_init=ExternalDeviceLifControl.initialize_parameters[
                 'v_init']):
 
         DataHolder.__init__(

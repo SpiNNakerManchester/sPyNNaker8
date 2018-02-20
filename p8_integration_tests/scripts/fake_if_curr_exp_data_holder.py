@@ -21,7 +21,7 @@ class FakeIFCurrExpDataHolder(DataHolder):
             label=AbstractPopulationVertex.none_pynn_default_parameters[
                 'label'],
 
-            v_init=IFCurrExpBase.none_pynn_default_parameters['v_init'],
+            v_init=IFCurrExpBase.initialize_parameters['v_init'],
             tau_m=IFCurrExpBase.default_parameters['tau_m'],
             cm=IFCurrExpBase.default_parameters['cm'],
             v_rest=IFCurrExpBase.default_parameters['v_rest'],

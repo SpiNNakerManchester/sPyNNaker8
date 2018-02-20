@@ -23,7 +23,7 @@ class IfCurrDeltaDataHolder(DataHolder):
             v_thresh=IFCurrDelta.default_parameters['v_thresh'],
             tau_refrac=IFCurrDelta.default_parameters['tau_refrac'],
             i_offset=IFCurrDelta.default_parameters['i_offset'],
-            v_init=IFCurrDelta.none_pynn_default_parameters['v_init'],
+            v_init=IFCurrDelta.initialize_parameters['v_init'],
             isyn_exc=IFCurrDelta.default_parameters['isyn_exc'],
             isyn_inh=IFCurrDelta.default_parameters['isyn_inh']):
         DataHolder.__init__(
