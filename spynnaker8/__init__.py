@@ -216,8 +216,8 @@ def setup(timestep=pynn_control.DEFAULT_TIMESTEP,
 
     # warn about kwargs arguments
     if len(extra_params) > 0:
-        logger.warn("Extra params {} have been applied to the setup "
-                    "command which we do not consider".format(extra_params))
+        logger.warning("Extra params {} have been applied to the setup "
+                       "command which we do not consider".format(extra_params))
 
     # get overloaded functions from PyNN in relation of our simulator object
     _create_overloaded_functions(globals_variables.get_simulator())
@@ -310,7 +310,7 @@ def record_v(source, filename):
     :param filename: the neo file to write to
     :rtype: None
     """
-    logger.warn(
+    logger.warning(
         "Using record_v is deprecated.  Use record('v') function instead")
     record(['v'], source, filename)
 
@@ -324,7 +324,7 @@ def record_gsyn(source, filename):
     :rtype: None
     """
 
-    logger.warn(
+    logger.warning(
         "Using record_gsyn is deprecated.  Use record('gsyn_exc') and/or"
         " record('gsyn_inh') function instead")
     record(['gsyn_exc', 'gsyn_inh'], source, filename)
