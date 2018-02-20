@@ -8,21 +8,21 @@ class IFCondExpDataHolder(DataHolder):
             self,
 
             spikes_per_second=AbstractPopulationVertex.
-            none_pynn_default_parameters['spikes_per_second'],
+            non_pynn_default_parameters['spikes_per_second'],
 
             ring_buffer_sigma=AbstractPopulationVertex.
-            none_pynn_default_parameters['ring_buffer_sigma'],
+            non_pynn_default_parameters['ring_buffer_sigma'],
 
             incoming_spike_buffer_size=AbstractPopulationVertex.
-            none_pynn_default_parameters['incoming_spike_buffer_size'],
+            non_pynn_default_parameters['incoming_spike_buffer_size'],
 
-            constraints=AbstractPopulationVertex.none_pynn_default_parameters[
+            constraints=AbstractPopulationVertex.non_pynn_default_parameters[
                 'constraints'],
 
-            label=AbstractPopulationVertex.none_pynn_default_parameters[
+            label=AbstractPopulationVertex.non_pynn_default_parameters[
                 'label'],
 
-            v_init=IFCondExpBase.none_pynn_default_parameters['v_init'],
+            v_init=IFCondExpBase.initialize_parameters['v_init'],
             tau_m=IFCondExpBase.default_parameters['tau_m'],
             cm=IFCondExpBase.default_parameters['cm'],
             v_rest=IFCondExpBase.default_parameters['v_rest'],

@@ -8,18 +8,18 @@ class IFCurrDualExpDataHolder(DataHolder):
             self,
 
             spikes_per_second=AbstractPopulationVertex.
-            none_pynn_default_parameters['spikes_per_second'],
+            non_pynn_default_parameters['spikes_per_second'],
 
             ring_buffer_sigma=AbstractPopulationVertex.
-            none_pynn_default_parameters['ring_buffer_sigma'],
+            non_pynn_default_parameters['ring_buffer_sigma'],
 
             incoming_spike_buffer_size=AbstractPopulationVertex.
-            none_pynn_default_parameters['incoming_spike_buffer_size'],
+            non_pynn_default_parameters['incoming_spike_buffer_size'],
 
             constraints=AbstractPopulationVertex.
-            none_pynn_default_parameters['constraints'],
+            non_pynn_default_parameters['constraints'],
 
-            label=AbstractPopulationVertex.none_pynn_default_parameters[
+            label=AbstractPopulationVertex.non_pynn_default_parameters[
                 'label'],
 
             tau_m=IFCurrDualExpBase.default_parameters['tau_m'],
@@ -32,7 +32,7 @@ class IFCurrDualExpDataHolder(DataHolder):
             tau_syn_I=IFCurrDualExpBase.default_parameters['tau_syn_I'],
             tau_refrac=IFCurrDualExpBase.default_parameters['tau_refrac'],
             i_offset=IFCurrDualExpBase.default_parameters['i_offset'],
-            v_init=IFCurrDualExpBase.none_pynn_default_parameters['v_init'],
+            v_init=IFCurrDualExpBase.initialize_parameters['v_init'],
             isyn_exc=IFCurrDualExpBase.default_parameters['isyn_exc'],
             isyn_inh=IFCurrDualExpBase.default_parameters['isyn_inh'],
             isyn_exc2=IFCurrDualExpBase.default_parameters['isyn_exc2']):

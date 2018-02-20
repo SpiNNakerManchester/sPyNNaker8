@@ -17,15 +17,15 @@ class PushBotLifSpinnakerLinkDataHolder(DataHolder):
             self, protocol, devices,
 
             spikes_per_second=AbstractPopulationVertex.
-            none_pynn_default_parameters['spikes_per_second'],
-            label=AbstractPopulationVertex.none_pynn_default_parameters[
+            non_pynn_default_parameters['spikes_per_second'],
+            label=AbstractPopulationVertex.non_pynn_default_parameters[
                 'label'],
             ring_buffer_sigma=AbstractPopulationVertex.
-            none_pynn_default_parameters['ring_buffer_sigma'],
+            non_pynn_default_parameters['ring_buffer_sigma'],
             incoming_spike_buffer_size=AbstractPopulationVertex.
-            none_pynn_default_parameters['incoming_spike_buffer_size'],
+            non_pynn_default_parameters['incoming_spike_buffer_size'],
             constraints=AbstractPopulationVertex.
-            none_pynn_default_parameters['constraints'],
+            non_pynn_default_parameters['constraints'],
 
             # default params for the neuron model type
             tau_m=ExternalDeviceLifControl.default_parameters['tau_m'],
@@ -37,7 +37,7 @@ class PushBotLifSpinnakerLinkDataHolder(DataHolder):
             tau_refrac=ExternalDeviceLifControl.default_parameters[
                 'tau_refrac'],
             i_offset=ExternalDeviceLifControl.default_parameters['i_offset'],
-            v_init=ExternalDeviceLifControl.none_pynn_default_parameters[
+            v_init=ExternalDeviceLifControl.initialize_parameters[
                 'v_init']):
 
         DataHolder.__init__(

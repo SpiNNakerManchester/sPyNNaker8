@@ -6,16 +6,23 @@ from spynnaker.pyNN.models.neuron.builds import IFCondExpStoc
 class IfCondExpStocDataHolder(DataHolder):
 
     def __init__(
-            self, spikes_per_second=AbstractPopulationVertex.
-            none_pynn_default_parameters['spikes_per_second'],
+            self,
+
+            spikes_per_second=AbstractPopulationVertex.
+            non_pynn_default_parameters['spikes_per_second'],
+
             ring_buffer_sigma=AbstractPopulationVertex.
-            none_pynn_default_parameters['ring_buffer_sigma'],
+            non_pynn_default_parameters['ring_buffer_sigma'],
+
             incoming_spike_buffer_size=AbstractPopulationVertex.
-            none_pynn_default_parameters['incoming_spike_buffer_size'],
-            constraints=AbstractPopulationVertex.none_pynn_default_parameters[
+            non_pynn_default_parameters['incoming_spike_buffer_size'],
+
+            constraints=AbstractPopulationVertex.non_pynn_default_parameters[
                 'constraints'],
-            label=AbstractPopulationVertex.none_pynn_default_parameters[
+
+            label=AbstractPopulationVertex.non_pynn_default_parameters[
                 'label'],
+
             tau_m=IFCondExpStoc.default_parameters['tau_m'],
             cm=IFCondExpStoc.default_parameters['cm'],
             v_rest=IFCondExpStoc.default_parameters['v_rest'],
@@ -29,7 +36,7 @@ class IfCondExpStocDataHolder(DataHolder):
             e_rev_I=IFCondExpStoc.default_parameters['e_rev_I'],
             du_th=IFCondExpStoc.default_parameters['du_th'],
             tau_th=IFCondExpStoc.default_parameters['tau_th'],
-            v_init=IFCondExpStoc.none_pynn_default_parameters['v_init'],
+            v_init=IFCondExpStoc.initialize_parameters['v_init'],
             isyn_exc=IFCondExpStoc.default_parameters['isyn_exc'],
             isyn_inh=IFCondExpStoc.default_parameters['isyn_inh']):
         DataHolder.__init__(

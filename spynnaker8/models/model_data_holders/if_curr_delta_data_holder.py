@@ -6,16 +6,23 @@ from spynnaker.pyNN.models.neuron.builds import IFCurrDelta
 class IfCurrDeltaDataHolder(DataHolder):
 
     def __init__(
-            self, spikes_per_second=AbstractPopulationVertex.
-            none_pynn_default_parameters['spikes_per_second'],
+            self,
+
+            spikes_per_second=AbstractPopulationVertex.
+            non_pynn_default_parameters['spikes_per_second'],
+
             ring_buffer_sigma=AbstractPopulationVertex.
-            none_pynn_default_parameters['ring_buffer_sigma'],
+            non_pynn_default_parameters['ring_buffer_sigma'],
+
             incoming_spike_buffer_size=AbstractPopulationVertex.
-            none_pynn_default_parameters['incoming_spike_buffer_size'],
-            constraints=AbstractPopulationVertex.none_pynn_default_parameters[
+            non_pynn_default_parameters['incoming_spike_buffer_size'],
+
+            constraints=AbstractPopulationVertex.non_pynn_default_parameters[
                 'constraints'],
-            label=AbstractPopulationVertex.none_pynn_default_parameters[
+
+            label=AbstractPopulationVertex.non_pynn_default_parameters[
                 'label'],
+
             tau_m=IFCurrDelta.default_parameters['tau_m'],
             cm=IFCurrDelta.default_parameters['cm'],
             v_rest=IFCurrDelta.default_parameters['v_rest'],
@@ -23,7 +30,7 @@ class IfCurrDeltaDataHolder(DataHolder):
             v_thresh=IFCurrDelta.default_parameters['v_thresh'],
             tau_refrac=IFCurrDelta.default_parameters['tau_refrac'],
             i_offset=IFCurrDelta.default_parameters['i_offset'],
-            v_init=IFCurrDelta.none_pynn_default_parameters['v_init'],
+            v_init=IFCurrDelta.initialize_parameters['v_init'],
             isyn_exc=IFCurrDelta.default_parameters['isyn_exc'],
             isyn_inh=IFCurrDelta.default_parameters['isyn_inh']):
         DataHolder.__init__(
