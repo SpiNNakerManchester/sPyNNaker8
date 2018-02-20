@@ -13,31 +13,25 @@ class Test_Population(BaseTestCase):
         pop_1 = sim.Population(n_neurons, sim.IF_curr_exp(), label=label)
         self.assertEquals(n_neurons, pop_1.size)
         self.assertEquals(label, pop_1.label)
-        self.assertEquals(sim.IF_curr_exp.build_model(),
-                          type(pop_1.celltype))
+        self.assertEquals(sim.IF_curr_exp, type(pop_1.celltype))
         v_init = -60
         pop_1.initialize(v=v_init)
         initial_values = pop_1.initial_values
-        self.assertDictContainsSubset(
-            dict({"v": [-60, -60, -60, -60, -60]}), initial_values)
-        v_init = [60 + index for index in xrange(n_neurons)]
+        vs = initial_values["v"]
+        assert [-60, -60, -60, -60, -60] == vs
+        v_init = [-60 + index for index in xrange(n_neurons)]
         pop_1.initialize(v=v_init)
         initial_values = pop_1.initial_values
-        self.assertDictContainsSubset(dict({"v": v_init}), initial_values)
+        vs = initial_values["v"]
+        assert [-60, -59, -58, -57, -56] == vs
 
-        try:
-            print pop_1.all_cells
-        except NotImplementedError:
-            pass
-
-        try:
-            print pop_1.local_cells
-        except NotImplementedError:
-            pass
+        pop_1.all_cells
+        pop_1.local_cells
 
         self.assertEquals(n_neurons, pop_1.local_size)
 
-        print pop_1.structure
+        test = pop_1._vertex.none_pynn_default_parameters
+        pop_1.structure
 
     def test_position_generator(self):
         n_neurons = 5

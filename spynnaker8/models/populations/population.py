@@ -305,7 +305,7 @@ class Population(PyNNPopulationCommon, Recorder):
     def local_cells(self):
         logger.warning("local calls do not really make sense on sPyNNaker so "
                        "local_cells just returns all_cells")
-        return self.all_cells()
+        return self.all_cells
 
     @property
     def position_generator(self):
