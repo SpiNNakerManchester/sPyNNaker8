@@ -1,6 +1,10 @@
 # Figure 2 with output frequency calculated as expected value of drive and input frequency
 import spynnaker8 as p
+
+import matplotlib
+matplotlib.use('Agg')
 from pyNN.utility.plotting import Figure, Panel, DataTable
+
 import matplotlib.pyplot as plt
 import numpy as np
 from neo.core.spiketrain import SpikeTrain
@@ -9,7 +13,6 @@ from scipy.interpolate import interp1d
 from matplotlib.pyplot import legend
 from idna.core import _alabel_prefix
 
-import matplotlib.pyplot as plt
 
 from neo.io import PyNNNumpyIO
 from neo.io import AsciiSpikeTrainIO
@@ -147,8 +150,9 @@ for r in range(n_runs):
     nseg = nseg+1
 
     p.reset()
-    probs = n_trans / n_tot
-    probs.tofile(output_file+"_"+str(r)+output_ext, sep='\t', format='%10.5f')
+    if do_save:
+        probs = n_trans / n_tot
+        probs.tofile(output_file+"_"+str(r)+output_ext, sep='\t', format='%10.5f')
 
     # need to reset the poisson sources, otherwise spike trains repeat too often
     for i in range(npops):
@@ -178,10 +182,12 @@ for i in range(n_pre_rates):
 
     plt.plot(np.append([0], xs), np.append([0], probs[i, :]), linestyle='-', marker='o')
 
-plt.show()
+# plt.show()
 
 plt.plot(pre_rates, np.amax(probs, 1), linestyle='-', marker='o')
-plt.show()
+plt.savefig('./' + "figure_2"+'.png', format="png")
+plt.close()
+# plt.show()
 
 
 
