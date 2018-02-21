@@ -88,8 +88,8 @@ class Recorder(RecordingCommon):
         try:
             return self._population.find_units(variable)
         except Exception as ex:
-            logger.warn("Population: {} Does not support units for {}"
-                        "".format(self._population.label, variable))
+            logger.warning("Population: {} Does not support units for {}"
+                           "".format(self._population.label, variable))
             if variable == SPIKES:
                 return "spikes"
             if variable == MEMBRANE_POTENTIAL:
@@ -207,8 +207,8 @@ class Recorder(RecordingCommon):
 
     def _append_previous_segment(self, block, segment_number, variables):
         if segment_number not in self._data_cache:
-            logger.warn("No Data available for Segment {}"
-                        .format(segment_number))
+            logger.warning("No Data available for Segment {}"
+                           .format(segment_number))
             segment = neo.Segment(
                 name="segment{}".format(segment_number),
                 description="Empty",
@@ -228,8 +228,8 @@ class Recorder(RecordingCommon):
 
         for variable in variables:
             if variable not in data_cache.variables:
-                logger.warn("No Data available for Segment {} variable {}"
-                            "".format(segment_number, variable))
+                logger.warning("No Data available for Segment {} variable {}"
+                               "".format(segment_number, variable))
                 continue
             variable_cache = data_cache.get_data(variable)
             indexes = variable_cache.indexes
