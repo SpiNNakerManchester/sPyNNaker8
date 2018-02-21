@@ -13,8 +13,10 @@ from example_graph_params import *
 # pre_spikes.txt is input spikes
 #######################################
 
-folder='data.st2'
+folder='data'
 
+weight_scale = 2048.0*2
+V_spike = -50
 xbuf = 20
 
 r_pre = io.AsciiSpikeTrainIO(filename=folder+'/pre_spikes.txt')
@@ -30,8 +32,8 @@ csv = np.genfromtxt (folder+'/ca.txt')
 Ca = csv[:]
 print Ca
 csv = np.genfromtxt (folder+'/wgt.txt')
-w_time = csv[:,1]
-wgts = csv[:,0]
+w_time = csv[:,0]
+wgts = csv[:,1]
 print w_time, wgts
 
 print post_spikes.spiketrains[0].shape
@@ -41,9 +43,9 @@ print post_spikes.spiketrains[0].shape
 
 
 fig_settings = {
-    'lines.linewidth': 0.5,
-    'axes.linewidth': 0.5,
-    'axes.labelsize': 'small',
+    'lines.linewidth': 1,
+    'axes.linewidth': 1,
+    'axes.labelsize': 12,
     'legend.fontsize': 'small',
     'font.size': 12
 }
@@ -76,12 +78,14 @@ plot_spiketrains(post_spikes, "post-spikes")
 plt.subplot(n_panels, 1, 2)
 plt.plot(range(simtime), V_data.analogsignals[0], 'b', label='V')
 plt.plot((0, simtime), (V_th, V_th), 'r--')
+plt.plot((0, simtime), (V_spike, V_spike), 'k--')
 plt.ylabel("V")
 plt.margins(x=.1)
 plt.xlim([0.0-xbuf,1000.0+xbuf])
 
 plt.subplot(n_panels, 1, 3)
 plt.plot(w_time, wgts/weight_scale, 'b')
+plt.plot((0, simtime), (th_w, th_w), 'k--')
 plt.ylabel("weights")
 plt.ylim([0,1.000])
 plt.xlim([0.0-xbuf,1000.0+xbuf])

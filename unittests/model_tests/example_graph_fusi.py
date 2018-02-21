@@ -20,6 +20,7 @@ dr_r = 100
 pre_rate = 50
 nrn = 1
 dt=20
+w_mult = w_mult/4
 
 p.setup(1)
 
