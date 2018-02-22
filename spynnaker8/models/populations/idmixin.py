@@ -13,14 +13,6 @@ class IDMixin(object):
         #    object.__getattr__(self, name)
         return self._population.get_by_selector(self._id, name)
 
-#    @property
-#    def _population(self):
-#        return object.__getattr__(self, "_population")
-
-#    @property
-#    def _id(self):
-#        return object.__getattr__(self, "_id")
-
     def __setattr__(self, name, value):
         if name in self.__slots__:
             object.__setattr__(self, name, value)
@@ -77,12 +69,12 @@ class IDMixin(object):
 
     def get_initial_value(self, variable):
         """Get the initial value of a state variable of the cell."""
-        return self.parent._get_cell_initial_value(self, variable)
+        return self._population.get_initial_value(variable, self._id)
 
     def set_initial_value(self, variable, value):
         """Set the initial value of a state variable of the cell."""
-        self.parent._set_cell_initial_value(self, variable, value)
+        self._population.set_initial_value(variable, value, self._id)
 
     def as_view(self):
         """Return a PopulationView containing just this cell."""
-        return self.parent[self._id]
+        return self._population[self._id]

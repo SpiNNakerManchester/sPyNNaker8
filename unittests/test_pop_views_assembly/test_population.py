@@ -69,3 +69,20 @@ class Test_Population(BaseTestCase):
         values = pop_1.get("tau_m")
         self.assertEqual([2, 3, 3, 2, 2], values)
         sim.end()
+
+    def test_init_by_in(self):
+        sim.setup(timestep=1.0)
+        pop = sim.Population(4, sim.IF_curr_exp(), label="LABEL")
+        assert [-65.0, -65.0, -65.0, -65.0] == pop.get_initial_value("v")
+        pop.set_initial_value(variable="v", value=-60, selector=1)
+        assert [-65, -60, -65, -65] == pop.get_initial_value("v")
+        pop.set_initial_value(variable="v", value=12, selector=2)
+        assert [-60] == pop.get_initial_value("v", selector=1)
+
+    def test_initial_values(self):
+        sim.setup(timestep=1.0)
+        pop = sim.Population(4, sim.IF_curr_exp(), label="LABEL")
+        initial_values = pop.initial_values
+        assert "v" in initial_values
+        initial_values = pop.get_initial_values(selector=3)
+        assert {"v": [-65, -65, -65, -65]} == initial_values

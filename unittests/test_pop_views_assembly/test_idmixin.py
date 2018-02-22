@@ -49,3 +49,26 @@ class Test_IDMixin(BaseTestCase):
         cells = pop_1.all_cells
         assert "q" == pop_1.position[1]
     """
+
+    def test_init_by_in(self):
+        sim.setup(timestep=1.0)
+        pop = sim.Population(N_NEURONS, sim.IF_curr_exp(), label=LABEL)
+        assert [-65.0, -65.0, -65.0, -65.0] == pop.get_initial_value("v")
+        cells = pop.all_cells
+        cells[1].set_initial_value(variable="v", value=-60)
+        test = cells[1].get_initial_value("v")
+        assert [-60] == cells[1].get_initial_value("v")
+
+    def test_initial_values(self):
+        sim.setup(timestep=1.0)
+        pop = sim.Population(N_NEURONS, sim.IF_curr_exp(), label=LABEL)
+        cells = pop.all_cells
+        assert {"v": [-65]} == cells[1].initial_values
+
+    """
+    def test_asview(self):
+        sim.setup(timestep=1.0)
+        pop = sim.Population(N_NEURONS, sim.IF_curr_exp(), label=LABEL)
+        cells = pop.all_cells
+        cells[1].as_view()
+    """

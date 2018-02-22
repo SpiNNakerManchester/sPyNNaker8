@@ -289,6 +289,27 @@ class Population(PyNNPopulationCommon, Recorder):
                 "Population does not support the initialisation")
         return self._vertex.initial_values
 
+    # NONE PYNN API CALL
+    def get_initial_value(self, variable, selector=None ):
+        """ See AbstractPopulationInitializable.get_initial_value"""
+        if not self._vertex_population_initializable:
+            raise KeyError(
+                "Population does not support the initialisation of {}".format(
+                    variable))
+        return self._vertex.get_initial_value(variable, selector)
+
+    # NONE PYNN API CALL
+    def set_initial_value(self, variable, value, selector=None ):
+        """ See AbstractPopulationInitializable.set_initial_value"""
+        if not self._vertex_population_initializable:
+            raise KeyError(
+                "Population does not support the initialisation of {}".format(
+                    variable))
+        if globals_variables.get_not_running_simulator().has_ran \
+                and not self._vertex_changeable_after_run:
+            raise Exception("Population does not support changes after run")
+        self._vertex.set_initial_value(variable, value, selector)
+
     def get(self, parameter_names, gather=False, simplify=True):
         if simplify is not True:
             logger.warning("The simplify value is ignored if not set to true")
