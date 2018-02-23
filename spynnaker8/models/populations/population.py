@@ -338,3 +338,19 @@ class Population(PyNNPopulationCommon, Recorder):
         logger.warning("local calls do not really make sense on sPyNNaker so "
                        "is_local always retruns True")
         return True
+
+    @staticmethod
+    def create(cellclass, cellparams=None, n=1):
+        """
+        Pass through method to the constructor defined by PyNN
+
+        Create n cells all of the same type.
+
+        Returns a Population object.
+
+        :param cellclass: see Population.__init__
+        :param cellparams: see Population.__init__
+        :param n: see Population.__init__(size...)
+        :return: A New Population
+        """
+        return Population(size=n, cellclass=cellclass, cellparams=cellparams)

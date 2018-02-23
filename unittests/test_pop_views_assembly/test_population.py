@@ -3,6 +3,8 @@ from unittest import SkipTest
 from p8_integration_tests.base_test_case import BaseTestCase
 import spynnaker8 as sim
 
+from spynnaker8.models.populations.population import Population
+
 
 class Test_Population(BaseTestCase):
 
@@ -81,7 +83,7 @@ class Test_Population(BaseTestCase):
 
     def test_initial_values(self):
         sim.setup(timestep=1.0)
-        pop = sim.Population(4, sim.IF_curr_exp(), label="LABEL")
+        pop = sim.Population.create(4, sim.IF_curr_exp(), label="LABEL")
         initial_values = pop.initial_values
         assert "v" in initial_values
         initial_values = pop.get_initial_values(selector=3)
