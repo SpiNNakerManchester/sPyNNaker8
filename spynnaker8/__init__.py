@@ -67,6 +67,8 @@ from spynnaker8.models.synapse_dynamics.weight_dependence\
 from spynnaker8.models.synapse_dynamics.timing_dependence\
     .timing_dependence_spike_pair import TimingDependenceSpikePair as \
     SpikePairRule
+from spynnaker8.models.synapse_dynamics.timing_dependence\
+    .timing_dependence_abbot_stp import TimingDependenceAbbotSTP as AbbotSTP
 
 # neuron stuff
 # noinspection PyUnresolvedReferences
