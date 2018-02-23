@@ -6,6 +6,7 @@ import quantities
 from datetime import datetime
 from neo.io import NeoHdf5IO, PickleIO, NeoMatlabIO
 from spinn_utilities.ordered_set import OrderedSet
+from spinn_utilities.log import FormatAdapter
 
 from spynnaker.pyNN.models.common import AbstractNeuronRecordable
 from spynnaker.pyNN.models.common import AbstractSpikeRecordable
@@ -19,7 +20,7 @@ from spynnaker8.models.data_cache import DataCache
 from spynnaker8.utilities.version_util import pynn8_syntax
 
 
-logger = logging.getLogger(__name__)
+logger = FormatAdapter(logging.getLogger(__name__))
 
 
 class Recorder(RecordingCommon):
@@ -56,7 +57,7 @@ class Recorder(RecordingCommon):
         """ extracts block from the vertices and puts them into a neo block
 
         :param variables: the variables to extract
-        :param clear: =if the variables should be cleared after reading
+        :param clear: if the variables should be cleared after reading
         :param annotations: annotations to put on the neo block
         :return: The neo block
         """
@@ -89,8 +90,8 @@ class Recorder(RecordingCommon):
         try:
             return self._population.find_units(variable)
         except Exception as ex:
-            logger.warn("Population: %s Does not support units for %s",
-                        self._population.label, variable)
+            logger.warning("Population: {} Does not support units for {}",
+                           self._population.label, variable)
             if variable == SPIKES:
                 return "spikes"
             if variable == MEMBRANE_POTENTIAL:
@@ -199,7 +200,7 @@ class Recorder(RecordingCommon):
 
     def _append_previous_segment(self, block, segment_number, variables):
         if segment_number not in self._data_cache:
-            logger.warn("No Data available for Segment %d", segment_number)
+            logger.warning("No Data available for Segment {}", segment_number)
             segment = neo.Segment(
                 name="segment{}".format(segment_number),
                 description="Empty",
@@ -219,8 +220,8 @@ class Recorder(RecordingCommon):
 
         for variable in variables:
             if variable not in data_cache.variables:
-                logger.warn("No Data available for Segment %d variable %s",
-                            segment_number, variable)
+                logger.warning("No Data available for Segment {} variable {}",
+                               segment_number, variable)
                 continue
             variable_cache = data_cache.get_data(variable)
             ids = variable_cache.ids

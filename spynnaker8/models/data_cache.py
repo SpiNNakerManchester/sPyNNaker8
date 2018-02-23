@@ -21,8 +21,6 @@ class DataCache(object):
                  "_segment_number",
                  "_t")
 
-    _cache = dict()
-
     def __init__(self, label, description, segment_number,
                  recording_start_time, t, first_id):
         """
@@ -41,6 +39,7 @@ class DataCache(object):
         self._recording_start_time = recording_start_time
         self._t = t
         self._first_id = first_id
+        self._cache = dict()
 
     @property
     def variables(self):
