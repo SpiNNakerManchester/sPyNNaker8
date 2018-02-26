@@ -12,8 +12,8 @@ CELL_PARAMS_LIF = {'cm': 0.25, 'i_offset': 0.0, 'tau_m': 20.0,
                    'v_reset': -70.0, 'v_rest': -65.0, 'v_thresh': -50.0}
 
 
-class TestRun(object):
-    # pylint: disable=too-many-arguments
+class SynfireRunner(object):
+    # pylint: disable=too-many-arguments, attribute-defined-outside-init
 
     def __init__(self):
         self.__init_object_state()
@@ -652,5 +652,5 @@ if __name__ == "__main__":
     """
     main entrance method
     """
-    blah = TestRun()
+    blah = SynfireRunner()
     blah.do_run(20)
