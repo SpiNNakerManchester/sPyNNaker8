@@ -9,15 +9,32 @@ class IDMixin(object):
         self._population = population
 
     def __getattr__(self, name):
-        #if name in self.__slots__:
-        #    object.__getattr__(self, name)
-        return self._population.get_by_selector(self._id, name)
+        try:
+            return self._population.get_by_selector(
+                selector=self._id, parameter_names=name)
+        except Exception as ex:
+            try:
+                # try initisable variable
+                return self._population.get_initial_value(
+                    selector=self._id, variable=name)
+            except Exception:
+                # that failed too so raise the better original exception
+                raise ex
 
     def __setattr__(self, name, value):
         if name in self.__slots__:
             object.__setattr__(self, name, value)
         else:
-            self._population.set_by_selector(self._id, name, value)
+            try:
+                self._population.set_by_selector(self._id, name, value)
+            except Exception as ex:
+                try:
+                    # try initisable variable
+                    return self._population.set_initial_value(
+                        selector=self._id, variable=name, value=value)
+                except Exception:
+                    # that failed too so raise the better original exception
+                    raise ex
 
     def set_parameters(self, **parameters):
         """

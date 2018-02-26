@@ -63,7 +63,10 @@ class Test_IDMixin(BaseTestCase):
         sim.setup(timestep=1.0)
         pop = sim.Population(N_NEURONS, sim.IF_curr_exp(), label=LABEL)
         cells = pop.all_cells
-        assert {"v": [-65]} == cells[1].initial_values
+        -65 == cells[1].v
+        -65 == cells[1].v_init
+        cells[1].v = -60
+        assert [-65.0, -60.0, -65.0, -65.0] == pop.get_initial_value("v")
 
     """
     def test_asview(self):
