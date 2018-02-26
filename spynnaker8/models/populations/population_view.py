@@ -175,7 +175,7 @@ class PopulationView(object):
         if simplify is not True:
             logger.warning("The simplify value is ignored if not set to true")
 
-        return self._population.get_by_selector(self._indexes, parameter_name)
+        return self._population.get_by_selector(self._indexes, parameter_names)
 
     def getSpikes(self, *args, **kwargs):
         """ Deprecated.Use get_data('spikes') instead. """
