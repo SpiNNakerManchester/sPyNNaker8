@@ -22,7 +22,7 @@ class IFCurrAlphaDataHolder(DataHolder):
             label=AbstractPopulationVertex.non_pynn_default_parameters[
                 'label'],
 
-            v_init=IFCurrAlpha.non_pynn_default_parameters['v_init'],
+            v_init=IFCurrAlpha.initialize_parameters['v_init'],
             tau_m=IFCurrAlpha.default_parameters['tau_m'],
             cm=IFCurrAlpha.default_parameters['cm'],
             v_rest=IFCurrAlpha.default_parameters['v_rest'],
