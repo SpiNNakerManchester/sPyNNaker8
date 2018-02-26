@@ -1,3 +1,4 @@
+import pytest
 from unittest import SkipTest
 
 from p8_integration_tests.base_test_case import BaseTestCase
@@ -32,8 +33,8 @@ class Test_Population(BaseTestCase):
 
         self.assertEquals(n_neurons, pop_1.local_size)
 
-        test = pop_1._vertex.none_pynn_default_parameters
         pop_1.structure
+        sim.end()
 
     def test_position_generator(self):
         n_neurons = 5
@@ -82,7 +83,7 @@ class Test_Population(BaseTestCase):
 
     def test_init_by_in(self):
         sim.setup(timestep=1.0)
-        pop = sim.Population(4, sim.IF_curr_exp(), label="LABEL")
+        pop = sim.Population(4, sim.IF_curr_exp())
         assert [-65.0, -65.0, -65.0, -65.0] == pop.get_initial_value("v")
         pop.set_initial_value(variable="v", value=-60, selector=1)
         assert [-65, -60, -65, -65] == pop.get_initial_value("v")
@@ -97,4 +98,26 @@ class Test_Population(BaseTestCase):
         assert "v" in initial_values
         initial_values = pop.get_initial_values(selector=3)
         assert {"v": [-65, -65, -65, -65]} == initial_values
+        sim.end()
+
+    def test_iter(self):
+        sim.setup(timestep=1.0)
+        pop = sim.Population(4, sim.IF_curr_exp(), label="a label")
+
+        iterator = iter(pop)
+        self.assertEqual(0, iterator.next().id)
+        self.assertEqual(1, iterator.next().id)
+        self.assertEqual(2, iterator.next().id)
+        self.assertEqual(3, iterator.next().id)
+        with pytest.raises(StopIteration):
+            iterator.next()
+
+        iterator = pop.all()
+        self.assertEqual(0, iterator.next().id)
+        self.assertEqual(1, iterator.next().id)
+        self.assertEqual(2, iterator.next().id)
+        self.assertEqual(3, iterator.next().id)
+        with pytest.raises(StopIteration):
+            iterator.next()
+
         sim.end()

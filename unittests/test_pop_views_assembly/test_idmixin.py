@@ -15,6 +15,7 @@ class Test_IDMixin(BaseTestCase):
         cells = pop_1.all_cells
         assert 0 == cells[0]._id
         assert pop_1 == cells[0]._population
+        sim.end()
 
     def test_get_set(self):
         sim.setup(timestep=1.0)
@@ -32,12 +33,14 @@ class Test_IDMixin(BaseTestCase):
         cells[2].set_parameters(tau_m=3, i_offset=13)
         params = cells[2].get_parameters()
         assert 13 == params["i_offset"][0]
+        sim.end()
 
     def test_is_local(self):
         sim.setup(timestep=1.0)
         pop_1 = sim.Population(N_NEURONS, sim.IF_curr_exp(), label=LABEL)
         cells = pop_1.all_cells
         assert pop_1.is_local(2) == cells[2].local
+        sim.end()
 
     """
     def test_positions(self):
@@ -58,6 +61,7 @@ class Test_IDMixin(BaseTestCase):
         cells[1].set_initial_value(variable="v", value=-60)
         test = cells[1].get_initial_value("v")
         assert [-60] == cells[1].get_initial_value("v")
+        sim.end()
 
     def test_initial_values(self):
         sim.setup(timestep=1.0)
@@ -67,6 +71,7 @@ class Test_IDMixin(BaseTestCase):
         -65 == cells[1].v_init
         cells[1].v = -60
         assert [-65.0, -60.0, -65.0, -65.0] == pop.get_initial_value("v")
+        sim.end()
 
     """
     def test_asview(self):
