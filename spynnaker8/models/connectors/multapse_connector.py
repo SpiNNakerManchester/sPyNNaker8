@@ -12,6 +12,10 @@ class MultapseConnector(CommonMultapseConnector):
 
     :param num_synapses:
         Integer. This is the total number of synapses in the connection.
+    :param allow_self_connections:
+        Bool. Allow a neuron to connect to itself or not.
+    :param with_replacement:
+        Bool. When selecting, allow a neuron to be re-selected or not.
 
     """
     def __init__(self, num_synapses, allow_self_connections=True,
