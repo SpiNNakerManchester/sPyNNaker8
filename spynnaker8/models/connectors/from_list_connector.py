@@ -35,7 +35,7 @@ class FromListConnector(CommonFromListConnector, Connector):
             if True, display a progress bar on the terminal.
         """
         # pylint: disable=too-many-arguments
-        if conn_list is None or not conn_list:
+        if conn_list is None or not len(conn_list):
             raise InvalidParameterType(
                 "The connection list for the FromListConnector must contain"
                 " at least a list of tuples, each of which should contain at "
@@ -44,7 +44,7 @@ class FromListConnector(CommonFromListConnector, Connector):
         conn_list = numpy.array(conn_list)
 
         n_columns = 0
-        if conn_list:
+        if conn_list.size:
             n_columns = conn_list.shape[1]
 
         weights = None

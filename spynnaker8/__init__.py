@@ -107,10 +107,11 @@ from spynnaker8.utilities.version_util import pynn8_syntax
 
 # big stuff
 from spynnaker8.spinnaker import SpiNNaker
+from spinn_utilities.log import FormatAdapter
 
 import logging
 
-logger = logging.getLogger(__name__)
+logger = FormatAdapter(logging.getLogger(__name__))
 
 __all__ = [
     # PyNN imports
@@ -145,6 +146,9 @@ __all__ = [
     'get_max_delay', 'initialize', 'list_standard_models', 'name',
     'num_processes', 'record', 'record_v', 'record_gsyn']
 
+# Dynamically-extracted operations from PyNN
+__pynn = {}
+
 
 def get_projections_data(projection_data):
     return globals_variables.get_simulator().get_projections_data(
@@ -160,31 +164,31 @@ def setup(timestep=pynn_control.DEFAULT_TIMESTEP,
           extra_pre_run_algorithms=None, extra_post_run_algorithms=None,
           extra_load_algorithms=None, time_scale_factor=None,
           n_chips_required=None, **extra_params):
-    """ main method needed to be called to make the PyNN 0.8 setup. Needs to\
-        be called before any other function
+    """ The main method needed to be called to make the PyNN 0.8 setup. Needs\
+        to be called before any other function
 
-    :param timestep:  the time step of the simulations
+    :param timestep: the time step of the simulations
     :param min_delay: the min delay of the simulation
     :param max_delay: the max delay of the simulation
     :param graph_label: the label for the graph
     :param database_socket_addresses: the sockets used by external devices\
         for the database notification protocol
-    :param extra_algorithm_xml_paths: list of paths to where other xml are\
-        located
+    :param extra_algorithm_xml_paths: \
+        list of paths to where other XML are located
     :param extra_mapping_inputs: other inputs used by the mapping process
-    :param extra_mapping_algorithms: other algorithms to be used by the\
-        mapping process
+    :param extra_mapping_algorithms: \
+        other algorithms to be used by the mapping process
     :param extra_pre_run_algorithms: extra algorithms to use before a run
     :param extra_post_run_algorithms: extra algorithms to use after a run
-    :param extra_load_algorithms: extra algorithms to use within the loading\
-        phase
+    :param extra_load_algorithms: \
+        extra algorithms to use within the loading phase
     :param time_scale_factor: multiplicative factor to the machine time step\
         (does not affect the neuron models accuracy)
     :param n_chips_required: The number of chips needed by the simulation
-    :param extra_params:  other stuff
+    :param extra_params: other stuff
     :return: rank thing
     """
-    # pylint: disable=too-many-arguments
+    # pylint: disable=too-many-arguments, too-many-function-args
     if pynn8_syntax:
         # setup PyNN common stuff
         pynn_common.setup(timestep, min_delay, max_delay, **extra_params)
@@ -215,15 +219,9 @@ def setup(timestep=pynn_control.DEFAULT_TIMESTEP,
         n_chips_required=n_chips_required)
 
     # warn about kwargs arguments
-<<<<<<< HEAD
     if extra_params:
-        logger.warn("Extra params %s have been applied to the setup "
-                    "command which we do not consider", extra_params)
-=======
-    if len(extra_params) > 0:
         logger.warning("Extra params {} have been applied to the setup "
-                       "command which we do not consider".format(extra_params))
->>>>>>> refs/heads/master
+                       "command which we do not consider", extra_params)
 
     # get overloaded functions from PyNN in relation of our simulator object
     _create_overloaded_functions(globals_variables.get_simulator())
@@ -243,7 +241,7 @@ def Projection(
         presynaptic_population, postsynaptic_population,
         connector, synapse_type=None, source=None, receptor_type="excitatory",
         space=None, label=None):
-    """ used to support pep 8 spelling correctly
+    """ Used to support PEP 8 spelling correctly
 
     :param presynaptic_population: the source pop
     :param postsynaptic_population: the dest pop
@@ -253,7 +251,7 @@ def Projection(
     :param receptor_type: the recpetor type
     :param space: the space object
     :param label: the label
-    :return:  a projection object for SpiNNaker
+    :return: a projection object for SpiNNaker
     """
     # pylint: disable=too-many-arguments
     return SpiNNakerProjection(
@@ -264,41 +262,37 @@ def Projection(
 
 
 def _create_overloaded_functions(spinnaker_simulator):
-    """ creates functions that the main PyNN interface supports\
+    """ Creates functions that the main PyNN interface supports\
         (given from PyNN)
     :param spinnaker_simulator: the simulator object we use underneath
     :rtype: None
     """
 
-    # get the global functions
-    global __pynn_run, __pynn_run_until
-    global __pynn_get_current_time, __pynn_get_time_step, __pynn_get_min_delay
-    global __pynn_get_max_delay, __pynn_num_processes, __pynn_rank
-    global __pynn_reset, __pynn_create, __pynn_connect, __pynn_record
-
     # overload the failed ones with now valid ones, now that we're in setup
     # phase.
-    __pynn_run, __pynn_run_until = pynn_common.build_run(spinnaker_simulator)
+    __pynn["run"], __pynn["run_until"] = pynn_common.build_run(
+        spinnaker_simulator)
 
-    __pynn_get_current_time, __pynn_get_time_step, __pynn_get_min_delay, \
-        __pynn_get_max_delay, __pynn_num_processes, __pynn_rank = \
+    __pynn["get_current_time"], __pynn["get_time_step"], \
+        __pynn["get_min_delay"], __pynn["get_max_delay"], \
+        __pynn["num_processes"], __pynn["rank"] = \
         pynn_common.build_state_queries(spinnaker_simulator)
 
-    __pynn_reset = pynn_common.build_reset(spinnaker_simulator)
-    __pynn_create = pynn_common.build_create(Population)
+    __pynn["reset"] = pynn_common.build_reset(spinnaker_simulator)
+    __pynn["create"] = pynn_common.build_create(Population)
 
-    __pynn_connect = pynn_common.build_connect(
+    __pynn["connect"] = pynn_common.build_connect(
         Projection, FixedProbabilityConnector, StaticSynapse)
 
-    __pynn_record = pynn_common.build_record(spinnaker_simulator)
+    __pynn["record"] = pynn_common.build_record(spinnaker_simulator)
 
 
 def end(_=True):
-    """ cleans up the spinnaker machine and software
+    """ Cleans up the spiNNaker machine and software
 
-    :param _: was named compatible_output, which we dont care about,\
+    :param _: was named compatible_output, which we don't care about,\
         so is a none existent parameter
-    :rtype:  None
+    :rtype: None
     """
     for (population, variables, filename) in \
             globals_variables.get_simulator().write_on_end:
@@ -309,8 +303,8 @@ def end(_=True):
 
 
 def record_v(source, filename):
-    """ depreciated method for getting voltage.\
-        This is not documented in the public facing api
+    """ Deprecated method for getting voltage.\
+        This is not documented in the public facing API.
 
     :param source: the population / view / assembly to record
     :param filename: the neo file to write to
@@ -322,19 +316,14 @@ def record_v(source, filename):
 
 
 def record_gsyn(source, filename):
-    """ depreciated method for getting both types of gsyn.\
-        This is not documented in the public facing api
+    """ Deprecated method for getting both types of gsyn.\
+        This is not documented in the public facing API
 
     :param source: the population / view / assembly to record
     :param filename: the neo file to write to
     :rtype: None
     """
-<<<<<<< HEAD
-    logger.warn(
-=======
-
     logger.warning(
->>>>>>> refs/heads/master
         "Using record_gsyn is deprecated.  Use record('gsyn_exc') and/or"
         " record('gsyn_inh') function instead")
     record(['gsyn_exc', 'gsyn_inh'], source, filename)
@@ -373,22 +362,21 @@ def set_number_of_neurons_per_core(neuron_type, max_permitted):
 
 def connect(pre, post, weight=0.0, delay=None, receptor_type=None, p=1,
             rng=None):
-    """ builds a projection
+    """ Builds a projection
 
     :param pre: source pop
     :param post: destination pop
     :param weight: weight of the connections
     :param delay: the delay of the connections
-    :param receptor_type: excititory / inhib
+    :param receptor_type: excitatory / inhibitatory
     :param p: probability
     :param rng: random number generator
     :rtype: None
     """
     # pylint: disable=too-many-arguments
-    global __pynn_connect
     if not globals_variables.has_simulator():
         raise ConfigurationException(FAILED_STATE_MSG)
-    __pynn_connect(pre, post, weight, delay, receptor_type, p, rng)
+    __pynn["connect"](pre, post, weight, delay, receptor_type, p, rng)
 
 
 def create(cellclass, cellparams=None, n=1):
@@ -399,10 +387,9 @@ def create(cellclass, cellparams=None, n=1):
     :param n: n neurons
     :rtype: None
     """
-    global __pynn_create
     if not globals_variables.has_simulator():
         raise ConfigurationException(FAILED_STATE_MSG)
-    __pynn_create(cellclass, cellparams, n)
+    __pynn["create"](cellclass, cellparams, n)
 
 
 def NativeRNG(seed_value):
@@ -419,47 +406,45 @@ def get_current_time():
 
     :return: returns the current time
     """
-    global __pynn_get_current_time
     if not globals_variables.has_simulator():
         raise ConfigurationException(FAILED_STATE_MSG)
-    return __pynn_get_current_time()
+    return __pynn["get_current_time"]()
 
 
 def get_min_delay():
-    """the minimum allowed synaptic delay
+    """ The minimum allowed synaptic delay; delays will be clamped to be at\
+        least this.
 
     :return: returns the min delay of the simulation
     """
-    global __pynn_get_min_delay
     if not globals_variables.has_simulator():
         raise ConfigurationException(FAILED_STATE_MSG)
-    return __pynn_get_min_delay()
+    return __pynn["get_min_delay"]()
 
 
 def get_max_delay():
-    """ the maximum allowed synaptic delay
+    """ The maximum allowed synaptic delay; delays will be clamped to be at\
+        most this.
 
     :return: returns the max delay of the simulation
     """
-    global __pynn_get_max_delay
     if not globals_variables.has_simulator():
         raise ConfigurationException(FAILED_STATE_MSG)
-    return __pynn_get_max_delay()
+    return __pynn["get_max_delay"]()
 
 
 def get_time_step():
-    """ the integration time step
+    """ The integration time step
 
     :return: get the time step of the simulation
     """
-    global __pynn_get_time_step
     if not globals_variables.has_simulator():
         raise ConfigurationException(FAILED_STATE_MSG)
-    return __pynn_get_time_step()
+    return __pynn["get_time_step"]()
 
 
 def initialize(cells, **initial_values):
-    """ sets cells values to certain values
+    """ Sets cells to be initialised to the given values
 
     :param cells: the cells to change params on
     :param initial_values: the params and there values to change
@@ -471,95 +456,90 @@ def initialize(cells, **initial_values):
 
 
 def num_processes():
-    """the number of MPI processes
+    """ The number of MPI processes. \
+        (Always 1 on SpiNNaker, which doesn't use MPI.)
 
-    :return: the num MPI processes
+    :return: the number of MPI processes
     """
-    global __pynn_num_processes
     if not globals_variables.has_simulator():
         raise ConfigurationException(FAILED_STATE_MSG)
-    return __pynn_num_processes()
+    return __pynn["num_processes"]()
 
 
 def rank():
-    """the MPI rank of the current node
+    """ The MPI rank of the current node. (Irrelevant on SpiNNaker.)
 
-    :return: mpi rank
+    :return: MPI rank
     """
-    global __pynn_rank
     if not globals_variables.has_simulator():
         raise ConfigurationException(FAILED_STATE_MSG)
-    return __pynn_rank()
+    return __pynn["rank"]()
 
 
 def record(variables, source, filename, sampling_interval=None,
            annotations=None):
-    """ sets variables to be recorded
+    """ Sets variables to be recorded.
 
     :param variables: may be either a single variable name or a list of \
         variable names. For a given celltype class, celltype.recordable \
         contains a list of variables that can be recorded for that celltype.
     :param source: ?????
     :param filename: file name to write data to
-    :param sampling_interval: how often to sample the reocrding, not \
-        ignored so far
+    :param sampling_interval: \
+        how often to sample the recording, not  ignored so far
     :param annotations: the annotations to data writers
     :return: neo object
     """
-    global __pynn_record
     if not globals_variables.has_simulator():
         raise ConfigurationException(FAILED_STATE_MSG)
-    return __pynn_record(variables, source, filename, sampling_interval,
-                         annotations)
+    return __pynn["record"](variables, source, filename, sampling_interval,
+                            annotations)
 
 
 def reset(annotations=None):
-    """ resets the simulation to t = 0
+    """ Resets the simulation to t = 0
 
     :param annotations: the annotations to the data objects
     :rtype: None
     """
     if annotations is None:
         annotations = {}
-    global __pynn_reset
     if not globals_variables.has_simulator():
         raise ConfigurationException(FAILED_STATE_MSG)
-    __pynn_reset(annotations)
+    __pynn["reset"](annotations)
 
 
 def run(simtime, callbacks=None):
     """ The run() function advances the simulation for a given number of \
         milliseconds, e.g.:
 
-    :param simtime:  time in milliseconds
+    :param simtime: time to run for (in milliseconds)
     :param callbacks: callbacks to run
-    :return: ?????
+    :return: the actual simulation time that the simulation stopped at
     """
-    global __pynn_run
     if not globals_variables.has_simulator():
         raise ConfigurationException(FAILED_STATE_MSG)
-    return __pynn_run(simtime, callbacks=callbacks)
+    return __pynn["run"](simtime, callbacks=callbacks)
 
 
-# left here becuase needs to be done, and no better place to put it
-# (ABS dont like it, but will put up with it)
+# left here because needs to be done, and no better place to put it
+# (ABS don't like it, but will put up with it)
 run_for = run
 
 
 def run_until(tstop):
-    """ run until that time period has completed
+    """ Run until a (simulation) time period has completed.
 
-    :param tstop: the time to stop at
-    :return: ??????
+    :param tstop: the time to stop at (in milliseconds)
+    :return: the actual simulation time that the simulation stopped at
     """
-    global __pynn_run_until
     if not globals_variables.has_simulator():
         raise ConfigurationException(FAILED_STATE_MSG)
-    return __pynn_run_until(tstop)
+    return __pynn["run_until"](tstop)
 
 
 def get_machine():
-    """ Get the spinnaker machine in use
+    """ Get the SpiNNaker machine in use.
 
     :return: the machine object
     """
