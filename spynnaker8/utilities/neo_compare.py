@@ -48,7 +48,7 @@ def compare_spiketrains(spiketrains1, spiketrains2, same_data=True):
         return
     if len(spiketrains1) != len(spiketrains2):
         raise AssertionError(
-            "spiketrains1 has {} spiketrains while spiketrains2 as {} " \
+            "spiketrains1 has {} spiketrains while spiketrains2 as {} "
             "analogsignalarrays".format(
                 len(spiketrains1), len(spiketrains2)))
     for spiketrain1, spiketrain2 in zip(spiketrains1, spiketrains2):
@@ -142,7 +142,7 @@ def compare_segments(seg1, seg2, same_data=True):
 
     if same_data and len(seg1_analogsignals) != len(seg2_analogsignals):
         raise AssertionError(
-            "Segment1 has {} analogsignalarrays while Segment2 as {} " \
+            "Segment1 has {} analogsignalarrays while Segment2 as {} "
             "analogsignalarrays".format(
                 len(seg1_analogsignals), len(seg1_analogsignals)))
 

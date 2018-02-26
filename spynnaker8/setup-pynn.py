@@ -24,7 +24,7 @@ def install_sPyNNaker8_into(module):
     print("Created {}".format(spinnaker_init))
 
 
-# Check the version; we really want PyNN 0.9 
+# Check the version; we really want PyNN 0.9
 if not version_satisfies(pyNN, "0.9"):
     raise Exception(
         "PyNN version {} found; SpyNNaker 9 requires PyNN version 0.9".format(
