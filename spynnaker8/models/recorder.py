@@ -23,6 +23,13 @@ from spynnaker8.utilities.version_util import pynn8_syntax
 logger = FormatAdapter(logging.getLogger(__name__))
 
 
+_DEFAULT_UNITS = {
+    SPIKES: "spikes",
+    MEMBRANE_POTENTIAL: "mV",
+    GSYN_EXCIT: "uS",
+    GSYN_INHIB: "uS"}
+
+
 class Recorder(RecordingCommon):
     # pylint: disable=protected-access
 
@@ -36,7 +43,7 @@ class Recorder(RecordingCommon):
         """ Return a Neo IO instance, guessing the type based on the filename\
             suffix.
         """
-        logger.debug("Creating Neo IO for filename %s", filename)
+        logger.debug("Creating Neo IO for filename {}", filename)
         directory = os.path.dirname(filename)
         utility_calls.check_directory_exists_and_create_if_not(directory)
         extension = os.path.splitext(filename)[1]
@@ -92,25 +99,17 @@ class Recorder(RecordingCommon):
         except Exception as ex:
             logger.warning("Population: {} Does not support units for {}",
                            self._population.label, variable)
-            if variable == SPIKES:
-                return "spikes"
-            if variable == MEMBRANE_POTENTIAL:
-                return "mV"
-            if variable == GSYN_EXCIT:
-                return "uS"
-            if variable == GSYN_INHIB:
-                return "uS"
+            if variable in _DEFAULT_UNITS:
+                return _DEFAULT_UNITS[variable]
             raise ex
 
     def cache_data(self):
         """ store data for later extraction
-
-        :rtype: None
         """
         variables = self._get_all_recording_variables()
         if variables:
             segment_number = get_simulator().segment_counter
-            logger.info("Caching data for segment %d", segment_number)
+            logger.info("Caching data for segment {:d}", segment_number)
 
             data_cache = DataCache(
                 label=self._population.label,
@@ -342,7 +341,6 @@ def read_in_spikes(segment, spikes, t, ids, indexes, first_id,
     :type  recording_start_time: int
     :param label: recording elements label
     :type label: str
-    :rtype None
     """
     # pylint: disable=too-many-arguments
     t_stop = t * quantities.ms
@@ -389,7 +387,7 @@ def _convert_extracted_data_into_neo_expected_format(
 
 def read_in_signal(segment, block, signal_array, ids, indexes, variable,
                    recording_start_time, units, label):
-    """ reads in a data item that's not spikes (likely v, gsyn e, gsyn i)
+    """ Reads in a data item that's not spikes (likely v, gsyn e, gsyn i)
 
     Saves this data to the segment.
 
@@ -405,8 +403,6 @@ def read_in_signal(segment, block, signal_array, ids, indexes, variable,
     :param recording_start_time: when recording started
     :param units: the units of the recorded value
     :param label: human readable label
-
-    :return: None
     """
     # pylint: disable=too-many-arguments
     t_start = recording_start_time * quantities.ms

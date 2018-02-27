@@ -15,8 +15,7 @@ logger = logging.getLogger(__name__)
 
 
 class Population(PyNNPopulationCommon, Recorder):
-    """ pynn 0.8 population object
-
+    """ PyNN 0.8/0.9 population object
     """
 
     def __init__(self, size, cellclass, cellparams=None, structure=None,
@@ -80,15 +79,13 @@ class Population(PyNNPopulationCommon, Recorder):
 
     @property
     def annotations(self):
-        """ returns annotations given by the end user
-
-        :return:
+        """ The annotations given by the end user
         """
         return self._annotations
 
     @property
     def celltype(self):
-        """ Implements the pynn expected celltype property
+        """ Implements the PyNN expected celltype property
 
         :return: The celltype this property has been set to
         """
@@ -98,15 +95,15 @@ class Population(PyNNPopulationCommon, Recorder):
         """ Record the specified variable or variables for all cells in the\
             Population or view.
 
-        `variables` may be either a single variable name or a list of variable\
-        names. For a given celltype class, `celltype.recordable` contains a\
-        list of variables that can be recorded for that celltype.
-
-        If specified, `to_file` should be a Neo IO instance and `write_data()`\
-        will be automatically called when `end()` is called.
-
-        `sampling_interval` should be a value in milliseconds, and an integer\
-        multiple of the simulation timestep.
+        :param variables: either a single variable name or a list of variable\
+            names. For a given celltype class, `celltype.recordable` contains\
+            a list of variables that can be recorded for that celltype.
+        :type variables: str or list(str)
+        :param to_file: a file to automatically record to (optional).\
+            `write_data()` will be automatically called when `end()` is called.
+        :type to_file: a Neo IO instance
+        :param sampling_interval: a value in milliseconds, and an integer\
+            multiple of the simulation timestep.
         """
         if variables is None:  # reset the list of things to record
             # note that if record(None) is called, its a reset
@@ -141,17 +138,18 @@ class Population(PyNNPopulationCommon, Recorder):
         """ Write recorded data to file, using one of the file formats\
             supported by Neo.
 
-        :param io: a Neo IO instance
-        :type io: neo instance or a string for where to put a neo instance
+        :param io: \
+            a Neo IO instance, or a string for where to put a neo instance
+        :type io: neo instance or str
         :param variables: \
             either a single variable name or a list of variable names.\
             Variables must have been previously recorded, otherwise an\
             Exception will be raised.
-        :type variables: string or list of string
-        :param gather: pointless in spynnaker
+        :type variables: str or list(str)
+        :param gather: pointless on sPyNNaker
         :param clear: \
             clears the storage data if set to true after reading it back
-        :param annotations: ???????????
+        :param annotations: annotations to put on the neo block
         """
         # pylint: disable=too-many-arguments
         if not gather:
@@ -172,7 +170,7 @@ class Population(PyNNPopulationCommon, Recorder):
         together with an associated template engine (see\
         :mod:`pyNN.descriptions`).
 
-        If template is None, then a dictionary containing the template\
+        If `template` is None, then a dictionary containing the template\
         context will be returned.
         """
         vertex_context = self._vertex.describe()
@@ -209,20 +207,16 @@ class Population(PyNNPopulationCommon, Recorder):
         """ Return a Neo `Block` containing the data\
             (spikes, state variables) recorded from the Assembly.
 
-        `variables` - either a single variable name or a list of variable\
-                      names. Variables must have been previously recorded,\
-                      otherwise an Exception will be raised.
-
-        For parallel simulators, if `gather` is True, all data will be\
-        gathered to all nodes and the Neo `Block` will contain data from all\
-        nodes. Otherwise, the Neo `Block` will contain only data from the\
-        cells simulated on the local node.
-
-        If `clear` is True, recorded data will be deleted from the `Assembly`.
-
+        :param variables: either a single variable name or a list of variable\
+            names. Variables must have been previously recorded, otherwise an
+            Exception will be raised.
         :type variables: str or list
+        :param: Whether to collect data from all MPI nodes or just the current\
+            node (irrelevant on sPyNNaker, which always behaves as if True)
         :type gather: bool
+        :param: Whether recorded data will be deleted from the `Assembly`.
         :type clear: bool
+        :param annotations: annotations to put on the neo block
         :type annotations: dict
         :rtype: neo.Block
         """
@@ -233,7 +227,7 @@ class Population(PyNNPopulationCommon, Recorder):
         return self._extract_neo_block(variables, clear, annotations)
 
     def spinnaker_get_data(self, variable):
-        """ public accessor for getting data as a numpy array, instead of\
+        """ Public accessor for getting data as a numpy array, instead of\
             the neo based object
 
         :param variable: \
@@ -243,8 +237,8 @@ class Population(PyNNPopulationCommon, Recorder):
         :return: numpy array of the data
         """
         logger.warning(
-            "This call is not standard pynn and therefore will not be "
-            "compatible between simulators. Nor do we guarantee that this "
+            "This call is not standard PyNN and therefore will not be "
+            "portable to other PyNN simulators. Nor do we guarantee that this "
             "function will exist in future releases.")
         if isinstance(variable, list):
             if len(variable) != 1:
@@ -260,10 +254,10 @@ class Population(PyNNPopulationCommon, Recorder):
         return super(Population, self).get_spike_counts(spikes, gather)
 
     def find_units(self, variable):
-        """ supports getting the units of a variable
+        """ Get the units of a variable
 
-        :param variable:
-        :return:
+        :param variable: The name of the variable
+        :return: The units of the variable
         """
         return self._get_variable_unit(variable)
 

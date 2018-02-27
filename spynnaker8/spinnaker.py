@@ -7,6 +7,7 @@ from spinn_front_end_common.utilities import globals_variables
 from spinn_front_end_common.utilities.exceptions import ConfigurationException
 from spinn_front_end_common.utilities.failed_state import FAILED_STATE_MSG
 from spynnaker.pyNN.abstract_spinnaker_common import AbstractSpiNNakerCommon
+from spinn_utilities.log import FormatAdapter
 from spynnaker.pyNN.utilities.spynnaker_failed_state \
     import SpynnakerFailedState
 
@@ -23,7 +24,7 @@ from spynnaker8.utilities.random_stats import RandomStatsRandIntImpl
 from spynnaker8.utilities.random_stats import RandomStatsUniformImpl
 from spynnaker8.utilities.random_stats import RandomStatsVonmisesImpl
 from spynnaker8.utilities.random_stats import RandomStatsBinomialImpl
-from _version import __version__ as version
+from ._version import __version__ as version
 
 import logging
 import math
@@ -33,7 +34,7 @@ from neo import __version__ as neo_version
 from lazyarray import __version__ as lazyarray_version
 
 
-logger = logging.getLogger(__name__)
+log = FormatAdapter(logging.getLogger(__name__))
 
 NAME = "SpiNNaker_under_version({}-{})".format(
     _version.__version__, _version.__version_name__)
@@ -41,7 +42,7 @@ NAME = "SpiNNaker_under_version({}-{})".format(
 
 class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
                 Spynnaker8SimulatorInterface):
-    """ main interface for the stuff software for PyNN 0.8
+    """ Main interface for the sPyNNaker implementation of PyNN 0.8/0.9
     """
 
     def __init__(
@@ -105,27 +106,24 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
             front_end_versions=front_end_versions)
 
     def run(self, simtime):
-        """ PyNN run simulation (enforced method and parameter name)
+        """ Run the simulation for a span of simulation time.
 
-        :param simtime: the runtime in milliseconds
+        :param simtime: the time to run for, in milliseconds
         :return: None
         """
 
         self._run_wait(simtime)
 
     def run_until(self, tstop):
-        """ functions demanded by pynn level api
+        """ Run the simulation until the given simulation time.
 
         :param tstop: when to run until in milliseconds
-        :return: None
         """
         # Build data
         self._run_wait(tstop - self.t)
 
     def clear(self):
         """ Clear the current recordings and reset the simulation
-
-        :return: None
         """
         self.recorders = set([])
         self._id_counter = 0
@@ -136,9 +134,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
         self.stop()
 
     def reset(self):
-        """Reset the state of the current network to time t = 0.
-
-        :return: None
+        """ Reset the state of the current network to time t = 0.
         """
         for population in self._populations:
             population.cache_data()
@@ -148,10 +144,10 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
         AbstractSpiNNakerCommon.reset(self)
 
     def _run_wait(self, duration_ms):
-        """ main interface for the starting of stuff
+        """ Run the simulation for a length of simulation time.
 
-        :param duration_ms:
-        :return:
+        :param duration_ms: The run duration, in milliseconds
+        :type duration_ms: int or float
         """
 
         # Convert dt into microseconds and divide by
@@ -163,17 +159,18 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
         duration_timesteps = int(math.ceil(
             float(duration_ms) / float(self.dt)))
 
-        logger.info("Simulating for %u %fms timesteps "
-                    "using a hardware timestep of %uus",
-                    duration_timesteps, self.dt, hardware_timestep_us)
+        log.info(
+            "Simulating for {:u} {:f}ms timesteps using a hardware timestep "
+            "of {:u}us", duration_timesteps, self.dt, hardware_timestep_us)
 
         super(SpiNNaker, self).run(duration_ms)
 
     @property
     def state(self):
-        """ used to bypass the stupid dual level object
+        """ Used to bypass the dual level object
 
-        :return: the stuff object
+        :return: the SpiNNaker object
+        :rtype: spynnaker8.spinnaker.SpiNNaker
         """
         return self
 
@@ -182,44 +179,40 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
         """ Gets the MPI rank of the simulator
 
         .. note::
-            Meaningless on SpiNNaker
+            Meaningless on SpiNNaker, so we pretend we're the head node.
 
-        :return: ??????????
+        :return: Constant: 0
         """
         return 0
 
     @mpi_rank.setter
     def mpi_rank(self, new_value):
-        """ this has no point in stuff
+        """ sPyNNaker does not use this value meaningfully
 
-        :param new_value: pointless entry
-        :return:
+        :param new_value: Ignored
         """
-        pass
 
     @property
     def num_processes(self):
         """ Gets the number of MPI worker processes
 
         .. note::
-            Meaningless on SpiNNaker
+            Meaningless on SpiNNaker, so we pretend there's one MPI process
 
-        :return: ???????
+        :return: Constant: 1
         """
         return 1
 
     @num_processes.setter
     def num_processes(self, new_value):
-        """ pointless method in stuff but needed for pynn interface
+        """ sPyNNaker does not use this value meaningfully
 
-        :param new_value: pointless entry
-        :return:
+        :param new_value: Ignored
         """
-        pass
 
     @property
     def dt(self):
-        """ method demanded by PyNN due to api assumptions
+        """ The machine time step.
 
         :return: the machine time step
         """
@@ -228,44 +221,43 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 
     @dt.setter
     def dt(self, new_value):
-        """ setter for the machine time step (forced by PyNN)
+        """ The machine time step
 
         :param new_value: new value for machine time step
-        :return: None
         """
         self._machine_time_step = new_value
 
     @property
     def t(self):
-        """ method demanded by PyNN due to api assumptions
+        """ The current simulation time
 
         :return: the current runtime already executed
         """
         return (
-            float(self._current_run_timesteps) *
-            (float(self._machine_time_step) / 1000.0))
+            self._current_run_timesteps * (self._machine_time_step / 1000.0))
 
     @property
     def segment_counter(self):
-        """ method demanded by the PyNN due to api assumptions
+        """ The number of the current recording segment being generated.
 
-        :return: the segment counter ??????
+        :return: the segment counter
         """
         return self._segment_counter
 
     @segment_counter.setter
     def segment_counter(self, new_value):
-        """ method demanded by the PyNN due to api assumptions
+        """ The number of the current recording segment being generated.
 
         :param new_value: new value for the segment counter
-        :return: None
         """
         self._segment_counter = new_value
 
     @property
     def running(self):
-        """ property method required from the base state object (ties into\
-            our has_ran parameter for auto pause and resume
+        """ Whether the simulation is running or has run.
+
+        .. note::
+            Ties into our has_ran parameter for automatic pause and resume.
 
         :return: the has_ran variable from the spinnaker main interface
         """
@@ -273,18 +265,17 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 
     @running.setter
     def running(self, new_value):
-        """ setter for the has_ran parameter, only used by the pynn interface,\
+        """ setter for the has_ran parameter, only used by the PyNN interface,\
             supports tracking where it thinks its setting this parameter.
 
         :param new_value: the new value for the simulation
-        :return: None
         """
         self._has_ran = new_value
 
     @property
     def name(self):
-        """ interface function needed to ensure pynn recording neo blocks are\
-            correctly labelled.
+        """ The name of the simulator. Used to ensure PyNN recording neo\
+            blocks are correctly labelled.
 
         :return: the name of the simulator.
         """
@@ -292,23 +283,25 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 
     @property
     def populations(self):
-        """ property for the population list. needed by the population class.
+        """ The list of all populations in the simulation.
 
-        :return:
+        :return: list of populations
         """
+        # needed by the population class
         return self._populations
 
     @property
     def projections(self):
-        """ property for the projections list. needed by the projection class.
+        """ The list of all projections in the simulation.
 
-        :return:
+        :return: list of projections
         """
+        # needed by the projection class.
         return self._projections
 
     @property
     def recorders(self):
-        """ property method for the recorders, used by the pynn state object
+        """ The recorders, used by the PyNN state object
 
         :return: the internal recorders object
         """
@@ -319,7 +312,6 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
         """ setter for the internal recorders object
 
         :param new_value: the new value for the recorder
-        :return:  None
         """
         self._recorders = new_value
 

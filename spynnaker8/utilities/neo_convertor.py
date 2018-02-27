@@ -8,7 +8,7 @@ def convert_analog_signal(signal_array, time_unit=ms):
 
     :param signal_array: Extended Quantities object
     :param time_unit: Data time unit for time index
-    :rtype ndarray
+    :rtype: ndarray
     """
     if pynn8_syntax:
         ids = signal_array.channel_index.astype(int)
@@ -32,9 +32,9 @@ def convert_data(data, name, run=0):
     :type data: SpynnakerNeoBlock
     :param name: Nane of the data to be extracted.\
         Same values as used in getData()
-    :type str
+    :type name: str
     :param run: Zero based index of the run to extract data for
-    :type int
+    :type run: int
     :return: nparray
     """
     if len(data.segments) <= run:
@@ -58,7 +58,7 @@ def convert_data_list(data, name, runs=None):
     :type data: SpynnakerNeoBlock
     :param name: Name of the data to be extracted.\
         Same values as used in getData()
-    :type str
+    :type name: str
     :param runs: List of Zero based index of the run to extract data for.\
         Or None to extract all runs
     :return: [nparray]
@@ -95,7 +95,7 @@ def convert_gsyn_inh_list(data):
     """ Converts the gsyn_inh into a list numpy array one per segment (all\
         runs) in the format id, time, value
 
-    :type data: SpynnakerNeoBlock Must have gsyn_exc data
+    :type data: SpynnakerNeoBlock Must have gsyn_inh data
     :return: [nparray]
     """
     return convert_data_list(data, "gsyn_inh", runs=None)
@@ -109,25 +109,25 @@ def convert_gsyn(gsyn_exc, gsyn_inh):
 
     :param gsyn_exc: neo with gsyn_exc data
     :param gsyn_inh: neo with gsyn_exc data
-    :rtype nparray
+    :rtype: nparray
     """
     exc = gsyn_exc.segments[0].filter(name='gsyn_exc')[0]
     inh = gsyn_inh.segments[0].filter(name='gsyn_inh')[0]
     ids = exc.channel_index
     ids2 = inh.channel_index
-    if (len(ids) != len(ids2)):
-        error = "Found {} neuron ids in gsyn_exc but {} in  gsyn_inh" \
-                "".format(len(ids), len(ids2))
-        raise ValueError(error)
-    if (not np.allclose(ids, ids2)):
+    if len(ids) != len(ids2):
+        raise ValueError(
+            "Found {} neuron ids in gsyn_exc but {} in  gsyn_inh".format(
+                len(ids), len(ids2)))
+    if not np.allclose(ids, ids2):
         raise ValueError("ids in gsyn_exc and gsyn_inh do not match")
     times = exc.times.rescale(ms)
     times2 = inh.times.rescale(ms)
-    if (len(times) != len(times2)):
-        error = "Found {} times in gsyn_exc but {} in  gsyn_inh" \
-                "".format(len(times), len(times))
-        raise ValueError(error)
-    if (not np.allclose(times, times2)):
+    if len(times) != len(times2):
+        raise ValueError(
+            "Found {} times in gsyn_exc but {} in  gsyn_inh".format(
+                len(times), len(times)))
+    if not np.allclose(times, times2):
         raise ValueError("times in gsyn_exc and gsyn_inh do not match")
     all_times = np.tile(times, len(ids))
     neurons = np.repeat(ids, len(times))
@@ -140,12 +140,11 @@ def convert_spiketrains(spiketrains):
     """ Converts a list of spiketrains into spynakker7 format
 
     :param spiketrains: List of SpikeTrains
-    :rtype nparray
+    :rtype: nparray
     """
-    neurons = np.concatenate(map(lambda x:
-                                 np.repeat(x.annotations['source_index'],
-                                           len(x)),
-                                 spiketrains))
+    neurons = np.concatenate(
+        map(lambda x: np.repeat(x.annotations['source_index'], len(x)),
+            spiketrains))
     spikes = np.concatenate(map(lambda x: x.magnitude, spiketrains))
     return np.column_stack((neurons, spikes))
 
@@ -153,15 +152,15 @@ def convert_spiketrains(spiketrains):
 def convert_spikes(neo, run=0):
     """ Extracts the spikes for run one from a Neo Object
 
-    :param neo: neo Object incliding Spike Data
+    :param neo: neo Object including Spike Data
     :param run: Zero based index of the run to extract data for
-    :type int
-    :rtype nparray
+    :type run: int
+    :rtype: nparray
     """
     if len(neo.segments) <= run:
-        raise ValueError("Data only contains {} so unable to run {}. "
-                         "Note run is the zero based index."
-                         "".format(len(neo.segments), run))
+        raise ValueError(
+            "Data only contains {} so unable to run {}. Note run is the "
+            "zero based index.".format(len(neo.segments), run))
     return convert_spiketrains(neo.segments[run].spiketrains)
 
 
@@ -169,7 +168,7 @@ def count_spiketrains(spiketrains):
     """ Help function to count the number of spikes in a list of spiketrains
 
     :param spiketrains: List of SpikeTrains
-    :return Total number of spikes in all the spiketrains
+    :return: Total number of spikes in all the spiketrains
     """
     return sum(map(len, spiketrains))
 
@@ -180,6 +179,6 @@ def count_spikes(neo):
     Only counts run 0
 
     :param neo: Neo Object which has spikes in it
-    :return:
+    :return: The number of spikes in the first segment
     """
     return count_spiketrains(neo.segments[0].spiketrains)

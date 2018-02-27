@@ -6,7 +6,8 @@ from spynnaker8.models.variable_cache import VariableCache
 class DataCache(object):
     """ Storage object to hold all the data to (re)create a Neo Segment
 
-    Required because deep-copy does not work on neo Objects
+    .. note::
+        Required because deep-copy does not work on neo Objects
 
     Stores the Data shared by all variable types at the top level\
     and holds a cache for the variable specific data
@@ -40,6 +41,7 @@ class DataCache(object):
         self._t = t
         self._first_id = first_id
         self._cache = dict()
+        self._rec_datetime = None
 
     @property
     def variables(self):
@@ -105,7 +107,7 @@ class DataCache(object):
         :param data: raw data in spynnaker format
         :type data: nparray
         :param ids: ids for which data should be returned
-        :type nparray
+        :type ids: nparray
         :param units: the units in which the data is
         :type units: str
         :rtype: None

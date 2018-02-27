@@ -230,7 +230,7 @@ def setup(timestep=pynn_control.DEFAULT_TIMESTEP,
 
 
 def name():
-    """ returns the name of the simulator
+    """ Returns the name of the simulator
 
     :rtype:None
     """
@@ -264,6 +264,7 @@ def Projection(
 def _create_overloaded_functions(spinnaker_simulator):
     """ Creates functions that the main PyNN interface supports\
         (given from PyNN)
+
     :param spinnaker_simulator: the simulator object we use underneath
     :rtype: None
     """
@@ -344,6 +345,7 @@ def list_standard_models():
 def set_number_of_neurons_per_core(neuron_type, max_permitted):
     """ Sets a ceiling on the number of neurons of a given type that can be\
         placed on a single core.
+
     :param neuron_type: neuron type
     :param max_permitted: the number to set to
     :rtype: None
@@ -380,7 +382,7 @@ def connect(pre, post, weight=0.0, delay=None, receptor_type=None, p=1,
 
 
 def create(cellclass, cellparams=None, n=1):
-    """ builds a population with certain params
+    """ Builds a population with certain params
 
     :param cellclass: population class
     :param cellparams: population params.
@@ -402,7 +404,7 @@ def NativeRNG(seed_value):
 
 
 def get_current_time():
-    """ the time within the simulation
+    """ Gets the time within the simulation
 
     :return: returns the current time
     """
@@ -456,8 +458,10 @@ def initialize(cells, **initial_values):
 
 
 def num_processes():
-    """ The number of MPI processes. \
-        (Always 1 on SpiNNaker, which doesn't use MPI.)
+    """ The number of MPI processes.
+
+    .. note::
+        Always 1 on SpiNNaker, which doesn't use MPI.
 
     :return: the number of MPI processes
     """
@@ -467,7 +471,10 @@ def num_processes():
 
 
 def rank():
-    """ The MPI rank of the current node. (Irrelevant on SpiNNaker.)
+    """ The MPI rank of the current node.
+
+    .. note::
+        Always 0 on SpiNNaker, whcih doesn't use MPI.
 
     :return: MPI rank
     """
@@ -483,7 +490,7 @@ def record(variables, source, filename, sampling_interval=None,
     :param variables: may be either a single variable name or a list of \
         variable names. For a given celltype class, celltype.recordable \
         contains a list of variables that can be recorded for that celltype.
-    :param source: ?????
+    :param source: where to record from
     :param filename: file name to write data to
     :param sampling_interval: \
         how often to sample the recording, not  ignored so far

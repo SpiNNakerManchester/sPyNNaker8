@@ -11,7 +11,7 @@ class VariableCache(object):
         :param data: raw data in spynakker format
         :type data: nparray
         :param ids: ids for which data should be returned
-        :type nparray
+        :type ids: nparray
         :param units: the units in which the data is
         :type units: str
         """

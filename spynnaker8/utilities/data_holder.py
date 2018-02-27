@@ -31,7 +31,7 @@ class DataHolder(object):
     @ClassProperty
     @classmethod
     def default_parameters(cls):
-        print cls
+        # print cls
         return cls.build_model().default_parameters
 
     @classmethod
