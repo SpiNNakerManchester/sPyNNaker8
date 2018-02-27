@@ -40,7 +40,10 @@ class Population(PyNNPopulationCommon, Recorder):
         # cellparams being retained for backwards compatibility, but use
         # is deprecated
         elif issubclass(cellclass, DataHolder):
-            internal_params = dict(cellparams)
+            if cellparams is None:
+                internal_params = dict()
+            else:
+                internal_params = dict(cellparams)
             cell_label = None
             if 'label' in internal_params:
                 cell_label = internal_params['label']
@@ -83,6 +86,17 @@ class Population(PyNNPopulationCommon, Recorder):
         # annotations used by neo objects
         self._annotations = dict()
 
+    def __iter__(self):
+        """ Iterate over local cells
+        """
+        for id in xrange(self._size):
+            yield IDMixin(self, id)
+
+    def all(self):
+        """ Iterator over cell ids on all MPI nodes."""
+        for id in xrange(self._size):
+            yield IDMixin(self, id)
+
     @property
     def annotations(self):
         """ returns annotations given by the end user
@@ -98,6 +112,11 @@ class Population(PyNNPopulationCommon, Recorder):
         :return: The celltype this property has been set to
         """
         return self._vertex_holder
+
+    def can_record(self, variable):
+        """ Determine whether `variable` can be recorded from this population.
+        """
+        return variable in self._get_all_possible_recordable_variables()
 
     def record(self, variables, to_file=None, sampling_interval=None):
         """
