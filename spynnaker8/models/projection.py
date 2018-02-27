@@ -97,7 +97,7 @@ class Projection(PyNNProjectionCommon):
         :return: values selected
         """
         if not gather:
-            logger.warn("Spynnaker always gathers from every core.")
+            logger.warning("Spynnaker always gathers from every core.")
 
         return self._get_data(
             attribute_names, format, with_address, multiple_synapses)
@@ -145,18 +145,18 @@ class Projection(PyNNProjectionCommon):
 
     def getWeights(self, format='list',  # @ReservedAssignment
                    gather=True):
-        logger.warn("getWeights is deprecated.  Use get('weight') instead")
+        logger.warning("getWeights is deprecated.  Use get('weight') instead")
         return self.get('weight', format, gather, with_address=False)
 
     def getDelays(self, format='list',  # @ReservedAssignment
                   gather=True):
-        logger.warn("getDelays is deprecated.  Use get('delay') instead")
+        logger.warning("getDelays is deprecated.  Use get('delay') instead")
         return self.get('delay', format, gather, with_address=False)
 
     def getSynapseDynamics(self, parameter_name,
                            format='list',  # @ReservedAssignment
                            gather=True):
-        logger.warn(
+        logger.warning(
             "getSynapseDynamics is deprecated.  Use get(parameter_name)"
             " instead")
         return self.get(parameter_name, format, gather, with_address=False)
@@ -164,12 +164,14 @@ class Projection(PyNNProjectionCommon):
     def saveConnections(self, file,  # @ReservedAssignment
                         gather=True,
                         compatible_output=True):  # @UnusedVariable
-        logger.warn("saveConnections is deprecated.  Use save('all') instead")
+        logger.warning(
+            "saveConnections is deprecated.  Use save('all') instead")
         self.save('all', file, format='list', gather=gather)
 
     def printWeights(self, file, format='list',  # @ReservedAssignment
                      gather=True):
-        logger.warn("printWeights is deprecated.  Use save('weight') instead")
+        logger.warning(
+            "printWeights is deprecated.  Use save('weight') instead")
         self.save('weight', file, format, gather)
 
     def printDelays(self, file, format='list',  # @ReservedAssignment
@@ -178,7 +180,7 @@ class Projection(PyNNProjectionCommon):
         Print synaptic weights to file. In the array format, zeros are printed
         for non-existent connections.
         """
-        logger.warn("printDelays is deprecated.  Use save('delay') instead")
+        logger.warning("printDelays is deprecated.  Use save('delay') instead")
         self.save('delay', file, format, gather)
 
     def weightHistogram(self, min=None, max=None,  # @ReservedAssignment
@@ -188,7 +190,7 @@ class Projection(PyNNProjectionCommon):
         If min and max are not given, the minimum and maximum weights are
         calculated automatically.
         """
-        logger.warn(
+        logger.warning(
             "weightHistogram is deprecated.  Use numpy.histogram function"
             " instead")
         pynn_common.Projection.weightHistogram(min=min, max=max, nbins=nbins)
@@ -227,6 +229,18 @@ class Projection(PyNNProjectionCommon):
             attribute_names, format, gather, with_address,
             notify=functools.partial(
                 self._save_callback, args=[file, format, metadata]))
+
+    @property
+    def pre(self):
+        return self._synapse_information.connector.pre_population
+
+    @property
+    def post(self):
+        return self._synapse_information.connector.post_population
+
+    @property
+    def label(self):
+        return self._projection_edge.label
 
     def __repr__(self):
         return "projection {}".format(self._projection_edge.label)
