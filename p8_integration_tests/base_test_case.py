@@ -19,7 +19,7 @@ class BaseTestCase(unittest.TestCase):
 
         factor = random.random()
         if factor > p8_integration_factor:
-            raise SkipTest("Test skipped by random number {} above " \
+            raise SkipTest("Test skipped by random number {} above "
                            "P8_INTEGRATION_FACTOR {}".format(
                                factor, p8_integration_factor))
 
