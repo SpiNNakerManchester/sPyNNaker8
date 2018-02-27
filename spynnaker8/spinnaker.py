@@ -160,8 +160,8 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
             float(duration_ms) / float(self.dt)))
 
         log.info(
-            "Simulating for {:u} {:f}ms timesteps using a hardware timestep "
-            "of {:u}us", duration_timesteps, self.dt, hardware_timestep_us)
+            "Simulating for {} {}ms timesteps using a hardware timestep "
+            "of {}us", duration_timesteps, self.dt, hardware_timestep_us)
 
         super(SpiNNaker, self).run(duration_ms)
 

@@ -60,7 +60,7 @@ def plot_spikes(ax, spike_times, neurons, label='', **options):
     :param label: Label for the graph
     :param options: plotting options
     """
-    if neurons:
+    if len(neurons):
         max_index = max(neurons)
         min_index = min(neurons)
         ax.plot(spike_times, neurons, 'b.', **options)
@@ -195,7 +195,7 @@ def plot_segment(axes, segment, label='', **options):
     elif len(analogsignals) == 1:
         heat_plot_neo(axes, analogsignals[0], label=label,
                       **options)
-    elif analogsignals:
+    elif len(analogsignals) > 1:
         raise Exception("Block.segment[0] has {} types of data; "
                         "please specify one to plot using name="
                         "".format(len(analogsignals)))
