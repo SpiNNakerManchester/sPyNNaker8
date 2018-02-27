@@ -44,6 +44,7 @@ class PopulationView(object):
             self._indexes = ids
         self._mask = selector
         self._label = label
+        self._annotations = dict()
 
     @property
     def size(self):
@@ -53,7 +54,7 @@ class PopulationView(object):
     @property
     def label(self):
         """A label for the Population."""
-        return self.label
+        return self._label
 
     @property
     def celltype(self):
@@ -63,7 +64,7 @@ class PopulationView(object):
     @property
     def initial_values(self):
         """ A dict containing the initial values of the state variables"""
-        return self._population.get_initial_values(self, self._indexes)
+        return self._population.get_initial_values(selector=self._indexes)
 
     @property
     def parent(self):
@@ -81,7 +82,7 @@ class PopulationView(object):
             Population(all MPI nodes). """
         cells = []
         for id in self._indexes:
-            cells.append(IDMixin(self, id))
+            cells.append(IDMixin(self._population, id))
         return cells
 
     @property
@@ -110,8 +111,8 @@ class PopulationView(object):
             Population(...) p[2] is equivalent to p.__getitem__(2).p[3:6] is
             equivalent to p.__getitem__(slice(3, 6))
         """
-        if isinstance(index, [int, long]):
-            return IDMixin(self, index)
+        if isinstance(index, (int, long)):
+            return IDMixin(self._population, index)
         else:
             return PopulationView(self, index, label=self.label+"_" + str(
                 index))
@@ -140,7 +141,7 @@ class PopulationView(object):
         Indicates whether the post - synaptic response is modelled as a
         change in conductance or a change in current.
         """
-        return self._population.conductance_base
+        return self._population.conductance_based
 
     def describe(self, template='populationview_default.txt',
                  engine='default'):
@@ -156,7 +157,7 @@ class PopulationView(object):
                    "parent": self.parent.label,
                    "mask": self.mask,
                    "size": self.size}
-        context.update(self.annotations)
+        context.update(self._annotations)
         return descriptions.render(engine, template, context)
 
     def find_units(self, variable):
@@ -179,6 +180,11 @@ class PopulationView(object):
 
     def getSpikes(self, *args, **kwargs):
         """ Deprecated.Use get_data('spikes') instead. """
+        if len(args) > 0:
+            raise NotImplementedError("Use get_data instead")
+        if len(kwargs) > 0:
+            raise NotImplementedError("Use get_datainstead")
+        return self.get_data("spikes")
 
     def get_data(self, variables='all', gather=True, clear=False):
         """
@@ -198,6 +204,7 @@ class PopulationView(object):
 
         If clear is True, recorded data will be deleted from the Population.
         """
+
 
     def get_gsyn(self, *args, **kwargs):
         """ Deprecated.Use get_data(['gsyn_exc', 'gsyn_inh']) instead."""
@@ -234,11 +241,6 @@ class PopulationView(object):
         Given an array of indices, return the indices in the parent
             population at the root of the tree.
         """
-
-    @property
-    def initial_values(self):
-        """ NO PyNN description of this method """
-
 
     def initialize(self, **initial_values):
         """
@@ -365,6 +367,9 @@ class PopulationView(object):
             p.set(spike_times=[0.3, 0.7, 0.9, 1.4])
             p.set(cm=rand_distr, tau_m=lambda i: 10 + i / 10.0)
         """
+        for (parameter, value) in parameters.iteritems():
+            self._population.set_by_selector(
+                selector=self._indexes, parameter=parameter, value=value)
 
     @property
     def structure(self):

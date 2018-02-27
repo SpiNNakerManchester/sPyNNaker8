@@ -93,11 +93,12 @@ class Test_Population(BaseTestCase):
 
     def test_initial_values(self):
         sim.setup(timestep=1.0)
-        pop = sim.Population.create(4, sim.IF_curr_exp(), label="LABEL")
+        pop = sim.Population.create(
+            cellclass=sim.IF_curr_exp, cellparams=None, n=4)
         initial_values = pop.initial_values
         assert "v" in initial_values
         initial_values = pop.get_initial_values(selector=3)
-        assert {"v": [-65, -65, -65, -65]} == initial_values
+        assert {"v": [-65]} == initial_values
         sim.end()
 
     def test_iter(self):

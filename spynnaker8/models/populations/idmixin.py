@@ -8,6 +8,11 @@ class IDMixin(object):
         self._id = id
         self._population = population
 
+    # NONE PYNN API CALL
+    @property
+    def id(self):
+        return self._id
+
     def __getattr__(self, name):
         try:
             return self._population.get_by_selector(
@@ -95,3 +100,16 @@ class IDMixin(object):
     def as_view(self):
         """Return a PopulationView containing just this cell."""
         return self._population[self._id]
+
+    def __eq__(self, other):
+        if isinstance(other, IDMixin):
+            return self._population == other._population and self._id == \
+                   other._id
+        else:
+            return False
+
+    def __str__(self):
+        return str(self._population) + "[" + str(self._id) + "]"
+
+    def __repr__(self):
+        return repr(self._population) + "[" + str(self._id) + "]"
