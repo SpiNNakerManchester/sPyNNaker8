@@ -1,5 +1,5 @@
 import pytest
-
+from pyNN.random import RandomDistribution, NumpyRNG
 from p8_integration_tests.base_test_case import BaseTestCase
 import spynnaker8 as sim
 from spynnaker8.models.populations.population_view import PopulationView
@@ -69,11 +69,25 @@ class Test_IDMixin(BaseTestCase):
         sim.setup(timestep=1.0)
         pop_1 = sim.Population(n_neurons, sim.IF_curr_exp(), label=label)
         view = PopulationView(pop_1, [1, 3], label="Odds")
+
         with pytest.raises(NotImplementedError):
             view.getSpikes("a_args")
         with pytest.raises(NotImplementedError):
             view.getSpikes(a_kargs="foo")
         view.getSpikes()
+
+        with pytest.raises(NotImplementedError):
+            view.get_gsyn("a_args")
+        view.get_gsyn()
+
+        with pytest.raises(NotImplementedError):
+            view.get_gsyn(a_kargs="foo")
+        with pytest.raises(NotImplementedError):
+            view.get_v("a_args")
+        with pytest.raises(NotImplementedError):
+            view.get_v(a_kargs="foo")
+        view.get_v()
+
         sim.end()
 
 
@@ -90,3 +104,44 @@ class Test_IDMixin(BaseTestCase):
         view.set(tau_m=3)
         self.assertEqual([2, 3, 2, 3], pop_1.get("tau_m"))
         sim.end()
+
+
+    def test_view_of_view(self):
+        n_neurons = 10
+        sim.setup(timestep=1.0)
+        pop_1 = sim.Population(n_neurons, sim.IF_curr_exp(), label="pop_1")
+        view1 = PopulationView(pop_1, [1, 3, 5, 7, 9], label="Odds")
+        view2 = PopulationView(view1, [1, 3], label="AlternativeOdds")
+        # Not a normal way to access but good to test
+        self.assertEqual([3,7], view2._indexes)
+        self.assertEqual(view2.parent, view1)
+        self.assertEqual(view1.grandparent, pop_1)
+        self.assertEqual(view2.grandparent, pop_1)
+        cells = view2.all_cells
+        self.assertEqual(3, cells[0].id)
+        self.assertEqual(7, cells[1].id)
+        self.assertEqual(3, view1.id_to_index(7))
+        self.assertEqual([3, 0], view1.id_to_index([7, 1]))
+        self.assertEqual(1, view2.id_to_index(7))
+
+    def test_initial_value(self):
+        sim.setup(timestep=1.0)
+        pop = sim.Population(5, sim.IF_curr_exp(), label="pop_1")
+        self.assertEqual([-65, -65, -65, -65, -65], pop.get_initial_value("v"))
+        view = PopulationView(pop, [1, 3], label="Odds")
+        view2 = PopulationView(pop, [1, 2], label="OneTwo")
+        view_iv =  view.initial_values
+        self.assertEqual(1, len(view_iv))
+        self.assertEqual([-65, -65], view_iv["v"])
+        view.initialize(v=-60)
+        self.assertEqual([-65, -60, -65, -60, -65], pop.get_initial_value("v"))
+        self.assertEqual([-60, -60], view.initial_values["v"])
+        self.assertEqual([-60, -65], view2.initial_values["v"])
+        rand_distr = RandomDistribution("uniform",
+                                        parameters_pos=[-65.0, -55.0],
+                                        rng=NumpyRNG(seed=85524))
+        view.initialize(v=rand_distr)
+        self.assertEqual([-64.43349869042906, -63.663421790102184],
+                         view.initial_values["v"])
+        view.initialize(v=lambda i: -65 + i / 10.0)
+        self.assertEqual([-64.9, -64.7], view.initial_values["v"])
