@@ -2,12 +2,11 @@ import logging
 from pyNN import descriptions
 
 from spinn_utilities.ranged.abstract_sized import AbstractSized
-from spynnaker8.models.populations import IDMixin
-
+from spynnaker8.models.populations import IDMixin, PopulationBase
 logger = logging.getLogger(__name__)
 
 
-class PopulationView(object):
+class PopulationView(PopulationBase):
 
     def __init__(self, parent, selector, label=None):
         """
@@ -84,16 +83,6 @@ class PopulationView(object):
         for id in self._indexes:
             cells.append(IDMixin(self._population, id))
         return cells
-
-    @property
-    def local_cells(self):
-        """
-        An array containing the cell ids of those neurons in the Population
-            that exist on the local MPI node.
-        """
-        logger.warning("local calls do not really make sense on sPyNNaker so "
-                       "local_cells just returns all_cells")
-        return self.all_cells
 
     def __add__(other):
         """ A Population / PopulationView can be added to another
@@ -178,14 +167,6 @@ class PopulationView(object):
 
         return self._population.get_by_selector(self._indexes, parameter_names)
 
-    def getSpikes(self, *args, **kwargs):
-        """ Deprecated.Use get_data('spikes') instead. """
-        if len(args) > 0:
-            raise NotImplementedError("Use get_data instead")
-        if len(kwargs) > 0:
-            raise NotImplementedError("Use get_datainstead")
-        return self.get_data("spikes")
-
     def get_data(self, variables='all', gather=True, clear=False):
         """
         Return a Neo Block containing the data(spikes, state variables)
@@ -204,19 +185,14 @@ class PopulationView(object):
 
         If clear is True, recorded data will be deleted from the Population.
         """
-
-
-    def get_gsyn(self, *args, **kwargs):
-        """ Deprecated.Use get_data(['gsyn_exc', 'gsyn_inh']) instead."""
+        # TODO
 
     def get_spike_counts(self, gather=True):
         """ Returns a dict containing the number of spikes for each neuron.
 
         The dict keys are neuron IDs, not indices.
         """
-
-    def get_v(self, *args, **kwargs):
-        """ Deprecated.Use get_data('v') instead. """
+        # TODO
 
     @property
     def grandparent(self):
@@ -227,6 +203,7 @@ class PopulationView(object):
         The name "grandparent" is of course a little misleading, as it could
             be just the parent, or the great, great, great, ..., grandparent.
         """
+        return self._population
 
     def id_to_index(self, id):
         """
@@ -235,12 +212,23 @@ class PopulationView(object):
 
         assert pv.id_to_index(pv[3]) == 3
         """
+        if isinstance(id, (int, long)):
+            return self._indexes.index(id)
+        else:
+            result = []
+            for _id in id:
+                result.append(self._indexes.index(_id))
+            return result
 
     def index_in_grandparent(self, indices):
         """
         Given an array of indices, return the indices in the parent
             population at the root of the tree.
         """
+        result = []
+        for index in indices:
+            result.append(self._indexes[index])
+        return result
 
     def initialize(self, **initial_values):
         """
@@ -262,52 +250,8 @@ class PopulationView(object):
             p.initialize(v=rand_distr, gsyn_exc=0.0)
             p.initialize(v=lambda i: -65 + i / 10.0)
         """
-
-    def inject(self, current_source):
-        """ Connect a current source to all cells in the Population."""
-
-    def is_local(self, id):
-        """
-        Indicates whether the cell with the given ID exists on the
-            local MPI node.
-        """
-
-    @property
-    def local_size(self):
-        """
-        Return the number of cells in the population on the local MPI node
-        """
-
-    def meanSpikeCount(self, *args, **kwargs):
-        """ Deprecated. Use mean_spike_count() instead. """
-
-    def mean_spike_count(self, gather=True):
-        """ Returns the mean number of spikes per neuron. """
-
-    def nearest(self, position):
-        """ Return the neuron closest to the specified position."""
-
-    @property
-    def position_generator(self):
-        """ NO PyNN description of this method """
-
-    @property
-    def positions(self):
-        """ NO PyNN description of this method """
-
-    def printSpikes(self, *args, **kwargs):
-        """ Deprecated. Use write_data(file, 'spikes') instead. """
-
-    def print_gsyn(self, *args, **kwargs):
-        """
-        Deprecated. Use write_data(file, ['gsyn_exc', 'gsyn_inh']) instead.
-        """
-
-    def print_v(self, *args, **kwargs):
-        """  Deprecated. Use write_data(file, 'v') instead."""
-
-    def receptor_types(self):
-        """ NO PyNN description of this method """
+        for variable, value in initial_values.iteritems():
+            self._population.set_initial_value(variable, value, self._indexes)
 
     def record(self, variables, to_file=None, sampling_interval=None):
         """
@@ -325,24 +269,41 @@ class PopulationView(object):
         sampling_interval should be a value in milliseconds, and an integer
             multiple of the simulation timestep.
         """
+        # TODO
 
     def record_gsyn(self, *args, **kwargs):
         """ Deprecated. Use record(['gsyn_exc', 'gsyn_inh']) instead. """
+        if len(args) > 0:
+            raise NotImplementedError(
+                "Use record(['gsyn_exc', 'gsyn_inh']) instead.")
+        if len(kwargs) > 0:
+            raise NotImplementedError(
+                "Use record(['gsyn_exc', 'gsyn_inh']) instead")
+        return self.record(['gsyn_exc', 'gsyn_inh'])
 
     def record_v(self, *args, **kwargs):
         """ Deprecated. Use record('v') instead. """
+        if len(args) > 0:
+            raise NotImplementedError(
+                "Use record('v') instead.")
+        if len(kwargs) > 0:
+            raise NotImplementedError(
+                "Use record('v']) instead")
+        return self.record('v')
 
     def rset(self, *args, **kwargs):
         """ Deprecated. Use set(parametername=rand_distr) instead. """
+        raise NotImplementedError(
+            " Use set(parametername=rand_distr) instead.")
 
     def sample(self, n, rng=None):
         """
         Randomly sample n cells from the Population, and return a
             PopulationView object.
         """
-
-    def save_positions(self, file):
-        """ Save positions to file. The output format is index x y z """
+        if not rng:
+            rng = random.NumpyRNG()
+        indices = rng.permutation(numpy.arange(len(self), dtype=numpy.int))[0:n]
 
     def set(self, **parameters):
         """
@@ -370,13 +331,6 @@ class PopulationView(object):
         for (parameter, value) in parameters.iteritems():
             self._population.set_by_selector(
                 selector=self._indexes, parameter=parameter, value=value)
-
-    @property
-    def structure(self):
-        """ The spatial structure of the parent Population. """
-
-    def tset(self, *args, **kwargs):
-        """ Deprecated. Use set(parametername=value_array) instead. """
 
     def write_data(self, io, variables='all', gather=True, clear=False,
                    annotations=None):

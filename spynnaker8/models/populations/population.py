@@ -9,7 +9,7 @@ from spinn_front_end_common.utilities import globals_variables
 from spinn_front_end_common.utilities.exceptions import ConfigurationException
 
 from spynnaker8.models import Recorder
-from spynnaker8.models.populations import IDMixin
+from spynnaker8.models.populations import IDMixin, PopulationBase
 from spynnaker8.utilities import DataHolder
 
 from pyNN import descriptions
@@ -17,7 +17,7 @@ from pyNN import descriptions
 logger = logging.getLogger(__name__)
 
 
-class Population(PyNNPopulationCommon, Recorder):
+class Population(PyNNPopulationCommon, Recorder, PopulationBase):
     """ pynn 0.8 population object
 
     """
@@ -349,21 +349,10 @@ class Population(PyNNPopulationCommon, Recorder):
         return cells
 
     @property
-    def local_cells(self):
-        logger.warning("local calls do not really make sense on sPyNNaker so "
-                       "local_cells just returns all_cells")
-        return self.all_cells
-
-    @property
     def position_generator(self):
         def gen(i):
             return self.positions[:, i]
         return gen
-
-    def is_local(self, id):
-        logger.warning("local calls do not really make sense on sPyNNaker so "
-                       "is_local always retruns True")
-        return True
 
     @staticmethod
     def create(cellclass, cellparams=None, n=1):

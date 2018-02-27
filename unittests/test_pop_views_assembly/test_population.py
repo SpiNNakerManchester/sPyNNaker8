@@ -44,7 +44,7 @@ class Test_Population(BaseTestCase):
         try:
             gen = pop_1.position_generator
             print gen(0)
-        except AttributeError:
+        except NotImplementedError:
             msg = "Depends on https://github.com/SpiNNakerManchester" \
                   "/sPyNNaker8/pull/73"
             raise SkipTest(msg)
