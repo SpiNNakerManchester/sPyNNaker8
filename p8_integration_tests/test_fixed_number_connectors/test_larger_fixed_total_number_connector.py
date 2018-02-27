@@ -11,8 +11,6 @@ def do_run(plot):
     p.set_number_of_neurons_per_core(p.IF_cond_exp, 50)
 
     # Experiment Parameters
-    rng = pyNN.random.NumpyRNG(seed=124578)
-
     n_groups = 6  # Number of Synfire Groups
     n_exc = 150  # Number of excitatory neurons per group
     n_inh = 100  # Number of inhibitory neurons per group
@@ -182,9 +180,6 @@ def do_run(plot):
 class FixedTotalNumberConnectorLargerTest(BaseTestCase):
     def test_run(self):
         stim_spikes, spklist_exc, spklist_inh = do_run(plot=False)
-        print 'stim_spikes: ', len(stim_spikes)
-        print 'spklist_exc: ', len(spklist_exc)
-        print 'spklist_inh: ', len(spklist_inh)
         # any checks go here
         self.assertEquals(750, len(stim_spikes))
         self.assertGreater(270, len(spklist_exc))
