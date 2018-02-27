@@ -6,7 +6,7 @@ from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt
 
 p.setup(1)
-runtime = 1000
+runtime = 200
 initial_run = 15  # to negate any initial conditions
 
 # STDP parameters
@@ -19,7 +19,8 @@ initial_weight = 1
 max_weight = 5
 min_weight = 0
 
-spike_times = [1, 6, 11]
+spike_times = [1, 100] #6, 11, 16, 21, 26, 31, 36, 41, 46, 51, 100, 150]
+
 # Spike source to send spike via plastic synapse
 pop_src1 = p.Population(1, p.SpikeSourceArray,
                         {'spike_times': spike_times}, label="src1")
