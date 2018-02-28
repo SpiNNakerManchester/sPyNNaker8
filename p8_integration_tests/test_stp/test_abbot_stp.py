@@ -19,6 +19,7 @@ baseline_weight = 1
 
 spike_times = [1, 6, 8, 11, 100]
 spike_times = [initial_run + i for i in spike_times]
+
 # Spike source to send spike via plastic synapse
 pop_src1 = p.Population(1, p.SpikeSourceArray,
                         {'spike_times': spike_times}, label="src1")
