@@ -1,7 +1,7 @@
 from spynnaker8.utilities import DataHolder
 from spynnaker.pyNN.models.spike_source import SpikeSourceArray
 
-_defaults = SpikeSourceArray.none_pynn_default_parameters
+_defaults = SpikeSourceArray.non_pynn_default_parameters
 
 
 class SpikeSourceArrayDataHolder(DataHolder):

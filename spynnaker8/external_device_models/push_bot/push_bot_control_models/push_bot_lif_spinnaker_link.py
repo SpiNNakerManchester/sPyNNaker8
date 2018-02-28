@@ -6,7 +6,7 @@ from spynnaker.pyNN.external_devices_models import ExternalDeviceLifControl
 
 import logging
 
-_apv_defs = AbstractPopulationVertex.none_pynn_default_parameters
+_apv_defs = AbstractPopulationVertex.non_pynn_default_parameters
 logger = logging.getLogger(__name__)
 
 
@@ -34,8 +34,7 @@ class PushBotLifSpinnakerLinkDataHolder(DataHolder):
             tau_refrac=ExternalDeviceLifControl.default_parameters[
                 'tau_refrac'],
             i_offset=ExternalDeviceLifControl.default_parameters['i_offset'],
-            v_init=ExternalDeviceLifControl.none_pynn_default_parameters[
-                'v_init']):
+            v_init=ExternalDeviceLifControl.initialize_parameters['v_init']):
         # pylint: disable=too-many-arguments, too-many-locals
         super(PushBotLifSpinnakerLinkDataHolder, self).__init__({
             'protocol': protocol, 'devices': devices,

@@ -2,7 +2,7 @@ from spynnaker.pyNN.models.neuron import AbstractPopulationVertex
 from spynnaker8.utilities import DataHolder
 from spynnaker.pyNN.models.neuron.builds import IFCurrDelta
 
-_apv_defs = AbstractPopulationVertex.none_pynn_default_parameters
+_apv_defs = AbstractPopulationVertex.non_pynn_default_parameters
 
 
 class IfCurrDeltaDataHolder(DataHolder):
@@ -18,7 +18,6 @@ class IfCurrDeltaDataHolder(DataHolder):
             constraints=_apv_defs['constraints'],
             label=_apv_defs['label'],
 
-            v_init=IFCurrDelta.none_pynn_default_parameters['v_init'],
 
             tau_m=IFCurrDelta.default_parameters['tau_m'],
             cm=IFCurrDelta.default_parameters['cm'],
@@ -27,6 +26,7 @@ class IfCurrDeltaDataHolder(DataHolder):
             v_thresh=IFCurrDelta.default_parameters['v_thresh'],
             tau_refrac=IFCurrDelta.default_parameters['tau_refrac'],
             i_offset=IFCurrDelta.default_parameters['i_offset'],
+            v_init=IFCurrDelta.initialize_parameters['v_init'],
             isyn_exc=IFCurrDelta.default_parameters['isyn_exc'],
             isyn_inh=IFCurrDelta.default_parameters['isyn_inh']):
         # pylint: disable=too-many-arguments, too-many-locals

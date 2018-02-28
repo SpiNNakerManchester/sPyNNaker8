@@ -2,7 +2,7 @@ from spynnaker.pyNN.models.neuron import AbstractPopulationVertex
 from spynnaker8.utilities import DataHolder
 from spynnaker.pyNN.models.neuron.builds import IFCurrAlpha
 
-_apv_defs = AbstractPopulationVertex.none_pynn_default_parameters
+_apv_defs = AbstractPopulationVertex.non_pynn_default_parameters
 
 
 class IFCurrAlphaDataHolder(DataHolder):
@@ -18,8 +18,7 @@ class IFCurrAlphaDataHolder(DataHolder):
             constraints=_apv_defs['constraints'],
             label=_apv_defs['label'],
 
-            v_init=IFCurrAlpha.non_pynn_default_parameters['v_init'],
-
+            v_init=IFCurrAlpha.initialize_parameters['v_init'],
             tau_m=IFCurrAlpha.default_parameters['tau_m'],
             cm=IFCurrAlpha.default_parameters['cm'],
             v_rest=IFCurrAlpha.default_parameters['v_rest'],

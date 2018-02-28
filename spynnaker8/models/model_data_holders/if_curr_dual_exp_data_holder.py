@@ -2,7 +2,7 @@ from spynnaker.pyNN.models.neuron import AbstractPopulationVertex
 from spynnaker8.utilities import DataHolder
 from spynnaker.pyNN.models.neuron.builds import IFCurrDualExpBase
 
-_apv_defs = AbstractPopulationVertex.none_pynn_default_parameters
+_apv_defs = AbstractPopulationVertex.non_pynn_default_parameters
 
 
 class IFCurrDualExpDataHolder(DataHolder):
@@ -18,8 +18,6 @@ class IFCurrDualExpDataHolder(DataHolder):
             constraints=_apv_defs['constraints'],
             label=_apv_defs['label'],
 
-            v_init=IFCurrDualExpBase.none_pynn_default_parameters['v_init'],
-
             tau_m=IFCurrDualExpBase.default_parameters['tau_m'],
             cm=IFCurrDualExpBase.default_parameters['cm'],
             v_rest=IFCurrDualExpBase.default_parameters['v_rest'],
@@ -30,6 +28,7 @@ class IFCurrDualExpDataHolder(DataHolder):
             tau_syn_I=IFCurrDualExpBase.default_parameters['tau_syn_I'],
             tau_refrac=IFCurrDualExpBase.default_parameters['tau_refrac'],
             i_offset=IFCurrDualExpBase.default_parameters['i_offset'],
+            v_init=IFCurrDualExpBase.initialize_parameters['v_init'],
             isyn_exc=IFCurrDualExpBase.default_parameters['isyn_exc'],
             isyn_inh=IFCurrDualExpBase.default_parameters['isyn_inh'],
             isyn_exc2=IFCurrDualExpBase.default_parameters['isyn_exc2']):

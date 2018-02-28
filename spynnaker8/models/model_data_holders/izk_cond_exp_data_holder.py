@@ -2,7 +2,7 @@ from spynnaker.pyNN.models.neuron import AbstractPopulationVertex
 from spynnaker8.utilities import DataHolder
 from spynnaker.pyNN.models.neuron.builds import IzkCondExpBase
 
-_apv_defs = AbstractPopulationVertex.none_pynn_default_parameters
+_apv_defs = AbstractPopulationVertex.non_pynn_default_parameters
 
 
 class IzkCondExpDataHolder(DataHolder):
@@ -23,8 +23,8 @@ class IzkCondExpDataHolder(DataHolder):
             c=IzkCondExpBase.default_parameters['c'],
             d=IzkCondExpBase.default_parameters['d'],
             i_offset=IzkCondExpBase.default_parameters['i_offset'],
-            u_init=IzkCondExpBase.default_parameters['u_init'],
-            v_init=IzkCondExpBase.default_parameters['v_init'],
+            u_init=IzkCondExpBase.initialize_parameters['u_init'],
+            v_init=IzkCondExpBase.initialize_parameters['v_init'],
             tau_syn_E=IzkCondExpBase.default_parameters['tau_syn_E'],
             tau_syn_I=IzkCondExpBase.default_parameters['tau_syn_I'],
             e_rev_E=IzkCondExpBase.default_parameters['e_rev_E'],
