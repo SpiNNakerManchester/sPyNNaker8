@@ -17,8 +17,8 @@ class ConfiguredFilter(object):
 
     def filter(self, record):
         """Get the level for the deepest parent, and filter appropriately."""
-        level = ConfiguredFormatter.level_of_deepest_parent(self._levels,
-                                                            record.name)
+        level = ConfiguredFormatter.level_of_deepest_parent(
+            self._levels, record.name)
 
         if level is None:
             return record.levelno >= self._default_level
@@ -53,11 +53,11 @@ class ConfiguredFormatter(logging.Formatter):
             if conf.has_option("Logging", label):
                 modules = map(
                     lambda s: s.strip(),
-                    conf.get('Logging', label).split(',')
-                )
+                    conf.get('Logging', label).split(','))
                 if '' not in modules:
                     _levels.update(
-                        dict(map(lambda m: (m, level), modules)))
+                        dict(map(lambda m, lv=level: (m, lv),
+                                 modules)))
         return _levels
 
     @staticmethod

@@ -6,10 +6,10 @@ from pyNN.random import NumpyRNG, RandomDistribution
 def poisson_generator(rate, rng, t_start=0.0, t_stop=1000.0, array=True,
                       debug=False):
     """
-    Returns a SpikeTrain whose spikes are a realization of a Poisson process
+    Returns a SpikeTrain whose spikes are a realization of a Poisson process\
     with the given rate (Hz) and stopping time t_stop (milliseconds).
 
-    Note: t_start is always 0.0, thus all realizations are as if
+    Note: t_start is always 0.0, thus all realizations are as if\
     they spiked at t=0.0, though this spike is not included in the SpikeList.
 
     Inputs:
@@ -60,14 +60,12 @@ def poisson_generator(rate, rng, t_start=0.0, t_stop=1000.0, array=True,
         if debug:
             print("ISI buf overrun handled. len(spikes)=%d,"
                   " len(extra_spikes)=%d" % (len(spikes), len(extra_spikes)))
-
     else:
         spikes = np.resize(spikes, (i,))
 
     if debug:
         return spikes, extra_spikes
-    else:
-        return [round(x) for x in spikes]
+    return [round(x) for x in spikes]
 
 
 def do_run(Neurons, sim_time, record, seed=None):

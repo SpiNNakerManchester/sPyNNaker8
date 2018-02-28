@@ -37,19 +37,28 @@ class ExternalDeviceLifControlDataHolder(DataHolder):
                 'v_init'],
             isyn_inh=ExternalDeviceLifControl.default_parameters['isyn_inh'],
             isyn_exc=ExternalDeviceLifControl.default_parameters['isyn_exc']):
+        # pylint: disable=too-many-arguments, too-many-locals
+        super(ExternalDeviceLifControlDataHolder, self).__init__({
+            'constraints': constraints,
+            'create_edges': create_edges,
+            'devices': devices,
+            'incoming_spike_buffer_size': incoming_spike_buffer_size,
+            'label': label,
+            'ring_buffer_sigma': ring_buffer_sigma,
+            'spikes_per_second': spikes_per_second,
+            'translator': translator,
 
-        DataHolder.__init__(
-            self,
-            {'devices': devices, 'create_edges': create_edges,
-             'translator': translator,
-             'spikes_per_second': spikes_per_second,
-             'ring_buffer_sigma': ring_buffer_sigma, 'label': label,
-             'incoming_spike_buffer_size': incoming_spike_buffer_size,
-             'constraints': constraints,
-             'tau_m': tau_m, 'cm': cm, 'v_rest': v_rest, 'v_reset': v_reset,
-             'tau_syn_E': tau_syn_E, 'tau_syn_I': tau_syn_I,
-             'tau_refrac': tau_refrac, 'i_offset': i_offset, 'v_init': v_init,
-             'isyn_inh': isyn_inh, 'isyn_exc': isyn_exc})
+            'cm': cm,
+            'i_offset': i_offset,
+            'isyn_exc': isyn_exc,
+            'isyn_inh': isyn_inh,
+            'tau_m': tau_m,
+            'tau_syn_E': tau_syn_E,
+            'tau_syn_I': tau_syn_I,
+            'tau_refrac': tau_refrac,
+            'v_init': v_init,
+            'v_reset': v_reset,
+            'v_rest': v_rest})
 
     @staticmethod
     def build_model():
