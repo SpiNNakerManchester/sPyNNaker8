@@ -64,7 +64,7 @@ class Synfire20n20pcDelaysDelayExtensionsAllRecording(BaseTestCase):
                         "spikes neo method mismatch")
 
     def test_sampling_rate(self):
-        synfire_run = TestRun()
+        synfire_run = SynfireRunner()
         synfire_run.do_run(n_neurons, neurons_per_core=neurons_per_core,
                            delay=delay, run_times=[runtime], record=True,
                            record_7=True, record_v=True, record_v_7=True,

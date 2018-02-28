@@ -201,7 +201,7 @@ class SynfireRunner(object):
             placement_constraint, randomise_v_init, seed, constraint,
             input_class, rate, start_time, duration, use_spike_connections)
 
-       # handle recording
+        # handle recording
         if record or record_7 or spike_path:
             populations[0].record("spikes")
         if record_v or record_v_7 or v_path:

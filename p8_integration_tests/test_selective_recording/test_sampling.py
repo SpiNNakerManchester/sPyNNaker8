@@ -143,8 +143,8 @@ def compare_results(
     if record_spikes:
         file_path = os.path.join(current_file_path, "spikes.csv")
         full_path = os.path.join(current_file_path, full_prefix+"spikes.csv")
-        lowest = compare_spikes(file_path, full_path, simtime, n_neurons,
-                                spike_rate, spike_indexes, tollerance)
+        compare_spikes(file_path, full_path, simtime, n_neurons,
+                       spike_rate, spike_indexes, tollerance)
     if record_v:
         file_path = os.path.join(current_file_path, "v.csv")
         full_path = os.path.join(current_file_path, full_prefix+"v.csv")

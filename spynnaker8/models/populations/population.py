@@ -249,7 +249,7 @@ class Population(PyNNPopulationCommon, Recorder):
                 variable = variable[0]
             else:
                 msg = "Only one type of data at a time is supported"
-                raise exceptions.ConfigurationException(msg)
+                raise ConfigurationException(msg)
         if variable == SPIKES:
             return self._get_spikes()
         return self._get_recorded_pynn7(variable)
