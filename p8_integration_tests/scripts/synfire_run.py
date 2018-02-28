@@ -457,7 +457,7 @@ class SynfireRunner(object):
                 p.reset()
 
         p.run(run_times[-1])
-        
+
         self._default_report_folder = \
             p.globals_variables.get_simulator()._report_default_directory
 
