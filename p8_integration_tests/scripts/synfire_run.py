@@ -153,8 +153,6 @@ class SynfireRunner(object):
         :param record_gsyn_inh_7: \
             If True will ask for gsyn inh to be recorded in PyNN 7 format
         :type record_gsyn_inh_7: bool
-        :param get_all: if True will obtain another neo object with all the\
- gsyn_exc_sampling_rate
         :param get_all: if True will obtain another neo object with all the
             data set to be recorded by any other parameter
         :type get_all: bool
@@ -203,15 +201,18 @@ class SynfireRunner(object):
             placement_constraint, randomise_v_init, seed, constraint,
             input_class, rate, start_time, duration, use_spike_connections)
 
-        # handle recording
+       # handle recording
         if record or record_7 or spike_path:
             populations[0].record("spikes")
         if record_v or record_v_7 or v_path:
-            populations[0].record("v")
+            populations[0].record(
+                variables="v", sampling_interval=v_sampling_rate)
         if record_gsyn_exc or record_gsyn_exc_7 or gsyn_path_exc:
-            populations[0].record("gsyn_exc")
+            populations[0].record(
+                variables="gsyn_exc", sampling_interval=gsyn_exc_sampling_rate)
         if record_gsyn_inh or record_gsyn_inh_7 or gsyn_path_inh:
-            populations[0].record("gsyn_inh")
+            populations[0].record(
+                variables="gsyn_inh", sampling_interval=gsyn_inh_sampling_rate)
         if record_input_spikes or record_input_spikes_7:
             populations[1].record("spikes")
 
@@ -416,20 +417,6 @@ class SynfireRunner(object):
             p.FromListConnector(injection_connection),
             p.StaticSynapse(weight=weight_to_spike, delay=1)))
 
-        # handle recording
-        if record or record_7 or spike_path:
-            populations[0].record("spikes")
-        if record_v or record_v_7 or v_path:
-            populations[0].record(
-                variables="v", sampling_interval=v_sampling_rate)
-        if record_gsyn_exc or record_gsyn_exc_7 or gsyn_path_exc:
-            populations[0].record(
-                variables="gsyn_exc", sampling_interval=gsyn_exc_sampling_rate)
-        if record_gsyn_inh or record_gsyn_inh_7 or gsyn_path_inh:
-            populations[0].record(
-                variables="gsyn_inh", sampling_interval=gsyn_inh_sampling_rate)
-        if record_input_spikes or record_input_spikes_7:
-            populations[1].record("spikes")
         return populations, projections, run_count
 
     def __run_sim(self, run_times, populations, projections, run_count,

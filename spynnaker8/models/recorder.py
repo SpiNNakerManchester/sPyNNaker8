@@ -398,8 +398,6 @@ def _convert_extracted_data_into_neo_expected_format(
 
 def read_in_signal(segment, block, signal_array, ids, indexes, variable,
                    recording_start_time, sampling_interval, units, label):
-    """ reads in a data item that's not spikes (likely v, gsyn e, gsyn i)
-                   recording_start_time, units, label):
     """ Reads in a data item that's not spikes (likely v, gsyn e, gsyn i)
 
     Saves this data to the segment.
@@ -451,6 +449,7 @@ def read_in_signal(segment, block, signal_array, ids, indexes, variable,
             data_array.shape = (data_array.shape[0], data_array.shape[1])
             segment.analogsignals.append(data_array)
             channel_index.analogsignals.append(data_array)
+
 
 def _add_pynn9_signal_chunk(
         segment, processed_data, units, t_start, sampling_period, variable,
