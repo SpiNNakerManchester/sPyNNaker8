@@ -182,26 +182,29 @@ class RandomDistribution(_PynnRandomDistribution):
     .. table:: Available distributions
         :widths: auto
 
-        ==========================  ====================  =====================
-        Name                        Parameters            Comments
-        --------------------------  --------------------  ---------------------
-        binomial                    n, p
-        gamma                       k, theta
-        exponential                 beta
-        lognormal                   mu, sigma
-        normal                      mu, sigma
-        normal_clipped              mu, sigma, low, high  Values outside (low,\
-                                                          high) are redrawn
-        normal_clipped_to_boundary  mu, sigma, low, high  Values below/above\
-                                                          low/high are set to\
-                                                          low/high
-        poisson                     lambda_               Trailing underscore\
-                                                          since lambda is a\
-                                                          Python keyword
-        uniform                     low, high
-        uniform_int                 low, high
-        vonmises                    mu, kappa
-        ==========================  ====================  =====================
+        ==============================  ====================  =================
+        Name                            Parameters            Comments
+        ------------------------------  --------------------  -----------------
+        ``binomial``                    n, p
+        ``gamma``                       k, theta
+        ``exponential``                 beta
+        ``lognormal``                   mu, sigma
+        ``normal``                      mu, sigma
+        ``normal_clipped``              mu, sigma, low, high  Values outside\
+                                                              (low, high) are\
+                                                              redrawn
+        ``normal_clipped_to_boundary``  mu, sigma, low, high  Values\
+                                                              below/above\
+                                                              low/high are set\
+                                                              to low/high
+        ``poisson``                     lambda_               Trailing\
+                                                              underscore since\
+                                                              ``lambda`` is a\
+                                                              Python keyword
+        ``uniform``                     low, high
+        ``uniform_int``                 low, high
+        ``vonmises``                    mu, kappa
+        ==============================  ====================  =================
     """
 
 
