@@ -4,7 +4,7 @@ Synfirechain-like example
 """
 
 from p8_integration_tests.base_test_case import BaseTestCase
-from p8_integration_tests.scripts.synfire_run import TestRun
+from p8_integration_tests.scripts.synfire_run import SynfireRunner
 from pacman.model.constraints.placer_constraints \
     import ChipAndCoreConstraint
 from spinn_front_end_common.utility_models.\
@@ -17,7 +17,7 @@ nNeurons = 200  # number of neurons in each population
 constraint = ChipAndCoreConstraint(2, 2)
 delay = 1
 neurons_per_core = 100
-synfire_run = TestRun()
+synfire_run = SynfireRunner()
 
 
 class Synfire200n10pc2chipsWithNoDelaysSpikeRecording(BaseTestCase):
