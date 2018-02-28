@@ -5,21 +5,20 @@ import unittest
 from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt
 
-p.setup(1)
-runtime = 250
-initial_run = 15  # to negate any initial conditions
+timestep = 1
+p.setup(timestep)
+runtime = 350
+initial_run = 100  # to negate any initial conditions
 
 # STDP parameters
-a_plus = 0.01
-a_minus = 0.01
-tau_plus = 2
-tau_minus = 5
-plastic_delay = 3
-initial_weight = 1
-max_weight = 5
-min_weight = 0
+STP_type = True
+f_F = 0.867
+P_baseline = 0.5
+tau_P = 7
+baseline_weight = 1
 
-spike_times = [1, 6, 11, 100]
+spike_times = [1, 6, 8, 11, 100]
+spike_times = [initial_run + i for i in spike_times]
 # Spike source to send spike via plastic synapse
 pop_src1 = p.Population(1, p.SpikeSourceArray,
                         {'spike_times': spike_times}, label="src1")
@@ -34,10 +33,10 @@ pop_exc = p.Population(1, p.IF_curr_exp(),  label="test")
 #     p.StaticSynapse(weight=0.01, delay=1), receptor_type="excitatory")
 
 syn_plas = p.STDPMechanism(
-        timing_dependence=p.AbbotSTP(tau_minus=tau_minus),
+        timing_dependence=p.AbbotSTP(STP_type, f_F, P_baseline, tau_P),
         weight_dependence=p.MultiplicativeWeightDependence(
-            w_min=min_weight, w_max=max_weight),
-        weight=initial_weight, delay=plastic_delay)
+            ),
+        weight=baseline_weight, delay=timestep)
 
 synapse = p.Projection(pop_src1, pop_exc,
                                        p.OneToOneConnector(),

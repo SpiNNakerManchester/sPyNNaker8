@@ -6,10 +6,17 @@ class TimingDependenceAbbotSTP(
        CorrectAbbotSTP):
 
     # noinspection PyPep8Naming
-    def __init__(
-            self, tau_plus=20.0, tau_minus=20.0, A_plus=0.01, A_minus=0.01):
-        CorrectAbbotSTP.__init__(
-            self, tau_plus=tau_plus, tau_minus=tau_minus)
+    def __init__(self,
+                 STP_type, f, P_baseline, tau_P,
+                 # unused parameters, but required due to using
+                 # existing STDP framework
+                 tau_plus=20.0, tau_minus=20.0, A_plus=0.01, A_minus=0.01):
+        CorrectAbbotSTP.__init__(self,
+                                 STP_type, f, P_baseline, tau_P,
+                                 # unused parameters, but required due to using
+                                 # existing STDP framework
+                                 tau_plus=tau_plus,
+                                 tau_minus=tau_minus)
 
         self._a_plus = A_plus
         self._a_minus = A_minus
