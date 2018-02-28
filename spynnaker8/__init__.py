@@ -3,11 +3,12 @@ import numpy as __numpy
 
 # pynn imports
 from pyNN import common as pynn_common
-from pyNN.common import control as pynn_control
+from pyNN.common import control as _pynn_control
 from pyNN.recording import get_io
-from pyNN.random import NumpyRNG, RandomDistribution
+from pyNN.random import NumpyRNG, RandomDistribution as _PynnRandomDistribution
 from pyNN.space import \
-    distance, Space, Line, Grid2D, Grid3D, Cuboid, Sphere, RandomStructure
+    Space, Line, Grid2D, Grid3D, Cuboid, Sphere, RandomStructure
+from pyNN.space import distance as _pynn_distance
 
 # fec imports
 from spinn_front_end_common.utilities.exceptions import ConfigurationException
@@ -150,14 +151,84 @@ __all__ = [
 __pynn = {}
 
 
+class RandomDistribution(_PynnRandomDistribution):
+    """ Class which defines a next(n) method which returns an array of ``n``\
+        random numbers from a given distribution.
+
+    :param distribution: the name of a random number distribution.
+    :param parameters_pos: \
+        parameters of the distribution, provided as a tuple. For the correct\
+        ordering, see `random.available_distributions`.
+    :param rng: the random number generator to use, if a specific one is\
+        desired (e.g., to provide a seed). If present, should be a\
+        :py:class:`NumpyRNG`,\
+        :py:class:`GSLRNG` or\
+        :py:class:`NativeRNG` object.
+    :param parameters_named: \
+        parameters of the distribution, provided as keyword arguments.
+
+    Parameters may be provided either through ``parameters_pos`` or through\
+    ``parameters_named``, but not both. All parameters must be provided, there\
+    are no default values. Parameter names are, in general, as used in\
+    Wikipedia.
+
+    Examples::
+
+        >>> rd = RandomDistribution('uniform', (-70, -50))
+        >>> rd = RandomDistribution('normal', mu=0.5, sigma=0.1)
+        >>> rng = NumpyRNG(seed=8658764)
+        >>> rd = RandomDistribution('gamma', k=2.0, theta=5.0, rng=rng)
+
+    .. table:: Available distributions
+        :widths: auto
+
+        ==========================  ====================  =====================
+        Name                        Parameters            Comments
+        --------------------------  --------------------  ---------------------
+        binomial                    n, p
+        gamma                       k, theta
+        exponential                 beta
+        lognormal                   mu, sigma
+        normal                      mu, sigma
+        normal_clipped              mu, sigma, low, high  Values outside (low,\
+                                                          high) are redrawn
+        normal_clipped_to_boundary  mu, sigma, low, high  Values below/above\
+                                                          low/high are set to\
+                                                          low/high
+        poisson                     lambda_               Trailing underscore\
+                                                          since lambda is a\
+                                                          Python keyword
+        uniform                     low, high
+        uniform_int                 low, high
+        vonmises                    mu, kappa
+        ==========================  ====================  =====================
+    """
+
+
+# Patch the bugs in the PyNN documentation... Ugh!
+def distance(src, tgt, mask=None, scale_factor=1.0, offset=0.0,
+             periodic_boundaries=None):
+    """ Return the Euclidian distance between two cells.
+
+    :param mask: allows only certain dimensions to be considered, e.g.:
+        * to ignore the z-dimension, use ``mask=array([0,1])``
+        * to ignore y, ``mask=array([0,2])``
+        * to just consider z-distance, ``mask=array([2])``
+    :param scale_factor: allows for different units in the pre- and post-\
+        position (the post-synaptic position is multiplied by this quantity).
+    """
+    return _pynn_distance(
+        src, tgt, mask, scale_factor, offset, periodic_boundaries)
+
+
 def get_projections_data(projection_data):
     return globals_variables.get_simulator().get_projections_data(
         projection_data)
 
 
-def setup(timestep=pynn_control.DEFAULT_TIMESTEP,
-          min_delay=pynn_control.DEFAULT_MIN_DELAY,
-          max_delay=pynn_control.DEFAULT_MAX_DELAY,
+def setup(timestep=_pynn_control.DEFAULT_TIMESTEP,
+          min_delay=_pynn_control.DEFAULT_MIN_DELAY,
+          max_delay=_pynn_control.DEFAULT_MAX_DELAY,
           graph_label=None,
           database_socket_addresses=None, extra_algorithm_xml_paths=None,
           extra_mapping_inputs=None, extra_mapping_algorithms=None,
