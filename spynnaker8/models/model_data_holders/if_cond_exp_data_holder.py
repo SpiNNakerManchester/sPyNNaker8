@@ -2,7 +2,7 @@ from spynnaker.pyNN.models.neuron import AbstractPopulationVertex
 from spynnaker8.utilities import DataHolder
 from spynnaker.pyNN.models.neuron.builds import IFCondExpBase
 
-_apv_defs = AbstractPopulationVertex.none_pynn_default_parameters
+_apv_defs = AbstractPopulationVertex.non_pynn_default_parameters
 
 
 class IFCondExpDataHolder(DataHolder):
@@ -18,8 +18,7 @@ class IFCondExpDataHolder(DataHolder):
             constraints=_apv_defs['constraints'],
             label=_apv_defs['label'],
 
-            v_init=IFCondExpBase.none_pynn_default_parameters['v_init'],
-
+            v_init=IFCondExpBase.initialize_parameters['v_init'],
             tau_m=IFCondExpBase.default_parameters['tau_m'],
             cm=IFCondExpBase.default_parameters['cm'],
             v_rest=IFCondExpBase.default_parameters['v_rest'],

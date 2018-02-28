@@ -4,7 +4,7 @@ from spynnaker8.utilities.data_holder import DataHolder
 from spynnaker.pyNN.models.neuron.builds.if_curr_exp_base import IFCurrExpBase
 from p8_integration_tests.scripts.fake_if_curr import FakeIFCurrExp
 
-_apv_defs = AbstractPopulationVertex.none_pynn_default_parameters
+_apv_defs = AbstractPopulationVertex.non_pynn_default_parameters
 
 
 class FakeIFCurrExpDataHolder(DataHolder):
@@ -16,7 +16,7 @@ class FakeIFCurrExpDataHolder(DataHolder):
             constraints=_apv_defs['constraints'],
             label=_apv_defs['label'],
 
-            v_init=IFCurrExpBase.none_pynn_default_parameters['v_init'],
+            v_init=IFCurrExpBase.initialize_parameters['v_init'],
             tau_m=IFCurrExpBase.default_parameters['tau_m'],
             cm=IFCurrExpBase.default_parameters['cm'],
             v_rest=IFCurrExpBase.default_parameters['v_rest'],

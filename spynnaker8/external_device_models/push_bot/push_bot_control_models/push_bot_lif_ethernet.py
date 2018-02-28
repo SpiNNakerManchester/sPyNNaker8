@@ -4,7 +4,7 @@ from spynnaker.pyNN.external_devices_models.push_bot.push_bot_control_modules \
     import PushBotLifEthernet
 from spynnaker.pyNN.external_devices_models import ExternalDeviceLifControl
 
-_apv_defs = AbstractPopulationVertex.none_pynn_default_parameters
+_apv_defs = AbstractPopulationVertex.non_pynn_default_parameters
 
 
 class PushBotLifEthernetDataHolder(DataHolder):
@@ -33,7 +33,7 @@ class PushBotLifEthernetDataHolder(DataHolder):
             tau_refrac=ExternalDeviceLifControl.default_parameters[
                 'tau_refrac'],
             i_offset=ExternalDeviceLifControl.default_parameters['i_offset'],
-            v_init=PushBotLifEthernet.none_pynn_default_parameters['v_init']):
+            v_init=PushBotLifEthernet.initialize_parameters['v_init']):
         # pylint: disable=too-many-arguments, too-many-locals
         super(PushBotLifEthernetDataHolder, self).__init__({
             'constraints': constraints,
