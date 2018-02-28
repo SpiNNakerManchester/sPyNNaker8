@@ -17,15 +17,17 @@ class MunichMotorDeviceDataHolder(DataHolder):
             continue_if_not_different=MunichMotorDevice.default_parameters[
                 'continue_if_not_different'],
             label=MunichMotorDevice.default_parameters['label']):
-
-        DataHolder.__init__(
-            self, {
-                'spinnaker_link_id': spinnaker_link_id,
-                'board_address': board_address, 'label': label,
-                'speed': speed, 'sample_time': sample_time,
-                'update_time': update_time, 'delay_time': delay_time,
-                'delta_threshold': delta_threshold,
-                'continue_if_not_different': continue_if_not_different})
+        # pylint: disable=too-many-arguments
+        super(MunichMotorDeviceDataHolder, self).__init__({
+            'board_address': board_address,
+            'continue_if_not_different': continue_if_not_different,
+            'delay_time': delay_time,
+            'label': label,
+            'sample_time': sample_time,
+            'delta_threshold': delta_threshold,
+            'speed': speed,
+            'spinnaker_link_id': spinnaker_link_id,
+            'update_time': update_time})
 
     @staticmethod
     def build_model():

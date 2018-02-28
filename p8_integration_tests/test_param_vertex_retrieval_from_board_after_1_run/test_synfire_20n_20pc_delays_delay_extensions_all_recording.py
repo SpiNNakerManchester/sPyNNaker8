@@ -7,7 +7,7 @@ import os.path
 
 import spynnaker.spike_checker as spike_checker
 from p8_integration_tests.base_test_case import BaseTestCase
-from p8_integration_tests.scripts.synfire_run import TestRun
+from p8_integration_tests.scripts.synfire_run import SynfireRunner
 from pyNN.utility.plotting import Figure
 from spynnaker8.spynnaker_plotting import SpynnakerPanel
 import matplotlib.pyplot as plt
@@ -27,7 +27,7 @@ gysn_file = os.path.join(current_file_path, "20_17_gsyn.csv")
 class Synfire20n20pcDelaysDelayExtensionsAllRecording(BaseTestCase):
 
     def test_all_no_constarint(self):
-        synfire_run = TestRun()
+        synfire_run = SynfireRunner()
         synfire_run.do_run(n_neurons, neurons_per_core=neurons_per_core,
                            delay=delay, run_times=[runtime], record=True,
                            record_7=True, record_v=True, record_v_7=True,
@@ -104,7 +104,7 @@ class Synfire20n20pcDelaysDelayExtensionsAllRecording(BaseTestCase):
                         "spikes neo method mismatch")
 
     def test_all_constarint(self):
-        synfire_run = TestRun()
+        synfire_run = SynfireRunner()
         synfire_run.do_run(n_neurons, neurons_per_core=neurons_per_core,
                            delay=delay, run_times=[runtime],
                            placement_constraint=placement_constraint,
@@ -134,7 +134,7 @@ class Synfire20n20pcDelaysDelayExtensionsAllRecording(BaseTestCase):
 
 
 if __name__ == '__main__':
-    synfire_run = TestRun()
+    synfire_run = SynfireRunner()
     synfire_run.do_run(n_neurons, neurons_per_core=neurons_per_core,
                        delay=delay, run_times=[runtime],
                        placement_constraint=placement_constraint, record=True,

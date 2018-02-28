@@ -6,7 +6,7 @@ import os
 import pickle
 import unittest
 from p8_integration_tests.base_test_case import BaseTestCase
-from p8_integration_tests.scripts.synfire_run import TestRun
+from p8_integration_tests.scripts.synfire_run import SynfireRunner
 from spinnman.exceptions import SpinnmanTimeoutException
 from spynnaker8.utilities import neo_compare
 from unittest import SkipTest
@@ -19,7 +19,7 @@ max_delay = 14
 timestep = 0.1
 neurons_per_core = n_neurons/2
 delay = 1.7
-synfire_run = TestRun()
+synfire_run = SynfireRunner()
 
 
 class TestPrintVoltage(BaseTestCase):

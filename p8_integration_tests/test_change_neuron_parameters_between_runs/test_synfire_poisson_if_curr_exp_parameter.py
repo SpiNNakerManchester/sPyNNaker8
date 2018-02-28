@@ -1,5 +1,5 @@
 from p8_integration_tests.base_test_case import BaseTestCase
-from p8_integration_tests.scripts.synfire_run import TestRun
+from p8_integration_tests.scripts.synfire_run import SynfireRunner
 import spynnaker8 as p
 import spynnaker.plot_utils as plot_utils
 import numpy
@@ -18,7 +18,7 @@ set_between_runs = [(1, 'start', 5000),
                     (1, 'duration', 2000.0)]
 extract_between_runs = False
 
-synfire_run = TestRun()
+synfire_run = SynfireRunner()
 
 
 class TestSynfirePoissonIfCurrExpParameter(BaseTestCase):

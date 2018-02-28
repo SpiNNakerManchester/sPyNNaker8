@@ -4,7 +4,9 @@ import os
 import numpy
 import quantities
 from datetime import datetime
+from neo.io import NeoHdf5IO, PickleIO, NeoMatlabIO
 from spinn_utilities.ordered_set import OrderedSet
+from spinn_utilities.log import FormatAdapter
 
 from spynnaker.pyNN.models.common import AbstractNeuronRecordable
 from spynnaker.pyNN.models.common import AbstractSpikeRecordable
@@ -18,22 +20,30 @@ from spynnaker8.models.data_cache import DataCache
 from spynnaker8.utilities.version_util import pynn8_syntax
 
 
-logger = logging.getLogger(__name__)
+logger = FormatAdapter(logging.getLogger(__name__))
+
+
+_DEFAULT_UNITS = {
+    SPIKES: "spikes",
+    MEMBRANE_POTENTIAL: "mV",
+    GSYN_EXCIT: "uS",
+    GSYN_INHIB: "uS"}
 
 
 class Recorder(RecordingCommon):
+    # pylint: disable=protected-access
+
     def __init__(self, population):
-        RecordingCommon.__init__(self, population)
+        super(Recorder, self).__init__(population)
         self._recording_start_time = get_simulator().t
         self._data_cache = {}
 
     @staticmethod
     def _get_io(filename):
+        """ Return a Neo IO instance, guessing the type based on the filename\
+            suffix.
         """
-        Return a Neo IO instance, guessing the type based on the filename
-        suffix.
-        """
-        logger.debug("Creating Neo IO for filename %s" % filename)
+        logger.debug("Creating Neo IO for filename {}", filename)
         directory = os.path.dirname(filename)
         utility_calls.check_directory_exists_and_create_if_not(directory)
         extension = os.path.splitext(filename)[1]
@@ -42,11 +52,11 @@ class Recorder(RecordingCommon):
                 "ASCII-based formats are not currently supported for output"
                 " data. Try using the file extension '.pkl' or '.h5'")
         elif extension in ('.h5',):
-            return neo.io.NeoHdf5IO(filename=filename)
+            return NeoHdf5IO(filename=filename)
         elif extension in ('.pkl', '.pickle'):
-            return neo.io.PickleIO(filename=filename)
+            return PickleIO(filename=filename)
         elif extension == '.mat':
-            return neo.io.NeoMatlabIO(filename=filename)
+            return NeoMatlabIO(filename=filename)
         else:  # function to be improved later
             raise Exception("file extension %s not supported" % extension)
 
@@ -54,7 +64,7 @@ class Recorder(RecordingCommon):
         """ extracts block from the vertices and puts them into a neo block
 
         :param variables: the variables to extract
-        :param clear: =if the variables should be cleared after reading
+        :param clear: if the variables should be cleared after reading
         :param annotations: annotations to put on the neo block
         :return: The neo block
         """
@@ -77,8 +87,7 @@ class Recorder(RecordingCommon):
         return block
 
     def _get_units(self, variable):
-        """
-        Get units with some safety code if the population has trouble
+        """ Get units with some safety code if the population has trouble
 
         :param variable: name of the variable
         :type variable: str
@@ -88,27 +97,19 @@ class Recorder(RecordingCommon):
         try:
             return self._population.find_units(variable)
         except Exception as ex:
-            logger.warning("Population: {} Does not support units for {}"
-                           "".format(self._population.label, variable))
-            if variable == SPIKES:
-                return "spikes"
-            if variable == MEMBRANE_POTENTIAL:
-                return "mV"
-            if variable == GSYN_EXCIT:
-                return "uS"
-            if variable == GSYN_INHIB:
-                return "uS"
+            logger.warning("Population: {} Does not support units for {}",
+                           self._population.label, variable)
+            if variable in _DEFAULT_UNITS:
+                return _DEFAULT_UNITS[variable]
             raise ex
 
     def cache_data(self):
         """ store data for later extraction
-
-        :rtype: None
         """
         variables = self._get_all_recording_variables()
-        if len(variables) != 0:
+        if variables:
             segment_number = get_simulator().segment_counter
-            logger.info("Caching data for segment {}".format(segment_number))
+            logger.info("Caching data for segment {:d}", segment_number)
 
             data_cache = DataCache(
                 label=self._population.label,
@@ -207,8 +208,7 @@ class Recorder(RecordingCommon):
 
     def _append_previous_segment(self, block, segment_number, variables):
         if segment_number not in self._data_cache:
-            logger.warning("No Data available for Segment {}"
-                           .format(segment_number))
+            logger.warning("No Data available for Segment {}", segment_number)
             segment = neo.Segment(
                 name="segment{}".format(segment_number),
                 description="Empty",
@@ -228,8 +228,8 @@ class Recorder(RecordingCommon):
 
         for variable in variables:
             if variable not in data_cache.variables:
-                logger.warning("No Data available for Segment {} variable {}"
-                               "".format(segment_number, variable))
+                logger.warning("No Data available for Segment {} variable {}",
+                               segment_number, variable)
                 continue
             variable_cache = data_cache.get_data(variable)
             indexes = variable_cache.indexes
@@ -326,6 +326,7 @@ class Recorder(RecordingCommon):
                     "The variable {} is not a recordable value".format(
                         variable))
 
+
 # These functions are neo utilities.
 # The only reason the are listed here is that this is currently the only use
 
@@ -350,8 +351,8 @@ def read_in_spikes(segment, spikes, t, n_neurons, first_id,
     :param sampling_interval: how often a neuron is recorded
     :param label: recording elements label
     :type label: str
-    :rtype None
     """
+    # pylint: disable=too-many-arguments
     t_stop = t * quantities.ms
 
     for index in xrange(n_neurons):
@@ -382,8 +383,8 @@ def _get_channel_index(ids, block):
 
 def _convert_extracted_data_into_neo_expected_format(
         signal_array, indexes):
-    """
-    Converts data between spynnaker format and neo format
+    """ Converts data between spynnaker format and neo format
+
     :param signal_array: Draw data in spynnaker format
     :type signal_array: nparray
     :rtype nparray
@@ -398,24 +399,26 @@ def _convert_extracted_data_into_neo_expected_format(
 def read_in_signal(segment, block, signal_array, ids, indexes, variable,
                    recording_start_time, sampling_interval, units, label):
     """ reads in a data item that's not spikes (likely v, gsyn e, gsyn i)
+                   recording_start_time, units, label):
+    """ Reads in a data item that's not spikes (likely v, gsyn e, gsyn i)
 
     Saves this data to the segment.
 
     :param segment: Segment to add data to
     :type segment: neo.Segment
-    :param signal_array: the raw signal data
-    :param segment: the segment to put the data into
-    :param ids: the recorded ids
-    :param variable: the variable name
     :param block: neo block
-    :param indexes: the channel index's
+    :type block: neo.Block
+    :param signal_array: the raw signal data
+    :type signal_array: nparray
+    :param ids: the recorded IDs
+    :param indexes: the channel indices
+    :param variable: the variable name
     :param recording_start_time: when recording started
     :param sampling_interval: how often a neuron is recorded
     :param units: the units of the recorded value
     :param label: human readable label
-
-    :return: None
     """
+    # pylint: disable=too-many-arguments
     t_start = recording_start_time * quantities.ms
     sampling_period = sampling_interval * quantities.ms
     indexes = numpy.array(indexes)
@@ -448,3 +451,22 @@ def read_in_signal(segment, block, signal_array, ids, indexes, variable,
             data_array.shape = (data_array.shape[0], data_array.shape[1])
             segment.analogsignals.append(data_array)
             channel_index.analogsignals.append(data_array)
+
+def _add_pynn9_signal_chunk(
+        segment, processed_data, units, t_start, sampling_period, variable,
+        label, ids, block):
+    # pylint: disable=too-many-arguments
+    source_ids = numpy.fromiter(ids, dtype=int)
+    data_array = neo.AnalogSignal(
+        processed_data,
+        units=units,
+        t_start=t_start,
+        sampling_period=sampling_period,
+        name=variable,
+        source_population=label,
+        source_ids=source_ids)
+    channel_index = _get_channel_index(ids, block)
+    data_array.channel_index = channel_index
+    data_array.shape = (data_array.shape[0], data_array.shape[1])
+    segment.analogsignals.append(data_array)
+    channel_index.analogsignals.append(data_array)

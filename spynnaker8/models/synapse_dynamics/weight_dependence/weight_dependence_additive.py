@@ -1,10 +1,9 @@
 from spynnaker.pyNN.models.neuron.plasticity.stdp.weight_dependence \
-    import WeightDependenceAdditive as CommonWeightDependenceAdditive
+    import WeightDependenceAdditive as _BaseClass
 
 
-class WeightDependenceAdditive(CommonWeightDependenceAdditive):
-
+class WeightDependenceAdditive(_BaseClass):
     # noinspection PyPep8Naming
     def __init__(self, w_min=0.0, w_max=1.0):
-        CommonWeightDependenceAdditive.__init__(
-            self, w_min=w_min, w_max=w_max)
+        super(WeightDependenceAdditive, self).__init__(
+            w_min=w_min, w_max=w_max)

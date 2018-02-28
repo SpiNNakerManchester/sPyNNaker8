@@ -3,7 +3,7 @@
 Synfirechain-like example
 """
 from p8_integration_tests.base_test_case import BaseTestCase
-from p8_integration_tests.scripts.synfire_run import TestRun
+from p8_integration_tests.scripts.synfire_run import SynfireRunner
 import spynnaker.plot_utils as plot_utils
 import spynnaker.spike_checker as spike_checker
 
@@ -12,7 +12,7 @@ delay = 1
 neurons_per_core = 20
 record_v = False
 record_gsyn = False
-synfire_run = TestRun()
+synfire_run = SynfireRunner()
 
 
 class Synfire200n20pc10cWithNoDelaysSpikeRecording(BaseTestCase):
