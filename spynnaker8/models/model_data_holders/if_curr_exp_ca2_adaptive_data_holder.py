@@ -2,7 +2,7 @@ from spynnaker.pyNN.models.neuron import AbstractPopulationVertex
 from spynnaker8.utilities import DataHolder
 from spynnaker.pyNN.models.neuron.builds import IFCurrExpCa2Adaptive
 
-_apv_defs = AbstractPopulationVertex.none_pynn_default_parameters
+_apv_defs = AbstractPopulationVertex.non_pynn_default_parameters
 
 
 class IfCurrExpCa2AdaptiveDataHolder(DataHolder):
@@ -18,8 +18,6 @@ class IfCurrExpCa2AdaptiveDataHolder(DataHolder):
             constraints=_apv_defs['constraints'],
             label=_apv_defs['label'],
 
-            v_init=IFCurrExpCa2Adaptive.none_pynn_default_parameters['v_init'],
-
             tau_m=IFCurrExpCa2Adaptive.default_parameters['tau_m'],
             cm=IFCurrExpCa2Adaptive.default_parameters['cm'],
             v_rest=IFCurrExpCa2Adaptive.default_parameters['v_rest'],
@@ -32,6 +30,7 @@ class IfCurrExpCa2AdaptiveDataHolder(DataHolder):
             tau_ca2=IFCurrExpCa2Adaptive.default_parameters["tau_ca2"],
             i_ca2=IFCurrExpCa2Adaptive.default_parameters["i_ca2"],
             i_alpha=IFCurrExpCa2Adaptive.default_parameters["i_alpha"],
+            v_init=IFCurrExpCa2Adaptive.initialize_parameters['v_init'],
             isyn_exc=IFCurrExpCa2Adaptive.default_parameters['isyn_exc'],
             isyn_inh=IFCurrExpCa2Adaptive.default_parameters['isyn_inh']):
         # pylint: disable=too-many-arguments, too-many-locals

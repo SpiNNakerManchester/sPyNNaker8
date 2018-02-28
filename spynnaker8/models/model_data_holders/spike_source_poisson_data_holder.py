@@ -1,7 +1,7 @@
 from spynnaker.pyNN.models.spike_source import SpikeSourcePoisson
 from spynnaker8.utilities import DataHolder
 
-_np_defs = SpikeSourcePoisson.none_pynn_default_parameters
+_np_defs = SpikeSourcePoisson.non_pynn_default_parameters
 _defs = SpikeSourcePoisson.default_parameters
 
 

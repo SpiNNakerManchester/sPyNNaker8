@@ -2,7 +2,7 @@ from spynnaker.pyNN.models.neuron import AbstractPopulationVertex
 from spynnaker8.utilities import DataHolder
 from spynnaker.pyNN.models.neuron.builds import IFCondExpStoc
 
-_apv_defs = AbstractPopulationVertex.none_pynn_default_parameters
+_apv_defs = AbstractPopulationVertex.non_pynn_default_parameters
 
 
 class IfCondExpStocDataHolder(DataHolder):
@@ -18,8 +18,6 @@ class IfCondExpStocDataHolder(DataHolder):
             constraints=_apv_defs['constraints'],
             label=_apv_defs['label'],
 
-            v_init=IFCondExpStoc.none_pynn_default_parameters['v_init'],
-
             tau_m=IFCondExpStoc.default_parameters['tau_m'],
             cm=IFCondExpStoc.default_parameters['cm'],
             v_rest=IFCondExpStoc.default_parameters['v_rest'],
@@ -33,6 +31,7 @@ class IfCondExpStocDataHolder(DataHolder):
             e_rev_I=IFCondExpStoc.default_parameters['e_rev_I'],
             du_th=IFCondExpStoc.default_parameters['du_th'],
             tau_th=IFCondExpStoc.default_parameters['tau_th'],
+            v_init=IFCondExpStoc.initialize_parameters['v_init'],
             isyn_exc=IFCondExpStoc.default_parameters['isyn_exc'],
             isyn_inh=IFCondExpStoc.default_parameters['isyn_inh']):
         # pylint: disable=too-many-arguments, too-many-locals

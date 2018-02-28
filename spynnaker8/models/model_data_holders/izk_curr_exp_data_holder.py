@@ -2,7 +2,7 @@ from spynnaker.pyNN.models.neuron import AbstractPopulationVertex
 from spynnaker8.utilities import DataHolder
 from spynnaker.pyNN.models.neuron.builds import IzkCurrExpBase
 
-_apv_defs = AbstractPopulationVertex.none_pynn_default_parameters
+_apv_defs = AbstractPopulationVertex.non_pynn_default_parameters
 
 
 class IzkCurrExpDataHolder(DataHolder):
@@ -23,8 +23,8 @@ class IzkCurrExpDataHolder(DataHolder):
             c=IzkCurrExpBase.default_parameters['c'],
             d=IzkCurrExpBase.default_parameters['d'],
             i_offset=IzkCurrExpBase.default_parameters['i_offset'],
-            u_init=IzkCurrExpBase.default_parameters['u_init'],
-            v_init=IzkCurrExpBase.default_parameters['v_init'],
+            u_init=IzkCurrExpBase.initialize_parameters['u_init'],
+            v_init=IzkCurrExpBase.initialize_parameters['v_init'],
             tau_syn_E=IzkCurrExpBase.default_parameters['tau_syn_E'],
             tau_syn_I=IzkCurrExpBase.default_parameters['tau_syn_I'],
             isyn_exc=IzkCurrExpBase.default_parameters['isyn_exc'],
