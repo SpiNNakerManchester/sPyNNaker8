@@ -1,27 +1,31 @@
 from spynnaker.pyNN.models.neural_projections.connectors \
-    import MultapseConnector as CommonMultapseConnector
+    import MultapseConnector as _BaseClass
 
 
-class MultapseConnector(CommonMultapseConnector):
+class MultapseConnector(_BaseClass):
     """
-    Create a multapse connector. The size of the source and destination
-    populations are obtained when the projection is connected. The number of
-    synapses is specified. when instantiated, the required number of synapses
-    is created by selecting at random from the source and target populations
+    Create a multapse connector. The size of the source and destination\
+    populations are obtained when the projection is connected. The number of\
+    synapses is specified. when instantiated, the required number of synapses\
+    is created by selecting at random from the source and target populations\
     with replacement. Uniform selection probability is assumed.
 
     :param num_synapses:
         Integer. This is the total number of synapses in the connection.
+    :type num_synapses: int
     :param allow_self_connections:
         Bool. Allow a neuron to connect to itself or not.
+    :type allow_self_connections: bool
     :param with_replacement:
         Bool. When selecting, allow a neuron to be re-selected or not.
-
+    :type with_replacement: bool
     """
+    __slots__ = []
+
     def __init__(self, num_synapses, allow_self_connections=True,
                  with_replacement=True, safe=True, verbose=False):
-        CommonMultapseConnector.__init__(
-            self, num_synapses=num_synapses,
+        super(MultapseConnector, self).__init__(
+            num_synapses=num_synapses,
             allow_self_connections=allow_self_connections,
             with_replacement=with_replacement, safe=safe, verbose=verbose)
 
