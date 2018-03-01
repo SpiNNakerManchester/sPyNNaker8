@@ -12,7 +12,7 @@ initial_run = 100  # to negate any initial conditions
 
 # STDP parameters
 STP_type = True
-f_F = 0.867
+f_F = 0.5
 P_baseline = 0.5
 tau_P = 7
 baseline_weight = 1
