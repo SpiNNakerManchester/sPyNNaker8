@@ -15,7 +15,9 @@ from neo.io import PyNNTextIO
 import time
 
 timestr = time.strftime("%Y%m%d-%H%M%S")
+
 figname =  "new_w"
+
 do_LTP = True # true for LTPs, false for LTDs
 #do_LTP = False # true for LTPs, false for LTDs
 do_save=False # save the data or not
@@ -24,7 +26,9 @@ p.setup(1)
 p.set_number_of_neurons_per_core(p.extra_models.IFCurrExpCa2Concentration, 200)
 
 simtime = 300
+
 n_runs = 10
+
 
 w0 = 0.0
 w_mult=2.0/16
@@ -47,7 +51,7 @@ V_th = V_th * scale_sys
 if do_LTP:
     w0 = 0.0 #initial weight for LTP
     drive_rates = np.arange(0, 400, 10) # driving source rates for LTPS
-    #drive_rates = np.arange(100, 200, 20) # driving source rates for LTPS
+    #drive_rates = np.arange(0, 300, 30) # driving source rates for LTPS
 else:
     w0 = 1.0 #initial weight for LTD
     drive_rates = np.arange(0, 200, 5) # driving source rates for LTDS
@@ -58,7 +62,9 @@ pre_rates = np.arange(10, 55, 10) # pre-synaptic neuron rates
 #pre_rates = np.arange(40, 55, 10) # pre-synaptic neuron rates
 n_pre_rates = pre_rates.shape[0]
 
-drive_rates = np.arange(0, 300, 10) # driving source rates
+
+#drive_rates = np.arange(0, 150, 15) # driving source rates
+
 n_drive_rates = drive_rates.shape[0]
 n_rates = drive_rates.size
 max_out_rate = 200
@@ -108,38 +114,12 @@ for pre_r in pre_rates:
 #         pop_src.record('spikes')
 #         pop_src2.record('spikes')
 nseg = 0
-save_train = []
+weights = []
 npops = len(pops)
 
 for r in range(n_runs):
-    p.run(simtime)
-    new_rates = np.zeros(n_nrn, dtype=int)
-    for i in range(npops):
-        pop_ex = pops[i]
-        proj = projections[i]
-
-        pre_rate_ind = i / n_drive_rates
-        dr_rate_ind = i - pre_rate_ind * n_drive_rates
-
-        trains = pop_ex.get_data('spikes').segments[nseg].spiketrains
-        new_w = proj.get('weight', format='list', with_address=False)
-
-        for n in range(n_nrn):
-            n_spikes = trains[n].shape[0]
-            new_rate = int(round( n_spikes*1000.0/simtime ))
-            #print n,":",n_spikes, new_rate
-
-            if new_rate>max_out_rate:
-                continue
-            if((w0*w_mult-th_w*w_mult)*(new_w[n] - th_w*w_mult)<0):
-                n_trans[pre_rate_ind][new_rate] = n_trans[pre_rate_ind][new_rate] + 1
-            n_tot[pre_rate_ind][new_rate] = n_tot[pre_rate_ind][new_rate] + 1
-
-
-    nseg = nseg+1
-
-    p.reset()
-
+    if r>0:
+        p.reset()
     # need to reset the poisson sources, otherwise spike trains repeat too often
     for i in range(npops):
         pop_src = pops_src[i]
@@ -151,7 +131,48 @@ for r in range(n_runs):
         pop_ex = pops[i]
         pop_ex.initialize(v=-65*scale_sys)
 
+    p.run(simtime)
+    new_rates = np.zeros(n_nrn, dtype=int)
+    for i in range(npops):
+        pop_ex = pops[i]
+        proj = projections[i]
 
+        pre_rate_ind = i / n_drive_rates
+        dr_rate_ind = i - pre_rate_ind * n_drive_rates
+
+        #trains = pop_ex.get_data('spikes').segments[nseg].spiketrains
+        new_w = proj.get('weight', format='list', with_address=False)
+        weights.append(new_w)
+
+
+
+    nseg = nseg+1
+
+
+
+
+
+for i in range(npops):
+    pop_ex = pops[i]
+    alltrains = pop_ex.get_data('spikes').segments
+    for nseg in range(n_runs):
+        trains = alltrains[nseg].spiketrains
+        pre_rate_ind = i / n_drive_rates
+        dr_rate_ind = i - pre_rate_ind * n_drive_rates
+        new_w = weights[nseg*npops+i]
+        #print new_w, "xxx"
+        #print "pre",pre_rates[pre_rate_ind]
+        #print "dr", drive_rates[dr_rate_ind]
+        for n in range(n_nrn):
+            n_spikes = trains[n].shape[0]
+            new_rate = int(round( n_spikes*1000.0/simtime ))
+            #print n,":",n_spikes, new_rate
+
+            if new_rate>max_out_rate:
+                continue
+            if((w0*w_mult-th_w*w_mult)*(new_w[n] - th_w*w_mult)<0):
+                n_trans[pre_rate_ind][new_rate] = n_trans[pre_rate_ind][new_rate] + 1
+            n_tot[pre_rate_ind][new_rate] = n_tot[pre_rate_ind][new_rate] + 1
 
 
 
@@ -178,6 +199,7 @@ for i in range(n_pre_rates):
     plt.plot(xs[s1mask[i,:]], series1[i,:][s1mask[i,:]], linestyle='-', marker='o')
 
 plt.savefig('./figs/' + "figure_2_"+figname+"_"+timestr+'.png', format="png")
+
 #plt.show()
 plt.close()
 
