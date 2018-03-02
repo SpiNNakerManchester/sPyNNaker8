@@ -1,23 +1,23 @@
 from spynnaker.pyNN.models.neuron.plasticity.stdp.timing_dependence \
-    import TimingDependenceRecurrent as CommonTimingDependenceRecurrent
+    import TimingDependenceRecurrent as _BaseClass
+
+_defaults = _BaseClass.default_parameters
 
 
-class TimingDependenceRecurrent(CommonTimingDependenceRecurrent):
+class TimingDependenceRecurrent(_BaseClass):
+    __slots__ = [
+        "_a_plus",
+        "_a_minus"]
 
     def __init__(
-            self, accumulator_depression=CommonTimingDependenceRecurrent.
-            default_parameters['accumulator_depression'],
-            accumulator_potentiation=CommonTimingDependenceRecurrent.
-            default_parameters['accumulator_potentiation'],
-            mean_pre_window=CommonTimingDependenceRecurrent.
-            default_parameters['mean_pre_window'],
-            mean_post_window=CommonTimingDependenceRecurrent.
-            default_parameters['mean_post_window'],
-            dual_fsm=CommonTimingDependenceRecurrent.
-            default_parameters['dual_fsm'], A_plus=0.01, A_minus=0.01):
-
-        CommonTimingDependenceRecurrent.__init__(
-            self, accumulator_depression=accumulator_depression,
+            self, accumulator_depression=_defaults['accumulator_depression'],
+            accumulator_potentiation=_defaults['accumulator_potentiation'],
+            mean_pre_window=_defaults['mean_pre_window'],
+            mean_post_window=_defaults['mean_post_window'],
+            dual_fsm=_defaults['dual_fsm'], A_plus=0.01, A_minus=0.01):
+        # pylint: disable=too-many-arguments
+        super(TimingDependenceRecurrent, self).__init__(
+            accumulator_depression=accumulator_depression,
             accumulator_potentiation=accumulator_potentiation,
             mean_pre_window=mean_pre_window,
             mean_post_window=mean_post_window,

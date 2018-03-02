@@ -9,30 +9,33 @@ from pyNN.connectors import Connector
 class FromListConnector(CommonFromListConnector, Connector):
     """ Make connections according to a list.
     """
+    __slots__ = [
+        "_extra_conn_data"]
 
     def __init__(
             self, conn_list, safe=True, verbose=False, column_names=None,
             callback=None):
-        """Creates a new FromListConnector.
-        :param: conn_list:
-            a list of tuples, one tuple for each connection. Each tuple
-            should contain: (pre_idx, post_idx, p1, p2, ..., pn) where pre_idx
-            is the index (i.e. order in the Population, not the ID) of the
-             presynaptic neuron, post_idx is the index of the postsynaptic
-             neuron, and p1, p2, etc. are the synaptic parameters (e.g.
-             weight, delay, plasticity parameters).
-        :param column_names:
-            the names of the parameters p1, p2, etc. If not provided, it is
-             assumed the parameters are weight, delay (for
+        """ Creates a new FromListConnector.
+
+        :param: conn_list: \
+            a list of tuples, one tuple for each connection. Each tuple\
+            should contain: (pre_idx, post_idx, p1, p2, ..., pn) where\
+            pre_idx is the index (i.e. order in the Population, not the ID)\
+            of the presynaptic neuron, post_idx is the index of the\
+            postsynaptic neuron, and p1, p2, etc. are the synaptic parameters\
+            (e.g. weight, delay, plasticity parameters).
+        :param column_names: \
+            the names of the parameters p1, p2, etc. If not provided, it is\
+             assumed the parameters are weight, delay (for\
              backwards compatibility).
-        :param safe:
-            if True, check that weights and delays have valid values. If
+        :param safe: \
+            if True, check that weights and delays have valid values. If\
             False, this check is skipped.
         :param callback:
             if True, display a progress bar on the terminal.
         """
-
-        if conn_list is None or len(conn_list) == 0:
+        # pylint: disable=too-many-arguments
+        if conn_list is None or not len(conn_list):
             raise InvalidParameterType(
                 "The connection list for the FromListConnector must contain"
                 " at least a list of tuples, each of which should contain at "
@@ -41,7 +44,7 @@ class FromListConnector(CommonFromListConnector, Connector):
         conn_list = numpy.array(conn_list)
 
         n_columns = 0
-        if len(conn_list) > 0:
+        if conn_list.size:
             n_columns = conn_list.shape[1]
 
         weights = None
@@ -85,8 +88,8 @@ class FromListConnector(CommonFromListConnector, Connector):
         return self._extra_conn_data
 
     def _verify_extra_data_meets_constraints(self):
-        """ safety check for current impl, stops extra params to be
-        variable per atom
+        """ safety check for current impl, stops extra params to be\
+            variable per atom
 
         :return:  None
         :raises InvalidParameterType: when the parameters are not constant
