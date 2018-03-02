@@ -11,11 +11,9 @@ def do_run(plot):
     p.set_number_of_neurons_per_core(p.IF_cond_exp, 50)
 
     # Experiment Parameters
-    rng = pyNN.random.NumpyRNG(seed=124578)
-
     n_groups = 6  # Number of Synfire Groups
     n_exc = 150  # Number of excitatory neurons per group
-    n_inh = 125  # Number of inhibitory neurons per group
+    n_inh = 100  # Number of inhibitory neurons per group
 
     sim_duration = 500.
 
@@ -37,7 +35,7 @@ def do_run(plot):
                    'e_rev_I': -75.0,  # mV
                    }
 
-    weight_exc = 0.001  # uS weight for excitatory to excitatory connections
+    weight_exc = 0.05  # uS weight for excitatory to excitatory connections
     weight_inh = 0.002  # uS weight for inhibitory to excitatory connections
 
     # list of excitatory populations
@@ -98,23 +96,21 @@ def do_run(plot):
     for group_index in range(n_groups-1):
         p.Projection(exc_pops[group_index % n_groups],
                      exc_pops[(group_index+1) % n_groups],
-                     p.FixedNumberPreConnector(90, rng=rng,
-                                               with_replacement=True),
+                     p.FixedTotalNumberConnector(90, with_replacement=True),
                      synapse_type=p.StaticSynapse(weight=weight_exc,
                                                   delay=10.),
                      receptor_type='excitatory')
         p.Projection(exc_pops[group_index % n_groups],
                      inh_pops[(group_index+1) % n_groups],
-                     p.FixedNumberPreConnector(90, rng=rng,
-                                               with_replacement=True),
+                     p.FixedTotalNumberConnector(90, with_replacement=True),
                      synapse_type=p.StaticSynapse(weight=weight_exc,
                                                   delay=10.),
                      receptor_type='excitatory')
 
     # Make another projection for testing that connects to itself
     p.Projection(exc_pops[1], exc_pops[1],
-                 p.FixedNumberPreConnector(90, rng=rng,
-                                           allow_self_connections=False),
+                 p.FixedTotalNumberConnector(90, with_replacement=False,
+                                             allow_self_connections=False),
                  synapse_type=p.StaticSynapse(weight=weight_exc,
                                               delay=10.),
                  receptor_type='excitatory')
@@ -122,11 +118,11 @@ def do_run(plot):
     # Connect the Stimulus to the first group
     print "Connecting Stimulus to first group"
     p.Projection(pop_stim, inh_pops[0],
-                 p.FixedNumberPreConnector(50, rng=rng),
+                 p.FixedTotalNumberConnector(50),
                  synapse_type=p.StaticSynapse(weight=weight_exc, delay=20.),
                  receptor_type='excitatory')
     p.Projection(pop_stim, exc_pops[0],
-                 p.FixedNumberPreConnector(90, rng=rng),
+                 p.FixedTotalNumberConnector(90),
                  synapse_type=p.StaticSynapse(weight=weight_exc, delay=20.),
                  receptor_type='excitatory')
 
@@ -142,7 +138,6 @@ def do_run(plot):
 
     # Get data
     print "Simulation finished, now collect all spikes and plot them"
-
     stim_spikes = pop_stim.spinnaker_get_data('spikes')
     stim_spikes[:, 0] -= n_exc
 
@@ -182,15 +177,15 @@ def do_run(plot):
     return stim_spikes, spklist_exc, spklist_inh
 
 
-class FixedNumberPreConnectorLargerTest(BaseTestCase):
+class FixedTotalNumberConnectorLargerTest(BaseTestCase):
     def test_run(self):
         stim_spikes, spklist_exc, spklist_inh = do_run(plot=False)
         # any checks go here
         self.assertEquals(750, len(stim_spikes))
-        self.assertGreater(2300, len(spklist_exc))
-        self.assertGreater(2000, len(spklist_inh))
-        self.assertLess(1900, len(spklist_exc))
-        self.assertLess(1600, len(spklist_inh))
+        self.assertGreater(270, len(spklist_exc))
+        self.assertGreater(230, len(spklist_inh))
+        self.assertLess(170, len(spklist_exc))
+        self.assertLess(130, len(spklist_inh))
 
 
 if __name__ == '__main__':
