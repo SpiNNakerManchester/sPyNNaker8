@@ -7,17 +7,17 @@ import matplotlib.pyplot as plt
 
 timestep = 1
 p.setup(timestep)
-runtime = 350
+runtime = 500
 initial_run = 100  # to negate any initial conditions
 
 # STDP parameters
-STP_type = True
-f_F = 0.5
-P_baseline = 0.5
-tau_P = 7
+STP_type = 1 # 0 for depression; 1 for potentiation
+f = 0.6
+P_baseline = 0.25
+tau_P = 55
 baseline_weight = 1
 
-spike_times = [1, 6, 8, 11, 100]
+spike_times = [1, 11, 21, 31, 41, 51, 61, 300]
 spike_times = [initial_run + i for i in spike_times]
 
 # Spike source to send spike via plastic synapse
@@ -34,14 +34,15 @@ pop_exc = p.Population(1, p.IF_curr_exp(),  label="test")
 #     p.StaticSynapse(weight=0.01, delay=1), receptor_type="excitatory")
 
 syn_plas = p.STDPMechanism(
-        timing_dependence=p.AbbotSTP(STP_type, f_F, P_baseline, tau_P),
-        weight_dependence=p.MultiplicativeWeightDependence(
-            ),
+        timing_dependence=p.AbbotSTP(STP_type, f, P_baseline, tau_P),
+#       weight_dependence=p.MultiplicativeWeightDependence(),
+        weight_dependence=p.STPOnlyWeightDependence(),
         weight=baseline_weight, delay=timestep)
 
-synapse = p.Projection(pop_src1, pop_exc,
-                                       p.OneToOneConnector(),
-                                       synapse_type=syn_plas)
+synapse = p.Projection(pop_src1,
+                        pop_exc,
+                        p.OneToOneConnector(),
+                        synapse_type=syn_plas)
 
 
 
