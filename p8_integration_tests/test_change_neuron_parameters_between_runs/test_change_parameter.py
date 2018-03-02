@@ -93,21 +93,6 @@ class TestChangeParameter(BaseTestCase):
         self.assertEqual(0, len(inp_spikes2))
 
 
-    def test_split(self):
-        results = do_run(split=True, seed=self._test_seed)
-        (pop_spikes1, inp_spikes1, pop_spikes2, inp_spikes2) = results
-        try:
-            self.assertLess(1100, len(pop_spikes1))
-            self.assertGreater(1300, len(pop_spikes1))
-            self.assertLess(1100, len(inp_spikes1))
-            self.assertGreater(1300, len(inp_spikes1))
-        except Exception as ex:
-            # Just in case the range failed
-            raise SkipTest(ex)
-        self.assertEqual(300, len(pop_spikes2))
-        self.assertEqual(0, len(inp_spikes2))
-
-
 if __name__ == '__main__':
     (pop_spikes1, inp_spikes1, pop_spikes2, inp_spikes2) = do_run(split=True)
     plot_spikes(pop_spikes1, inp_spikes1)
