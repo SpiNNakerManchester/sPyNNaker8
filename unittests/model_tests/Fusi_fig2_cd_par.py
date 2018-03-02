@@ -15,7 +15,7 @@ from neo.io import PyNNTextIO
 import time
 
 timestr = time.strftime("%Y%m%d-%H%M%S")
-
+figname =  "new_w"
 do_LTP = True # true for LTPs, false for LTDs
 #do_LTP = False # true for LTPs, false for LTDs
 do_save=False # save the data or not
@@ -24,10 +24,10 @@ p.setup(1)
 p.set_number_of_neurons_per_core(p.extra_models.IFCurrExpCa2Concentration, 200)
 
 simtime = 300
-n_runs = 50
+n_runs = 10
 
 w0 = 0.0
-w_mult=2.0/4
+w_mult=2.0/16
 a_plus = 0.15
 a_minus = 0.15
 w_min = 0.0
@@ -54,11 +54,11 @@ else:
     #drive_rates = np.arange(0, 200, 10) # driving source rates for LTDS
 
 
-pre_rates = np.arange(5, 55, 5) # pre-synaptic neuron rates
-pre_rates = np.arange(40, 55, 10) # pre-synaptic neuron rates
+pre_rates = np.arange(10, 55, 10) # pre-synaptic neuron rates
+#pre_rates = np.arange(40, 55, 10) # pre-synaptic neuron rates
 n_pre_rates = pre_rates.shape[0]
 
-drive_rates = np.arange(0, 300, 30) # driving source rates
+drive_rates = np.arange(0, 300, 10) # driving source rates
 n_drive_rates = drive_rates.shape[0]
 n_rates = drive_rates.size
 max_out_rate = 200
@@ -69,7 +69,7 @@ n_trans = np.zeros((n_pre_rates, max_out_rate+1)) # number of weight transitions
 n_tot = np.zeros((n_pre_rates, max_out_rate+1)) # number of sims ran for each spiking rate of the output neuron (needed to calculate transition probability)
 
 
-n_nrn = 200 # total number of neurons in each population
+n_nrn = 200*5 # total number of neurons in each population
 
 cell_params = {"i_offset":0.0,  "tau_ca2":150, "i_alpha":1., "i_ca2":3.,  'v_reset':-65*scale_sys, 'v_rest':-65*scale_sys, 'v_thresh': -50*scale_sys}
 
@@ -177,8 +177,8 @@ print xs[s1mask[0,:]]
 for i in range(n_pre_rates):
     plt.plot(xs[s1mask[i,:]], series1[i,:][s1mask[i,:]], linestyle='-', marker='o')
 
-plt.savefig('./figs/' + "figure_2_"+timestr+'.png', format="png")
-plt.show()
+plt.savefig('./figs/' + "figure_2_"+figname+"_"+timestr+'.png', format="png")
+#plt.show()
 plt.close()
 
 
