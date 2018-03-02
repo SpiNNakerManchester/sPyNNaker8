@@ -260,6 +260,8 @@ def compare(current, full, rate, indexes):
     print current
     d1 = numpy.loadtxt(current, delimiter=',')
     print d1.shape
+    if len(d1.shape) == 1:
+        d1 = numpy.transpose(numpy.array([d1]))
     print full
     d2 = numpy.loadtxt(full, delimiter=',')
     if indexes is None:
@@ -269,7 +271,8 @@ def compare(current, full, rate, indexes):
     print d2_rate.shape
     if not numpy.array_equal(d1, d2_rate):
         if d1.shape != d2_rate.shape:
-            raise Exception("Shape not equal")
+            raise Exception(
+                "Shape not equal {} {}".format(d1.shape, d2_rate.shape))
         for i in xrange(d1.shape[0]):
             if not numpy.array_equal(d1[i], d2_rate[i]):
                 print "row {}".format(i)
@@ -312,6 +315,17 @@ class TestSampling(BaseTestCase):
             record_v=True, v_rate=4, v_indexes=range(0, n_neurons, 2),
             record_exc=True, exc_rate=3, exc_indexes=range(0, n_neurons, 3),
             record_inh=True, inh_rate=2, inh_indexes=range(0, n_neurons, 4))
+
+    def test_one(self):
+        simtime = 500
+        n_neurons = 300
+        run_and_compare_script(
+            simtime, n_neurons,
+            record_spikes=True, spike_rate=5,
+            spike_indexes=[0],
+            record_v=True, v_indexes=[0],
+            record_exc=True, exc_indexes=[0],
+            record_inh=True, inh_indexes=[0])
 
 
 if __name__ == '__main__':
