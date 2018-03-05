@@ -33,7 +33,6 @@ from spynnaker8.external_device_models \
 # injector for spynnaker 8
 from spynnaker8.models.model_data_holders \
     import SpikeInjectorDataHolder as ExternalDeviceSpikeInjector
-import spynnaker8
 
 # connections
 from spynnaker.pyNN import model_binaries
