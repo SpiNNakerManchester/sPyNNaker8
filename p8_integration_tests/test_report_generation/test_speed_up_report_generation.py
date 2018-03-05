@@ -30,7 +30,7 @@ class Synfire200n10pc2chipsWithNoDelaysSpikeRecording(BaseTestCase):
         report_folder = synfire_run.get_default_report_folder()
         file_path = os.path.join(
             report_folder,
-            DataSpeedUpPacketGatherMachineVertex.REPORT_NAME)
+            DataSpeedUpPacketGatherMachineVertex.DATA_OUT_REPORT_NAME)
         self.assertTrue(os.path.exists(file_path))
 
 
@@ -42,6 +42,6 @@ if __name__ == '__main__':
     report_folder = synfire_run.get_default_report_folder()
     file_path = os.path.join(
         report_folder,
-        DataSpeedUpPacketGatherMachineVertex.REPORT_NAME)
+        DataSpeedUpPacketGatherMachineVertex.DATA_OUT_REPORT_NAME)
     if not os.path.exists(file_path):
         raise Exception("missing report!")
