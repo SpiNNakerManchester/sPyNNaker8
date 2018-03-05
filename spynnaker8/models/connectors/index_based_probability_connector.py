@@ -1,11 +1,12 @@
 from spynnaker.pyNN.models.neural_projections.connectors \
-    import IndexBasedProbabilityConnector as _BaseClass
+    import IndexBasedProbabilityConnector as \
+    CommonIndexBasedProbabilityConnector
 
 
-class IndexBasedProbabilityConnector(_BaseClass):
+class IndexBasedProbabilityConnector(CommonIndexBasedProbabilityConnector):
     """
     Create an index-based probability connector.
-    The index_expression must depend on the indices of the populations.
+    The index_expression must depend on the indices i, j of the populations.
 
     :param index_expression: a function of the indices of the populations
         An expression
