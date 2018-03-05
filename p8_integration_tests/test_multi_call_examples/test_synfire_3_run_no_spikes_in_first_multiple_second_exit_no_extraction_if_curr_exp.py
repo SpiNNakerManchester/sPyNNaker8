@@ -2,7 +2,7 @@
 Synfirechain-like example
 """
 from p8_integration_tests.base_test_case import BaseTestCase
-from p8_integration_tests.scripts.synfire_run import TestRun
+from p8_integration_tests.scripts.synfire_run import SynfireRunner
 
 import spynnaker.plot_utils as plot_utils
 import spynnaker.spike_checker as spike_checker
@@ -12,7 +12,7 @@ SPIKE_TIMES = [[1050, 1060, 1500, 1700, 1900, 2200]]
 run_times = [1000, 1000, 1000]
 reset = False
 extract_between_runs = False
-synfire_run = TestRun()
+synfire_run = SynfireRunner()
 
 
 class Synfire3RunNoSpikesInFirstExitNoExtractionIfCurrExp(BaseTestCase):

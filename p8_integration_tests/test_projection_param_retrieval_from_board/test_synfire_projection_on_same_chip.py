@@ -1,7 +1,7 @@
 import numpy
 
 from p8_integration_tests.base_test_case import BaseTestCase
-from p8_integration_tests.scripts.synfire_run import TestRun
+from p8_integration_tests.scripts.synfire_run import SynfireRunner
 
 n_neurons = 20  # number of neurons in each population
 runtimes = [0, 100]  # The zero uis to read data before a run
@@ -16,7 +16,7 @@ get_delays = True
 class SynfireProjectionOnSameChip(BaseTestCase):
 
     def test_get_before_and_after(self):
-        synfire_run = TestRun()
+        synfire_run = SynfireRunner()
         synfire_run.do_run(n_neurons, neurons_per_core=neurons_per_core,
                            weight_to_spike=weight_to_spike, delay=delay,
                            placement_constraint=placement_constraint,
@@ -34,7 +34,7 @@ class SynfireProjectionOnSameChip(BaseTestCase):
 
 
 if __name__ == '__main__':
-    synfire_run = TestRun()
+    synfire_run = SynfireRunner()
     synfire_run.do_run(n_neurons, neurons_per_core=neurons_per_core,
                        weight_to_spike=weight_to_spike, delay=delay,
                        placement_constraint=placement_constraint,
