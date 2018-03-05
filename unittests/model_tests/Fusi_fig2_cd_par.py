@@ -1,23 +1,23 @@
 import spynnaker8 as p
-from pyNN.utility.plotting import Figure, Panel, DataTable
-import matplotlib.pyplot as plt
 import matplotlib
+matplotlib.use('Agg')
 import numpy as np
 from neo.core.spiketrain import SpikeTrain
 from scipy.ndimage.measurements import label
 from matplotlib.pyplot import legend
+from pyNN.utility.plotting import Figure, Panel, DataTable
+import matplotlib.pyplot as plt
 from idna.core import _alabel_prefix
 
 from neo.io import PyNNNumpyIO
 from neo.io import AsciiSpikeTrainIO
 from neo.io import PyNNTextIO
 import time
-matplotlib.use('Agg')
 plt.ioff()
 
 timestr = time.strftime("%Y%m%d-%H%M%S")
 
-figname =  "LTP"
+figname =  "LTPtst"
 
 do_LTP = True # true for LTPs, false for LTDs
 #do_LTP = False # true for LTPs, false for LTDs
@@ -30,7 +30,7 @@ simtime = 300
 cooldowntime=100
 segtime = simtime+cooldowntime
 
-n_runs = 20
+n_runs = 2
 
 
 w0 = 0.0
@@ -78,7 +78,7 @@ n_trans = np.zeros((n_pre_rates, max_out_rate+1)) # number of weight transitions
 n_tot = np.zeros((n_pre_rates, max_out_rate+1)) # number of sims ran for each spiking rate of the output neuron (needed to calculate transition probability)
 
 
-n_nrn = 200*5 # total number of neurons in each population
+n_nrn = 200 # total number of neurons in each population
 
 cell_params = {"i_offset":0.0,  "tau_ca2":150, "i_alpha":1., "i_ca2":3.,  'v_reset':-65*scale_sys, 'v_rest':-65*scale_sys, 'v_thresh': -50*scale_sys}
 
