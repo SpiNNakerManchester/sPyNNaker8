@@ -17,9 +17,6 @@ logger = logging.getLogger(__name__)
 
 
 class Population(PyNNPopulationCommon, Recorder, PopulationBase):
-    """ pynn 0.8 population object
-
-class Population(PyNNPopulationCommon, Recorder):
     """ PyNN 0.8/0.9 population object
     """
 
