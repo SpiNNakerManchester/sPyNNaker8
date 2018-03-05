@@ -18,14 +18,17 @@ timestr = time.strftime("%Y%m%d-%H%M%S")
 figname = "w18"
 
 do_LTP = True # true for LTPs, false for LTDs
-#do_LTP = False # true for LTPs, false for LTDs
+do_LTP = False # true for LTPs, false for LTDs
 do_save=False # save the data or not
 
 p.setup(1)
 p.set_number_of_neurons_per_core(p.extra_models.IFCurrExpCa2Concentration, 200)
 
 simtime = 300
-n_runs = 20
+cooldowntime=100
+segtime = simtime+cooldowntime
+
+n_runs = 10
 
 w0 = 0.0
 w_mult=2.0/16
@@ -52,7 +55,7 @@ if do_LTP:
 else:
     w0 = 1.0 #initial weight for LTD
     drive_rates = np.arange(0, 200, 5) # driving source rates for LTDS
-    #drive_rates = np.arange(0, 200, 10) # driving source rates for LTDS
+    drive_rates = np.arange(0, 200, 20) # driving source rates for LTDS
 
 
 pre_rates = np.arange(5, 55, 5) # pre-synaptic neuron rates
@@ -78,6 +81,7 @@ pops = []
 pops_src = []
 pops_src2 = []
 projections = []
+conns=[]
 
 for pre_r in pre_rates:
     for dr_r in drive_rates:
@@ -89,11 +93,11 @@ for pre_r in pre_rates:
         syn_plas = p.STDPMechanism(
             timing_dependence = p.PreOnly(A_plus = a_plus*w_max*w_mult, A_minus = a_minus*w_max*w_mult, th_v_mem=V_th, th_ca_up_l = Ca_th_l, th_ca_up_h = Ca_th_h2, th_ca_dn_l = Ca_th_l, th_ca_dn_h = Ca_th_h1),
             weight_dependence = p.WeightDependenceFusi(w_min=w_min*w_mult, w_max=w_max*w_mult, w_drift=w_drift*w_mult, th_w=th_w * w_mult), weight=w0*w_mult, delay=1.0)
-
+        myconn = p.OneToOneConnector()
         proj = p.Projection(
             pop_src,
             pop_ex,
-            p.OneToOneConnector(),
+            myconn,
             synapse_type=syn_plas, receptor_type='excitatory'
             )
 
@@ -102,6 +106,7 @@ for pre_r in pre_rates:
 
 
         pop_ex.record(['spikes'])
+        conns.append(myconn)
         pops.append(pop_ex)
         pops_src.append(pop_src)
         pops_src2.append(pop_src2)
@@ -113,8 +118,8 @@ weights = []
 npops = len(pops)
 
 for r in range(n_runs):
-    if r>0:
-        p.reset()
+    #if r>0:
+    #    p.reset()
     # need to reset the poisson sources, otherwise spike trains repeat too often
     for i in range(npops):
         pop_src = pops_src[i]
@@ -124,10 +129,11 @@ for r in range(n_runs):
         pop_src.set(rate=pre_rates[pre_rate_ind])
         pop_src2.set(rate=drive_rates[dr_rate_ind])
         pop_ex = pops[i]
-        pop_ex.initialize(v=-65*scale_sys)
+        pop_ex.set(v=-65*scale_sys)
+        pop_ex.set(i_ca2=3.0)
+        conns[i].set_weights_and_delays( (w0)*w_mult, 1.0)
 
     p.run(simtime)
-    new_rates = np.zeros(n_nrn, dtype=int)
     for i in range(npops):
         pop_ex = pops[i]
         proj = projections[i]
@@ -139,6 +145,13 @@ for r in range(n_runs):
         new_w = proj.get('weight', format='list', with_address=False)
         weights.append(new_w)
 
+    # make a short run to get rid of residual input currents
+    for i in range(npops):
+        pop_src = pops_src[i]
+        pop_src2 = pops_src2[i]
+        pop_src.set(rate=0)
+        pop_src2.set(rate=0)
+    p.run(cooldowntime)
 
 
     nseg = nseg+1
@@ -150,8 +163,10 @@ for r in range(n_runs):
 for i in range(npops):
     pop_ex = pops[i]
     alltrains = pop_ex.get_data('spikes').segments
+    trains = alltrains[0].spiketrains
     for nseg in range(n_runs):
-        trains = alltrains[nseg].spiketrains
+        start = nseg*segtime
+        stop = (nseg)*segtime + simtime
         pre_rate_ind = i / n_drive_rates
         dr_rate_ind = i - pre_rate_ind * n_drive_rates
         new_w = weights[nseg*npops+i]
@@ -159,7 +174,9 @@ for i in range(npops):
         #print "pre",pre_rates[pre_rate_ind]
         #print "dr", drive_rates[dr_rate_ind]
         for n in range(n_nrn):
-            n_spikes = trains[n].shape[0]
+            trains_n = trains[n]
+            trains_n = trains_n[(start<=trains_n) & (trains_n<stop)]
+            n_spikes = trains_n.shape[0]
             new_rate = int(round( n_spikes*1000.0/simtime ))
             #print n,":",n_spikes, new_rate
 
