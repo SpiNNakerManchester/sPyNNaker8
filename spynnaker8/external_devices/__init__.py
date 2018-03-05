@@ -135,6 +135,7 @@ __all__ = [
     "activate_live_output_to",
     "SpikeInjector",
     "register_database_notification_request",
+    "run_forever",
     "add_poisson_live_rate_control"
 ]
 
