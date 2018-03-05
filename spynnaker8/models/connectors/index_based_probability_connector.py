@@ -14,7 +14,7 @@ class IndexBasedProbabilityConnector(CommonIndexBasedProbabilityConnector):
     :param allow_self_connections: allow a neuron to connect to itself
     :type allow_self_connections: bool
     """
-    slots = []
+    __slots__ = []
 
     def __init__(
             self, index_expression, allow_self_connections=True, rng=None,
