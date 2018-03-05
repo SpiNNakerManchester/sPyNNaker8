@@ -5,7 +5,7 @@ import os
 import pickle
 import unittest
 from p8_integration_tests.base_test_case import BaseTestCase
-from p8_integration_tests.scripts.synfire_run import TestRun
+from p8_integration_tests.scripts.synfire_run import SynfireRunner
 from spynnaker8.utilities import neo_compare
 
 from spinnman.exceptions import SpinnmanTimeoutException
@@ -19,7 +19,7 @@ neurons_per_core = n_neurons/2
 runtime = 500
 current_file_path = os.path.dirname(os.path.abspath(__file__))
 spike_path = os.path.join(current_file_path, "spikes.pickle")
-synfire_run = TestRun()
+synfire_run = SynfireRunner()
 
 
 class TestPrintSpikes(BaseTestCase):

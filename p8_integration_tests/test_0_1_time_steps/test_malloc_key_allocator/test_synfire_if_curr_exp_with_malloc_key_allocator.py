@@ -6,12 +6,12 @@ import pickle
 import unittest
 
 from p8_integration_tests.base_test_case import BaseTestCase
-from p8_integration_tests.scripts.synfire_run import TestRun
+from p8_integration_tests.scripts.synfire_run import SynfireRunner
 from spynnaker8.utilities import neo_compare
 from spinnman.exceptions import SpinnmanTimeoutException
 from unittest import SkipTest
 
-synfire_run = TestRun()
+synfire_run = SynfireRunner()
 
 
 class TestMallocKeyAllocatorWithSynfire(BaseTestCase):

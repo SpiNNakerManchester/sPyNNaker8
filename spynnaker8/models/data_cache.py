@@ -6,9 +6,10 @@ from spynnaker8.models.variable_cache import VariableCache
 class DataCache(object):
     """ Storage object to hold all the data to (re)create a Neo Segment
 
-    Required because deepcopy does not work on neo Objects
+    .. note::
+        Required because deep-copy does not work on neo Objects
 
-    Stores the Data shared by all variable types at the top level
+    Stores the Data shared by all variable types at the top level\
     and holds a cache for the variable specific data
     """
 
@@ -21,31 +22,32 @@ class DataCache(object):
                  "_segment_number",
                  "_t")
 
-    _cache = dict()
-
     def __init__(self, label, description, segment_number,
                  recording_start_time, t, first_id):
-        """ constructor
-
+        """
         :param label: cache label
         :param description: cache description
         :param segment_number: cache segment number
-        :param recording_start_time: when this cache was started in\
-            recording space.
+        :param recording_start_time: \
+            when this cache was started in recording space.
         :param t: time
         :param first_id: first atom
         """
+        # pylint: disable=too-many-arguments
         self._label = label
         self._description = description
         self._segment_number = segment_number
         self._recording_start_time = recording_start_time
         self._t = t
         self._first_id = first_id
+        self._cache = dict()
+        self._rec_datetime = None
 
     @property
     def variables(self):
-        """Provides a list of which variables data has been cached for
-        rtype: Iterator (str)
+        """ Provides a list of which variables data has been cached for
+
+        :rtype: Iterator (str)
         """
         return self._cache.keys()
 
@@ -78,38 +80,37 @@ class DataCache(object):
         return self._rec_datetime
 
     def has_data(self, variable):
-        """
-        Checks if data for a variable has been cached
+        """ Checks if data for a variable has been cached
 
         :param variable: Name of variable
         :type variable: str
         :return: True if there is cached data
-        :rtype bool
+        :rtype: bool
         """
         return variable in self._cache
 
     def get_data(self, variable):
-        """
-        Get the varaaible cahe for the named variable
+        """ Get the variable cache for the named variable
+
         :param variable: name of variable to get cache for
         :rtype variable: str
         :return: The cache data, ids, indexes and units
-        :rtype VariableCache
+        :rtype: VariableCache
         """
         return self._cache[variable]
 
     def save_data(self, variable, data, ids, units):
-        """
-        Saves the data for one variable in this segment
+        """ Saves the data for one variable in this segment
+
         :param variable: name of variable data applies to
         :type variable: str
-        :param data: raw data in spynakker format
+        :param data: raw data in spynnaker format
         :type data: nparray
         :param ids: ids for which data should be returned
-        :type nparray
+        :type ids: nparray
         :param units: the units in which the data is
         :type units: str
-        :rtype None
+        :rtype: None
         """
         self._rec_datetime = datetime.now()
         variable_cache = VariableCache(data, ids, units)
