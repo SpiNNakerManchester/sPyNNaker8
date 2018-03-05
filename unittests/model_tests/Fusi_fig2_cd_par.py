@@ -1,22 +1,23 @@
 import spynnaker8 as p
 from pyNN.utility.plotting import Figure, Panel, DataTable
 import matplotlib.pyplot as plt
+import matplotlib
 import numpy as np
 from neo.core.spiketrain import SpikeTrain
 from scipy.ndimage.measurements import label
 from matplotlib.pyplot import legend
 from idna.core import _alabel_prefix
 
-import matplotlib.pyplot as plt
-
 from neo.io import PyNNNumpyIO
 from neo.io import AsciiSpikeTrainIO
 from neo.io import PyNNTextIO
 import time
+matplotlib.use('Agg')
+plt.ioff()
 
 timestr = time.strftime("%Y%m%d-%H%M%S")
 
-figname =  "new_w"
+figname =  "LTP"
 
 do_LTP = True # true for LTPs, false for LTDs
 #do_LTP = False # true for LTPs, false for LTDs
@@ -27,7 +28,7 @@ p.set_number_of_neurons_per_core(p.extra_models.IFCurrExpCa2Concentration, 200)
 
 simtime = 300
 
-n_runs = 10
+n_runs = 20
 
 
 w0 = 0.0
