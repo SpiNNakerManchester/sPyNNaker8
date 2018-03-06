@@ -120,11 +120,18 @@ class Recorder(RecordingCommon):
                 first_id=self._population._first_id)
 
             for variable in variables:
-                data = self._get_recorded_variable(variable)
-                ids = sorted(
-                    self._filter_recorded(self._indices_to_record[variable]))
-                data_cache.save_data(variable=variable, data=data, ids=ids,
-                                     units=self._get_units(variable))
+                if variable == SPIKES:
+                    data = self._get_spikes()
+                    sampling_interval = self._population._vertex. \
+                        get_spikes_sampling_interval()
+                    indexes = self._population.size
+                else:
+                    results = self._get_recorded_matrix(variable)
+                    (data, indexes, sampling_interval) = results
+                data_cache.save_data(
+                    variable=variable, data=data, indexes=indexes,
+                    units=self._get_units(variable),
+                    sampling_interval=sampling_interval)
             self._data_cache[segment_number] = data_cache
 
     def _filter_recorded(self, filter_ids):
@@ -168,30 +175,32 @@ class Recorder(RecordingCommon):
         variables = self._clean_variables(variables)
 
         for variable in variables:
-            ids = sorted(
-                self._filter_recorded(self._indices_to_record[variable]))
-            indexes = numpy.array(
-                [self._population.id_to_index(atom_id) for atom_id in ids])
             if variable == SPIKES:
+                sampling_interval = self._population._vertex. \
+                    get_spikes_sampling_interval()
                 read_in_spikes(
                     segment=segment,
-                    spikes=self._get_recorded_variable(variable),
+                    spikes=self._get_spikes(),
                     t=get_simulator().get_current_time(),
-                    ids=ids, indexes=indexes,
+                    n_neurons=self._population.size,
                     first_id=self._population._first_id,
                     recording_start_time=self._recording_start_time,
+                    sampling_interval=sampling_interval,
                     label=self._population.label)
             else:
+                (data, indexes, sampling_interval) = self._get_recorded_matrix(
+                    variable)
+                ids = map(self._population.index_to_id, indexes)
                 read_in_signal(
                     segment=segment,
                     block=block,
-                    signal_array=self._get_recorded_variable(variable),
+                    signal_array=data,
                     ids=ids, indexes=indexes,
                     variable=variable,
                     recording_start_time=self._recording_start_time,
+                    sampling_interval=sampling_interval,
                     units=self._get_units(variable),
                     label=self._population.label)
-
         block.segments.append(segment)
 
         if clear:
@@ -223,28 +232,29 @@ class Recorder(RecordingCommon):
                                segment_number, variable)
                 continue
             variable_cache = data_cache.get_data(variable)
-            ids = variable_cache.ids
-            indexes = numpy.array(
-                [self._population.id_to_index(atom_id) for atom_id in ids])
+            indexes = variable_cache.indexes
             if variable == SPIKES:
                 read_in_spikes(
                     segment=segment,
                     spikes=variable_cache.data,
                     t=data_cache.t,
-                    ids=ids,
-                    indexes=indexes,
+                    # In this case indexes saved self._population.size
+                    n_neurons=indexes,
                     first_id=data_cache.first_id,
                     recording_start_time=data_cache.recording_start_time,
+                    sampling_interval=variable_cache.sampling_interval,
                     label=data_cache.label)
             else:
+                ids = map(self._population.index_to_id, indexes)
                 read_in_signal(
                     segment=segment,
                     block=block,
                     signal_array=variable_cache.data,
-                    ids=variable_cache.ids,
+                    ids=ids,
                     indexes=indexes,
                     variable=variable,
                     recording_start_time=data_cache.recording_start_time,
+                    sampling_interval=variable_cache.sampling_interval,
                     units=variable_cache.units,
                     label=data_cache.label)
 
@@ -321,9 +331,10 @@ class Recorder(RecordingCommon):
 # The only reason the are listed here is that this is currently the only use
 
 
-def read_in_spikes(segment, spikes, t, ids, indexes, first_id,
-                   recording_start_time, label):
-    """ Converts the data into SpikeTrains and saves them to the segment
+def read_in_spikes(segment, spikes, t, n_neurons, first_id,
+                   recording_start_time, sampling_interval, label):
+    """
+    Converts the data into SpikeTrains and saves them to the segment
 
     :param segment: Segment to add spikes to
     :type segment: neo.Segment
@@ -331,28 +342,28 @@ def read_in_spikes(segment, spikes, t, ids, indexes, first_id,
     :type spikes: nparray
     :param t: last simulation time
     :type t: int
-    :param ids: list of the ids to save spikes for
-    :type ids: nparray
-    :param indexes: list of the channel indexes
-    :type indexes: nparray
+    :param n_neurons: total number of neurons including ones not recording
+    :type n_neurons: int
     :param first_id: id of first neuron
     :type first_id: int
     :param recording_start_time: time recording started
     :type  recording_start_time: int
+    :param sampling_interval: how often a neuron is recorded
     :param label: recording elements label
     :type label: str
     """
     # pylint: disable=too-many-arguments
     t_stop = t * quantities.ms
 
-    for (_id, index) in zip(ids, indexes):
+    for index in xrange(n_neurons):
         spiketrain = neo.SpikeTrain(
-            times=spikes[spikes[:, 0] == _id - first_id][:, 1],
+            times=spikes[spikes[:, 0] == index][:, 1],
             t_start=recording_start_time,
             t_stop=t_stop,
             units='ms',
+            sampling_rate=sampling_interval,
             source_population=label,
-            source_id=_id,
+            source_id=index + first_id,
             source_index=index)
         # get times per atom
         segment.spiketrains.append(spiketrain)
@@ -386,7 +397,7 @@ def _convert_extracted_data_into_neo_expected_format(
 
 
 def read_in_signal(segment, block, signal_array, ids, indexes, variable,
-                   recording_start_time, units, label):
+                   recording_start_time, sampling_interval, units, label):
     """ Reads in a data item that's not spikes (likely v, gsyn e, gsyn i)
 
     Saves this data to the segment.
@@ -401,44 +412,43 @@ def read_in_signal(segment, block, signal_array, ids, indexes, variable,
     :param indexes: the channel indices
     :param variable: the variable name
     :param recording_start_time: when recording started
+    :param sampling_interval: how often a neuron is recorded
     :param units: the units of the recorded value
     :param label: human readable label
     """
     # pylint: disable=too-many-arguments
     t_start = recording_start_time * quantities.ms
-    sampling_interval = get_simulator().machine_time_step / 1000.0
     sampling_period = sampling_interval * quantities.ms
-    if not signal_array.size:
-        return
-    processed_data = _convert_extracted_data_into_neo_expected_format(
-        signal_array, indexes)
+    indexes = numpy.array(indexes)
+    if signal_array.size > 0:
+        # source_ids = numpy.fromiter(ids, dtype=int)
+        if pynn8_syntax:
+            data_array = neo.AnalogSignalArray(
+                    signal_array,
+                    units=units,
+                    t_start=t_start,
+                    sampling_period=sampling_period,
+                    name=variable,
+                    source_population=label,
+                    channel_index=indexes,
+                    source_ids=ids)
+            data_array.shape = (data_array.shape[0], data_array.shape[1])
+            segment.analogsignalarrays.append(data_array)
 
-    if pynn8_syntax:
-        _add_pynn8_signal_chunk(
-            segment, processed_data, units, t_start, sampling_period, variable,
-            label, indexes, ids)
-    else:
-        _add_pynn9_signal_chunk(
-            segment, processed_data, units, t_start, sampling_period, variable,
-            label, ids, block)
-
-
-def _add_pynn8_signal_chunk(
-        segment, processed_data, units, t_start, sampling_period, variable,
-        label, indices, ids):
-    # pylint: disable=too-many-arguments
-    source_ids = numpy.fromiter(ids, dtype=int)
-    data_array = neo.AnalogSignalArray(
-        processed_data,
-        units=units,
-        t_start=t_start,
-        sampling_period=sampling_period,
-        name=variable,
-        source_population=label,
-        channel_index=indices,
-        source_ids=source_ids)
-    data_array.shape = (data_array.shape[0], data_array.shape[1])
-    segment.analogsignalarrays.append(data_array)
+        else:
+            data_array = neo.AnalogSignal(
+                signal_array,
+                units=units,
+                t_start=t_start,
+                sampling_period=sampling_period,
+                name=variable,
+                source_population=label,
+                source_ids=ids)
+            channel_index = _get_channel_index(indexes, block)
+            data_array.channel_index = channel_index
+            data_array.shape = (data_array.shape[0], data_array.shape[1])
+            segment.analogsignals.append(data_array)
+            channel_index.analogsignals.append(data_array)
 
 
 def _add_pynn9_signal_chunk(

@@ -25,14 +25,16 @@ class SynfireRunner(object):
             spike_times_list=None,
             placement_constraint=None, weight_to_spike=2.0, delay=17,
             neurons_per_core=10, cell_class=IF_curr_exp, constraint=None,
-            cell_params=None, run_times=None, reset=False,
+            cell_params=CELL_PARAMS_LIF, run_times=None, reset=False,
             extract_between_runs=True, set_between_runs=None, new_pop=False,
             record_input_spikes=False, record_input_spikes_7=False,
             record=True, get_spikes=None, spike_path=None, record_7=False,
             record_v=True, get_v=None, v_path=None, record_v_7=False,
-            record_gsyn_exc=True, record_gsyn_inh=True, get_gsyn_exc=None,
-            get_gsyn_inh=None, gsyn_path_exc=None, gsyn_path_inh=None,
-            record_gsyn_exc_7=False, record_gsyn_inh_7=False, get_all=False,
+            v_sampling_rate=None, record_gsyn_exc=True, record_gsyn_inh=True,
+            get_gsyn_exc=None, get_gsyn_inh=None, gsyn_path_exc=None,
+            gsyn_path_inh=None, record_gsyn_exc_7=False,
+            record_gsyn_inh_7=False, gsyn_exc_sampling_rate=None,
+            gsyn_inh_sampling_rate=None, get_all=False,
             use_spike_connections=True, use_wrap_around_connections=True,
             get_weights=False, get_delays=False, end_before_print=False,
             randomise_v_init=False):
@@ -124,6 +126,9 @@ class SynfireRunner(object):
         :param record_v_7: If True will ask for voltage to be recorded\
             in PyNN7 format
         :type record_v_7: bool
+        :param v_sampling_rate: Rate at which to sample v.
+        :type v_sampling_rate: int, float ot None
+        :param record_gsyn_exc: If True will aks for gsyn exc to be recorded
         :param record_gsyn_exc: If True will ask for gsyn exc to be recorded
         :type record_gsyn_exc: bool
         :param record_gsyn_inh: If True will ask for gsyn inh to be recorded
@@ -148,7 +153,7 @@ class SynfireRunner(object):
         :param record_gsyn_inh_7: \
             If True will ask for gsyn inh to be recorded in PyNN 7 format
         :type record_gsyn_inh_7: bool
-        :param get_all: if True will obtain another neo object with all the\
+        :param get_all: if True will obtain another neo object with all the
             data set to be recorded by any other parameter
         :type get_all: bool
         :param get_weights: If True set will add a weight value to the return
@@ -200,11 +205,14 @@ class SynfireRunner(object):
         if record or record_7 or spike_path:
             populations[0].record("spikes")
         if record_v or record_v_7 or v_path:
-            populations[0].record("v")
+            populations[0].record(
+                variables="v", sampling_interval=v_sampling_rate)
         if record_gsyn_exc or record_gsyn_exc_7 or gsyn_path_exc:
-            populations[0].record("gsyn_exc")
+            populations[0].record(
+                variables="gsyn_exc", sampling_interval=gsyn_exc_sampling_rate)
         if record_gsyn_inh or record_gsyn_inh_7 or gsyn_path_inh:
-            populations[0].record("gsyn_inh")
+            populations[0].record(
+                variables="gsyn_inh", sampling_interval=gsyn_inh_sampling_rate)
         if record_input_spikes or record_input_spikes_7:
             populations[1].record("spikes")
 
