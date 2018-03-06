@@ -182,7 +182,7 @@ def do_run(plot):
     return stim_spikes, spklist_exc, spklist_inh
 
 
-class FixedNumberPreConnectorTest(BaseTestCase):
+class FixedNumberPreConnectorLargerTest(BaseTestCase):
     def test_run(self):
         stim_spikes, spklist_exc, spklist_inh = do_run(plot=False)
         # any checks go here

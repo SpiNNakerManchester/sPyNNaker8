@@ -9,7 +9,7 @@ import spynnaker.spike_checker as spike_checker
 from spynnaker8.spynnaker_plotting import SpynnakerPanel
 from pyNN.utility.plotting import Figure
 from p8_integration_tests.base_test_case import BaseTestCase
-from p8_integration_tests.scripts.synfire_run import TestRun
+from p8_integration_tests.scripts.synfire_run import SynfireRunner
 import matplotlib.pyplot as plt
 
 n_neurons = 200  # number of neurons in each population
@@ -26,7 +26,7 @@ gysn_file = os.path.join(current_file_path, "200_17_gsyn.csv")
 
 class Synfire20n20pcDelaysDelayExtensionsAllRecording(BaseTestCase):
     def test_all_no_constarint(self):
-        synfire_run = TestRun()
+        synfire_run = SynfireRunner()
         synfire_run.do_run(n_neurons, neurons_per_core=neurons_per_core,
                            delay=delay, run_times=[runtime], record=True,
                            record_7=True, record_v=True, record_v_7=True,
@@ -63,7 +63,7 @@ class Synfire20n20pcDelaysDelayExtensionsAllRecording(BaseTestCase):
                         "spikes neo method mismatch")
 
     def test_all_constarint(self):
-        synfire_run = TestRun()
+        synfire_run = SynfireRunner()
         synfire_run.do_run(n_neurons, neurons_per_core=neurons_per_core,
                            delay=delay, run_times=[runtime],
                            placement_constraint=placement_constraint,
@@ -92,7 +92,7 @@ class Synfire20n20pcDelaysDelayExtensionsAllRecording(BaseTestCase):
                         "spikes neo method mismatch")
 
     def test_spikes_no_constarint(self):
-        synfire_run = TestRun()
+        synfire_run = SynfireRunner()
         synfire_run.do_run(n_neurons, neurons_per_core=neurons_per_core,
                            delay=delay, run_times=[runtime], record=True,
                            record_v=False, record_gsyn_exc_7=False,
@@ -106,7 +106,7 @@ class Synfire20n20pcDelaysDelayExtensionsAllRecording(BaseTestCase):
                         "spikes neo method mismatch")
 
     def test_v_no_constarint(self):
-        synfire_run = TestRun()
+        synfire_run = SynfireRunner()
         synfire_run.do_run(n_neurons, neurons_per_core=neurons_per_core,
                            delay=delay, run_times=[runtime], record=False,
                            record_v=True, record_gsyn_exc_7=False,
@@ -119,7 +119,7 @@ class Synfire20n20pcDelaysDelayExtensionsAllRecording(BaseTestCase):
                         "v neo method mismatch")
 
     def test_gsyn_no_constarint(self):
-        synfire_run = TestRun()
+        synfire_run = SynfireRunner()
         synfire_run.do_run(n_neurons, neurons_per_core=neurons_per_core,
                            delay=delay, run_times=[runtime], record=False,
                            record_v=False, record_gsyn_exc_7=True,
@@ -133,7 +133,7 @@ class Synfire20n20pcDelaysDelayExtensionsAllRecording(BaseTestCase):
 
 
 if __name__ == '__main__':
-    synfire_run = TestRun()
+    synfire_run = SynfireRunner()
     synfire_run.do_run(n_neurons, neurons_per_core=neurons_per_core,
                        delay=delay, run_times=[runtime],
                        placement_constraint=placement_constraint, record=True,

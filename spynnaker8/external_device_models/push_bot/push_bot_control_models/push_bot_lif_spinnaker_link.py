@@ -6,6 +6,7 @@ from spynnaker.pyNN.external_devices_models import ExternalDeviceLifControl
 
 import logging
 
+_apv_defs = AbstractPopulationVertex.non_pynn_default_parameters
 logger = logging.getLogger(__name__)
 
 
@@ -16,16 +17,12 @@ class PushBotLifSpinnakerLinkDataHolder(DataHolder):
     def __init__(
             self, protocol, devices,
 
-            spikes_per_second=AbstractPopulationVertex.
-            none_pynn_default_parameters['spikes_per_second'],
-            label=AbstractPopulationVertex.none_pynn_default_parameters[
-                'label'],
-            ring_buffer_sigma=AbstractPopulationVertex.
-            none_pynn_default_parameters['ring_buffer_sigma'],
-            incoming_spike_buffer_size=AbstractPopulationVertex.
-            none_pynn_default_parameters['incoming_spike_buffer_size'],
-            constraints=AbstractPopulationVertex.
-            none_pynn_default_parameters['constraints'],
+            spikes_per_second=_apv_defs['spikes_per_second'],
+            label=_apv_defs['label'],
+            ring_buffer_sigma=_apv_defs['ring_buffer_sigma'],
+            incoming_spike_buffer_size=_apv_defs[
+                'incoming_spike_buffer_size'],
+            constraints=_apv_defs['constraints'],
 
             # default params for the neuron model type
             tau_m=ExternalDeviceLifControl.default_parameters['tau_m'],
@@ -37,19 +34,17 @@ class PushBotLifSpinnakerLinkDataHolder(DataHolder):
             tau_refrac=ExternalDeviceLifControl.default_parameters[
                 'tau_refrac'],
             i_offset=ExternalDeviceLifControl.default_parameters['i_offset'],
-            v_init=ExternalDeviceLifControl.none_pynn_default_parameters[
-                'v_init']):
-
-        DataHolder.__init__(
-            self,
-            {'protocol': protocol, 'devices': devices,
-             'spikes_per_second': spikes_per_second,
-             'ring_buffer_sigma': ring_buffer_sigma, 'label': label,
-             'incoming_spike_buffer_size': incoming_spike_buffer_size,
-             'constraints': constraints,
-             'tau_m': tau_m, 'cm': cm, 'v_rest': v_rest, 'v_reset': v_reset,
-             'tau_syn_E': tau_syn_E, 'tau_syn_I': tau_syn_I,
-             'tau_refrac': tau_refrac, 'i_offset': i_offset, 'v_init': v_init})
+            v_init=ExternalDeviceLifControl.initialize_parameters['v_init']):
+        # pylint: disable=too-many-arguments, too-many-locals
+        super(PushBotLifSpinnakerLinkDataHolder, self).__init__({
+            'protocol': protocol, 'devices': devices,
+            'spikes_per_second': spikes_per_second,
+            'ring_buffer_sigma': ring_buffer_sigma, 'label': label,
+            'incoming_spike_buffer_size': incoming_spike_buffer_size,
+            'constraints': constraints,
+            'tau_m': tau_m, 'cm': cm, 'v_rest': v_rest, 'v_reset': v_reset,
+            'tau_syn_E': tau_syn_E, 'tau_syn_I': tau_syn_I,
+            'tau_refrac': tau_refrac, 'i_offset': i_offset, 'v_init': v_init})
 
     @staticmethod
     def build_model():
