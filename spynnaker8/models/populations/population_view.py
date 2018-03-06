@@ -84,12 +84,6 @@ class PopulationView(PopulationBase):
             cells.append(IDMixin(self._population, id))
         return cells
 
-    def __add__(other):
-        """ A Population / PopulationView can be added to another
-            Population, PopulationView or Assembly, returning an Assembly.
-        """
-        raise NotImplementedError
-
     def __getitem__(self, index):
         """
         Return either a single cell(ID object) from the Population,
@@ -270,31 +264,6 @@ class PopulationView(PopulationBase):
             multiple of the simulation timestep.
         """
         # TODO
-
-    def record_gsyn(self, *args, **kwargs):
-        """ Deprecated. Use record(['gsyn_exc', 'gsyn_inh']) instead. """
-        if len(args) > 0:
-            raise NotImplementedError(
-                "Use record(['gsyn_exc', 'gsyn_inh']) instead.")
-        if len(kwargs) > 0:
-            raise NotImplementedError(
-                "Use record(['gsyn_exc', 'gsyn_inh']) instead")
-        return self.record(['gsyn_exc', 'gsyn_inh'])
-
-    def record_v(self, *args, **kwargs):
-        """ Deprecated. Use record('v') instead. """
-        if len(args) > 0:
-            raise NotImplementedError(
-                "Use record('v') instead.")
-        if len(kwargs) > 0:
-            raise NotImplementedError(
-                "Use record('v']) instead")
-        return self.record('v')
-
-    def rset(self, *args, **kwargs):
-        """ Deprecated. Use set(parametername=rand_distr) instead. """
-        raise NotImplementedError(
-            " Use set(parametername=rand_distr) instead.")
 
     def sample(self, n, rng=None):
         """

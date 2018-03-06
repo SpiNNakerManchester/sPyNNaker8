@@ -39,10 +39,9 @@ class PopulationBase(object):
 
     def getSpikes(self, *args, **kwargs):
         """ Deprecated.Use get_data('spikes') instead. """
-        if len(args) > 0:
-            raise NotImplementedError('Use get_data("spikes") instead')
-        if len(kwargs) > 0:
-            raise NotImplementedError('Use get_data("spikes") instead')
+        logger.warning(
+            'getSpikes is depricated. Call transfered to get_data("spikes") '
+            'without additional arguements')
         return self.get_data("spikes")
 
     @abstractmethod
@@ -67,12 +66,10 @@ class PopulationBase(object):
 
     def get_gsyn(self, *args, **kwargs):
         """ Deprecated.Use get_data(['gsyn_exc', 'gsyn_inh']) instead."""
-        if len(args) > 0:
-            raise NotImplementedError(
-                "Use get_data(['gsyn_exc', 'gsyn_inh']) instead")
-        if len(kwargs) > 0:
-            raise NotImplementedError(
-                "Use get_data(['gsyn_exc', 'gsyn_inh']) instead")
+        logger.warning(
+            'get_gsy is depricated. '
+            'Call transfered to get_data(["gsyn_exc", "gsyn_inh"]) '
+            'without additional arguements')
         return self.get_data(['gsyn_exc', 'gsyn_inh'])
 
     @abstractmethod
@@ -84,10 +81,9 @@ class PopulationBase(object):
 
     def get_v(self, *args, **kwargs):
         """ Deprecated.Use get_data('v') instead. """
-        if len(args) > 0:
-            raise NotImplementedError('Use get_data("v") instead')
-        if len(kwargs) > 0:
-            raise NotImplementedError('Use get_data("v") instead')
+        logger.warning(
+            'getSpikes is depricated. '
+            'Call transfered to get_data("v") without additional arguements')
         return self.get_data("v")
 
     def inject(self, current_source):
@@ -115,15 +111,15 @@ class PopulationBase(object):
 
     def meanSpikeCount(self, *args, **kwargs):
         """ Deprecated. Use mean_spike_count() instead. """
+        logger.warning(
+            'meanSpikeCount is depricated. '
+            'Call transfered to mean_spike_count with additional arguements')
         return self.mean_spike_count(*args, **kwargs)
 
     def mean_spike_count(self, gather=True):
         """ Returns the mean number of spikes per neuron. """
-        sum = 0
         counts = self.get_spike_counts()
-        for count in counts.itervalues():
-            sum += count
-        return sum / len(counts)
+        return sum(counts) / len(counts)
 
     def nearest(self, position):
         """ Return the neuron closest to the specified position."""
@@ -139,45 +135,102 @@ class PopulationBase(object):
         """ NO PyNN description of this method """
         raise NotImplementedError
 
-    def printSpikes(self, *args, **kwargs):
-        """ Deprecated. Use write_data(file, 'spikes') instead. """
-        raise NotImplementedError("Use write_data(file, 'spikes') instead.")
+    @abstractmethod
+    def write_data(self, io, variables='all', gather=True, clear=False,
+                   annotations=None):
+        """ Write recorded data to file, using one of the file formats\
+            supported by Neo.
 
-    def print_gsyn(self, *args, **kwargs):
+        :param io: \
+            a Neo IO instance, or a string for where to put a neo instance
+        :type io: neo instance or str
+        :param variables: \
+            either a single variable name or a list of variable names.\
+            Variables must have been previously recorded, otherwise an\
+            Exception will be raised.
+        :type variables: str or list(str)
+        :param gather: pointless on sPyNNaker
+        :param clear: \
+            clears the storage data if set to true after reading it back
+        :param annotations: annotations to put on the neo block
+        """
+        # pylint: disable=too-many-arguments
+
+    def printSpikes(self, filename, gather=True):
+        """ Deprecated. Use write_data(file, 'spikes') instead.
+
+        Note: Method signature is the PyNN0.7 one
+        """
+        logger.warning(
+            'printSpikes is depricated. '
+            'Call transfered to write_data(file, "spikes", gatherer) instead.')
+        self.write_data(filename, 'spikes', gather=True)
+
+    def print_gsyn(self, filename, gather=True):
         """
         Deprecated. Use write_data(file, ['gsyn_exc', 'gsyn_inh']) instead.
 
-       """
-        raise NotImplementedError(
-            "Use write_data(file, ['gsyn_exc', 'gsyn_inh']) instead.")
+        Note: Method signature is the PyNN0.7 one
+        """
+        logger.warning(
+            'print_gsyn is depricated. Call transfered to '
+            'write_data(file, ["gsyn_exc", "gsyn_inh"], gatherer) instead.')
+        self.write_data(filename, ['gsyn_exc', 'gsyn_inh'], gather=True)
 
-    def print_v(self, *args, **kwargs):
-        """  Deprecated. Use write_data(file, 'v') instead."""
-        raise NotImplementedError("Use write_data(file, 'v') instead.")
+    def print_v(self, filename, gather=True):
+        """ Deprecated. Use write_data(file, 'v') instead.
+
+        Note: Method signature is the PyNN0.7 one
+        """
+        logger.warning(
+            'print_v is depricated. '
+            'Call transfered to write_data(file, "v", gatherer) instead.')
+        self.write_data(filename, 'v', gather=True)
 
     def receptor_types(self):
         """ NO PyNN description of this method """
         raise NotImplementedError
 
-    def record_gsyn(self, *args, **kwargs):
-        """ Deprecated. Use record(['gsyn_exc', 'gsyn_inh']) instead. """
-        if len(args) > 0:
-            raise NotImplementedError(
-                "Use record(['gsyn_exc', 'gsyn_inh']) instead.")
-        if len(kwargs) > 0:
-            raise NotImplementedError(
-                "Use record(['gsyn_exc', 'gsyn_inh']) instead")
-        return self.record(['gsyn_exc', 'gsyn_inh'])
+    @abstractmethod
+    def record(self, variables, to_file=None, sampling_interval=None,
+               indexes=None):
+        """ Record the specified variable or variables for all cells in the\
+            Population or view.
 
-    def record_v(self, *args, **kwargs):
-        """ Deprecated. Use record('v') instead. """
-        if len(args) > 0:
-            raise NotImplementedError(
-                "Use record('v') instead.")
-        if len(kwargs) > 0:
-            raise NotImplementedError(
-                "Use record('v']) instead")
-        return self.record('v')
+        :param variables: either a single variable name or a list of variable\
+            names. For a given celltype class, `celltype.recordable` contains\
+            a list of variables that can be recorded for that celltype.
+        :type variables: str or list(str)
+        :param to_file: a file to automatically record to (optional).\
+            `write_data()` will be automatically called when `end()` is called.
+        :type to_file: a Neo IO instance
+        :param sampling_interval: a value in milliseconds, and an integer\
+            multiple of the simulation timestep.
+        """
+
+    def record_gsyn(self, sampling_interval=1, indexes=None, to_file=None):
+        """ Deprecated. Use record(['gsyn_exc', 'gsyn_inh']) instead.
+
+        Note: Method signature is the PyNN0.7 one
+        with the extra None Pynn sampling_interval and indexes
+        """
+        logger.warning(
+            'record_gsyn is depricated. Call transfered to '
+            'record(["gsyn_exc", "gsyn_inh"], tofile) instead.')
+        return self.record(
+            ['gsyn_exc', 'gsyn_inh'], to_file=to_file,
+            sampling_interval=sampling_interval, indexes=indexes)
+
+    def record_v(self, sampling_interval=1, indexes=None, to_file=None):
+        """ Deprecated. Use record('v') instead.
+
+        Note: Method signature is the PyNN0.7 one
+        with the extra None Pynn sampling_interval and indexes
+        """
+        logger.warning('record_v is depricated. '
+                       'Call transfered to record(["v"], .....) instead.')
+        return self.record('v', to_file=to_file,
+            sampling_interval=sampling_interval, indexes=indexes)
 
     def rset(self, *args, **kwargs):
         """ Deprecated. Use set(parametername=rand_distr) instead. """
