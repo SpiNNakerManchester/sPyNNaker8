@@ -1,5 +1,7 @@
 import logging
+import numpy
 from pyNN import descriptions
+from pyNN.random import NumpyRNG
 
 from spinn_utilities.ranged.abstract_sized import AbstractSized
 from spynnaker8.models.populations import IDMixin, PopulationBase
@@ -36,7 +38,7 @@ class PopulationView(PopulationBase):
         ids = sized.selector_to_ids(selector, warn=True)
 
         if isinstance(parent, PopulationView):
-            self._population =  parent.grandparent
+            self._population = parent.grandparent
             self._indexes = parent.index_in_grandparent(ids)
         else:
             self._population = parent
@@ -271,8 +273,12 @@ class PopulationView(PopulationBase):
             PopulationView object.
         """
         if not rng:
-            rng = random.NumpyRNG()
-        indices = rng.permutation(numpy.arange(len(self), dtype=numpy.int))[0:n]
+            rng = NumpyRNG()
+        indices = rng.permutation(
+            numpy.arange(len(self), dtype=numpy.int))[0:n]
+        return PopulationView(
+            self, indices,
+            label="Random sample size {} from {}".format(n, self.label))
 
     def set(self, **parameters):
         """
