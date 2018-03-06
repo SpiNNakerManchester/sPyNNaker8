@@ -131,7 +131,17 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
             logger.warn(
                 "record indexes parameter is not standard PyNN so will not "
                 "work on other other simulators. "
-                "In the future this will be replaced with views")
+                "It is now depricated and replaced with views")
+        self._record_with_indexes(
+            variables, to_file, sampling_interval, indexes)
+
+    def record_with_indexes(
+            self, variables, to_file, sampling_interval, indexes):
+        """ Same as record but without none standard pynn warning
+
+        This method is none standard pynn and is intended only to be called by
+        record in a Population, View or Assembly
+        """
         if variables is None:  # reset the list of things to record
             # note that if record(None) is called, its a reset
             Recorder._turn_off_all_recording(self)
