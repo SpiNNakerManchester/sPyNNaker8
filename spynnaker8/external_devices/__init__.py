@@ -10,6 +10,7 @@ import os
 from spinn_front_end_common.abstract_models \
     import AbstractSendMeMulticastCommandsVertex
 from spinn_front_end_common.utility_models import LivePacketGather
+from spinn_front_end_common.utilities import globals_variables
 from spinn_utilities.socket_address import SocketAddress
 from spinnman.messages.eieio import EIEIOType
 
@@ -133,8 +134,18 @@ __all__ = [
     "activate_live_output_to",
     "SpikeInjector",
     "register_database_notification_request",
+    "run_forever",
     "add_poisson_live_rate_control"
 ]
+
+
+def run_forever():
+    """ supports running forever in pynn 0.8/0.9 format
+
+    :return: returns when the application has started running on the\
+    SpiNNaker platform.
+    """
+    AbstractSpiNNakerCommon.run(globals_variables.get_simulator(), None)
 
 
 def register_database_notification_request(hostname, notify_port, ack_port):
