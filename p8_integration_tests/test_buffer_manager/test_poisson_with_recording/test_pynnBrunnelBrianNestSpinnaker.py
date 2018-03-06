@@ -34,18 +34,14 @@ class PynnBrunnelBrianNestSpinnaker(BaseTestCase):
         esp_numpy = neo_convertor.convert_spikes(esp)
         s_numpy = neo_convertor.convert_spikes(s)
         self.assertEquals(2400, N_E)
-        if self._test_seed == 1:
-            self.assertEquals(244, len(esp_numpy))
-            self.assertEquals(23896, len(s_numpy))
-        else:
-            try:
-                self.assertLess(200, len(esp_numpy))
-                self.assertGreater(300, len(esp_numpy))
-                self.assertLess(22000, len(s_numpy))
-                self.assertGreater(26000, len(s_numpy))
-            except Exception as ex:
-                # Just in case the range failed
-                raise SkipTest(ex)
+        try:
+            self.assertLess(200, len(esp_numpy))
+            self.assertGreater(300, len(esp_numpy))
+            self.assertLess(22000, len(s_numpy))
+            self.assertGreater(26000, len(s_numpy))
+        except Exception as ex:
+            # Just in case the range failed
+            raise SkipTest(ex)
 
 
 if __name__ == '__main__':
