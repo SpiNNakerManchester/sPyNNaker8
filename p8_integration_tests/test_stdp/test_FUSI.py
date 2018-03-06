@@ -7,8 +7,9 @@ import unittest
 
 class TestFUSI(BaseTestCase):
 
-
-    shared_params = { 'w_min':0.0, 'w_max':1.0,  'w_drift': .0035, 'th_w':0.50,  'w_mult': 2.0,
+    # input w_max is calculated: w_max = w_max * w_mult / n_inp
+    # change the n_inp parameter to change input weights: to get w_max=0.1, n_inp should be set to 20
+    shared_params = { 'w_min':0.0, 'w_max':1.0,  'w_drift': .0035, 'th_w':0.50,  'w_mult': 2.0, 'n_inp':20,
         'V_th':-55.0,  'Ca_th_l': 3.0, 'Ca_th_h1': 4.0, 'Ca_th_h2' : 13.0,
         'a_plus' : 0.15,  'a_minus': 0.15,
         'tau_Ca' : 150, 'J_Ca' : 1.0, 'V_reset' : -65.0,
@@ -24,8 +25,9 @@ class TestFUSI(BaseTestCase):
     spike_times:    input spikes
     spike_times:    driving spikes
     test_name:    test name string to print in report
+    atol:        atol, relative to w_max (atol = atol * w_max)
     """
-    def run_one_test(self, init_vals, runtime, expected_wgt, spike_times, spike_times2,  test_name, atol = 0.001):
+    def run_one_test(self, init_vals, runtime, expected_wgt, spike_times, spike_times2,  test_name, atol = 0.01):
         p.setup(1)
 
 
@@ -38,7 +40,6 @@ class TestFUSI(BaseTestCase):
         w_max = self.shared_params['w_max']
         w_drift = self.shared_params['w_drift']
         th_w = self.shared_params['th_w']
-        w_mult =self.shared_params['w_mult']
         V_th = self.shared_params['V_th']
         Ca_th_l = self.shared_params['Ca_th_l']
         Ca_th_h1 = self.shared_params['Ca_th_h1']
@@ -51,12 +52,15 @@ class TestFUSI(BaseTestCase):
         a_plus = self.shared_params['a_plus']
         a_minus = self.shared_params['a_minus']
 
+        n_inp = self.shared_params['n_inp']
+        w_mult =self.shared_params['w_mult']
+        w_mult = w_mult/n_inp
 
         runtime = runtime
-        expected_wgt = expected_wgt* self.shared_params['w_mult']
+        expected_wgt = expected_wgt* w_mult
 
         # Spike source to send spike via plastic synapse
-        pop_src1 = p.Population(1, p.SpikeSourceArray,
+        pop_src1 = p.Population(n_inp, p.SpikeSourceArray,
                                 {'spike_times': spike_times}, label="src1")
 
         # Spike source to send spike via static synapse to make
@@ -78,7 +82,7 @@ class TestFUSI(BaseTestCase):
         proj = p.Projection(
             pop_src1,
             pop_exc,
-            p.OneToOneConnector(),
+            p.AllToAllConnector(),
             synapse_type=syn_plas, receptor_type='excitatory'
             )
 
@@ -100,7 +104,7 @@ class TestFUSI(BaseTestCase):
         #print v
         #print v[len(v)-1]
         self.assertTrue(np.allclose(weight,
-                                      w_cur, atol=atol))
+                                      w_cur, atol=atol*w_max*w_mult))
 
         p.end()
 
