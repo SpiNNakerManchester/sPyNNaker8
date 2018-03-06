@@ -2,7 +2,7 @@
 Synfirechain-like example
 """
 from p8_integration_tests.base_test_case import BaseTestCase
-from p8_integration_tests.scripts.synfire_run import TestRun
+from p8_integration_tests.scripts.synfire_run import SynfireRunner
 import spynnaker.plot_utils as plot_utils
 import spynnaker.spike_checker as spike_checker
 
@@ -11,7 +11,7 @@ neurons_per_core = 10
 delay = 17
 run_times = [5000]
 get_weights = True
-synfire_run = TestRun()
+synfire_run = SynfireRunner()
 
 
 class SynfireIfCurr_exp(BaseTestCase):

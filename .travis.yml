@@ -24,6 +24,7 @@ before_install:
 
 install:
   - pip install -r requirements-test.txt
+  - pip install python-coveralls
   - python ./setup.py install
 
 before_script:
@@ -35,9 +36,16 @@ before_script:
   - echo '[Buffers]' >> ~/.spynnaker.cfg
 
 script:
-  - py.test unittests
+  # Tests
+  - py.test unittests --cov spynnaker8
+  # Code quality check
   - flake8
+  # Doc check
   - cd doc/source
   - sphinx-build -T -E -b html -d _build/doctrees-readthedocsdirhtml -D language=en . _build/html
   - sphinx-build -T -b json -d _build/doctrees-json -D language=en . _build/json
   - sphinx-build -T -b singlehtml -d _build/doctrees-readthedocssinglehtmllocalmedia -D language=en . _build/localmedia
+
+after_success:
+  - cd $TRAVIS_BUILD_DIR
+  - coveralls
