@@ -112,7 +112,8 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         """
         return variable in self._get_all_possible_recordable_variables()
 
-    def record(self, variables, to_file=None, sampling_interval=None):
+    def record(self, variables, to_file=None, sampling_interval=None,
+               indexes=None):
         """ Record the specified variable or variables for all cells in the\
             Population or view.
 
