@@ -181,7 +181,11 @@ class PopulationView(PopulationBase):
 
         If clear is True, recorded data will be deleted from the Population.
         """
-        # TODO
+        if not gather:
+            logger.warning("Spinnaker only supports gather=True. We will run "
+                           "as if gather was set to True.")
+        return self._population.get_data_by_indexes(
+            variables, self._indexes, clear=clear)
 
     def get_spike_counts(self, gather=True):
         """ Returns a dict containing the number of spikes for each neuron.
@@ -265,7 +269,8 @@ class PopulationView(PopulationBase):
         sampling_interval should be a value in milliseconds, and an integer
             multiple of the simulation timestep.
         """
-        # TODO
+        self._population.record_with_indexes(
+            variables, to_file, sampling_interval, self._indexes)
 
     def sample(self, n, rng=None):
         """

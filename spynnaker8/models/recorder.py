@@ -60,7 +60,7 @@ class Recorder(RecordingCommon):
         else:  # function to be improved later
             raise Exception("file extension %s not supported" % extension)
 
-    def _extract_neo_block(self, variables, clear, annotations):
+    def _extract_neo_block(self, variables, indexes, clear, annotations):
         """ extracts block from the vertices and puts them into a neo block
 
         :param variables: the variables to extract
@@ -72,10 +72,10 @@ class Recorder(RecordingCommon):
         block = neo.Block()
 
         for previous in range(0, get_simulator().segment_counter):
-            self._append_previous_segment(block, previous, variables)
+            self._append_previous_segment(block, previous, variables, indexes)
 
         # add to the segments the new block
-        self._append_current_segment(block, variables, clear)
+        self._append_current_segment(block, variables, indexes, clear)
 
         # add fluff to the neo block
         block.name = self._population.label
@@ -163,7 +163,7 @@ class Recorder(RecordingCommon):
             variables.update(self._get_all_recording_variables())
         return variables
 
-    def _append_current_segment(self, block, variables, clear):
+    def _append_current_segment(self, block, variables, indexes, clear):
 
         # build segment for the current data to be gathered in
         segment = neo.Segment(
@@ -186,6 +186,7 @@ class Recorder(RecordingCommon):
                     first_id=self._population._first_id,
                     recording_start_time=self._recording_start_time,
                     sampling_interval=sampling_interval,
+                    indexes=indexes,
                     label=self._population.label)
             else:
                 (data, indexes, sampling_interval) = self._get_recorded_matrix(
@@ -206,7 +207,8 @@ class Recorder(RecordingCommon):
         if clear:
             self._clear_recording(variables)
 
-    def _append_previous_segment(self, block, segment_number, variables):
+    def _append_previous_segment(
+            self, block, segment_number, variables, indexes):
         if segment_number not in self._data_cache:
             logger.warning("No Data available for Segment {}", segment_number)
             segment = neo.Segment(
@@ -243,6 +245,7 @@ class Recorder(RecordingCommon):
                     first_id=data_cache.first_id,
                     recording_start_time=data_cache.recording_start_time,
                     sampling_interval=variable_cache.sampling_interval,
+                    indexes=indexes,
                     label=data_cache.label)
             else:
                 ids = map(self._population.index_to_id, indexes)
@@ -332,7 +335,7 @@ class Recorder(RecordingCommon):
 
 
 def read_in_spikes(segment, spikes, t, n_neurons, first_id,
-                   recording_start_time, sampling_interval, label):
+                   recording_start_time, sampling_interval, indexes, label):
     """
     Converts the data into SpikeTrains and saves them to the segment
 
@@ -355,7 +358,9 @@ def read_in_spikes(segment, spikes, t, n_neurons, first_id,
     # pylint: disable=too-many-arguments
     t_stop = t * quantities.ms
 
-    for index in xrange(n_neurons):
+    if indexes is None:
+        indexes = xrange(n_neurons)
+    for index in indexes:
         spiketrain = neo.SpikeTrain(
             times=spikes[spikes[:, 0] == index][:, 1],
             t_start=recording_start_time,

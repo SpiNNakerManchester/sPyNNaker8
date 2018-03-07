@@ -132,7 +132,7 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
                 "record indexes parameter is not standard PyNN so will not "
                 "work on other other simulators. "
                 "It is now depricated and replaced with views")
-        self._record_with_indexes(
+        self.record_with_indexes(
             variables, to_file, sampling_interval, indexes)
 
     def record_with_indexes(
@@ -193,7 +193,7 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         if isinstance(io, basestring):
             io = self._get_io(io)
 
-        data = self._extract_neo_block(variables, clear, annotations)
+        data = self._extract_neo_block(variables, None, clear, annotations)
         # write the neo block to the file
         io.write(data)
 
@@ -258,7 +258,28 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
             logger.warning("Spinnaker only supports gather=True. We will run "
                            "as if gather was set to True.")
 
-        return self._extract_neo_block(variables, clear, annotations)
+        return self._extract_neo_block(variables, None, clear, annotations)
+
+    def get_data_by_indexes(
+            self, variables, indexes, clear=False, annotations=None):
+        """ Return a Neo `Block` containing the data\
+            (spikes, state variables) recorded from the Assembly.
+
+        :param variables: either a single variable name or a list of variable\
+            names. Variables must have been previously recorded, otherwise an
+            Exception will be raised.
+        :type variables: str or list
+        :param indexes: List of neuron indexes to include in the data.
+            Clearly only neurons recording will actually have any data
+            If None will be taken as all recording as get_data
+        :type indexes: list (int)
+        :param clear: Whether recorded data will be deleted from the `Assembly`.
+        :type clear: bool
+        :param annotations: annotations to put on the neo block
+        :type annotations: dict
+        :rtype: neo.Block
+        """
+        return self._extract_neo_block(variables, indexes, clear, annotations)
 
     def spinnaker_get_data(self, variable):
         """ Public accessor for getting data as a numpy array, instead of\
