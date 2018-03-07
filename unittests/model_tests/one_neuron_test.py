@@ -26,12 +26,14 @@ pop_src1 = p.Population(1, p.SpikeSourceArray,
 
 
 # Post-synapse population
-pop_exc = p.Population(1, p.IF_curr_exp(),  label="test")
+cell_params = {"i_offset":0.0,  "tau_ca2":150, "i_alpha":1., "i_ca2":3.,  'v_reset':-65}
+pop_exc = p.Population(1, p.extra_models.IFCurrExpCa2Concentration, cell_params, label="test")
+# pop_exc = p.Population(1, p.IF_curr_exp(),  label="test")
 
 # Create projections
 synapse = p.Projection(
     pop_src1, pop_exc, p.AllToAllConnector(),
-    p.StaticSynapse(weight=0.01, delay=1), receptor_type="excitatory")
+    p.StaticSynapse(weight=0.1, delay=1), receptor_type="excitatory")
 
 
 pop_src1.record('all')
