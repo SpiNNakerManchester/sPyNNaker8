@@ -160,15 +160,12 @@ class TestVABenchmarkSpikes(BaseTestCase):
 
         exc_spikes = do_run(seed=self._test_seed)
         spike_count = neo_convertor.count_spikes(exc_spikes)
-        if self._test_seed == 1:
-            self.assertEquals(2196, spike_count)
-        else:
-            try:
-                self.assertLess(1900, spike_count)
-                self.assertGreater(2700, spike_count)
-            except Exception as ex:
-                # Just in case the range failed
-                raise SkipTest(ex)
+        try:
+            self.assertLess(1900, spike_count)
+            self.assertGreater(2700, spike_count)
+        except Exception as ex:
+            # Just in case the range failed
+            raise SkipTest(ex)
 
         with open(neo_path, "r") as neo_file:
                 recorded_spikes = pickle.load(neo_file)

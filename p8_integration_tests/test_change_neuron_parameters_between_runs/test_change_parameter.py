@@ -67,41 +67,29 @@ class TestChangeParameter(BaseTestCase):
     def test_no_split(self):
         results = do_run(split=False, seed=self._test_seed)
         (pop_spikes1, inp_spikes1, pop_spikes2, inp_spikes2) = results
-        if self._test_seed == 1:
-            self.assertEqual(1158, len(inp_spikes1))
-            self.assertEqual(1111, len(pop_spikes1))
-            self.assertEqual(300, len(pop_spikes2))
-        else:
-            try:
-                self.assertLess(1100, len(pop_spikes1))
-                self.assertGreater(1300, len(pop_spikes1))
-                self.assertLess(1100, len(inp_spikes1))
-                self.assertGreater(1300, len(inp_spikes1))
-                self.assertLess(450, len(pop_spikes2))
-                self.assertGreater(600, len(pop_spikes2))
-            except Exception as ex:
-                # Just in case the range failed
-                raise SkipTest(ex)
+        try:
+            self.assertLess(1100, len(pop_spikes1))
+            self.assertGreater(1300, len(pop_spikes1))
+            self.assertLess(1100, len(inp_spikes1))
+            self.assertGreater(1300, len(inp_spikes1))
+        except Exception as ex:
+            # Just in case the range failed
+            raise SkipTest(ex)
+        self.assertEqual(300, len(pop_spikes2))
         self.assertEqual(0, len(inp_spikes2))
 
     def test_split(self):
         results = do_run(split=True, seed=self._test_seed)
         (pop_spikes1, inp_spikes1, pop_spikes2, inp_spikes2) = results
-        if self._test_seed == 1:
-            self.assertEqual(1135, len(inp_spikes1))
-            self.assertEqual(1090, len(pop_spikes1))
-            self.assertEqual(300, len(pop_spikes2))
-        else:
-            try:
-                self.assertLess(1100, len(pop_spikes1))
-                self.assertGreater(1300, len(pop_spikes1))
-                self.assertLess(1100, len(inp_spikes1))
-                self.assertGreater(1300, len(inp_spikes1))
-                self.assertLess(450, len(pop_spikes2))
-                self.assertGreater(600, len(pop_spikes2))
-            except Exception as ex:
-                # Just in case the range failed
-                raise SkipTest(ex)
+        try:
+            self.assertLess(1100, len(pop_spikes1))
+            self.assertGreater(1300, len(pop_spikes1))
+            self.assertLess(1100, len(inp_spikes1))
+            self.assertGreater(1300, len(inp_spikes1))
+        except Exception as ex:
+            # Just in case the range failed
+            raise SkipTest(ex)
+        self.assertEqual(300, len(pop_spikes2))
         self.assertEqual(0, len(inp_spikes2))
 
 
