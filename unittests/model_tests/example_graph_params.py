@@ -1,7 +1,7 @@
 simtime = 1000
 w_min = 0.0
 w_max = 1.0
-w_drift = .0035
+w_drift = .0035 * w_max
 th_w = 0.50
 w0 = 0.0
 w_mult = .1
