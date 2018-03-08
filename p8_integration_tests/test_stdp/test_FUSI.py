@@ -100,8 +100,9 @@ class TestFUSI(BaseTestCase):
         w_cur = expected_wgt
         print test_name,"weight exact: {}".format(w_cur)
         print "New weight SpiNNaker: {}".format(weight)
-        #v = pop_exc.get_data('v').segments[0].filter(name='v')[0]
-        #print v
+#         v = pop_exc.get_data('v').segments[0].filter(name='v')[0]
+#         for i in range(len(v)):
+#             print i, v[i]
         #print v[len(v)-1]
         self.assertTrue(np.allclose(weight,
                                       w_cur, atol=atol*w_max*w_mult))
@@ -181,12 +182,12 @@ class TestFUSI(BaseTestCase):
         a_plus = self.shared_params['a_plus']
         a_minus = self.shared_params['a_minus']
 
-        w0=0.15
+        w0=0.2
         expected_weight = (w0 + 8*a_plus - w_drift*(160) +w_drift*(200-160) )
         runtime = 201
         spike_times2 = np.arange(0, 300, 10)
         spike_times = np.append(np.arange(10, 170, 30), [180, 200])
-        initial_vals = { 'V0':-55, 'Ca0': 4.0, 'w0' : w0 }
+        initial_vals = { 'V0':-55, 'Ca0': 5.0, 'w0' : w0 }
         self.run_one_test(initial_vals, runtime, expected_weight, spike_times, spike_times2, "Test 5:")
 
     """
@@ -228,21 +229,40 @@ class TestFUSI(BaseTestCase):
         self.run_one_test(initial_vals, runtime, expected_weight, spike_times, spike_times2, "Test 8:")
 
     """
-    Only drift
+    Only drift down
     """
-    def test_test9_just_drift(self):
+    def test_test9_just_drift_down(self):
         w_min = self.shared_params['w_min']
         w_max = self.shared_params['w_max']
         w_drift = self.shared_params['w_drift']
         th_w = self.shared_params['th_w']
         w_mult =self.shared_params['w_mult']
-        w0=0.5
+        w0=0.4
         runtime = 101
         expected_weight = w0 - (runtime-1) * w_drift
         spike_times2 = np.arange(0, -2, 10)
         spike_times = np.arange(100, 101, 10)
         initial_vals = { 'V0':-51, 'Ca0': 3.0, 'w0' : w0 }
         self.run_one_test(initial_vals, runtime, expected_weight, spike_times, spike_times2, "Test 9:")
+
+    """
+    Only drift up
+    our minimum unit of weight is 0.00035, so scaled w0 should be >= scaled(0.5) + 0.00035;
+    TODO: update this for the final version, where minimum weight will not be hardcoded
+    """
+    def test_testA_just_drift_up(self):
+        w_min = self.shared_params['w_min']
+        w_max = self.shared_params['w_max']
+        w_drift = self.shared_params['w_drift']
+        th_w = self.shared_params['th_w']
+        w_mult =self.shared_params['w_mult']
+        w0=0.5036
+        runtime = 101
+        expected_weight = w0 + (runtime-1) * w_drift
+        spike_times2 = np.arange(0, -2, 10)
+        spike_times = np.arange(100, 101, 10)
+        initial_vals = { 'V0':-51, 'Ca0': 3.0, 'w0' : w0 }
+        self.run_one_test(initial_vals, runtime, expected_weight, spike_times, spike_times2, "Test 10:")
 
     """
     Long test that performs all subtests in one 1 second long simulation
