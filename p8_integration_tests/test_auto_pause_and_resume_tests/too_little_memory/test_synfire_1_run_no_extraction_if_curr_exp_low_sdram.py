@@ -23,6 +23,7 @@ class TestGsyn(BaseTestCase):
             synfire_run.do_run(n_neurons, neurons_per_core=neurons_per_core,
                                run_times=[runtime])
 
+
 if __name__ == '__main__':
     synfire_run.do_run(n_neurons, neurons_per_core=neurons_per_core,
                        run_times=[runtime])
