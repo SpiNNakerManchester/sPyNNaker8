@@ -40,6 +40,8 @@ pop_exc.record("all")
 p.run(runtime)
 weights = []
 
+
+runtime = runtime/0.1 # temporary scaling to account for new recording
 weights.append(synapse.get('weight', 'list',
                                    with_address=False)[0])
 
