@@ -11,7 +11,7 @@ current_file_path = os.path.dirname(os.path.abspath(__file__))
 
 
 def run_script(
-        simtime, n_neurons,
+        simtime, n_neurons, run_split=1,
         record_spikes=False, spike_rate=None, spike_rec_indexes=None,
         spike_get_indexes=None,
         record_v=False, v_rate=None, v_indexes=None,
@@ -44,7 +44,8 @@ def run_script(
     if record_inh:
         pop_1.record(['gsyn_inh'], sampling_interval=inh_rate,
                      indexes=inh_indexes)
-    sim.run(simtime)
+    for i in range(run_split):
+        sim.run(simtime/run_split)
 
     if record_spikes:
         if spike_get_indexes is None:
@@ -173,7 +174,7 @@ def compare_results(
 
 
 def run_and_compare_script(
-        simtime, n_neurons,
+        simtime, n_neurons, run_split=1,
         record_spikes=False, spike_rate=None, spike_rec_indexes=None,
         spike_get_indexes=None,
         record_v=False, v_rate=None, v_indexes=None,
@@ -199,7 +200,7 @@ def run_and_compare_script(
             file_prefix=full_prefix)
 
     run_script(
-        simtime, n_neurons,
+        simtime, n_neurons, run_split,
         record_spikes=record_spikes, spike_rate=spike_rate,
         spike_rec_indexes=spike_rec_indexes,
         spike_get_indexes=spike_get_indexes,
@@ -348,6 +349,17 @@ class TestSampling(BaseTestCase):
         n_neurons = 500
         run_and_compare_script(
             simtime, n_neurons,
+            record_spikes=True, spike_rate=5,
+            spike_rec_indexes=range(0, n_neurons, 2),
+            record_v=True, v_rate=4, v_indexes=range(0, n_neurons, 2),
+            record_exc=True, exc_rate=3, exc_indexes=range(0, n_neurons, 3),
+            record_inh=True, inh_rate=2, inh_indexes=range(0, n_neurons, 4))
+
+    def test_medium_split(self):
+        simtime = 5000
+        n_neurons = 500
+        run_and_compare_script(
+            simtime, n_neurons, run_split=5,
             record_spikes=True, spike_rate=5,
             spike_rec_indexes=range(0, n_neurons, 2),
             record_v=True, v_rate=4, v_indexes=range(0, n_neurons, 2),

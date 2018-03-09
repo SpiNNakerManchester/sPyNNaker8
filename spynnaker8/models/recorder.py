@@ -124,12 +124,13 @@ class Recorder(RecordingCommon):
                     data = self._get_spikes()
                     sampling_interval = self._population._vertex. \
                         get_spikes_sampling_interval()
-                    indexes = self._population.size
+                    indexes = None
                 else:
                     results = self._get_recorded_matrix(variable)
                     (data, indexes, sampling_interval) = results
                 data_cache.save_data(
                     variable=variable, data=data, indexes=indexes,
+                    n_neurons=self._population.size,
                     units=self._get_units(variable),
                     sampling_interval=sampling_interval)
             self._data_cache[segment_number] = data_cache
@@ -234,21 +235,20 @@ class Recorder(RecordingCommon):
                                segment_number, variable)
                 continue
             variable_cache = data_cache.get_data(variable)
-            indexes = variable_cache.indexes
+            cached_indexes = variable_cache.indexes
             if variable == SPIKES:
                 read_in_spikes(
                     segment=segment,
                     spikes=variable_cache.data,
                     t=data_cache.t,
-                    # In this case indexes saved self._population.size
-                    n_neurons=indexes,
+                    n_neurons=variable_cache.n_neurons,
                     first_id=data_cache.first_id,
                     recording_start_time=data_cache.recording_start_time,
                     sampling_interval=variable_cache.sampling_interval,
                     indexes=indexes,
                     label=data_cache.label)
             else:
-                ids = map(self._population.index_to_id, indexes)
+                ids = map(self._population.index_to_id, cached_indexes)
                 read_in_signal(
                     segment=segment,
                     block=block,

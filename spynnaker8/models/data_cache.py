@@ -99,7 +99,8 @@ class DataCache(object):
         """
         return self._cache[variable]
 
-    def save_data(self, variable, data, indexes, units, sampling_interval):
+    def save_data(self, variable, data, indexes, n_neurons, units,
+                  sampling_interval):
         """
         Saves the data for one variable in this segment
         :param variable: name of variable data applies to
@@ -108,10 +109,14 @@ class DataCache(object):
         :type data: nparray
         :param indexes: population indexes for which data should be returned
         :type nparray
+        :param n_neurons: Number of neurons in the population.
+            Regardless of if they where recording or not.
+        :type n_neurons: int
         :param units: the units in which the data is
         :type units: str
         :rtype: None
         """
         self._rec_datetime = datetime.now()
-        variable_cache = VariableCache(data, indexes, units, sampling_interval)
+        variable_cache = VariableCache(
+            data, indexes, n_neurons, units, sampling_interval)
         self._cache[variable] = variable_cache
