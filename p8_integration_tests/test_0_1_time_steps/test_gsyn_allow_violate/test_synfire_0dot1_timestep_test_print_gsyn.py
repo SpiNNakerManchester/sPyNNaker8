@@ -12,8 +12,6 @@ from spynnaker8.utilities import neo_convertor
 from spynnaker8.spynnaker_plotting import SpynnakerPanel
 from spinnman.exceptions import SpinnmanTimeoutException
 from unittest import SkipTest
-from pyNN.utility.plotting import Figure
-import matplotlib.pyplot as plt
 
 n_neurons = 200  # number of neurons in each population
 max_delay = 14.4
@@ -52,6 +50,10 @@ class TestPrintGsyn(BaseTestCase):
 
 
 if __name__ == '__main__':
+    # Delayed imports so unit tests do not need them
+    from pyNN.utility.plotting import Figure
+    import matplotlib.pyplot as plt
+
     synfire_run.do_run(n_neurons, max_delay=max_delay, time_step=timestep,
                        neurons_per_core=neurons_per_core, delay=delay,
                        run_times=[runtime], gsyn_path_exc=gsyn_path)
