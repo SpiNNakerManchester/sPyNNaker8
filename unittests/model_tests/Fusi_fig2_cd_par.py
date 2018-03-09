@@ -27,7 +27,7 @@ output_ext = ".txt"
 output_file_name = output_file+"_full"+output_ext
 
 do_LTP = True # true for LTPs, false for LTDs
-#do_LTP = False # true for LTPs, false for LTDs
+do_LTP = False # true for LTPs, false for LTDs
 do_save = False # save the data or not
 spinn3 = True  # True if using 4 node board (resources are limited)
 
@@ -35,21 +35,21 @@ p.setup(1)
 p.set_number_of_neurons_per_core(p.extra_models.IFCurrExpCa2Concentration, 200)
 
 simtime = 300
-n_runs = 2
+n_runs = 20
 if spinn3:
     n_nrn = 200 # total number of neurons in each population
 else:
     n_nrn = 1000
 
 w0 = 0.0
-w_mult=2.0/4   # this parameters scales all weight variables, actual w_max = w_mult; should be 0.1-0.125 or smaller to avoid distortions in results
-a_plus = 0.15
-a_minus = 0.15
+w_mult=0.1   # this parameters scales all weight variables, actual w_max = w_mult; should be 0.1-0.125 or smaller to avoid distortions in results
+a_plus = 0.11
+a_minus = 0.11
 w_min = 0.0
 w_max = 1.0
 w_drift = .0035
 th_w = 0.50
-V_th = -54.0
+V_th = -55.0
 Ca_th_l = 3.0
 Ca_th_h1 = 4.0
 Ca_th_h2 = 13.0
