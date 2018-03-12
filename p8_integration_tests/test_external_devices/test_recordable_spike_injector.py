@@ -2,6 +2,7 @@ import spynnaker8 as p
 import time
 from random import randint
 from collections import defaultdict
+from six import iteritems
 
 n_spikes = defaultdict(lambda: 0)
 n_neurons = 100
@@ -44,7 +45,7 @@ def test_recordable_spike_injector():
             assert n_spikes[i] == len(spiketrain)
         spike_trains[i] = spiketrain
 
-    for (index, count) in n_spikes.iteritems():
+    for (index, count) in iteritems(n_spikes):
         if __name__ == "__main__":
             if index not in spike_trains:
                 print("Neuron {} should have spiked {} times but didn't"\

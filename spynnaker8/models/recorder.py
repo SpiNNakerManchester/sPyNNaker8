@@ -4,6 +4,8 @@ import os
 import numpy
 import quantities
 from datetime import datetime
+from six import string_types
+from six.moves import xrange
 from neo.io import NeoHdf5IO, PickleIO, NeoMatlabIO
 from spinn_utilities.ordered_set import OrderedSet
 from spinn_utilities.log import FormatAdapter
@@ -151,7 +153,7 @@ class Recorder(RecordingCommon):
         """
         # if variable is a base string, plonk into a array for ease of
         # conversion
-        if isinstance(variables, basestring):
+        if isinstance(variables, string_types):
             variables = [variables]
 
         # if all are needed to be extracted, extract each and plonk into the

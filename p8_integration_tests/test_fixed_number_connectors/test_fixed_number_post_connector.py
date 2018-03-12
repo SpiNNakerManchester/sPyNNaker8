@@ -84,7 +84,7 @@ def do_run(plot):
     for cell in range(len(pop_stim)):
         spiketimes = []
         for pulse in range(pp_a):
-            spiketimes.append(rd.next())  # draw from the random distribution
+            spiketimes.append(next(rd))  # draw from the random distribution
         spiketimes.sort()
         all_spiketimes.append(spiketimes)
 

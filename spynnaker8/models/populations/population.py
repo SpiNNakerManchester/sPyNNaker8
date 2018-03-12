@@ -1,5 +1,5 @@
 import logging
-
+from six import iteritems
 from spynnaker.pyNN.exceptions import InvalidParameterType
 from spynnaker.pyNN.models.pynn_population_common import PyNNPopulationCommon
 from spynnaker.pyNN.utilities.constants import SPIKES
@@ -269,14 +269,14 @@ class Population(PyNNPopulationCommon, Recorder):
         return self._get_variable_unit(variable)
 
     def set(self, **kwargs):
-        for parameter, value in kwargs.iteritems():
+        for parameter, value in iteritems(kwargs):
             try:
                 super(Population, self).set(parameter, value)
             except InvalidParameterType:
                 super(Population, self).initialize(parameter, value)
 
     def initialize(self, **kwargs):
-        for parameter, value in kwargs.iteritems():
+        for parameter, value in iteritems(kwargs):
             super(Population, self).initialize(parameter, value)
 
     def get(self, parameter_names, gather=False, simplify=True):

@@ -300,10 +300,12 @@ class TestSampling(BaseTestCase):
         run_and_compare_script(
             simtime, n_neurons,
             record_spikes=True, spike_rate=1,
-            spike_indexes=range(0, n_neurons, 2),
-            record_v=True, v_rate=1, v_indexes=range(0, n_neurons, 2),
-            record_exc=True, exc_rate=1, exc_indexes=range(0, n_neurons, 3),
-            record_inh=True, inh_rate=1, inh_indexes=range(0, n_neurons, 4))
+            spike_indexes=list(range(0, n_neurons, 2)),
+            record_v=True, v_rate=1, v_indexes=list(range(0, n_neurons, 2)),
+            record_exc=True, exc_rate=1,
+            exc_indexes=list(range(0, n_neurons, 3)),
+            record_inh=True, inh_rate=1,
+            inh_indexes=list(range(0, n_neurons, 4)))
 
     def test_big_with_both(self):
         simtime = 20000
@@ -311,10 +313,12 @@ class TestSampling(BaseTestCase):
         run_and_compare_script(
             simtime, n_neurons,
             record_spikes=True, spike_rate=5,
-            spike_indexes=range(0, n_neurons, 2),
-            record_v=True, v_rate=4, v_indexes=range(0, n_neurons, 2),
-            record_exc=True, exc_rate=3, exc_indexes=range(0, n_neurons, 3),
-            record_inh=True, inh_rate=2, inh_indexes=range(0, n_neurons, 4))
+            spike_indexes=list(range(0, n_neurons, 2)),
+            record_v=True, v_rate=4, v_indexes=list(range(0, n_neurons, 2)),
+            record_exc=True, exc_rate=3,
+            exc_indexes=list(range(0, n_neurons, 3)),
+            record_inh=True, inh_rate=2,
+            inh_indexes=list(range(0, n_neurons, 4)))
 
     def test_one(self):
         simtime = 500

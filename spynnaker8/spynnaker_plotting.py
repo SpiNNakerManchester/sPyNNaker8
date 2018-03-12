@@ -151,7 +151,7 @@ def heat_plot_neo(ax, signal_array, label='', **options):
     if label is None:
         label = signal_array.name
     n_neurons = signal_array.shape[-1]
-    xs = range(n_neurons)
+    xs = list(range(n_neurons))
     times = signal_array.times / signal_array.sampling_period
     times = np.rint(times.magnitude).astype(int)
     all_times = np.tile(times, n_neurons)
