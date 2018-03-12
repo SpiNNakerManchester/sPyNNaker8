@@ -10,8 +10,8 @@ class VariableCache(object):
         """
         :param data: raw data in spynakker format
         :type data: nparray
-        :param indexes: Population indexes for which data should be returned
-        :type nparray
+        :param indexes: Population indexes for which data was collected
+        :type indexes: list (int)
         :param n_neurons: Number of neurons in the population.
             Regardless of if they where recording or not.
         :type n_neurons: int

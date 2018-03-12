@@ -15,7 +15,6 @@ class DataCache(object):
 
     __slots__ = ("_cache",
                  "_description",
-                 "_first_id",
                  "_label",
                  "_rec_datetime",
                  "_recording_start_time",
@@ -23,7 +22,7 @@ class DataCache(object):
                  "_t")
 
     def __init__(self, label, description, segment_number,
-                 recording_start_time, t, first_id):
+                 recording_start_time, t):
         """
         :param label: cache label
         :param description: cache description
@@ -31,7 +30,6 @@ class DataCache(object):
         :param recording_start_time: \
             when this cache was started in recording space.
         :param t: time
-        :param first_id: first atom
         """
         # pylint: disable=too-many-arguments
         self._label = label
@@ -39,7 +37,6 @@ class DataCache(object):
         self._segment_number = segment_number
         self._recording_start_time = recording_start_time
         self._t = t
-        self._first_id = first_id
         self._cache = dict()
         self._rec_datetime = None
 
@@ -70,10 +67,6 @@ class DataCache(object):
     @property
     def t(self):
         return self._t
-
-    @property
-    def first_id(self):
-        return self._first_id
 
     @property
     def rec_datetime(self):
