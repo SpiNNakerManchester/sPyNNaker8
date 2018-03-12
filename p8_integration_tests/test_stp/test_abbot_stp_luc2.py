@@ -35,16 +35,26 @@ tau_P = 500
 baseline_weight = 1
 
 
+poisson_input = False
+
 
 spiking_frequencies = np.linspace(0, 100, 21)
 runtime = len(spiking_frequencies)*200
 
 timestamp = initial_run + 200*rt_scaling
-spike_times = np.linspace(initial_run, timestamp, spiking_frequencies[0]*200*rt_scaling/1000.)
+if not poisson_input:
+    spike_times = np.linspace(initial_run, timestamp, spiking_frequencies[0]*200*rt_scaling/1000.)
+else:
+    t = sp.arange(initial_run, timestamp)
+    spike_times = t[np.random.rand(len(t)) < spiking_frequencies[0]/1000.]
 
 for i in range(1, len(spiking_frequencies)):
-    spike_times = np.concatenate((spike_times, np.linspace(timestamp,timestamp+200*rt_scaling,
-                                                           spiking_frequencies[i]*200*rt_scaling/1000.)))
+    if not poisson_input:
+        spike_times = np.concatenate((spike_times, np.linspace(timestamp,timestamp+200*rt_scaling,
+                                                               spiking_frequencies[i]*200*rt_scaling/1000.)))
+    else:
+        t = sp.arange(timestamp, timestamp + 200*rt_scaling)
+        spike_times = np.concatenate((spike_times, t[np.random.rand(len(t)) < spiking_frequencies[i]/1000.]))
     timestamp = timestamp + 200*rt_scaling
 
 
