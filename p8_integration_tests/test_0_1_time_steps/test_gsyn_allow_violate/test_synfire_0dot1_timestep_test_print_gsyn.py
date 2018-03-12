@@ -6,7 +6,7 @@ import numpy
 import os
 import pickle
 from p8_integration_tests.base_test_case import BaseTestCase
-from p8_integration_tests.scripts.synfire_run import TestRun
+from p8_integration_tests.scripts.synfire_run import SynfireRunner
 import spynnaker.spike_checker as spike_checker
 from spynnaker8.utilities import neo_convertor
 from spynnaker8.spynnaker_plotting import SpynnakerPanel
@@ -23,7 +23,7 @@ delay = 1.7
 runtime = 500
 gsyn_path = os.path.dirname(os.path.abspath(__file__))
 gsyn_path = os.path.join(gsyn_path, "gsyn.pickle")
-synfire_run = TestRun()
+synfire_run = SynfireRunner()
 
 
 class TestPrintGsyn(BaseTestCase):

@@ -3,6 +3,7 @@ from neo import Block, Segment
 import numpy as np
 from quantities import ms
 try:
+    # pylint: disable=import-error
     from pyNN.utility.plotting import repeat
     import matplotlib.pyplot as plt
     matplotlib_missing = False
@@ -12,18 +13,17 @@ from spynnaker8.utilities.version_util import pynn8_syntax
 if pynn8_syntax:
     from neo import AnalogSignalArray as AnalogSignal
 else:
-    from neo import AnalogSignal as AnalogSignal
+    from neo import AnalogSignal
 
 
 """
-Plotting tools to be unsed together with
+Plotting tools to be used together with
 https://github.com/NeuralEnsemble/PyNN/blob/master/pyNN/utility/plotting.py
 """
 
 
 def handle_options(ax, options):
-    """
-    Handles options that can not be passed to axes.plot
+    """ Handles options that can not be passed to axes.plot
 
     Removes the ones it has handled
 
@@ -52,8 +52,7 @@ def handle_options(ax, options):
 
 
 def plot_spikes(ax, spike_times, neurons, label='', **options):
-    """
-    Plots the spikes based on two lists
+    """ Plots the spikes based on two lists
 
     :param ax: An Axes in a matplot lib figure
     :param spike_times: List of Spiketimes
@@ -61,7 +60,7 @@ def plot_spikes(ax, spike_times, neurons, label='', **options):
     :param label: Label for the graph
     :param options: plotting options
     """
-    if len(neurons) > 0:
+    if len(neurons):
         max_index = max(neurons)
         min_index = min(neurons)
         ax.plot(spike_times, neurons, 'b.', **options)
@@ -73,9 +72,7 @@ def plot_spikes(ax, spike_times, neurons, label='', **options):
 
 
 def plot_spiketrains(ax, spiketrains, label='', **options):
-    """
-
-    Plot all spike trains in a Segment in a raster plot.
+    """ Plot all spike trains in a Segment in a raster plot.
 
     :param ax: An Axes in a matplot lib figure
     :param spiketrains: List of spiketimes
@@ -93,8 +90,7 @@ def plot_spiketrains(ax, spiketrains, label='', **options):
 
 
 def plot_spikes_numpy(ax, spikes, label='', **options):
-    """
-    Plot all spike
+    """ Plot all spikes
 
     :param ax: An Axes in a matplot lib figure
     :param spikes: spynakker7 format nparray of spikes
@@ -108,8 +104,7 @@ def plot_spikes_numpy(ax, spikes, label='', **options):
 
 
 def heat_plot(ax, neurons, times, values, label='', **options):
-    """
-    Plots three lists of neurons, times and values into a heatmap
+    """ Plots three lists of neurons, times and values into a heatmap
 
     :param ax: An Axes in a matplot lib figure
     :param neurons: List of Neuron ids
@@ -132,8 +127,7 @@ def heat_plot(ax, neurons, times, values, label='', **options):
 
 
 def heat_plot_numpy(ax, data, label='', **options):
-    """
-    Plots neurons, times and values into a heatmap
+    """ Plots neurons, times and values into a heatmap
 
     :param ax: An Axes in a matplot lib figure
     :param data: nparray of values in spknakker7 format
@@ -143,12 +137,11 @@ def heat_plot_numpy(ax, data, label='', **options):
     neurons = data[:, 0].astype(int)
     times = data[:, 1].astype(int)
     values = data[:, 2]
-    heat_plot(ax, neurons, times, values, label='', **options)
+    heat_plot(ax, neurons, times, values, label=label, **options)
 
 
 def heat_plot_neo(ax, signal_array, label='', **options):
-    """
-    Plots neurons, times and values into a heatmap
+    """ Plots neurons, times and values into a heatmap
 
     :param ax: An Axes in a matplot lib figure
     :param signal_array: Neo Signal array Object
@@ -169,13 +162,13 @@ def heat_plot_neo(ax, signal_array, label='', **options):
 
 
 def plot_segment(axes, segment, label='', **options):
-    """
-    Plots a segment into a plot of spikes or a heatmap
+    """ Plots a segment into a plot of spikes or a heatmap
 
-    If there is more than ode type of Data in the segment options must
+        If there is more than ode type of Data in the segment options must\
         include the name of the data to plot
 
-    Note: method signature defined by pynn plotting
+    .. note::
+        method signature defined by pynn plotting.\
         This allows mixing of this plotting tool and pynn's
 
     :param axes: An Axes in a matplot lib figure
@@ -194,51 +187,49 @@ def plot_segment(axes, segment, label='', **options):
         else:
             heat_plot_neo(axes, segment.filter(name=name)[0], label=label,
                           **options)
-    elif len(segment.spiketrains) > 0:
+    elif segment.spiketrains:
         if len(analogsignals) > 1:
             raise Exception("Block.segment[0] has spikes and "
-                            "other data please specifiy one "
-                            "to plot")
+                            "other data please specify one to plot")
         plot_spiketrains(axes, segment.spiketrains, label=label, **options)
     elif len(analogsignals) == 1:
         heat_plot_neo(axes, analogsignals[0], label=label,
                       **options)
     elif len(analogsignals) > 1:
-        raise Exception("Block.segment[0] has {} types of data "
+        raise Exception("Block.segment[0] has {} types of data; "
                         "please specify one to plot using name="
-                        "" % len(analogsignals))
+                        "".format(len(analogsignals)))
     else:
         raise Exception("Block does not appear to hold any data")
 
 
 class SpynnakerPanel(object):
-    """
-    Represents a single panel in a multi-panel figure.
+    """ Represents a single panel in a multi-panel figure.
 
-    Compatable with pyNN.utility.plotting's Frame and
+    Compatible with pyNN.utility.plotting's Frame and\
         can be mixed with pyNN.utility.plotting's Panel
 
-    Unlike pyNN.utility.plotting Panel
-        Spikes are plotted faster
+    Unlike pyNN.utility.plotting.Panel,\
+        Spikes are plotted faster,\
         other data is plotted as a heatmap
 
-    A panel is a Matplotlib Axes or Subplot instance. A data item may be an
-    AnalogSignalArray, or a list of SpikeTrains. The Panel will
-    automatically choose an appropriate representation. Multiple data items may
-    be plotted in the same panel.
+    A panel is a Matplotlib Axes or Subplot instance. A data item may be an\
+    AnalogSignalArray, or a list of SpikeTrains. The Panel will\
+    automatically choose an appropriate representation. Multiple data items\
+    may be plotted in the same panel.
 
-    Valid options are any valid Matplotlib formatting options that should be
+    Valid options are any valid Matplotlib formatting options that should be\
     applied to the Axes/Subplot, plus in addition:
 
         `data_labels`:
             a list of strings of the same length as the number of data items.
         `line_properties`:
-            a list of dicts containing Matplotlib formatting options, of the
+            a list of dicts containing Matplotlib formatting options, of the\
             same length as the number of data items.
 
 
-    Whole Neo Objects can be passed in as long as they
-        contain a single Segment/run
+    Whole Neo Objects can be passed in as long as they\
+        contain a single Segment/run\
         and only contain one type of data
     Whole Segments can be passed in only if they only contain one type of data
 
@@ -253,54 +244,66 @@ class SpynnakerPanel(object):
         self.line_properties = options.pop("line_properties", repeat({}))
 
     def plot(self, axes):
-        """
-        Plot the Panel's data in the provided Axes/Subplot instance.
+        """ Plot the Panel's data in the provided Axes/Subplot instance.
         """
         for datum, label, properties in zip(self.data, self.data_labels,
                                             self.line_properties):
             properties.update(self.options)
+
             # Support lists length one
             # for example result of segments[0].filter(name='v')
             if isinstance(datum, list):
-                if len(datum) == 0:
+                if not datum:
                     raise Exception("Can't handle empty list")
                 if len(datum) == 1 and not isinstance(datum[0], SpikeTrain):
                     datum = datum[0]
+
             if isinstance(datum, list):
-                if isinstance(datum[0], SpikeTrain):
-                    plot_spiketrains(axes, datum, label=label, **properties)
-                else:
-                    raise Exception("Can't handle lists of type %s"
-                                    "" % type(datum))
+                self.__plot_list(axes, datum, label, properties)
             # AnalogSignalArray / AnalogSignal is also a ndarray
             # but data format different!
             # In pynn8_syntax AnalogSignalArray is imported as AnalogSignal
             elif isinstance(datum, AnalogSignal):
                 heat_plot_neo(axes, datum, label=label, **properties)
             elif isinstance(datum, np.ndarray):
-                if len(datum[0]) == 2:
-                    plot_spikes_numpy(axes, datum, label=label, **properties)
-                elif len(datum[0]) == 3:
-                    heat_plot_numpy(axes, datum, label=label, **properties)
-                else:
-                    raise Exception("Can't handle ndarray with %s columns"
-                                    "" % len(datum[0]))
+                self.__plot_array(axes, datum, label, properties)
             elif isinstance(datum, Block):
-                if "run" in properties:
-                    run = int(properties.pop("run"))
-                    if len(datum.segments) <= run:
-                        raise Exception("Block only has {} segments"
-                                        "" % len(datum.segments))
-                    segment = datum.segments[run]
-                else:
-                    if len(datum.segments) != 1:
-                        raise Exception("Block has {} segments please "
-                                        "specifiy one to plot using run="
-                                        "" % len(datum.segments))
-                    segment = datum.segments[0]
-                plot_segment(axes, segment, label=label, **properties)
+                self.__plot_block(axes, datum, label, properties)
             elif isinstance(datum, Segment):
                 plot_segment(axes, datum, label=label, **properties)
             else:
-                raise Exception("Can't handle type %s Consider using "
-                                "pyNN.utility.plotting" % type(datum))
+                raise Exception("Can't handle type {}; consider using "
+                                "pyNN.utility.plotting".format(type(datum)))
+
+    @staticmethod
+    def __plot_list(axes, datum, label, properties):
+        if not isinstance(datum[0], SpikeTrain):
+            raise Exception("Can't handle lists of type {}"
+                            "".format(type(datum)))
+        plot_spiketrains(axes, datum, label=label, **properties)
+
+    @staticmethod
+    def __plot_array(axes, datum, label, properties):
+        if len(datum[0]) == 2:
+            plot_spikes_numpy(axes, datum, label=label, **properties)
+        elif len(datum[0]) == 3:
+            heat_plot_numpy(axes, datum, label=label, **properties)
+        else:
+            raise Exception("Can't handle ndarray with {} columns".format(
+                len(datum[0])))
+
+    @staticmethod
+    def __plot_block(axes, datum, label, properties):
+        if "run" in properties:
+            run = int(properties.pop("run"))
+            if len(datum.segments) <= run:
+                raise Exception("Block only has {} segments".format(
+                    len(datum.segments)))
+            segment = datum.segments[run]
+        elif len(datum.segments) != 1:
+            raise Exception(
+                "Block has {} segments please specify one to plot using run="
+                .format(len(datum.segments)))
+        else:
+            segment = datum.segments[0]
+        plot_segment(axes, segment, label=label, **properties)
