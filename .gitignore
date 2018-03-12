@@ -12,3 +12,4 @@
 MANIFEST
 /.cache
 .coverage
+/.pytest_cache
