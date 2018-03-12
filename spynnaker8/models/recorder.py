@@ -404,35 +404,32 @@ class Recorder(RecordingCommon):
             signal_array = signal_array[:, map_indexes]
 
         ids = map(self._population.index_to_id, indexes)
-        if signal_array.size > 0:
-            # source_ids = numpy.fromiter(ids, dtype=int)
-            if pynn8_syntax:
-                data_array = neo.AnalogSignalArray(
-                        signal_array,
-                        units=units,
-                        t_start=t_start,
-                        sampling_period=sampling_period,
-                        name=variable,
-                        source_population=label,
-                        channel_index=indexes,
-                        source_ids=ids)
-                data_array.shape = (data_array.shape[0], data_array.shape[1])
-                segment.analogsignalarrays.append(data_array)
-
-            else:
-                data_array = neo.AnalogSignal(
-                    signal_array,
-                    units=units,
-                    t_start=t_start,
-                    sampling_period=sampling_period,
-                    name=variable,
-                    source_population=label,
-                    source_ids=ids)
-                channel_index = _get_channel_index(indexes, block)
-                data_array.channel_index = channel_index
-                data_array.shape = (data_array.shape[0], data_array.shape[1])
-                segment.analogsignals.append(data_array)
-                channel_index.analogsignals.append(data_array)
+        if pynn8_syntax:
+            data_array = neo.AnalogSignalArray(
+                signal_array,
+                units=units,
+                t_start=t_start,
+                sampling_period=sampling_period,
+                name=variable,
+                source_population=label,
+                channel_index=indexes,
+                source_ids=ids)
+            data_array.shape = (data_array.shape[0], data_array.shape[1])
+            segment.analogsignalarrays.append(data_array)
+        else:
+            data_array = neo.AnalogSignal(
+                signal_array,
+                units=units,
+                t_start=t_start,
+                sampling_period=sampling_period,
+                name=variable,
+                source_population=label,
+                source_ids=ids)
+            channel_index = _get_channel_index(indexes, block)
+            data_array.channel_index = channel_index
+            data_array.shape = (data_array.shape[0], data_array.shape[1])
+            segment.analogsignals.append(data_array)
+            channel_index.analogsignals.append(data_array)
 
 
 def _get_channel_index(ids, block):

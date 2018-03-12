@@ -336,6 +336,8 @@ def compare(current, full, rate, indexes):
     print d2_rate.shape
     if not numpy.array_equal(d1, d2_rate):
         if d1.shape != d2_rate.shape:
+            if d1.shape[0] == 0 or d1.shape[1] == 0:
+                return  # Empty so ignore shape
             raise Exception(
                 "Shape not equal {} {}".format(d1.shape, d2_rate.shape))
         for i in xrange(d1.shape[0]):
@@ -426,6 +428,22 @@ class TestSampling(BaseTestCase):
             record_v=True, v_rate=4, v_get_indexes=range(0, n_neurons, 2),
             record_exc=True, exc_rate=3, exc_get_indexes=range(0, n_neurons, 3),
             record_inh=True, inh_rate=2, inh_get_indexes=range(0, n_neurons, 4))
+
+    def test_mixed_medium(self):
+        simtime = 5000
+        n_neurons = 500
+        run_and_compare_script(
+            simtime, n_neurons,
+            record_spikes=True, spike_rate=5,
+            spike_get_indexes=range(0, n_neurons, 2),
+            record_v=True, v_rate=4, v_rec_indexes=range(0, n_neurons, 2),
+            v_get_indexes=range(0, n_neurons, 4),
+            record_exc=True, exc_rate=3,
+            exc_rec_indexes=range(0, n_neurons, 2),
+            exc_get_indexes=range(0, n_neurons, 3),
+            record_inh=True, inh_rate=2,
+            inh_rec_indexes=range(0, n_neurons, 4),
+            inh_get_indexes=range(2, n_neurons, 4))
 
     def test_one(self):
         simtime = 500
