@@ -26,7 +26,6 @@ def processing_data(data, frequencies):
     times = map(lambda x: x - 100, times)
     # compute average release probabilities for every simulated frequency
     rt_scaling = 10
-    runtime = len(spiking_frequencies)*200*rt_scaling
     start_time = 0
     freq_stp_traces = []
     norm_stp_traces = []
@@ -56,11 +55,7 @@ spiking_frequencies = np.linspace(0, 100, 21)
 freq_stp_traces_fac, norm_stp_traces_fac = processing_data(data_fac, spiking_frequencies)
 freq_stp_traces_dep, norm_stp_traces_dep = processing_data(data_dep, spiking_frequencies)
 
-print(spiking_frequencies[0])
-print(freq_stp_traces_fac[0])
-print(freq_stp_traces_dep[0])
-print(norm_stp_traces_fac[0])
-print(norm_stp_traces_dep[0])
+
 
 # plotting
 
@@ -77,7 +72,7 @@ ax2.set_ylabel(r'$<P_{rel}>r$ (Hz)')
 plots = p1+p2
 labs = [plot.get_label() for plot in plots]
 ax1.legend(plots, labs, loc='upper left')
-#plt.savefig(output_path + '5_18_A-reproduction.png', format = 'png', dpi = 1200)
+plt.savefig(output_path + '5_18_A-reproduction.png', format = 'png', dpi = 1200)
 plt.show()
 
 fig2, ax3 = plt.subplots()
@@ -93,7 +88,7 @@ ax4.set_ylabel(r'$<P_{rel}>r$ (Hz)')
 plots = p3+p4
 labs = [plot.get_label() for plot in plots]
 ax3.legend(plots, labs, loc='center right')
-#plt.savefig(output_path + '5_18_B-reproduction.png', format = 'png', dpi = 1200)
+plt.savefig(output_path + '5_18_B-reproduction.png', format = 'png', dpi = 1200)
 plt.show()
 
 

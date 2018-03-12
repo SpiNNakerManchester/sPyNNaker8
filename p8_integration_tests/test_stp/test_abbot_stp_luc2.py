@@ -43,9 +43,9 @@ timestamp = initial_run + 200*rt_scaling
 spike_times = np.linspace(initial_run, timestamp, spiking_frequencies[0]*200*rt_scaling/1000.)
 
 for i in range(1, len(spiking_frequencies)):
-    timestamp = timestamp + 200*rt_scaling
     spike_times = np.concatenate((spike_times, np.linspace(timestamp,timestamp+200*rt_scaling,
                                                            spiking_frequencies[i]*200*rt_scaling/1000.)))
+    timestamp = timestamp + 200*rt_scaling
 
 
 # Spike source to send spike via plastic synapse
