@@ -1,5 +1,4 @@
 import logging
-import numpy
 
 from spynnaker.pyNN.exceptions import InvalidParameterType
 from spynnaker.pyNN.models.pynn_population_common import PyNNPopulationCommon
@@ -273,7 +272,7 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
             Clearly only neurons recording will actually have any data
             If None will be taken as all recording as get_data
         :type indexes: list (int)
-        :param clear: Whether recorded data will be deleted from the `Assembly`.
+        :param clear: Whether recorded data will be deleted.
         :type clear: bool
         :param annotations: annotations to put on the neo block
         :type annotations: dict
@@ -338,7 +337,7 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         return self._vertex.initial_values
 
     # NONE PYNN API CALL
-    def get_initial_value(self, variable, selector=None ):
+    def get_initial_value(self, variable, selector=None):
         """ See AbstractPopulationInitializable.get_initial_value"""
         if not self._vertex_population_initializable:
             raise KeyError(
@@ -347,7 +346,7 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         return self._vertex.get_initial_value(variable, selector)
 
     # NONE PYNN API CALL
-    def set_initial_value(self, variable, value, selector=None ):
+    def set_initial_value(self, variable, value, selector=None):
         """ See AbstractPopulationInitializable.set_initial_value"""
         if not self._vertex_population_initializable:
             raise KeyError(

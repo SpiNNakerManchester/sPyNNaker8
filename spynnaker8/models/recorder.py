@@ -364,10 +364,9 @@ class Recorder(RecordingCommon):
             # get times per atom
             segment.spiketrains.append(spiketrain)
 
-
     def read_in_signal(
-        self, segment, block, signal_array, data_indexes, view_indexes,
-        variable, recording_start_time, sampling_interval, units, label):
+            self, segment, block, signal_array, data_indexes, view_indexes,
+            variable, recording_start_time, sampling_interval, units, label):
         """ Reads in a data item that's not spikes (likely v, gsyn e, gsyn i)
 
         Saves this data to the segment.
@@ -457,8 +456,6 @@ def _convert_extracted_data_into_neo_expected_format(
         for index in indexes]
     processed_data = numpy.vstack(processed_data).T
     return processed_data
-
-
 
 
 def _add_pynn9_signal_chunk(

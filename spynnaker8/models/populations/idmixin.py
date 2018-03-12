@@ -1,6 +1,7 @@
 # Alternative implemenation for
 # https://github.com/NeuralEnsemble/PyNN/blob/master/pyNN/common/populations.py
 
+
 class IDMixin(object):
     __slots__ = ["_id", "_population"]
 

@@ -4,6 +4,7 @@ from p8_integration_tests.base_test_case import BaseTestCase
 import spynnaker8 as sim
 from spynnaker8.models.populations.population_view import PopulationView
 
+
 class Test_IDMixin(BaseTestCase):
 
     def test_simple(self):
@@ -62,7 +63,6 @@ class Test_IDMixin(BaseTestCase):
 
         sim.end()
 
-
     def test_get_set(self):
         n_neurons = 4
         label = "pop_1"
@@ -97,7 +97,7 @@ class Test_IDMixin(BaseTestCase):
         view3 = view1[1:3]
         self.assertEqual([3, 5], view3._indexes)
         view4 = view1.sample(2)
-        self.assertEqual(2, len(view3._indexes))
+        self.assertEqual(2, len(view4._indexes))
         sim.end()
 
     def test_initial_value(self):
@@ -122,4 +122,3 @@ class Test_IDMixin(BaseTestCase):
         view.initialize(v=lambda i: -65 + i / 10.0)
         self.assertEqual([-64.9, -64.7], view.initial_values["v"])
         sim.end()
-

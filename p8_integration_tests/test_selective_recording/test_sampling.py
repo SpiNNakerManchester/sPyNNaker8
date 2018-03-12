@@ -346,8 +346,7 @@ def compare(current, full, rate, indexes):
                     if d1[i][j] != d2_rate[i][j]:
                         raise Exception(
                             "row {} column{} index{} current {} full {}"
-                                .format(i, j, indexes[j], d1[i][j],
-                                        d2_rate[i][j]))
+                            .format(i, j, indexes[j], d1[i][j], d2_rate[i][j]))
 
 
 class TestSampling(BaseTestCase):
@@ -371,8 +370,10 @@ class TestSampling(BaseTestCase):
             record_spikes=True, spike_rate=1,
             spike_rec_indexes=range(0, n_neurons, 2),
             record_v=True, v_rate=1, v_rec_indexes=range(0, n_neurons, 2),
-            record_exc=True, exc_rate=1, exc_rec_indexes=range(0, n_neurons, 3),
-            record_inh=True, inh_rate=1, inh_rec_indexes=range(0, n_neurons, 4))
+            record_exc=True, exc_rate=1,
+            exc_rec_indexes=range(0, n_neurons, 3),
+            record_inh=True, inh_rate=1,
+            inh_rec_indexes=range(0, n_neurons, 4))
 
     def test_big_with_get_index(self):
         simtime = 20000
@@ -382,8 +383,10 @@ class TestSampling(BaseTestCase):
             record_spikes=True, spike_rate=1,
             spike_get_indexes=range(0, n_neurons, 2),
             record_v=True, v_rate=1, v_get_indexes=range(0, n_neurons, 2),
-            record_exc=True, exc_rate=1, exc_get_indexes=range(0, n_neurons, 3),
-            record_inh=True, inh_rate=1, inh_get_indexes=range(0, n_neurons, 4))
+            record_exc=True, exc_rate=1,
+            exc_get_indexes=range(0, n_neurons, 3),
+            record_inh=True, inh_rate=1,
+            inh_get_indexes=range(0, n_neurons, 4))
 
     def test_big_with_both(self):
         simtime = 20000
@@ -393,8 +396,10 @@ class TestSampling(BaseTestCase):
             record_spikes=True, spike_rate=5,
             spike_rec_indexes=range(0, n_neurons, 2),
             record_v=True, v_rate=4, v_rec_indexes=range(0, n_neurons, 2),
-            record_exc=True, exc_rate=3, exc_rec_indexes=range(0, n_neurons, 3),
-            record_inh=True, inh_rate=2, inh_rec_indexes=range(0, n_neurons, 4))
+            record_exc=True, exc_rate=3,
+            exc_rec_indexes=range(0, n_neurons, 3),
+            record_inh=True, inh_rate=2,
+            inh_rec_indexes=range(0, n_neurons, 4))
 
     def test_medium_split(self):
         simtime = 5000
@@ -404,8 +409,10 @@ class TestSampling(BaseTestCase):
             record_spikes=True, spike_rate=5,
             spike_rec_indexes=range(0, n_neurons, 2),
             record_v=True, v_rate=4, v_rec_indexes=range(0, n_neurons, 2),
-            record_exc=True, exc_rate=3, exc_rec_indexes=range(0, n_neurons, 3),
-            record_inh=True, inh_rate=2, inh_rec_indexes=range(0, n_neurons, 4))
+            record_exc=True, exc_rate=3,
+            exc_rec_indexes=range(0, n_neurons, 3),
+            record_inh=True, inh_rate=2,
+            inh_rec_indexes=range(0, n_neurons, 4))
 
     def test_rec_medium(self):
         simtime = 5000
@@ -415,8 +422,10 @@ class TestSampling(BaseTestCase):
             record_spikes=True, spike_rate=5,
             spike_rec_indexes=range(0, n_neurons, 2),
             record_v=True, v_rate=4, v_rec_indexes=range(0, n_neurons, 2),
-            record_exc=True, exc_rate=3, exc_rec_indexes=range(0, n_neurons, 3),
-            record_inh=True, inh_rate=2, inh_rec_indexes=range(0, n_neurons, 4))
+            record_exc=True, exc_rate=3,
+            exc_rec_indexes=range(0, n_neurons, 3),
+            record_inh=True, inh_rate=2,
+            inh_rec_indexes=range(0, n_neurons, 4))
 
     def test_get_medium(self):
         simtime = 5000
@@ -426,8 +435,10 @@ class TestSampling(BaseTestCase):
             record_spikes=True, spike_rate=5,
             spike_get_indexes=range(0, n_neurons, 2),
             record_v=True, v_rate=4, v_get_indexes=range(0, n_neurons, 2),
-            record_exc=True, exc_rate=3, exc_get_indexes=range(0, n_neurons, 3),
-            record_inh=True, inh_rate=2, inh_get_indexes=range(0, n_neurons, 4))
+            record_exc=True, exc_rate=3,
+            exc_get_indexes=range(0, n_neurons, 3),
+            record_inh=True, inh_rate=2,
+            inh_get_indexes=range(0, n_neurons, 4))
 
     def test_mixed_medium(self):
         simtime = 5000

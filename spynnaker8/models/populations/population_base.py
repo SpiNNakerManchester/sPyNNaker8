@@ -1,6 +1,4 @@
 import logging
-from pyNN import random
-import numpy
 from six import add_metaclass
 from spinn_utilities.abstract_base import AbstractBase, abstractmethod, \
     abstractproperty
@@ -229,7 +227,8 @@ class PopulationBase(object):
         """
         logger.warning('record_v is depricated. '
                        'Call transfered to record(["v"], .....) instead.')
-        return self.record('v', to_file=to_file,
+        return self.record(
+            'v', to_file=to_file,
             sampling_interval=sampling_interval, indexes=indexes)
 
     def rset(self, *args, **kwargs):
@@ -248,4 +247,5 @@ class PopulationBase(object):
 
     def tset(self, *args, **kwargs):
         """ Deprecated. Use set(parametername=value_array) instead. """
-        raise NotImplementedError("Use set(parametername=value_array) instead.")
+        raise NotImplementedError(
+            "Use set(parametername=value_array) instead.")

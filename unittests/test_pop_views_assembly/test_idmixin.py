@@ -1,5 +1,3 @@
-from unittest import SkipTest
-
 from p8_integration_tests.base_test_case import BaseTestCase
 import spynnaker8 as sim
 
@@ -59,7 +57,6 @@ class Test_IDMixin(BaseTestCase):
         assert [-65.0, -65.0, -65.0, -65.0] == pop.get_initial_value("v")
         cells = pop.all_cells
         cells[1].set_initial_value(variable="v", value=-60)
-        test = cells[1].get_initial_value("v")
         assert [-60] == cells[1].get_initial_value("v")
         sim.end()
 

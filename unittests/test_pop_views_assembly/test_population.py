@@ -4,8 +4,6 @@ from unittest import SkipTest
 from p8_integration_tests.base_test_case import BaseTestCase
 import spynnaker8 as sim
 
-from spynnaker8.models.populations.population import Population
-
 
 class Test_Population(BaseTestCase):
 
