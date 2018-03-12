@@ -7,19 +7,19 @@ import matplotlib.pyplot as plt
 
 timestep = 1
 p.setup(timestep)
-runtime = 5000
+runtime = 2000
 initial_run = 100  # to negate any initial conditions
 
 # Facilitation STP parameters
 STP_type_facil = 1 # 0 for depression; 1 for potentiation
-f_facil = 0.6
-P_baseline_facil = 0.25
+f_facil = 0.4
+P_baseline_facil = 0.1
 tau_P_facil = 55
 
 # Depression STP parameters
 STP_type_depress = 0 # 0 for depression; 1 for potentiation
 f_depress = 0.6
-P_baseline_depress = 0.25
+P_baseline_depress = 1.0
 tau_P_depress = 55
 
 
