@@ -1,3 +1,4 @@
+from __future__ import print_function
 import spynnaker8 as p
 from p8_integration_tests.base_test_case import BaseTestCase
 
@@ -61,5 +62,5 @@ if __name__ == '__main__':
     (pre_weights, pre_delays, post_weights, post_delays) = do_run()
     for pre_weight, post_weight, pre_delay, post_delay in zip(
             pre_weights, post_weights, pre_delays, post_delays):
-        print "Weights before:", pre_weight, "and after:", post_weight
-        print "Delays before:", pre_delay, "and after:", post_delay
+        print("Weights before:", pre_weight, "and after:", post_weight)
+        print("Delays before:", pre_delay, "and after:", post_delay)

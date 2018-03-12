@@ -29,6 +29,7 @@ Authors : Catherine Wacongne < catherine.waco@gmail.com >
 
 April 2013
 """
+from __future__ import print_function
 import spynnaker8 as sim
 import spynnaker.plot_utils as plot_utils
 from spynnaker8.utilities import neo_convertor
@@ -208,8 +209,8 @@ class StdpExample(BaseTestCase):
 
 if __name__ == '__main__':
     (pre_spikes, post_spikes, weights) = do_run()
-    print len(pre_spikes)
-    print len(post_spikes)
+    print(len(pre_spikes))
+    print(len(post_spikes))
     plot_utils.plot_spikes([pre_spikes, post_spikes])
-    print len(weights)
+    print(len(weights))
     print("Weights:", weights)

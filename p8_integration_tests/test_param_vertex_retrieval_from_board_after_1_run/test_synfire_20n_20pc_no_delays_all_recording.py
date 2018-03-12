@@ -1,4 +1,5 @@
 #!/usr/bin/python
+from __future__ import print_function
 """
 Synfirechain-like example
 """
@@ -46,7 +47,7 @@ class Synfire20n20pcDelaysDelayExtensionsAllRecording(BaseTestCase):
         if not numpy.allclose(read_gsyn, gsyn_exc_7):
             for g1, g2 in zip(read_gsyn, gsyn_exc_7):
                 if not numpy.allclose(g1, g2, rtol=1e-04):
-                    print g1, g2, g1[2]-g2[2], (g1[2]-g2[2])/g1[2]
+                    print(g1, g2, g1[2]-g2[2], (g1[2]-g2[2])/g1[2])
 
         self.assertTrue(numpy.allclose(read_gsyn, gsyn_exc_7, rtol=1e-04),
                         "gsyn synakker method mismatch")

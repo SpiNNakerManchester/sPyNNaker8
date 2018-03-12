@@ -14,7 +14,7 @@ SPIKE_TIMES = [11, 22]
 def do_run(nNeurons, timestep):
 
     spike_list = {'spike_times': SPIKE_TIMES}
-    print spike_list
+    print(spike_list)
     p.setup(timestep=timestep, min_delay=timestep, max_delay=timestep*10)
 
     pop = p.Population(nNeurons, p.SpikeSourceArray, spike_list, label='input')
@@ -85,4 +85,4 @@ if __name__ == '__main__':
     neo = do_run(nNeurons)
     spikes = neo_convertor.convert_spikes()
     plot_utils.plot_spikes(spikes)
-    print spikes
+    print(spikes)
