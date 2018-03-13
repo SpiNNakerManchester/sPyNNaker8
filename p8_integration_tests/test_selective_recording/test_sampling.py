@@ -76,7 +76,7 @@ def compare_spikearrays(this, full, tollerance=False):
     if numpy.array_equal(this, full):
         return sys.maxsize
     if this[0] != full[0]:
-        raise Exception("Index missmatch")
+        raise Exception("Index mismatch")
     if len(this) != len(full):
         print("{} spikes length differ. {} != {}".format(
             this[0], len(this), len(full)))
@@ -175,7 +175,7 @@ def run_and_compare_script(
                 os.path.join(current_file_path, full_prefix + "v.csv")) or
             not os.path.exists(
                 os.path.join(current_file_path, full_prefix + "v.csv"))):
-        print ("Comparision files do not exist so creating them")
+        print("Comparison files do not exist so creating them")
         run_script(
             simtime, n_neurons,
             record_spikes=True,
@@ -244,10 +244,8 @@ def read_spikes(name, simtime, n_neurons, rate=1, indexes=None):
 
 
 def compare(current, full, rate, indexes):
-    """
-    Compares two data files to see if they contain similar data.
-
-    Ignoring data not recorded due to sampling rate or indexes.
+    """ Compares two data files to see if they contain similar data.\
+    Ignores data not recorded due to sampling rate or indexes.
 
     The current data is also read from file so that any float changes \
         due to read write are the same.
