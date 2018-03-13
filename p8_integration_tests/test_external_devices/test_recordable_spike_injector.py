@@ -38,8 +38,8 @@ def test_recordable_spike_injector():
         i = spiketrain.annotations['source_index']
         if __name__ == "__main__":
             if n_spikes[i] != len(spiketrain):
-                print("Incorrect number of spikes, expected {} but got {}:"\
-                    .format(n_spikes[i], len(spiketrain)))
+                print("Incorrect number of spikes, expected {} but got {}:"
+                      .format(n_spikes[i], len(spiketrain)))
                 print(spiketrain)
         else:
             assert n_spikes[i] == len(spiketrain)
@@ -48,8 +48,8 @@ def test_recordable_spike_injector():
     for (index, count) in iteritems(n_spikes):
         if __name__ == "__main__":
             if index not in spike_trains:
-                print("Neuron {} should have spiked {} times but didn't"\
-                    .format(index, count))
+                print("Neuron {} should have spiked {} times but didn't"
+                      .format(index, count))
         else:
             assert index in spike_trains
 

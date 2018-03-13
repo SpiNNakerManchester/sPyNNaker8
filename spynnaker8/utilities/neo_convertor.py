@@ -30,12 +30,12 @@ def convert_data(data, name, run=0):
 
     :param data: Data as returned by a getData() call
     :type data: SpynnakerNeoBlock
-    :param name: Nane of the data to be extracted.\
+    :param name: Name of the data to be extracted.\
         Same values as used in getData()
     :type name: str
     :param run: Zero based index of the run to extract data for
     :type run: int
-    :return: nparray
+    :rtype: nparray
     """
     if len(data.segments) <= run:
         raise ValueError("Data only contains {} so unable to run {}. "
@@ -61,7 +61,7 @@ def convert_data_list(data, name, runs=None):
     :type name: str
     :param runs: List of Zero based index of the run to extract data for.\
         Or None to extract all runs
-    :return: [nparray]
+    :rtype: list(nparray)
     """
     results = []
     if runs is None:
@@ -75,8 +75,9 @@ def convert_v_list(data):
     """ Converts the voltage into a list numpy array one per segment (all\
         runs) in the format id, time, value
 
-    :type data: SpynnakerNeoBlock Must have v data
-    :return: [nparray]
+    :param data: The data to convert; it must have V data in it
+    :type data: SpynnakerNeoBlock
+    :rtype: list(nparray)
     """
     return convert_data_list(data, "v", runs=None)
 
@@ -85,8 +86,9 @@ def convert_gsyn_exc_list(data):
     """ Converts the gsyn_exc into a list numpy array one per segment (all\
         runs) in the format id, time, value
 
-    :type data: SpynnakerNeoBlock Must have gsyn_exc data
-    :return: [nparray]
+    :param data: The data to convert; it must have Gsyn_exc data in it
+    :type data: SpynnakerNeoBlock
+    :rtype: list(nparray)
     """
     return convert_data_list(data, "gsyn_exc", runs=None)
 
@@ -95,8 +97,9 @@ def convert_gsyn_inh_list(data):
     """ Converts the gsyn_inh into a list numpy array one per segment (all\
         runs) in the format id, time, value
 
-    :type data: SpynnakerNeoBlock Must have gsyn_inh data
-    :return: [nparray]
+    :param data: The data to convert; it must have Gsyn_inh data in it
+    :type data: SpynnakerNeoBlock
+    :rtype: list(nparray)
     """
     return convert_data_list(data, "gsyn_inh", runs=None)
 

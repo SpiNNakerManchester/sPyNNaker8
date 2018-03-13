@@ -93,9 +93,8 @@ class Population(PyNNPopulationCommon, Recorder):
 
     def record(self, variables, to_file=None, sampling_interval=None,
                indexes=None):
-        """
-        Record the specified variable or variables for all cells in the
-        Population or view.
+        """ Record the specified variable or variables for all cells in the\
+            Population or view.
 
         :param variables: either a single variable name or a list of variable\
             names. For a given celltype class, `celltype.recordable` contains\
@@ -157,7 +156,7 @@ class Population(PyNNPopulationCommon, Recorder):
         """
         # pylint: disable=too-many-arguments
         if not gather:
-            logger.warning("Spinnaker only supports gather=True. We will run "
+            logger.warning("sPyNNaker only supports gather=True. We will run "
                            "as if gather was set to True.")
 
         if isinstance(io, string_types):
@@ -225,7 +224,7 @@ class Population(PyNNPopulationCommon, Recorder):
         :rtype: neo.Block
         """
         if not gather:
-            logger.warning("Spinnaker only supports gather=True. We will run "
+            logger.warning("sPyNNaker only supports gather=True. We will run "
                            "as if gather was set to True.")
 
         return self._extract_neo_block(variables, clear, annotations)

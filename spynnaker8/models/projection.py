@@ -34,7 +34,7 @@ class Projection(PyNNProjectionCommon):
         # pylint: disable=too-many-arguments
         if source is not None:
             raise InvalidParameterType(
-                "spynnaker8 {} does not yet support multi-compartmental "
+                "sPyNNaker8 {} does not yet support multi-compartmental "
                 "cells.".format(__version__))
 
         # set space object if not set
@@ -99,7 +99,7 @@ class Projection(PyNNProjectionCommon):
         """
         # pylint: disable=too-many-arguments
         if not gather:
-            logger.warning("Spynnaker always gathers from every core.")
+            logger.warning("sPyNNaker always gathers from every core.")
 
         return self._get_data(
             attribute_names, format, with_address, multiple_synapses)
@@ -113,7 +113,7 @@ class Projection(PyNNProjectionCommon):
         # pylint: disable=too-many-arguments
         if multiple_synapses != 'last':
             raise ConfigurationException(
-                "Spynnaker only recognises multiple_synapses == last")
+                "sPyNNaker only recognises multiple_synapses == last")
 
         # fix issue with 1 versus many
         if isinstance(attribute_names, string_types):
@@ -159,7 +159,7 @@ class Projection(PyNNProjectionCommon):
                            format='list',  # @ReservedAssignment
                            gather=True):
         logger.warning(
-            "getSynapseDynamics is deprecated.  Use get(parameter_name)"
+            "getSynapseDynamics is deprecated. Use get(parameter_name)"
             " instead")
         return self.get(parameter_name, format, gather, with_address=False)
 
@@ -167,33 +167,31 @@ class Projection(PyNNProjectionCommon):
                         gather=True,
                         compatible_output=True):  # @UnusedVariable
         logger.warning(
-            "saveConnections is deprecated.  Use save('all') instead")
+            "saveConnections is deprecated. Use save('all') instead")
         self.save('all', file, format='list', gather=gather)
 
     def printWeights(self, file, format='list',  # @ReservedAssignment
                      gather=True):
         logger.warning(
-            "printWeights is deprecated.  Use save('weight') instead")
+            "printWeights is deprecated. Use save('weight') instead")
         self.save('weight', file, format, gather)
 
     def printDelays(self, file, format='list',  # @ReservedAssignment
                     gather=True):
+        """ Print synaptic weights to file. In the array format, zeros are\
+            printed for non-existent connections.
         """
-        Print synaptic weights to file. In the array format, zeros are\
-        printed for non-existent connections.
-        """
-        logger.warning("printDelays is deprecated.  Use save('delay') instead")
+        logger.warning("printDelays is deprecated. Use save('delay') instead")
         self.save('delay', file, format, gather)
 
     def weightHistogram(self, min=None, max=None,  # @ReservedAssignment
                         nbins=10):
-        """
-        Return a histogram of synaptic weights.\
-        If min and max are not given, the minimum and maximum weights are\
-        calculated automatically.
+        """ Return a histogram of synaptic weights.\
+            If min and max are not given, the minimum and maximum weights are\
+            calculated automatically.
         """
         logger.warning(
-            "weightHistogram is deprecated.  Use numpy.histogram function"
+            "weightHistogram is deprecated. Use numpy.histogram function"
             " instead")
         pynn_common.Projection.weightHistogram(
             self, min=min, max=max, nbins=nbins)
@@ -214,11 +212,11 @@ class Projection(PyNNProjectionCommon):
     def save(
             self, attribute_names, file, format='list',  # @ReservedAssignment
             gather=True, with_address=True):
-        """
-        Print synaptic attributes (weights, delays, etc.) to file. In the\
-        array format, zeros are printed for non-existent connections.\
-        Values will be expressed in the standard PyNN units (i.e. millivolts,\
-        nanoamps, milliseconds, microsiemens, nanofarads, event per second).
+        """ Print synaptic attributes (weights, delays, etc.) to file. In the\
+            array format, zeros are printed for non-existent connections.\
+            Values will be expressed in the standard PyNN units (i.e., \
+            millivolts, nanoamps, milliseconds, microsiemens, nanofarads, \
+            event per second).
         """
         # pylint: disable=too-many-arguments
         if attribute_names in ('all', 'connections'):
