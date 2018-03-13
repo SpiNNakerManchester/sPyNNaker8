@@ -1,5 +1,5 @@
 import logging
-from six import iteritems
+from six import iteritems, string_types
 from spynnaker.pyNN.exceptions import InvalidParameterType
 from spynnaker.pyNN.models.pynn_population_common import PyNNPopulationCommon
 from spynnaker.pyNN.utilities.constants import SPIKES
@@ -116,7 +116,7 @@ class Population(PyNNPopulationCommon, Recorder):
             # note that if record(None) is called, its a reset
             Recorder._turn_off_all_recording(self)
             # handle one element vs many elements
-        elif isinstance(variables, basestring):
+        elif isinstance(variables, string_types):
             # handle special case of 'all'
             if variables == "all":
                 logger.warning(
@@ -160,7 +160,7 @@ class Population(PyNNPopulationCommon, Recorder):
             logger.warning("Spinnaker only supports gather=True. We will run "
                            "as if gather was set to True.")
 
-        if isinstance(io, basestring):
+        if isinstance(io, string_types):
             io = self._get_io(io)
 
         data = self._extract_neo_block(variables, clear, annotations)

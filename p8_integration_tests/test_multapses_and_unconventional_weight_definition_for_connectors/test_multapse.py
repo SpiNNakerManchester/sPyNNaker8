@@ -1,6 +1,7 @@
 from __future__ import print_function
 import spynnaker8 as p
 from p8_integration_tests.base_test_case import BaseTestCase
+from six import assertCountEqual
 
 
 def do_run():
@@ -54,8 +55,8 @@ class TestMultapse(BaseTestCase):
         (pre_weights, pre_delays, post_weights, post_delays) = do_run()
         for pre_weight, post_weight, pre_delay, post_delay in zip(
                 pre_weights, post_weights, pre_delays, post_delays):
-            self.assertItemsEqual(pre_weight, post_weight)
-            self.assertItemsEqual(pre_delay, post_delay)
+            assertCountEqual(self, pre_weight, post_weight)
+            assertCountEqual(self, pre_delay, post_delay)
 
 
 if __name__ == '__main__':

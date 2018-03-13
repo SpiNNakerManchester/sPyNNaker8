@@ -1,5 +1,6 @@
 import logging
 import numpy
+from six import string_types
 
 from pyNN import common as pynn_common, recording
 from pyNN.space import Space as PyNNSpace
@@ -86,7 +87,7 @@ class Projection(PyNNProjectionCommon):
         """ get a parameter for pynn 0.8
 
         :param attribute_names: list of attributes to gather
-        :type attribute_names: basestring or iterable of basestring
+        :type attribute_names: str or iterable(str)
         :param format: "list" or "array"
         :param gather: gather over all nodes (defaulted to true on spinnaker)
         :param with_address: True if the source and target are to be included
@@ -115,7 +116,7 @@ class Projection(PyNNProjectionCommon):
                 "Spynnaker only recognises multiple_synapses == last")
 
         # fix issue with 1 versus many
-        if isinstance(attribute_names, basestring):
+        if isinstance(attribute_names, string_types):
             attribute_names = [attribute_names]
 
         data_items = list()
@@ -201,7 +202,7 @@ class Projection(PyNNProjectionCommon):
             self, save_file, format,  # @ReservedAssignment
             metadata, data):
         data_file = save_file
-        if isinstance(data_file, basestring):
+        if isinstance(data_file, string_types):
             data_file = recording.files.StandardTextFile(save_file, mode='wb')
         if format == 'array':
             data = [
