@@ -91,9 +91,11 @@ class Population(PyNNPopulationCommon, Recorder):
         """
         return self._vertex_holder
 
-    def record(self, variables, to_file=None, sampling_interval=None):
-        """ Record the specified variable or variables for all cells in the\
-            Population or view.
+    def record(self, variables, to_file=None, sampling_interval=None,
+               indexes=None):
+        """
+        Record the specified variable or variables for all cells in the
+        Population or view.
 
         :param variables: either a single variable name or a list of variable\
             names. For a given celltype class, `celltype.recordable` contains\
@@ -105,6 +107,11 @@ class Population(PyNNPopulationCommon, Recorder):
         :param sampling_interval: a value in milliseconds, and an integer\
             multiple of the simulation timestep.
         """
+        if indexes is not None:
+            logger.warn(
+                "record indexes parameter is not standard PyNN so will not "
+                "work on other other simulators. "
+                "In the future this will be replaced with views")
         if variables is None:  # reset the list of things to record
             # note that if record(None) is called, its a reset
             Recorder._turn_off_all_recording(self)
@@ -121,17 +128,14 @@ class Population(PyNNPopulationCommon, Recorder):
 
                 # iterate though them
                 for variable in variables:
-                    self._record(variable, self._all_ids,
-                                 sampling_interval, to_file)
+                    self._record(variable, sampling_interval, to_file, indexes)
             else:
                 # record variable
-                self._record(
-                    variables, self._all_ids, sampling_interval, to_file)
+                self._record(variables, sampling_interval, to_file, indexes)
 
         else:  # list of variables, so just iterate though them
             for variable in variables:
-                self._record(
-                    variable, self._all_ids, sampling_interval, to_file)
+                self._record(variable, sampling_interval, to_file, indexes)
 
     def write_data(self, io, variables='all', gather=True, clear=False,
                    annotations=None):
@@ -241,17 +245,20 @@ class Population(PyNNPopulationCommon, Recorder):
             "portable to other PyNN simulators. Nor do we guarantee that this "
             "function will exist in future releases.")
         if isinstance(variable, list):
-            if len(variable) != 1:
-                raise ConfigurationException(
-                    "Only one type of data at a time is supported")
-            variable = variable[0]
-        return self._get_recorded_variable(variable)
+            if len(variable) == 1:
+                variable = variable[0]
+            else:
+                msg = "Only one type of data at a time is supported"
+                raise ConfigurationException(msg)
+        if variable == SPIKES:
+            return self._get_spikes()
+        return self._get_recorded_pynn7(variable)
 
     def get_spike_counts(self, gather=True):
         """ Return the number of spikes for each neuron.
         """
-        spikes = self._get_recorded_variable(SPIKES)
-        return super(Population, self).get_spike_counts(spikes, gather)
+        spikes = self._get_spikes()
+        return PyNNPopulationCommon.get_spike_counts(self, spikes, gather)
 
     def find_units(self, variable):
         """ Get the units of a variable
