@@ -13,7 +13,7 @@ _neo_ver = StrictVersion(neo_version)
 print("Detected pynn version {} and neo version {}".format(
     pynn_version, neo_version))
 
-if _pynn_ver >= "0.9": 
+if _pynn_ver >= "0.9":
     if _neo_ver < "0.5":
         raise ImportError(_msg)
     pynn8_syntax = False
