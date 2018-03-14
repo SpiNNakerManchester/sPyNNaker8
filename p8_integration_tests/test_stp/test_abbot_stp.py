@@ -14,13 +14,13 @@ initial_run = 100  # to negate any initial conditions
 STP_type_facil = 1 # 0 for depression; 1 for potentiation
 f_facil = 0.4
 P_baseline_facil = 0.1
-tau_P_facil = 5
+tau_P_facil = 50
 
 # Depression STP parameters
 STP_type_depress = 0 # 0 for depression; 1 for potentiation
 f_depress = 0.6
 P_baseline_depress = 1.0
-tau_P_depress = 50
+tau_P_depress = 5
 
 
 # Common parameters
