@@ -14,13 +14,13 @@ initial_run = 100  # to negate any initial conditions
 STP_type_facil = 1 # 0 for depression; 1 for potentiation
 f_facil = 0.4
 P_baseline_facil = 0.1
-tau_P_facil = 55
+tau_P_facil = 5
 
 # Depression STP parameters
 STP_type_depress = 0 # 0 for depression; 1 for potentiation
 f_depress = 0.6
 P_baseline_depress = 1.0
-tau_P_depress = 55
+tau_P_depress = 50
 
 
 # Common parameters
@@ -34,7 +34,8 @@ depress_spike_times = [10*initial_run + i for i in spike_times]
 facil_src = p.Population(1, p.SpikeSourceArray,
                         {'spike_times': facil_spike_times}, label="facil src")
 depress_src = p.Population(1, p.SpikeSourceArray,
-                        {'spike_times': depress_spike_times}, label="depress src")
+                        {'spike_times': depress_spike_times},
+                        label="depress src")
 
 # Post-synapse population
 pop_exc = p.Population(1, p.IF_curr_exp(),  label="test")
