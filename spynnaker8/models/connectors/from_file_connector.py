@@ -6,9 +6,11 @@ from pyNN.recording import files
 
 
 class FromFileConnector(CommonFromFileConnector, PyNNFromFileConnector):
+    # pylint: disable=redefined-builtin
     def __init__(
             self, file, callback=None,  # @ReservedAssignment
             distributed=False, safe=True, verbose=False):
+        # pylint: disable=too-many-arguments
         CommonFromFileConnector.__init__(
             self, file=file, distributed=distributed, safe=safe,
             verbose=verbose)
@@ -16,9 +18,8 @@ class FromFileConnector(CommonFromFileConnector, PyNNFromFileConnector):
             self, file=file, distributed=distributed, safe=safe,
             callback=callback)
 
-    def get_reader(self, file):
-        """
-        get a filereader object using the pynn methods
+    def get_reader(self, file):  # @ReservedAssignment
+        """ Get a file reader object using the PyNN methods.
 
         :return: A pynn StandardTextFile or similar
         """

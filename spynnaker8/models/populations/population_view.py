@@ -7,6 +7,7 @@ from .assembly import Assembly
 
 
 class PopulationView(pynn_common.PopulationView):
+    # pylint: disable=protected-access
     _assembly_class = Assembly
 
     @property

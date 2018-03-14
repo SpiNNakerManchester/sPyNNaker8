@@ -2,7 +2,7 @@
 Synfirechain-like example
 """
 from p8_integration_tests.base_test_case import BaseTestCase
-from p8_integration_tests.scripts.synfire_run import TestRun
+from p8_integration_tests.scripts.synfire_run import SynfireRunner
 import spynnaker.plot_utils as plot_utils
 import spynnaker.spike_checker as spike_checker
 
@@ -10,7 +10,7 @@ import spynnaker.spike_checker as spike_checker
 nNeurons = 200  # number of neurons in each population
 run_times = [1000, 1000, 1000]
 reset = False
-synfire_run = TestRun()
+synfire_run = SynfireRunner()
 
 
 class Synfire3Run1ExitExtractionIfCurrExp(BaseTestCase):
