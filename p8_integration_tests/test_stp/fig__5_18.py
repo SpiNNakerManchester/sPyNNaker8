@@ -69,10 +69,11 @@ ax1.set_ylim([0,1.])
 ax2 = ax1.twinx()
 p2 = ax2.plot(spiking_frequencies, norm_stp_traces_fac, 'b', label=r'$<P_{rel}>r$ (Hz)')
 ax2.set_ylabel(r'$<P_{rel}>r$ (Hz)')
+ax2.set_ylim(bottom=0)
 plots = p1+p2
 labs = [plot.get_label() for plot in plots]
 ax1.legend(plots, labs, loc='upper left')
-plt.savefig(output_path + '5_18_A-reproduction.png', format = 'png', dpi = 1200)
+plt.savefig(output_path + '5_18_A-reproduction2.png', format = 'png', dpi = 1200)
 plt.show()
 
 fig2, ax3 = plt.subplots()
@@ -85,6 +86,7 @@ ax3.set_ylim([0,1.])
 ax4 = ax3.twinx()
 p4 = ax4.plot(spiking_frequencies, norm_stp_traces_dep, 'b', label=r'$<P_{rel}>r$ (Hz)')
 ax4.set_ylabel(r'$<P_{rel}>r$ (Hz)')
+ax4.set_ylim(bottom=0)
 plots = p3+p4
 labs = [plot.get_label() for plot in plots]
 ax3.legend(plots, labs, loc='center right')

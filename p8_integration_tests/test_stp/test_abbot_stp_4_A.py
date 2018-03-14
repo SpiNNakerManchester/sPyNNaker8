@@ -46,6 +46,7 @@ synapse = p.Projection(pop_src1,
 
 pop_src1.record('all')
 pop_exc.record("all")
+
 p.run(initial_run + 1500)
 pop_src1.set(rate=freq2)
 p.run(500)
