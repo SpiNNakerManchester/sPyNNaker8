@@ -11,13 +11,13 @@ runtime = 2000
 initial_run = 100  # to negate any initial conditions
 
 # Facilitation STP parameters
-STP_type_facil = 1 # 0 for depression; 1 for potentiation
+STP_type_facil = 1 # 0 for depression; 1 for facilitation
 f_facil = 0.4
 P_baseline_facil = 0.1
 tau_P_facil = 50
 
 # Depression STP parameters
-STP_type_depress = 0 # 0 for depression; 1 for potentiation
+STP_type_depress = 0 # 0 for depression; 1 for facilitation
 f_depress = 0.6
 P_baseline_depress = 1.0
 tau_P_depress = 5
@@ -90,7 +90,7 @@ Figure(
           ylabel="Membrane potential (mV)",
           data_labels=[pop_exc.label], yticks=True, xlim=(0, runtime)),
     Panel(exc_data.segments[0].filter(name='gsyn_exc')[0],
-          ylabel="gsyn excitatory (mV)",
+          ylabel="gsyn excitatory (mA)",
           data_labels=[pop_exc.label], yticks=True, xlim=(0, runtime)),
 #     Panel(exc_data.segments[0].filter(name='gsyn_inh')[0],
 #           ylabel="gsyn inhibitory (mV)",
