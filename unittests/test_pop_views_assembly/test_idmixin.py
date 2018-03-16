@@ -1,3 +1,5 @@
+import pytest
+
 from p8_integration_tests.base_test_case import BaseTestCase
 import spynnaker8 as sim
 
@@ -5,7 +7,7 @@ N_NEURONS = 4
 LABEL = "pop_1"
 
 
-class Test_IDMixin(BaseTestCase):
+class TestIDMixin(BaseTestCase):
 
     def test_cells(self):
         sim.setup(timestep=1.0)
@@ -13,6 +15,9 @@ class Test_IDMixin(BaseTestCase):
         cells = pop_1.all_cells
         assert 0 == cells[0]._id
         assert pop_1 == cells[0]._population
+        assert len(str(cells[0])) > 0
+        assert len(repr(cells[0])) > 0
+        assert not(cells[1].__eq__("Not the same object"))
         sim.end()
 
     def test_get_set(self):
@@ -21,7 +26,7 @@ class Test_IDMixin(BaseTestCase):
         cells = pop_1.all_cells
         p_tau_m = pop_1.get("tau_m")
         tau_m_3 = cells[3].tau_m
-        assert p_tau_m[3] == tau_m_3[0]
+        assert p_tau_m[3] == tau_m_3
         cells[2].tau_m = 2
         p_tau_m = pop_1.get("tau_m")
         assert 2 == p_tau_m[2]
@@ -31,6 +36,16 @@ class Test_IDMixin(BaseTestCase):
         cells[2].set_parameters(tau_m=3, i_offset=13)
         params = cells[2].get_parameters()
         assert 13 == params["i_offset"][0]
+        sim.end()
+
+    def test_bad(self):
+        sim.setup(timestep=1.0)
+        pop_1 = sim.Population(4, sim.IF_curr_exp(), label=LABEL)
+        cell = pop_1.all_cells[2]
+        with pytest.raises(Exception):
+            cell.variable_that_is_not_there
+        with pytest.raises(Exception):
+            cell.variable_that_is_not_there = "pop"
         sim.end()
 
     def test_is_local(self):
@@ -64,16 +79,14 @@ class Test_IDMixin(BaseTestCase):
         sim.setup(timestep=1.0)
         pop = sim.Population(N_NEURONS, sim.IF_curr_exp(), label=LABEL)
         cells = pop.all_cells
-        -65 == cells[1].v
-        -65 == cells[1].v_init
+        assert -65 == cells[1].v
+        assert -65 == cells[1].v_init
         cells[1].v = -60
         assert [-65.0, -60.0, -65.0, -65.0] == pop.get_initial_value("v")
         sim.end()
 
-    """
     def test_asview(self):
         sim.setup(timestep=1.0)
-        pop = sim.Population(N_NEURONS, sim.IF_curr_exp(), label=LABEL)
-        cells = pop.all_cells
-        cells[1].as_view()
-    """
+        pop = sim.Population(4, sim.IF_curr_exp(), label=LABEL)
+        cell = pop[2]
+        cell.as_view()

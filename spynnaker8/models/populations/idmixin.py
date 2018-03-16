@@ -17,12 +17,12 @@ class IDMixin(object):
     def __getattr__(self, name):
         try:
             return self._population.get_by_selector(
-                selector=self._id, parameter_names=name)
+                selector=self._id, parameter_names=name)[0]
         except Exception as ex:
             try:
                 # try initisable variable
                 return self._population.get_initial_value(
-                    selector=self._id, variable=name)
+                    selector=self._id, variable=name)[0]
             except Exception:
                 # that failed too so raise the better original exception
                 raise ex

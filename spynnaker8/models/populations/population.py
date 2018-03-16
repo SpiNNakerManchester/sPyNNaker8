@@ -8,6 +8,7 @@ from spinn_front_end_common.utilities.exceptions import ConfigurationException
 
 from spynnaker8.models import Recorder
 from spynnaker8.models.populations import IDMixin, PopulationBase
+from spynnaker8.models.populations.population_view import PopulationView
 from spynnaker8.utilities import DataHolder
 
 from pyNN import descriptions
@@ -86,6 +87,13 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         """
         for id in xrange(self._size):
             yield IDMixin(self, id)
+
+    def __getitem__(self, index_or_slice):
+        if isinstance(index_or_slice, int):
+            return IDMixin(self, index_or_slice)
+        else:
+            return PopulationView(
+                self, index_or_slice, label="view over {}".format(self.label))
 
     def all(self):
         """ Iterator over cell ids on all MPI nodes."""
