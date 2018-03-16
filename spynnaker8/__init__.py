@@ -59,6 +59,8 @@ from spynnaker8.models.synapse_dynamics.synapse_dynamics_static import \
 # plastic stuff
 from spynnaker8.models.synapse_dynamics.synapse_dynamics_stdp import \
     SynapseDynamicsSTDP as STDPMechanism
+from spynnaker8.models.synapse_dynamics.synapse_dynamics_structural \
+    import SynapseDynamicsStructural as StructuralMechanism
 from spynnaker8.models.synapse_dynamics.weight_dependence\
     .weight_dependence_additive import WeightDependenceAdditive as \
     AdditiveWeightDependence
@@ -128,7 +130,7 @@ __all__ = [
     # synapse structures
     'StaticSynapse',
     # plastic stuff
-    'STDPMechanism', 'AdditiveWeightDependence',
+    'STDPMechanism', 'StructuralMechanism', 'AdditiveWeightDependence',
     'MultiplicativeWeightDependence', 'SpikePairRule',
     # neuron stuff
     'IF_cond_exp', 'IF_curr_exp', "IF_curr_alpha",
