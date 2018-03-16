@@ -13,12 +13,14 @@ from neo.io import PyNNNumpyIO
 from neo.io import AsciiSpikeTrainIO
 from neo.io import PyNNTextIO
 import time
+from matplotlib import rcParams
+rcParams.update({'figure.autolayout': True})
 
-#plt.ioff()  # turn on if running a long sim over ssh
+plt.ioff()  # turn on if running a long sim over ssh
 
 timestr = time.strftime("%Y%m%d-%H%M%S")
 
-figname0 =  "LTPtst"
+figname0 =  "LTD50"
 figname = './figs/' + "figure_2_"+figname0+"_"+timestr+'.png'
 figname2 = './figs/' + "figure_2_inset_"+figname0+"_"+timestr+'.png'
 
@@ -29,17 +31,17 @@ output_file_name = output_file+"_full"+output_ext
 do_LTP = True # true for LTPs, false for LTDs
 do_LTP = False # true for LTPs, false for LTDs
 do_save = False # save the data or not
-spinn3 = True  # True if using 4 node board (resources are limited)
+spinn3 = False  # True if using 4 node board (resources are limited)
 
 p.setup(1)
 p.set_number_of_neurons_per_core(p.extra_models.IFCurrExpCa2Concentration, 200)
 
 simtime = 300
-n_runs = 20
+n_runs = 50
 if spinn3:
     n_nrn = 200 # total number of neurons in each population
 else:
-    n_nrn = 1000
+    n_nrn = 600
 
 w0 = 0.0
 w_mult=0.1   # this parameters scales all weight variables, actual w_max = w_mult; should be 0.1-0.125 or smaller to avoid distortions in results
@@ -49,7 +51,7 @@ w_min = 0.0
 w_max = 1.0
 w_drift = .0035
 th_w = 0.50
-V_th = -55.0
+V_th = -56.0
 Ca_th_l = 3.0
 Ca_th_h1 = 4.0
 Ca_th_h2 = 13.0
@@ -76,7 +78,7 @@ n_drive_rates = drive_rates.shape[0]
 if spinn3:
     pre_rates = np.arange(40, 55, 10) # pre-synaptic neuron rates
 else:
-    pre_rates = np.arange(10, 55, 10) # pre-synaptic neuron rates
+    pre_rates = np.arange(20, 55, 5) # pre-synaptic neuron rates
 
 n_pre_rates = pre_rates.shape[0]
 
@@ -209,7 +211,7 @@ fig_settings = {
     'font.size': 12
 }
 plt.rcParams.update(fig_settings)
-
+plt.figure(figsize=(5,3))
 
 if do_LTP:
     plt.ylabel(r'${\mathrm{P_{LTP}}}$')
@@ -224,7 +226,7 @@ for i in range(n_pre_rates):
     max_probs[i] = np.amax(series1[i,:][s1mask[i,:]])
 
 plt.savefig(figname, format="png")
-plt.tight_layout()
+#plt.tight_layout()
 plt.clf()
 
 # make plot of max P_LT(P/D) against input firing rate
