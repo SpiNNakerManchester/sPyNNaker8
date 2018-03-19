@@ -1,7 +1,9 @@
 from __future__ import division
 import numpy
 import pickle
+import pytest
 
+from spinn_front_end_common.utilities.exceptions import ConfigurationException
 from p8_integration_tests.base_test_case import BaseTestCase
 from spinn_front_end_common.utilities.globals_variables import get_simulator
 import spynnaker8 as sim
@@ -53,6 +55,13 @@ class TestGetting(BaseTestCase):
         get_simulator().get_current_time = mock_time
 
         neo = pop.getSpikes()
+        spikes = neo_convertor.convert_spikes(neo)
+        assert numpy.array_equal(spikes,  mock_spikes())
+        spiketrains = neo.segments[0].spiketrains
+        assert 4 == len(spiketrains)
+
+        #  gather False has not effect testing that here
+        neo = pop.get_data("spikes", gather=False)
         spikes = neo_convertor.convert_spikes(neo)
         assert numpy.array_equal(spikes,  mock_spikes())
         spiketrains = neo.segments[0].spiketrains
@@ -182,7 +191,8 @@ class TestGetting(BaseTestCase):
         pop._get_recorded_matrix = mock_v_all
         get_simulator().get_current_time = mock_time
 
-        pop.write_data("spikes.pkl", "spikes")
+        # Note gather=False will be ignored just testing it can be
+        pop.write_data("spikes.pkl", "spikes", gather=False)
         with open("spikes.pkl") as pkl:
             neo = pickle.load(pkl)
             spikes = neo_convertor.convert_spikes(neo)
@@ -213,7 +223,6 @@ class TestGetting(BaseTestCase):
 
         sim.end()
 
-    """
     def test_get_(self):
         sim.setup(timestep=1.0)
         pop = sim.Population(4, sim.IF_curr_exp(), label="a label")
@@ -221,5 +230,12 @@ class TestGetting(BaseTestCase):
         pop._get_recorded_matrix = mock_v_all
         get_simulator().get_current_time = mock_time
 
+        v = pop.spinnaker_get_data("v")
+        assert 400 == len(v)
+
+        v = pop.spinnaker_get_data(["v"])
+        assert 400 == len(v)
+
+        with pytest.raises(ConfigurationException):
+            pop.spinnaker_get_data(["v", "spikes"])
         sim.end()
-    """

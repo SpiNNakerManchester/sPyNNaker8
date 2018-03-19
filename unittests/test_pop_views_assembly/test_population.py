@@ -89,6 +89,26 @@ class TestPopulation(BaseTestCase):
         assert [-60] == pop.get_initial_value("v", selector=1)
         sim.end()
 
+    def test_init_bad(self):
+        sim.setup(timestep=1.0)
+        pop = sim.Population(4, sim.IF_curr_exp())
+        with pytest.raises(Exception):
+            pop.set_initial_value(variable="NOT_THERE", value="Anything")
+        with pytest.raises(Exception):
+            pop.get_initial_value(variable="NOT_THERE")
+        sim.end()
+
+    def test_no_init(self):
+        sim.setup(timestep=1.0)
+        pop = sim.Population(4, sim.SpikeSourceArray())
+        with pytest.raises(KeyError):
+            pop.set_initial_value(variable="v", value="Anything")
+        with pytest.raises(KeyError):
+            pop.get_initial_value(variable="v")
+        with pytest.raises(KeyError):
+            pop.initial_values
+        sim.end()
+
     def test_initial_values(self):
         sim.setup(timestep=1.0)
         pop = sim.Population.create(

@@ -97,3 +97,10 @@ class TestPopulation(BaseTestCase):
         assert pop._vertex._neuron_recorder._indexes["v"] is None
         assert len(pop._get_all_recording_variables()) == 0
         sim.end()
+
+    def test_clash(self):
+        sim.setup(timestep=1.0)
+        pop = sim.Population(5, sim.IF_curr_exp())
+        pop.record("v")
+        with pytest.raises(ConfigurationException):
+            pop.record(None, sampling_interval=2)
