@@ -1,5 +1,6 @@
+from __future__ import division
 import logging
-from six import add_metaclass
+from six import add_metaclass, itervalues
 from spinn_utilities.abstract_base import AbstractBase, abstractmethod, \
     abstractproperty
 
@@ -33,7 +34,7 @@ class PopulationBase(object):
         """ A Population / PopulationView can be added to another
             Population, PopulationView or Assembly, returning an Assembly.
         """
-        raise NotImplementedError
+        raise NotImplementedError  # pragma: no cover
 
     def getSpikes(self, *args, **kwargs):
         """ Deprecated.Use get_data('spikes') instead. """
@@ -87,7 +88,7 @@ class PopulationBase(object):
     def inject(self, current_source):
         """ Connect a current source to all cells in the Population."""
         # TODO:
-        raise NotImplementedError
+        raise NotImplementedError  # pragma: no cover
 
     def is_local(self, id):
         """
@@ -117,21 +118,21 @@ class PopulationBase(object):
     def mean_spike_count(self, gather=True):
         """ Returns the mean number of spikes per neuron. """
         counts = self.get_spike_counts()
-        return sum(counts) / len(counts)
+        return sum(itervalues(counts)) / len(counts)
 
     def nearest(self, position):
         """ Return the neuron closest to the specified position."""
-        raise NotImplementedError
+        raise NotImplementedError  # pragma: no cover
 
     @property
     def position_generator(self):
         """ NO PyNN description of this method """
-        raise NotImplementedError
+        raise NotImplementedError   # pragma: no cover
 
     @property
     def positions(self):
         """ NO PyNN description of this method """
-        raise NotImplementedError
+        raise NotImplementedError   # pragma: no cover
 
     @abstractmethod
     def write_data(self, io, variables='all', gather=True, clear=False,
@@ -187,7 +188,7 @@ class PopulationBase(object):
 
     def receptor_types(self):
         """ NO PyNN description of this method """
-        raise NotImplementedError
+        raise NotImplementedError   # pragma: no cover
 
     @abstractmethod
     def record(self, variables, to_file=None, sampling_interval=None,
@@ -234,18 +235,18 @@ class PopulationBase(object):
     def rset(self, *args, **kwargs):
         """ Deprecated. Use set(parametername=rand_distr) instead. """
         raise NotImplementedError(
-            " Use set(parametername=rand_distr) instead.")
+            " Use set(parametername=rand_distr) instead.")   # pragma: no cover
 
     def save_positions(self, file):
         """ Save positions to file. The output format is index x y z """
-        raise NotImplementedError
+        raise NotImplementedError   # pragma: no cover
 
     @property
     def structure(self):
         """ The spatial structure of the parent Population. """
-        raise NotImplementedError
+        raise NotImplementedError   # pragma: no cover
 
     def tset(self, *args, **kwargs):
         """ Deprecated. Use set(parametername=value_array) instead. """
         raise NotImplementedError(
-            "Use set(parametername=value_array) instead.")
+            "Use set(parametername=value_array) instead.")   # pragma: no cover

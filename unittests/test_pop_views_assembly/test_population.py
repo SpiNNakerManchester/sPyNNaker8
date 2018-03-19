@@ -5,7 +5,7 @@ from p8_integration_tests.base_test_case import BaseTestCase
 import spynnaker8 as sim
 
 
-class Test_Population(BaseTestCase):
+class TestPopulation(BaseTestCase):
 
     def test_properties(self):
         n_neurons = 5
@@ -120,3 +120,10 @@ class Test_Population(BaseTestCase):
             iterator.next()
 
         sim.end()
+
+    def test_base(self):
+        n_neurons = 5
+        label = "pop_1"
+        sim.setup(timestep=1.0)
+        pop_1 = sim.Population(n_neurons, sim.IF_curr_exp(), label=label)
+        assert n_neurons == pop_1.local_size

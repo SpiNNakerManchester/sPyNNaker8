@@ -15,6 +15,8 @@ class Test_IDMixin(BaseTestCase):
         mask = [1, 3]
         view = PopulationView(pop_1, mask, label=label)
         self.assertEqual(2, view.size)
+        self.assertEqual(2, view.local_size)
+
         self.assertEqual(label, view.label)
         self.assertEqual(pop_1.celltype, view.celltype)
 

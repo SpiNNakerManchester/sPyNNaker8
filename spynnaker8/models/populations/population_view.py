@@ -192,7 +192,14 @@ class PopulationView(PopulationBase):
 
         The dict keys are neuron IDs, not indices.
         """
-        # TODO
+        logger.info("get_spike_counts is inefficient as it just counts the "
+                    "results of get_datas('spikes')")
+        neo = self.get_data("spikes")
+        spiketrains = neo.segments[len(neo.segments)-1].spiketrains
+        results = {}
+        for i, index in enumerate(self._indexes):
+            results[index] = len(spiketrains[i])
+        return results
 
     @property
     def grandparent(self):

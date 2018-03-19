@@ -150,8 +150,20 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         record in a Population, View or Assembly
         """
         if variables is None:  # reset the list of things to record
+            if sampling_interval is not None:
+                raise ConfigurationException(
+                    "Clash between parameters in record."
+                    "variables=None turns off recording,"
+                    "while sampling_interval!=None implies turn on recording")
+            if indexes is not None:
+                logger.warning(
+                    "View.record with variable None is none standard. "
+                    "Only the neurons in the view have their record turned "
+                    "off. Other neurons already set to record will remain "
+                    "set to record")
+
             # note that if record(None) is called, its a reset
-            Recorder._turn_off_all_recording(self)
+            Recorder._turn_off_all_recording(self, indexes)
             # handle one element vs many elements
         elif isinstance(variables, basestring):
             # handle special case of 'all'
