@@ -8,22 +8,8 @@ from spynnaker8.models.synapse_dynamics import SynapseDynamicsStatic
 
 class SynapseDynamicsStructural(_BaseClass):
     __slots__ = [
-        "_f_rew",
-        "_p_rew",
         "_weight",
-        "_delay",
-        "_s_max",
-        "_lateral_inhibition",
-        "_sigma_form_forward",
-        "_sigma_form_lateral",
-        "_p_form_forward",
-        "_p_form_lateral",
-        "_p_elim_dep",
-        "_p_elim_pot",
-        "_grid",
-        "_random_partner",
-        "_connections",
-        "_actual_row_max_length"]
+        "_delay"]
 
     def __init__(self, stdp_model=None, f_rew=10 ** 4, weight=0, delay=1,
                  s_max=32, sigma_form_forward=2.5, sigma_form_lateral=1,
@@ -32,7 +18,7 @@ class SynapseDynamicsStructural(_BaseClass):
                  grid=np.array([16, 16]), lateral_inhibition=0,
                  random_partner=False,
                  seed=None):
-        # if stdp_model and isinstance(stdp_model, SynapseDynamicsSTDP):
+
         if not stdp_model:
             stdp_model = SynapseDynamicsStatic()
 
