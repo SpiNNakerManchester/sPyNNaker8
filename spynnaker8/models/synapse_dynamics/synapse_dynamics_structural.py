@@ -1,12 +1,12 @@
 from spynnaker.pyNN.models.neuron.synapse_dynamics \
-    import SynapseDynamicsStructural as _BaseClass
+    import SynapseDynamicsStructural as SynapseDynamicsStructuralBaseClass
 from spinn_front_end_common.utilities import globals_variables
 import numpy as np
 
 from spynnaker8.models.synapse_dynamics import SynapseDynamicsStatic
 
 
-class SynapseDynamicsStructural(_BaseClass):
+class SynapseDynamicsStructural(SynapseDynamicsStructuralBaseClass):
     __slots__ = [
         "_weight",
         "_delay"]
