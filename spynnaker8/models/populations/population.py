@@ -139,10 +139,10 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
                 "record indexes parameter is not standard PyNN so will not "
                 "work on other other simulators. "
                 "It is now depricated and replaced with views")
-        self.record_with_indexes(
+        self._record_with_indexes(
             variables, to_file, sampling_interval, indexes)
 
-    def record_with_indexes(
+    def _record_with_indexes(
             self, variables, to_file, sampling_interval, indexes):
         """ Same as record but without none standard pynn warning
 

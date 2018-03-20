@@ -276,7 +276,7 @@ class PopulationView(PopulationBase):
         sampling_interval should be a value in milliseconds, and an integer
             multiple of the simulation timestep.
         """
-        self._population.record_with_indexes(
+        self._population._record_with_indexes(
             variables, to_file, sampling_interval, self._indexes)
 
     def sample(self, n, rng=None):
