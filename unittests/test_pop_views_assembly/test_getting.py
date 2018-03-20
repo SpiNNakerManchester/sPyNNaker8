@@ -162,6 +162,8 @@ class TestGetting(BaseTestCase):
         neo = view.get_data("v")
         v = neo.segments[0].filter(name='v')[0].magnitude
         (target, _, _) = mock_v_one_two("v")
+        assert numpy.array_equal(
+            [1, 2], neo.segments[0].filter(name='v')[0].channel_index.index)
         assert v.shape == target.shape
         assert numpy.array_equal(v,  target)
 
