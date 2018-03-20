@@ -1,6 +1,7 @@
 import pytest
 from pyNN.random import RandomDistribution, NumpyRNG
 from p8_integration_tests.base_test_case import BaseTestCase
+from spinn_front_end_common.utilities.exceptions import ConfigurationException
 import spynnaker8 as sim
 from spynnaker8.models.populations.population_view import PopulationView
 
@@ -124,3 +125,14 @@ class Test_IDMixin(BaseTestCase):
         view.initialize(v=lambda i: -65 + i / 10.0)
         self.assertEqual([-64.9, -64.7], view.initial_values["v"])
         sim.end()
+
+    def test_projection(self):
+        sim.setup(timestep=1.0)
+        pop = sim.Population(5, sim.IF_curr_exp(), label="pop_1")
+        view = PopulationView(pop, [1, 3], label="Odds")
+        try:
+            sim.Projection(pop, view, sim.OneToOneConnector())
+        except NotImplementedError:
+            pass  # Exceptable but better if it worked
+        with pytest.raises(ConfigurationException):
+            sim.Projection(pop, "SOMETHING WIERD", sim.OneToOneConnector())

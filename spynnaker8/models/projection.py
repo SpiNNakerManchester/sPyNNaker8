@@ -6,6 +6,8 @@ from pyNN.space import Space as PyNNSpace
 
 from spynnaker8.models.connectors import FromListConnector
 from spynnaker8.models.synapse_dynamics import SynapseDynamicsStatic
+from spynnaker8.models.populations.population import Population
+from spynnaker8.models.populations.population_view import PopulationView
 from spynnaker8._version import __version__
 
 from spynnaker.pyNN.models.pynn_projection_common import PyNNProjectionCommon
@@ -35,6 +37,9 @@ class Projection(PyNNProjectionCommon):
             raise InvalidParameterType(
                 "spynnaker8 {} does not yet support multi-compartmental "
                 "cells.".format(__version__))
+
+        self._check_population_param(pre_synaptic_population)
+        self._check_population_param(post_synaptic_population)
 
         # set space object if not set
         if space is None:
@@ -74,6 +79,15 @@ class Projection(PyNNProjectionCommon):
             machine_time_step=self._simulator.machine_time_step,
             user_max_delay=self._simulator.max_delay, label=label,
             time_scale_factor=self._simulator.time_scale_factor)
+
+    def _check_population_param(self, param):
+        if isinstance(param, Population):
+            return  # Good that is what we want
+        if isinstance(param, PopulationView):
+            raise NotImplementedError(
+                "Projections over views not currently supported")
+        raise ConfigurationException("Unexpected paramater type {}. Expected "
+                                     "Population".format(type(param)))
 
     def __len__(self):
         raise NotImplementedError
