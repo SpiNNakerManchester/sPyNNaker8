@@ -1,12 +1,12 @@
 from spynnaker.pyNN.models.neuron.synapse_dynamics \
-    import SynapseDynamicsStructural as StructuralBaseClass
+    import SynapseDynamicsStructuralStatic as StaticStructuralBaseClass
+from spynnaker.pyNN.models.neuron.synapse_dynamics \
+    import SynapseDynamicsStructuralCommon as StructuralBaseClass
 from spinn_front_end_common.utilities import globals_variables
-import numpy as np
-
 from spynnaker8.models.synapse_dynamics import SynapseDynamicsStatic
 
 
-class SynapseDynamicsStructural(StructuralBaseClass):
+class SynapseDynamicsStructuralStatic(StaticStructuralBaseClass):
     """ Class enables synaptic rewiring. It acts as a wrapper around \
         SynapseDynamicsStatic or SynapseDynamicsSTDP. This means rewiring \
         can operate in parallel with these types of synapses.
@@ -18,7 +18,7 @@ class SynapseDynamicsStructural(StructuralBaseClass):
 
             stdp_model = sim.STDPMechanism(...)
 
-            structure_model_with_stdp = sim.StructuralMechanism(
+            structure_model_with_stdp = sim.StructuralMechanismSTDP(
                 stdp_model=stdp_model,
                 weight=0,
                 s_max=32,
@@ -67,8 +67,8 @@ class SynapseDynamicsStructural(StructuralBaseClass):
     :type seed: int
     """
     __slots__ = [
-        "_weights",
-        "_delays"]
+        "_weight",
+        "_delay"]
 
     def __init__(
             self,
@@ -97,7 +97,7 @@ class SynapseDynamicsStructural(StructuralBaseClass):
         if not stdp_model:
             stdp_model = SynapseDynamicsStatic()
 
-        super(SynapseDynamicsStructural, self).__init__(
+        super(SynapseDynamicsStructuralStatic, self).__init__(
             stdp_model=stdp_model, f_rew=f_rew, weight=weight, delay=delay,
             s_max=s_max, sigma_form_forward=sigma_form_forward,
             sigma_form_lateral=sigma_form_lateral,
@@ -107,24 +107,24 @@ class SynapseDynamicsStructural(StructuralBaseClass):
             random_partner=random_partner, seed=seed
         )
 
-        self._weights = stdp_model._weight
-        _delays = stdp_model.delay
-        if _delays is None:
-            _delays = globals_variables.get_simulator().min_delay
-        self._delays = _delays
+        self._weight = stdp_model._weight
+        _delay = stdp_model.delay
+        if _delay is None:
+            _delay = globals_variables.get_simulator().min_delay
+        self._delay = _delay
 
     @property
     def weight(self):
-        return self._weights
+        return self._weight
 
     @weight.setter
     def weight(self, new_value):
-        self._weights = new_value
+        self._weight = new_value
 
     @property
     def delay(self):
-        return self._delays
+        return self._delay
 
     @delay.setter
     def delay(self, new_value):
-        self._delays = new_value
+        self._delay = new_value
