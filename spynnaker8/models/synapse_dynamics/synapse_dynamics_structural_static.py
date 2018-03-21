@@ -18,7 +18,7 @@ class SynapseDynamicsStructuralStatic(StaticStructuralBaseClass):
 
             stdp_model = sim.STDPMechanism(...)
 
-            structure_model_with_stdp = sim.StructuralMechanismSTDP(
+            structure_model_with_stdp = sim.StructuralMechanismStatic(
                 stdp_model=stdp_model,
                 weight=0,
                 s_max=32,
