@@ -23,16 +23,16 @@ GABA_B_src = p.Population(1, p.SpikeSourceArray,
 pop_exc = p.Population(1, p.extra_models.HillTononi(),  label="test")
 
 # Create projections
-synapse = p.Projection(
+synapse_AMPA = p.Projection(
     AMPA_src, pop_exc, p.AllToAllConnector(),
     p.StaticSynapse(weight=0.1, delay=1), receptor_type="AMPA")
-synapse = p.Projection(
+synapse_NMDA = p.Projection(
     NMDA_src, pop_exc, p.AllToAllConnector(),
     p.StaticSynapse(weight=0.075, delay=1), receptor_type="NMDA")
-synapse = p.Projection(
+synapse_GABA_A = p.Projection(
     GABA_A_src, pop_exc, p.AllToAllConnector(),
     p.StaticSynapse(weight=0.33, delay=1), receptor_type="GABA_A")
-synapse = p.Projection(
+synapse_GABA_B = p.Projection(
     GABA_B_src, pop_exc, p.AllToAllConnector(),
     p.StaticSynapse(weight=0.0132, delay=1), receptor_type="GABA_B")
 
@@ -42,7 +42,7 @@ weights = []
 
 
 runtime = runtime/0.1 # temporary scaling to account for new recording
-weights.append(synapse.get('weight', 'list',
+weights.append(synapse_GABA_B.get('weight', 'list',
                                    with_address=False)[0])
 
 exc_data = pop_exc.get_data()
