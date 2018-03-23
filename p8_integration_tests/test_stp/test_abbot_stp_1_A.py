@@ -27,7 +27,6 @@ pop_exc = p.Population(
 #                           v_rest=13.5, v_reset=13.5, v_thresh=15,
                           tau_syn_E=3, tau_syn_I=3, tau_refrac=3,
 #                          i_offset = 0.5),
-                          #i_offset=RandomDistribution("uniform", low=0.35, high=0.6)),
                           i_offset=RandomDistribution("uniform", low=0.494, high=0.503)),
             label="Excitatory")
 pop_inh = p.Population(
@@ -36,7 +35,6 @@ pop_inh = p.Population(
 #                           v_rest=13.5, v_reset=13.5, v_thresh=15,
                           tau_syn_E=3, tau_syn_I=3, tau_refrac=2,
 #                          i_offset = 0.5),
-                          #i_offset=RandomDistribution("uniform", low=0.35, high=0.6)),
                           i_offset=RandomDistribution("uniform", low=0.494, high=0.503)),
             label="Inhibitory")
 
@@ -71,7 +69,6 @@ depress_syn_plas_ie = p.STDPMechanism(
 
 
 
-#conn = p.FixedProbabilityConnector(0.1)
 conn = p.FixedProbabilityConnector(0.1)
 
 p.Projection(
@@ -86,8 +83,6 @@ p.Projection(
 
 
 
-#pop_exc.initialize(v=RandomDistribution("uniform", low=0, high=15))
-#pop_inh.initialize(v=RandomDistribution("uniform", low=0, high=15))
 pop_exc.initialize(v=RandomDistribution("uniform", low=-65, high=-50))
 pop_inh.initialize(v=RandomDistribution("uniform", low=-65, high=-50))
 
