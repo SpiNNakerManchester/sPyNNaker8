@@ -22,6 +22,8 @@ p.setup(1)
 simtime = 10000
 inp_nrn = 2000
 inh_nrn = 1000
+inp_nrn = 40
+inh_nrn = 20
 inp_inh_conn_prob = 8.0/inh_nrn
 
 w0 = 0.51
@@ -54,13 +56,13 @@ pop_ex = p.Population(1, p.extra_models.IFCurrExpCa2Concentration, cell_params, 
 #pop_ex = p.Population(1, p.IF_curr_exp(), label="test")
 
 rates = [2]*inp_nrn
-for i in range(100):
+for i in range(inp_nrn/20):
     rates[i]=50
 pop_src.set(rate=rates)
 
 weights = [1]*inp_nrn
-for i in range(1000):
-     weights[i+50]=0.0*w_mult
+for i in range(inp_nrn/2):
+     weights[i+inp_nrn/40]=0.0*w_mult
 
 rd = RandomDistribution('uniform', (0, w_mult))
 
