@@ -19,6 +19,7 @@ to_plot_wgts = False
 
 p.setup(1)
 
+simtime = 10000
 inp_nrn = 2000
 inh_nrn = 1000
 inp_inh_conn_prob = 8.0/inh_nrn
@@ -38,18 +39,14 @@ Ca_th_h2 = 13.0
 
 
 
-#w_mult = w_mult/inp_nrn
-#simtime=300
-
-#simtime = 1000
-# p.set_number_of_neurons_per_core(p.IF_curr_exp, 50)
-# p.set_number_of_neurons_per_core(p.SpikeSourcePoisson, 50)
+p.set_number_of_neurons_per_core(p.IF_curr_exp, 50)
+p.set_number_of_neurons_per_core(p.SpikeSourcePoisson, 50)
 # p.set_number_of_neurons_per_core(p.extra_models.IFCurrExpCa2Concentration, 100)
 # p.extra_models.IFCurrExpCa2Concentration.set_max_atoms_per_core(100)
 
 pop_src = p.Population(inp_nrn, p.SpikeSourcePoisson(rate=10), label="src")
 #pop_inp = p.Population(inp_nrn, p.IF_curr_exp(), label="inp")
-pop_teacher = p.Population(1, p.SpikeSourcePoisson(rate=50), label="teacher")
+pop_teacher = p.Population(1, p.SpikeSourcePoisson(rate=150), label="teacher")
 cell_params = {"i_offset":0.0,  "tau_ca2":150, "i_alpha":1., "i_ca2":3.,   'v_reset':-65}
 #pop_inh = p.Population(inh_nrn, p.extra_models.IFCurrExpCa2Concentration, cell_params, label="inhibitory")
 pop_inh = p.Population(inh_nrn, p.IF_curr_exp(), label="inhibitory")
@@ -63,7 +60,8 @@ pop_src.set(rate=rates)
 
 weights = [1]*inp_nrn
 for i in range(1000):
-     rates[i+50]=0.0*w_mult
+     weights[i+50]=0.0*w_mult
+
 rd = RandomDistribution('uniform', (0, w_mult))
 
 syn_plas = p.STDPMechanism(
@@ -91,7 +89,9 @@ proj_teach_ex = p.Projection(pop_teacher,  pop_ex,  p.AllToAllConnector(),
 pop_ex.record(['v',  'spikes'])
 pop_src.record('spikes')
 pop_inh.record('spikes')
-
+pop_teacher.set(rate=50)
+p.run(1000)
+#pop_teacher.set(rate=150)
 wgts=[]
 if to_plot_wgts:
     for i in range(simtime):
@@ -101,6 +101,9 @@ if to_plot_wgts:
 #        wgts.append( proj.get('weight', format='list', with_address=False)[0])
 else:
         p.run(simtime)
+
+pop_teacher.set(rate=50)
+p.run(1000)
 
 #p.run(50)
 
