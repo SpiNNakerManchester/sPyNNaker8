@@ -11,7 +11,6 @@ from idna.core import _alabel_prefix
 from neo.io import PyNNNumpyIO
 from neo.io import AsciiSpikeTrainIO
 from neo.io import PyNNTextIO
-from example_graph_params import *
 
 
 to_plot_wgts = True
@@ -22,8 +21,8 @@ p.setup(1)
 simtime = 10000
 inp_nrn = 2000
 inh_nrn = 1000
-inp_nrn = 40
-inh_nrn = 20
+# inp_nrn = 40
+# inh_nrn = 20
 inp_inh_conn_prob = 8.0/inh_nrn
 
 w0 = 0.51
@@ -60,9 +59,6 @@ for i in range(inp_nrn/20):
     rates[i]=50
 pop_src.set(rate=rates)
 
-weights = [1]*inp_nrn
-for i in range(inp_nrn/2):
-     weights[i+inp_nrn/40]=0.0*w_mult
 
 rd = RandomDistribution('uniform', (0, w_mult))
 
@@ -91,9 +87,9 @@ proj_teach_ex = p.Projection(pop_teacher,  pop_ex,  p.AllToAllConnector(),
 pop_ex.record(['v',  'spikes'])
 pop_src.record('spikes')
 pop_inh.record('spikes')
-pop_teacher.set(rate=50)
+pop_teacher.set(rate=150)
 p.run(1000)
-#pop_teacher.set(rate=150)
+pop_teacher.set(rate=150)
 wgts=[]
 if to_plot_wgts:
     for i in range(simtime):
@@ -103,6 +99,7 @@ if to_plot_wgts:
 #        wgts.append( proj.get('weight', format='list', with_address=False)[0])
 else:
         p.run(simtime)
+        pass
 
 pop_teacher.set(rate=50)
 p.run(1000)
@@ -132,7 +129,8 @@ print spikes.segments[0].spiketrains[0].shape
 #print pre_spikes.segments[0].spiketrains
 #print spikes.segments[0].spiketrains
 
-plot_time = simtime
+plot_time = simtime+2000
+#plot_time = 100000
 if to_plot_wgts:
     plot_wgt = DataTable(range(plot_time), wgts)
 
