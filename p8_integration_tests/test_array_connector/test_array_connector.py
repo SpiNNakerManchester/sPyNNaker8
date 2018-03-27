@@ -4,7 +4,6 @@ from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt
 from spynnaker8.utilities import neo_convertor
 
-import os
 import numpy
 
 
@@ -31,14 +30,16 @@ def do_run(plot):
     p.set_number_of_neurons_per_core(p.IF_curr_exp, nNeurons / 2)
 
     # Population
-    pop = p.Population(nNeurons, p.IF_curr_exp(**cell_params_lif), label='pop_1')
+    pop = p.Population(nNeurons, p.IF_curr_exp(**cell_params_lif),
+                       label='pop_1')
 
     # create loopConnections array using numpy linspaces
-    loopConnections = numpy.array([numpy.linspace(0,nNeurons-1,nNeurons),
-                                   numpy.linspace(1,nNeurons,nNeurons)],
-                                   numpy.uint32)
+    loopConnections = numpy.array(
+        [numpy.linspace(0, nNeurons-1, nNeurons),
+         numpy.linspace(1, nNeurons, nNeurons)],
+        numpy.uint32)
     # connect the final neuron to the first neuron
-    loopConnections[1,nNeurons-1] = 0
+    loopConnections[1, nNeurons-1] = 0
 
     # SpikeInjector
     injectionConnection = numpy.array([[0], [0]], numpy.uint32)
