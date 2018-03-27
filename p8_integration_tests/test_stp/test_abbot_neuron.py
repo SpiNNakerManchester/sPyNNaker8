@@ -8,10 +8,10 @@ import matplotlib.pyplot as plt
 
 
 timestep = 1
-runtime = 1000
+runtime = 10000
 initial_run = 100  # to negate any initial conditions
 
-currents = np.linspace(0.2,0.8,21)
+currents = np.linspace(14, 16, 21)
 frequencies = []
 
 for offset in currents:
@@ -20,13 +20,12 @@ for offset in currents:
 
     # test-neuron
     pop_exc = p.Population(1,
-                           p.IF_curr_exp(tau_m=30,
-                                         #v_rest=0, v_reset=0, v_thresh=15,
+                           p.IF_curr_exp(tau_m=30, cm=30,
+                                         v_rest=0, v_reset=13.5, v_thresh=15,
                                          tau_syn_E=3, tau_syn_I=3, tau_refrac=3,
                                          i_offset = offset),
                            label="test")
 
-    pop_exc.initialize(v=13.5)
 
     pop_exc.record("all")
     p.run(initial_run + runtime)
@@ -36,7 +35,7 @@ for offset in currents:
     # print "neuron firing frequency: {} Hz".format(
     #      len(exc_data.segments[0].spiketrains[0]))
 
-    frequencies.append(len(exc_data.segments[0].spiketrains[0]))
+    frequencies.append(len(exc_data.segments[0].spiketrains[0])/10.)
 
     # Plot
     # Figure(
@@ -65,6 +64,6 @@ for offset in currents:
 plt.figure(1)
 plt.plot(currents, frequencies)
 plt.xlabel('offset current (A)')
-plt.ylabel('frequency (Hy)')
+plt.ylabel('frequency (Hz)')
 plt.show()
 
