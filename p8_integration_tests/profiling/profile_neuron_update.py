@@ -5,7 +5,7 @@ import unittest
 from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt
 
-p.setup(1)
+p.setup(1) # 1 for LIF; 0.1 for Izhikevich
 runtime = 1000 # Run for one second
 n_neurons = 1 # takes value 1, 2, 100, 256
 recording = False
