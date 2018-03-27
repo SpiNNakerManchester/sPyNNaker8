@@ -40,8 +40,8 @@ Ca_th_h2 = 13.0
 
 
 
-p.set_number_of_neurons_per_core(p.IF_curr_exp, 50)
-p.set_number_of_neurons_per_core(p.SpikeSourcePoisson, 50)
+# p.set_number_of_neurons_per_core(p.IF_curr_exp, 50)
+# p.set_number_of_neurons_per_core(p.SpikeSourcePoisson, 50)
 # p.set_number_of_neurons_per_core(p.extra_models.IFCurrExpCa2Concentration, 100)
 # p.extra_models.IFCurrExpCa2Concentration.set_max_atoms_per_core(100)
 
@@ -87,10 +87,12 @@ proj_teach_ex = p.Projection(pop_teacher,  pop_ex,  p.AllToAllConnector(),
 pop_ex.record(['v',  'spikes'])
 pop_src.record('spikes')
 pop_inh.record('spikes')
-pop_teacher.set(rate=150)
+pop_teacher.set(rate=0)
 p.run(1000)
 pop_teacher.set(rate=150)
 wgts=[]
+pop_src.set(rate=rates) # do this before second run to avoid all poisson sources firing at once
+
 if to_plot_wgts:
     for i in range(simtime):
         print i
