@@ -5,7 +5,7 @@ import unittest
 from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt
 
-p.setup(0.1)
+p.setup(1) # 1 for LIf; 0.1 for Izhikevich
 runtime = 1000 # Run for one second
 source_neurons = 256 # takes value: 1, 2, 100, 256
 target_neurons = 256 # takes value: 1, 2, 100, 256
@@ -18,7 +18,7 @@ source_pop = p.Population(source_neurons, p.SpikeSourceArray,
 
 ## Create target population of neurons - comment as appropriate
 target_pop = p.Population(target_neurons, p.IF_curr_exp(),  label="test")
-target_pop = p.Population(target_neurons, p.Izhikevich(),  label="test")
+# target_pop = p.Population(target_neurons, p.Izhikevich(),  label="test")
 
 
 # Connect neurons all-to-all
