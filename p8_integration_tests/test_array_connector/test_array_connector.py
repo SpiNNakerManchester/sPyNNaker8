@@ -33,7 +33,7 @@ def do_run(plot):
     pop = p.Population(nNeurons, p.IF_curr_exp(**cell_params_lif),
                        label='pop_1')
     pop2 = p.Population(nNeurons, p.IF_curr_exp(**cell_params_lif),
-                       label='pop_2')
+                        label='pop_2')
 
     # create loopConnections array for first population using numpy linspaces
     loopConnections = numpy.array(
