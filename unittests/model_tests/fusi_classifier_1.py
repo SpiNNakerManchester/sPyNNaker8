@@ -23,7 +23,7 @@ inp_nrn = 2000
 inh_nrn = 1000
 # inp_nrn = 40
 # inh_nrn = 20
-inp_inh_conn_prob = 8.0/inh_nrn
+inp_inh_conn_prob = 7.5/inh_nrn
 
 w0 = 0.51
 w_mult=0.1   # this parameters scales all weight variables, actual w_max = w_mult; should be 0.1-0.125 or smaller to avoid distortions in results
@@ -40,8 +40,8 @@ Ca_th_h2 = 13.0
 
 
 
-# p.set_number_of_neurons_per_core(p.IF_curr_exp, 50)
-# p.set_number_of_neurons_per_core(p.SpikeSourcePoisson, 50)
+p.set_number_of_neurons_per_core(p.IF_curr_exp, 50)
+p.set_number_of_neurons_per_core(p.SpikeSourcePoisson, 50)
 # p.set_number_of_neurons_per_core(p.extra_models.IFCurrExpCa2Concentration, 100)
 # p.extra_models.IFCurrExpCa2Concentration.set_max_atoms_per_core(100)
 
@@ -89,9 +89,9 @@ pop_src.record('spikes')
 pop_inh.record('spikes')
 pop_teacher.set(rate=0)
 p.run(1000)
-pop_teacher.set(rate=150)
+pop_teacher.set(rate=110)
 wgts=[]
-pop_src.set(rate=rates) # do this before second run to avoid all poisson sources firing at once
+#pop_src.set(rate=rates) # do this before second run to avoid all poisson sources firing at once
 
 if to_plot_wgts:
     for i in range(simtime):
@@ -103,7 +103,7 @@ else:
         p.run(simtime)
         pass
 
-pop_teacher.set(rate=50)
+pop_teacher.set(rate=0)
 p.run(1000)
 
 #p.run(50)
@@ -126,6 +126,8 @@ avg_inh_rate = avg_inh_rate / len(inh_spikes.segments[0].spiketrains)
 print "pre", avg_pre_rate
 print "inh", avg_inh_rate
 print spikes.segments[0].spiketrains[0].shape
+sp = spikes.segments[0].spiketrains[0]
+print np.histogram(sp, 12, (0,12000))
 
 #print v.segments[0].filter(name='v')[0]
 #print pre_spikes.segments[0].spiketrains
