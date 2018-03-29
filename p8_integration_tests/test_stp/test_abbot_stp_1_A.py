@@ -22,7 +22,7 @@ n_inh = int(round(n_neurons * 0.2))
 
 #current = 15
 #current = RandomDistribution("uniform", low=14.625, high=15.375)
-current = RandomDistribution("uniform", low=14.95, high=15.05)
+current = RandomDistribution("uniform", low=14.95, high=15.1)
 
 
 # Neuron populations
@@ -63,8 +63,8 @@ tau_rec_ei = 800.0
 tau_facil_ii = 1000.0
 tau_facil_ie = 1000.0
 
-#synapse_delay = timestep
-synapse_delay = RandomDistribution("uniform", low=0, high=2)
+synapse_delay = timestep
+#synapse_delay = RandomDistribution("uniform", low=0, high=10)
 
 
 # Create synapse dynamics
