@@ -110,6 +110,25 @@ class SimpleClassifier():
         self.pop_teacher.set(rate = teacher_freq)
         p.run(simtime)
 
+    def gap(self, input_freq, simtime):
+        pattern = [self.low_inp_freq]*self.inp_pop_sz
+        self.pop_src.set(rate=pattern)
+        self.pop_teacher.set(rate = input_freq)
+        p.run(simtime)
+
+    def calc_out_rates(self, spikes, nruns, simtime, gaptime, t0=0):
+        total_time = (nruns) * self.N_patterns * (simtime+gaptime)
+        bins = np.sort(np.concatenate(np.arange(0, total_time+1, (simtime + gaptime)), np.arange(simtime, total_time, (simtime + gaptime))))
+        (hist, tmp) = np.histogram(spikes, bins, (t0, t0+total_time))
+        hist.shape = (nruns, self.N_patterns)
+        results = np.zeros(((nruns), self.N_patterns))
+        hist_inds = np.arange(0, self.N_patterns *2 , 2) # ignore spikes in gaps
+        for j in range(nruns):
+            pattern_list = pattern_permutations[j, :]
+            results[j, pattern_list] = hist[j, hist_inds]
+        return results
+
+
 
     """
     Perform N_presentations presentations of the set of patterns, each time in a different random order
@@ -121,6 +140,7 @@ class SimpleClassifier():
         # present all patterns N_presentations times
         pattern_permutations = np.zeros((N_presentations, self.N_patterns))
         pattern_permutations = np.asarray(pattern_permutations, dtype=int)
+        gaptime = 700
         for i in range(N_presentations):
             pattern_list = np.random.permutation(self.N_patterns)
             pattern_permutations[i, :] = pattern_list
@@ -130,37 +150,22 @@ class SimpleClassifier():
                     teaching_signal = self.low_teacher
                 else:
                     teaching_signal = self.high_teacher
-                teaching_signal = (teaching_signal * (N_presentations - (3.0*i)/4)) / N_presentations
+                teaching_signal = (teaching_signal * (N_presentations - (1.0*i)/2)) / N_presentations
                 self.present_pattern(pattern_list[pnum], teaching_signal, self.simtime)
+                self.gap(0, gaptime)
             # print preliminary data for debugging
             spikes = self.pop_ex.get_data('spikes').segments[0].spiketrains[0]
-            total_time = (i+1) * self.N_patterns * self.simtime
-            (hist, tmp) = np.histogram(spikes, (i+1) * self.N_patterns, (t0, t0+total_time))
-            hist.shape = (i+1, self.N_patterns)
-            print hist
-            results = np.zeros(((i+1), self.N_patterns))
-            for j in range(i+1):
-                pattern_list = pattern_permutations[j, :]
-                results[j, pattern_list] = hist[j, :]
+            results = self.calc_out_rates(spikes, i+1, self.simtime, gaptime, t0)
             print results
 
 
         pattern_permutations = np.asarray(pattern_permutations, dtype=int)
         # read output spike data
         spikes = self.pop_ex.get_data('spikes').segments[0].spiketrains[0]
-        total_time = N_presentations * self.N_patterns * self.simtime
-        print spikes
-        (hist, tmp) = np.histogram(spikes, N_presentations * self.N_patterns, (t0, t0+total_time))
-        print hist
-        hist.shape = (N_presentations, self.N_patterns)
-        self.results = np.zeros((N_presentations, self.N_patterns))
-        for i in range(N_presentations):
-            pattern_list = pattern_permutations[i, :]
-            #self.results[i, pattern_list] = hist[i, range(self.N_patterns)]
-            self.results[i, pattern_list] = hist[i, :]
+        self.results = self.calc_out_rates(spikes, N_presentations, self.simtime, gaptime, t0)
 
 
-npat = 10
+npat = 2
 npres = 30
 
 fusi_classifier = SimpleClassifier(N_patterns=npat, simtime = 1000)
