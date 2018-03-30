@@ -32,7 +32,7 @@ class SimpleClassifier():
     Ca_th_h2 = 13.0
     tau_Ca = 150
 
-    def __init__(self, N_patterns=400, inp_pop_sz=2000, inh_pop_sz=1000, low_inp_freq=2, high_inp_freq=50, low_teacher=40, high_teacher=110, inp_inh_conn_prob = 7.5/1000,
+    def __init__(self, N_patterns=400, inp_pop_sz=2000, inh_pop_sz=1000, low_inp_freq=2, high_inp_freq=50, low_teacher=20, high_teacher=110, inp_inh_conn_prob = 7.5/1000,
                  N_active = 100, simtime = 300):
         self.init_patterns(N_patterns, inp_pop_sz, N_active)
         self.init_network(inp_pop_sz, inh_pop_sz, inp_inh_conn_prob)
@@ -120,18 +120,31 @@ class SimpleClassifier():
     def train(self, N_presentations, t0 = 0):
         # present all patterns N_presentations times
         pattern_permutations = np.zeros((N_presentations, self.N_patterns))
+        pattern_permutations = np.asarray(pattern_permutations, dtype=int)
         for i in range(N_presentations):
             pattern_list = np.random.permutation(self.N_patterns)
             pattern_permutations[i, :] = pattern_list
             for pnum in range(self.N_patterns):
-                print "presentation ", i ,"pattern", pnum
+                print "presentation ", i ,"pattern", pattern_list[pnum]
                 if pattern_list[pnum] < self.N_patterns/2:
                     teaching_signal = self.low_teacher
                 else:
                     teaching_signal = self.high_teacher
+                teaching_signal = (teaching_signal * (N_presentations - (3.0*i)/4)) / N_presentations
                 self.present_pattern(pattern_list[pnum], teaching_signal, self.simtime)
-                spikes = self.pop_ex.get_data('spikes').segments[0].spiketrains[0]
-                #spikes2 = self.pop_src.get_data('spikes').segments[0].spiketrains[0]
+            # print preliminary data for debugging
+            spikes = self.pop_ex.get_data('spikes').segments[0].spiketrains[0]
+            total_time = (i+1) * self.N_patterns * self.simtime
+            (hist, tmp) = np.histogram(spikes, (i+1) * self.N_patterns, (t0, t0+total_time))
+            hist.shape = (i+1, self.N_patterns)
+            print hist
+            results = np.zeros(((i+1), self.N_patterns))
+            for j in range(i+1):
+                pattern_list = pattern_permutations[j, :]
+                results[j, pattern_list] = hist[j, :]
+            print results
+
+
         pattern_permutations = np.asarray(pattern_permutations, dtype=int)
         # read output spike data
         spikes = self.pop_ex.get_data('spikes').segments[0].spiketrains[0]
@@ -147,16 +160,16 @@ class SimpleClassifier():
             self.results[i, pattern_list] = hist[i, :]
 
 
-npat = 100
-npres = 40
+npat = 10
+npres = 30
 
-fusi_classifier = SimpleClassifier(N_patterns=npat)
+fusi_classifier = SimpleClassifier(N_patterns=npat, simtime = 1000)
 
 # fusi_classifier.present_pattern(0, 40, 1000)
 # p.reset()
 fusi_classifier.train(npres, 0)
-print fusi_classifier.results*(1000.0/300.0)
-t0 = npat*npres*300
+print fusi_classifier.results #*(1000.0/300.0)
+t0 = npat*npres*1000
 for i in range(npat):
     fusi_classifier.present_pattern(i, 0, 1000)
 
