@@ -8,15 +8,19 @@ from .spike_source_poisson_data_holder import SpikeSourcePoissonDataHolder
 from .spike_injector_data_holder import SpikeInjectorDataHolder
 from .if_cond_exp_stoc_data_holder import IfCondExpStocDataHolder
 from .if_curr_delta_data_holder import IfCurrDeltaDataHolder
+from .if_curr_alpha_data_holder import IFCurrAlphaDataHolder
 from .if_curr_exp_ca2_adaptive_data_holder \
     import IfCurrExpCa2AdaptiveDataHolder
 from .if_curr_exp_ca2_concentration_data_holder \
     import IfCurrExpCa2ConcentrationDataHolder
+from .if_cond_exp_ca2_concentration_data_holder \
+    import IfCondExpCa2ConcentrationDataHolder
 
 __all__ = ["IFCondExpDataHolder", "IFCurrDualExpDataHolder",
            "IFCurrExpDataHolder", "IzkCondExpDataHolder",
            "IzkCurrExpDataHolder", "SpikeSourceArrayDataHolder",
            "SpikeSourcePoissonDataHolder", "SpikeInjectorDataHolder",
            "IfCondExpStocDataHolder", "IfCurrDeltaDataHolder",
-	    "IfCurrExpCa2AdaptiveDataHolder", "IFCurrAlphaDataHolder",           
-	    "IfCurrExpCa2ConcentrationDataHolder",           "IfCondExpCa2ConcentrationDataHolder"]
+           "IfCurrExpCa2AdaptiveDataHolder", "IFCurrAlphaDataHolder",
+           "IfCurrExpCa2ConcentrationDataHolder",
+           "IfCondExpCa2ConcentrationDataHolder"]

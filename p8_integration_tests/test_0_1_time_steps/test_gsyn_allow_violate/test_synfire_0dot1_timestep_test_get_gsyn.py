@@ -2,20 +2,16 @@
 Synfirechain-like example
 """
 # general imports
-from p8_integration_tests.scripts.synfire_run import TestRun
+from p8_integration_tests.scripts.synfire_run import SynfireRunner
 from p8_integration_tests.base_test_case import BaseTestCase
 import spynnaker.spike_checker as spike_checker
 from spinnman.exceptions import SpinnmanTimeoutException
 from unittest import SkipTest
 
-# plotting stuff
-import matplotlib.pyplot as plt
-from pyNN.utility.plotting import Figure
-from spynnaker8.spynnaker_plotting import SpynnakerPanel
 
 n_neurons = 10  # number of neurons in each population
 runtime = 50
-synfire_run = TestRun()
+synfire_run = SynfireRunner()
 
 
 class TestGsyn(BaseTestCase):
@@ -39,6 +35,11 @@ class TestGsyn(BaseTestCase):
 
 
 if __name__ == '__main__':
+    # plotting stuff delay import so unittestsz do not need them
+    import matplotlib.pyplot as plt
+    from pyNN.utility.plotting import Figure
+    from spynnaker8.spynnaker_plotting import SpynnakerPanel
+
     synfire_run.do_run(
         n_neurons, max_delay=14.4, time_step=0.1, neurons_per_core=5,
         delay=1.7, run_times=[runtime])

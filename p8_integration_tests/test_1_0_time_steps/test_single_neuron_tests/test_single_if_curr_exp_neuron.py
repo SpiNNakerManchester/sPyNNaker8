@@ -8,7 +8,7 @@ from unittest import SkipTest
 from p8_integration_tests.base_test_case import BaseTestCase
 import spynnaker.plot_utils as plot_utils
 
-from p8_integration_tests.scripts.synfire_run import TestRun
+from p8_integration_tests.scripts.synfire_run import SynfireRunner
 from spynnaker8 import SpikeSourcePoisson
 
 cell_params = {'cm': 0.25,
@@ -28,7 +28,7 @@ noise_rate = 200
 def do_run(seed=None):
 
     # Simulate using both simulators
-    synfire_run = TestRun()
+    synfire_run = SynfireRunner()
     synfire_run.do_run(
         n_neurons=1, input_class=SpikeSourcePoisson, rate=noise_rate,
         start_time=0, duration=simtime, seed=seed,
