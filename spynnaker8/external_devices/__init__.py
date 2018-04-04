@@ -41,6 +41,7 @@ from spynnaker.pyNN.connections \
     import EthernetControlConnection
 from spynnaker.pyNN.connections \
     import SpynnakerLiveSpikesConnection
+from spynnaker.pyNN.connections import SpynnakerPoissonControlConnection
 
 # abstract
 from spynnaker.pyNN.external_devices_models \
@@ -119,6 +120,8 @@ activate_live_output_to = \
     SpynnakerExternalDevicePluginManager.activate_live_output_to
 activate_live_output_for = \
     SpynnakerExternalDevicePluginManager.activate_live_output_for
+add_poisson_live_rate_control = \
+    SpynnakerExternalDevicePluginManager.add_poisson_live_rate_control
 
 logger = logging.getLogger(__name__)
 
@@ -157,12 +160,14 @@ __all__ = [
 
     # Connections
     "SpynnakerLiveSpikesConnection",
+    "SpynnakerPoissonControlConnection",
 
     # Provided functions
     "activate_live_output_for",
     "activate_live_output_to",
     "SpikeInjector",
-    "register_database_notification_request"
+    "register_database_notification_request",
+    "add_poisson_live_rate_control"
 ]
 
 
