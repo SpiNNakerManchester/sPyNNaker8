@@ -73,6 +73,6 @@ Figure(
     len(exc_data.segments[0].spiketrains[0]))
 )
 plt.show()
-# p.end()
+p.end()
 
 
