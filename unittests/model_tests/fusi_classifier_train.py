@@ -32,8 +32,8 @@ class SimpleClassifier():
     Ca_th_h2 = 13.0
     tau_Ca = 150
 
-    def __init__(self, N_patterns=400, inp_pop_sz=2000, inh_pop_sz=1000, low_inp_freq=2, high_inp_freq=50, low_teacher=20, high_teacher=110, inp_inh_conn_prob = 7.5/1000,
-                 N_active = 100, simtime = 300):
+    def __init__(self, N_patterns=400, inp_pop_sz=2000, inh_pop_sz=1000, low_inp_freq=2, high_inp_freq=50, low_teacher=50, high_teacher=150, inp_inh_conn_prob = 7.5/1000,
+                 N_active = 100, simtime = 300, gap = 700):
         self.init_patterns(N_patterns, inp_pop_sz, N_active)
         self.init_network(inp_pop_sz, inh_pop_sz, inp_inh_conn_prob)
         self.low_inp_freq = low_inp_freq
@@ -41,6 +41,7 @@ class SimpleClassifier():
         self.low_teacher =low_teacher
         self.high_teacher =high_teacher
         self.simtime = simtime
+	self.gaptime = gap
 
 
     """
@@ -109,24 +110,29 @@ class SimpleClassifier():
         self.pop_src.set(rate=pattern)
         self.pop_teacher.set(rate = teacher_freq)
         p.run(simtime)
-
+    
+    """
+    Run with sponataneous input, and input_freq teacher rate.
+    This should allow the network to reset to normal state after a pattern is presented.
+    
+    """
     def gap(self, input_freq, simtime):
         pattern = [self.low_inp_freq]*self.inp_pop_sz
         self.pop_src.set(rate=pattern)
         self.pop_teacher.set(rate = input_freq)
         p.run(simtime)
 
-    def calc_out_rates(self, spikes, nruns, simtime, gaptime, t0=0):
+    def calc_out_rates(self, spikes, nruns, simtime, gaptime,  pattern_permutations, t0=0):
         total_time = (nruns) * self.N_patterns * (simtime+gaptime)
-        bins = np.sort(np.concatenate(np.arange(0, total_time+1, (simtime + gaptime)), np.arange(simtime, total_time, (simtime + gaptime))))
+        bins = np.sort(np.concatenate((np.arange(0, total_time+1, (simtime + gaptime)), np.arange(simtime, total_time, (simtime + gaptime)))))
         (hist, tmp) = np.histogram(spikes, bins, (t0, t0+total_time))
-        hist.shape = (nruns, self.N_patterns)
+        hist.shape = (nruns, self.N_patterns*2)
         results = np.zeros(((nruns), self.N_patterns))
         hist_inds = np.arange(0, self.N_patterns *2 , 2) # ignore spikes in gaps
         for j in range(nruns):
             pattern_list = pattern_permutations[j, :]
             results[j, pattern_list] = hist[j, hist_inds]
-        return results
+        return results*1000.0/simtime
 
 
 
@@ -140,7 +146,7 @@ class SimpleClassifier():
         # present all patterns N_presentations times
         pattern_permutations = np.zeros((N_presentations, self.N_patterns))
         pattern_permutations = np.asarray(pattern_permutations, dtype=int)
-        gaptime = 700
+        gaptime = self.gaptime
         for i in range(N_presentations):
             pattern_list = np.random.permutation(self.N_patterns)
             pattern_permutations[i, :] = pattern_list
@@ -155,25 +161,26 @@ class SimpleClassifier():
                 self.gap(0, gaptime)
             # print preliminary data for debugging
             spikes = self.pop_ex.get_data('spikes').segments[0].spiketrains[0]
-            results = self.calc_out_rates(spikes, i+1, self.simtime, gaptime, t0)
+            results = self.calc_out_rates(spikes, i+1, self.simtime, gaptime, pattern_permutations, t0)
             print results
 
 
         pattern_permutations = np.asarray(pattern_permutations, dtype=int)
         # read output spike data
         spikes = self.pop_ex.get_data('spikes').segments[0].spiketrains[0]
-        self.results = self.calc_out_rates(spikes, N_presentations, self.simtime, gaptime, t0)
+        self.results = self.calc_out_rates(spikes, N_presentations, self.simtime, gaptime, pattern_permutations, t0)
 
 
 npat = 2
-npres = 30
+npres = 10
 
-fusi_classifier = SimpleClassifier(N_patterns=npat, simtime = 1000)
+
+fusi_classifier = SimpleClassifier(N_patterns=npat, simtime = 300, gap = 700)
 
 # fusi_classifier.present_pattern(0, 40, 1000)
 # p.reset()
 fusi_classifier.train(npres, 0)
-print fusi_classifier.results #*(1000.0/300.0)
+print fusi_classifier.results
 t0 = npat*npres*1000
 for i in range(npat):
     fusi_classifier.present_pattern(i, 0, 1000)
