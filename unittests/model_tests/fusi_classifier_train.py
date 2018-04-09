@@ -1,12 +1,12 @@
 import spynnaker8 as p
-from pyNN.utility.plotting import Figure, Panel, DataTable
+#from pyNN.utility.plotting import Figure, Panel, DataTable
 from pyNN.random import RandomDistribution
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import numpy as np
 from neo.core.spiketrain import SpikeTrain
-from scipy.ndimage.measurements import label
-from matplotlib.pyplot import legend
-from idna.core import _alabel_prefix
+#from scipy.ndimage.measurements import label
+#from matplotlib.pyplot import legend
+#from idna.core import _alabel_prefix
 
 from neo.io import PyNNNumpyIO
 from neo.io import AsciiSpikeTrainIO
@@ -32,7 +32,7 @@ class SimpleClassifier():
     Ca_th_h2 = 13.0
     tau_Ca = 150
 
-    def __init__(self, N_patterns=400, inp_pop_sz=2000, inh_pop_sz=1000, low_inp_freq=2, high_inp_freq=50, low_teacher=50, high_teacher=150, inp_inh_conn_prob = 7.5/1000,
+    def __init__(self, N_patterns=400, inp_pop_sz=2000, inh_pop_sz=1000, low_inp_freq=2, high_inp_freq=50, low_teacher=0, high_teacher=50, inp_inh_conn_prob = 7.5/1000,
                  N_active = 100, simtime = 300, gap = 700):
         self.init_patterns(N_patterns, inp_pop_sz, N_active)
         self.init_network(inp_pop_sz, inh_pop_sz, inp_inh_conn_prob)
@@ -64,7 +64,7 @@ class SimpleClassifier():
         # populations:
         self.inp_pop_sz = inp_pop_sz
         self.pop_src = p.Population(inp_pop_sz, p.SpikeSourcePoisson(rate=10), label="src")
-        self.pop_teacher = p.Population(1, p.SpikeSourcePoisson(rate=150), label="teacher")
+        self.pop_teacher = p.Population(20, p.SpikeSourcePoisson(rate=150), label="teacher")
         cell_params = {"i_offset":0.0,  "tau_ca2":self.tau_Ca, "i_alpha":1., "i_ca2":3.,   'v_reset':-65}
         self.pop_inh = p.Population(inh_pop_sz, p.IF_curr_exp(), label="inhibitory")
         self.pop_ex = p.Population(1, p.extra_models.IFCurrExpCa2Concentration, cell_params, label="test")
@@ -85,7 +85,7 @@ class SimpleClassifier():
         self.proj_inh_ex = p.Projection(self.pop_inh,  self.pop_ex,  p.AllToAllConnector(),
                    synapse_type=p.StaticSynapse(weight=self.w_mult),  receptor_type='inhibitory')
         self.proj_teach_ex = p.Projection(self.pop_teacher,  self.pop_ex,  p.AllToAllConnector(),
-                   synapse_type=p.StaticSynapse(weight=2.0),  receptor_type='excitatory')
+                   synapse_type=p.StaticSynapse(weight=0.2),  receptor_type='excitatory')
 
         self.pop_ex.record(['spikes'])
         #self.pop_src.record(['spikes'])
@@ -154,9 +154,11 @@ class SimpleClassifier():
                 print "presentation ", i ,"pattern", pattern_list[pnum]
                 if pattern_list[pnum] < self.N_patterns/2:
                     teaching_signal = self.low_teacher
+                    teaching_signal = (teaching_signal * (N_presentations - (1.0*i)/4)) / N_presentations
                 else:
                     teaching_signal = self.high_teacher
-                teaching_signal = (teaching_signal * (N_presentations - (1.0*i)/2)) / N_presentations
+                    teaching_signal = (teaching_signal * (N_presentations - (1.0*i))) / N_presentations
+#                teaching_signal = (teaching_signal * (N_presentations -i)) / N_presentations
                 self.present_pattern(pattern_list[pnum], teaching_signal, self.simtime)
                 self.gap(0, gaptime)
             # print preliminary data for debugging
@@ -171,8 +173,8 @@ class SimpleClassifier():
         self.results = self.calc_out_rates(spikes, N_presentations, self.simtime, gaptime, pattern_permutations, t0)
 
 
-npat = 2
-npres = 10
+npat = 100
+npres = 100
 
 
 fusi_classifier = SimpleClassifier(N_patterns=npat, simtime = 300, gap = 700)
