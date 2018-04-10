@@ -21,9 +21,10 @@ p.setup(1)
 simtime = 10000
 inp_nrn = 2000
 inh_nrn = 1000
+tea_nrn = 20
 # inp_nrn = 40
 # inh_nrn = 20
-inp_inh_conn_prob = 7.5/inh_nrn
+inp_inh_conn_prob = 62.0/inh_nrn
 
 w0 = 0.51
 w_mult=0.1   # this parameters scales all weight variables, actual w_max = w_mult; should be 0.1-0.125 or smaller to avoid distortions in results
@@ -47,7 +48,7 @@ p.set_number_of_neurons_per_core(p.SpikeSourcePoisson, 50)
 
 pop_src = p.Population(inp_nrn, p.SpikeSourcePoisson(rate=10), label="src")
 #pop_inp = p.Population(inp_nrn, p.IF_curr_exp(), label="inp")
-pop_teacher = p.Population(1, p.SpikeSourcePoisson(rate=150), label="teacher")
+pop_teacher = p.Population(tea_nrn, p.SpikeSourcePoisson(rate=50), label="teacher")
 cell_params = {"i_offset":0.0,  "tau_ca2":150, "i_alpha":1., "i_ca2":3.,   'v_reset':-65}
 #pop_inh = p.Population(inh_nrn, p.extra_models.IFCurrExpCa2Concentration, cell_params, label="inhibitory")
 pop_inh = p.Population(inh_nrn, p.IF_curr_exp(), label="inhibitory")
@@ -76,11 +77,11 @@ proj = p.Projection(
     )
 
 proj_inp_inh = p.Projection(pop_src,  pop_inh,  p.FixedProbabilityConnector(inp_inh_conn_prob),
-               synapse_type=p.StaticSynapse(weight=1.0),  receptor_type='excitatory')
+               synapse_type=p.StaticSynapse(weight=0.2),  receptor_type='excitatory')
 proj_inh_ex = p.Projection(pop_inh,  pop_ex,  p.AllToAllConnector(),
                synapse_type=p.StaticSynapse(weight=w_mult),  receptor_type='inhibitory')
 proj_teach_ex = p.Projection(pop_teacher,  pop_ex,  p.AllToAllConnector(),
-               synapse_type=p.StaticSynapse(weight=2.0),  receptor_type='excitatory')
+               synapse_type=p.StaticSynapse(weight=0.2),  receptor_type='excitatory')
 
 
 
@@ -89,7 +90,7 @@ pop_src.record('spikes')
 pop_inh.record('spikes')
 pop_teacher.set(rate=0)
 p.run(1000)
-pop_teacher.set(rate=110)
+pop_teacher.set(rate=50)
 wgts=[]
 #pop_src.set(rate=rates) # do this before second run to avoid all poisson sources firing at once
 

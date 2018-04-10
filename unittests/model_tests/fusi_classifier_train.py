@@ -32,7 +32,7 @@ class SimpleClassifier():
     Ca_th_h2 = 13.0
     tau_Ca = 150
 
-    def __init__(self, N_patterns=400, inp_pop_sz=2000, inh_pop_sz=1000, low_inp_freq=2, high_inp_freq=50, low_teacher=0, high_teacher=50, inp_inh_conn_prob = 7.5/1000,
+    def __init__(self, N_patterns=400, inp_pop_sz=2000, inh_pop_sz=1000, low_inp_freq=2, high_inp_freq=50, low_teacher=0, high_teacher=50, inp_inh_conn_prob = 65.0/1000,
                  N_active = 100, simtime = 300, gap = 700):
         self.init_patterns(N_patterns, inp_pop_sz, N_active)
         self.init_network(inp_pop_sz, inh_pop_sz, inp_inh_conn_prob)
@@ -81,7 +81,7 @@ class SimpleClassifier():
         self.proj_inp_ex = p.Projection(self.pop_src, self.pop_ex,   p.AllToAllConnector(),  synapse_type=syn_plas, receptor_type='excitatory')
 
         self.proj_inp_inh = p.Projection(self.pop_src,  self.pop_inh,  p.FixedProbabilityConnector(inp_inh_conn_prob),
-                   synapse_type=p.StaticSynapse(weight=1.0),  receptor_type='excitatory')
+                   synapse_type=p.StaticSynapse(weight=0.2),  receptor_type='excitatory')
         self.proj_inh_ex = p.Projection(self.pop_inh,  self.pop_ex,  p.AllToAllConnector(),
                    synapse_type=p.StaticSynapse(weight=self.w_mult),  receptor_type='inhibitory')
         self.proj_teach_ex = p.Projection(self.pop_teacher,  self.pop_ex,  p.AllToAllConnector(),
@@ -173,7 +173,7 @@ class SimpleClassifier():
         self.results = self.calc_out_rates(spikes, N_presentations, self.simtime, gaptime, pattern_permutations, t0)
 
 
-npat = 100
+npat = 10
 npres = 100
 
 
