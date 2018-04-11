@@ -28,7 +28,7 @@ class IfCondExpCa2ConcentrationDataHolder(DataHolder):
             tau_ca2=IFCondExpCa2Concentration.default_parameters["tau_ca2"],
             i_ca2=IFCondExpCa2Concentration.default_parameters["i_ca2"],
             i_alpha=IFCondExpCa2Concentration.default_parameters["i_alpha"],
-            v_init=IFCondExpCa2Concentration.non_pynn_default_parameters['v_init'],
+            v_init=IFCondExpCa2Concentration.initialize_parameters['v_init'],
             isyn_exc=IFCondExpCa2Concentration.default_parameters['isyn_exc'],
             isyn_inh=IFCondExpCa2Concentration.default_parameters['isyn_inh'],
             e_rev_E=IFCondExpCa2Concentration.default_parameters['e_rev_E'],
