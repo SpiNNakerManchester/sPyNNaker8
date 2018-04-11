@@ -1,12 +1,12 @@
 import spynnaker8 as p
-from pyNN.utility.plotting import Figure, Panel, DataTable
+#from pyNN.utility.plotting import Figure, Panel, DataTable
 from pyNN.random import RandomDistribution
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import numpy as np
 from neo.core.spiketrain import SpikeTrain
-from scipy.ndimage.measurements import label
-from matplotlib.pyplot import legend
-from idna.core import _alabel_prefix
+#from scipy.ndimage.measurements import label
+#from matplotlib.pyplot import legend
+#from idna.core import _alabel_prefix
 
 from neo.io import PyNNNumpyIO
 from neo.io import AsciiSpikeTrainIO
@@ -32,8 +32,8 @@ class SimpleClassifier():
     Ca_th_h2 = 13.0
     tau_Ca = 150
 
-    def __init__(self, N_patterns=400, inp_pop_sz=2000, inh_pop_sz=1000, low_inp_freq=2, high_inp_freq=50, low_teacher=40, high_teacher=110, inp_inh_conn_prob = 7.5/1000,
-                 N_active = 100, simtime = 300):
+    def __init__(self, N_patterns=400, inp_pop_sz=2000, inh_pop_sz=1000, low_inp_freq=2, high_inp_freq=50, low_teacher=0, high_teacher=50, inp_inh_conn_prob = 65.0/1000,
+                 N_active = 100, simtime = 300, gap = 700):
         self.init_patterns(N_patterns, inp_pop_sz, N_active)
         self.init_network(inp_pop_sz, inh_pop_sz, inp_inh_conn_prob)
         self.low_inp_freq = low_inp_freq
@@ -41,6 +41,7 @@ class SimpleClassifier():
         self.low_teacher =low_teacher
         self.high_teacher =high_teacher
         self.simtime = simtime
+	self.gaptime = gap
 
 
     """
@@ -63,7 +64,7 @@ class SimpleClassifier():
         # populations:
         self.inp_pop_sz = inp_pop_sz
         self.pop_src = p.Population(inp_pop_sz, p.SpikeSourcePoisson(rate=10), label="src")
-        self.pop_teacher = p.Population(1, p.SpikeSourcePoisson(rate=150), label="teacher")
+        self.pop_teacher = p.Population(20, p.SpikeSourcePoisson(rate=150), label="teacher")
         cell_params = {"i_offset":0.0,  "tau_ca2":self.tau_Ca, "i_alpha":1., "i_ca2":3.,   'v_reset':-65}
         self.pop_inh = p.Population(inh_pop_sz, p.IF_curr_exp(), label="inhibitory")
         self.pop_ex = p.Population(1, p.extra_models.IFCurrExpCa2Concentration, cell_params, label="test")
@@ -80,11 +81,11 @@ class SimpleClassifier():
         self.proj_inp_ex = p.Projection(self.pop_src, self.pop_ex,   p.AllToAllConnector(),  synapse_type=syn_plas, receptor_type='excitatory')
 
         self.proj_inp_inh = p.Projection(self.pop_src,  self.pop_inh,  p.FixedProbabilityConnector(inp_inh_conn_prob),
-                   synapse_type=p.StaticSynapse(weight=1.0),  receptor_type='excitatory')
+                   synapse_type=p.StaticSynapse(weight=0.2),  receptor_type='excitatory')
         self.proj_inh_ex = p.Projection(self.pop_inh,  self.pop_ex,  p.AllToAllConnector(),
                    synapse_type=p.StaticSynapse(weight=self.w_mult),  receptor_type='inhibitory')
         self.proj_teach_ex = p.Projection(self.pop_teacher,  self.pop_ex,  p.AllToAllConnector(),
-                   synapse_type=p.StaticSynapse(weight=2.0),  receptor_type='excitatory')
+                   synapse_type=p.StaticSynapse(weight=0.2),  receptor_type='excitatory')
 
         self.pop_ex.record(['spikes'])
         #self.pop_src.record(['spikes'])
@@ -109,6 +110,30 @@ class SimpleClassifier():
         self.pop_src.set(rate=pattern)
         self.pop_teacher.set(rate = teacher_freq)
         p.run(simtime)
+    
+    """
+    Run with sponataneous input, and input_freq teacher rate.
+    This should allow the network to reset to normal state after a pattern is presented.
+    
+    """
+    def gap(self, input_freq, simtime):
+        pattern = [self.low_inp_freq]*self.inp_pop_sz
+        self.pop_src.set(rate=pattern)
+        self.pop_teacher.set(rate = input_freq)
+        p.run(simtime)
+
+    def calc_out_rates(self, spikes, nruns, simtime, gaptime,  pattern_permutations, t0=0):
+        total_time = (nruns) * self.N_patterns * (simtime+gaptime)
+        bins = np.sort(np.concatenate((np.arange(0, total_time+1, (simtime + gaptime)), np.arange(simtime, total_time, (simtime + gaptime)))))
+        (hist, tmp) = np.histogram(spikes, bins, (t0, t0+total_time))
+        hist.shape = (nruns, self.N_patterns*2)
+        results = np.zeros(((nruns), self.N_patterns))
+        hist_inds = np.arange(0, self.N_patterns *2 , 2) # ignore spikes in gaps
+        for j in range(nruns):
+            pattern_list = pattern_permutations[j, :]
+            results[j, pattern_list] = hist[j, hist_inds]
+        return results*1000.0/simtime
+
 
 
     """
@@ -120,43 +145,45 @@ class SimpleClassifier():
     def train(self, N_presentations, t0 = 0):
         # present all patterns N_presentations times
         pattern_permutations = np.zeros((N_presentations, self.N_patterns))
+        pattern_permutations = np.asarray(pattern_permutations, dtype=int)
+        gaptime = self.gaptime
         for i in range(N_presentations):
             pattern_list = np.random.permutation(self.N_patterns)
             pattern_permutations[i, :] = pattern_list
             for pnum in range(self.N_patterns):
-                print "presentation ", i ,"pattern", pnum
+                print "presentation ", i ,"pattern", pattern_list[pnum]
                 if pattern_list[pnum] < self.N_patterns/2:
                     teaching_signal = self.low_teacher
+                    teaching_signal = (teaching_signal * (N_presentations - (1.0*i)/4)) / N_presentations
                 else:
                     teaching_signal = self.high_teacher
+                    teaching_signal = (teaching_signal * (N_presentations - (1.0*i))) / N_presentations
+#                teaching_signal = (teaching_signal * (N_presentations -i)) / N_presentations
                 self.present_pattern(pattern_list[pnum], teaching_signal, self.simtime)
-                spikes = self.pop_ex.get_data('spikes').segments[0].spiketrains[0]
-                #spikes2 = self.pop_src.get_data('spikes').segments[0].spiketrains[0]
+                self.gap(0, gaptime)
+            # print preliminary data for debugging
+            spikes = self.pop_ex.get_data('spikes').segments[0].spiketrains[0]
+            results = self.calc_out_rates(spikes, i+1, self.simtime, gaptime, pattern_permutations, t0)
+            print results
+
+
         pattern_permutations = np.asarray(pattern_permutations, dtype=int)
         # read output spike data
         spikes = self.pop_ex.get_data('spikes').segments[0].spiketrains[0]
-        total_time = N_presentations * self.N_patterns * self.simtime
-        print spikes
-        (hist, tmp) = np.histogram(spikes, N_presentations * self.N_patterns, (t0, t0+total_time))
-        print hist
-        hist.shape = (N_presentations, self.N_patterns)
-        self.results = np.zeros((N_presentations, self.N_patterns))
-        for i in range(N_presentations):
-            pattern_list = pattern_permutations[i, :]
-            #self.results[i, pattern_list] = hist[i, range(self.N_patterns)]
-            self.results[i, pattern_list] = hist[i, :]
+        self.results = self.calc_out_rates(spikes, N_presentations, self.simtime, gaptime, pattern_permutations, t0)
 
 
-npat = 100
-npres = 40
+npat = 10
+npres = 100
 
-fusi_classifier = SimpleClassifier(N_patterns=npat)
+
+fusi_classifier = SimpleClassifier(N_patterns=npat, simtime = 300, gap = 700)
 
 # fusi_classifier.present_pattern(0, 40, 1000)
 # p.reset()
 fusi_classifier.train(npres, 0)
-print fusi_classifier.results*(1000.0/300.0)
-t0 = npat*npres*300
+print fusi_classifier.results
+t0 = npat*npres*1000
 for i in range(npat):
     fusi_classifier.present_pattern(i, 0, 1000)
 
