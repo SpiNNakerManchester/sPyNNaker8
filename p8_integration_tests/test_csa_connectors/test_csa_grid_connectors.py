@@ -1,7 +1,6 @@
 import spynnaker8 as p
 from p8_integration_tests.base_test_case import BaseTestCase
 import pylab
-import numpy
 import csa
 
 
@@ -20,10 +19,10 @@ def do_run(plot):
                        'v_thresh': -40.0
                        }
 
-    n = 13 # 10  # 5
+    n = 13  # 10  # 5
     p.set_number_of_neurons_per_core(p.IF_curr_exp, n)
     weight_to_spike = 2.0
-    delay = 2
+    delay = 5
     runtime = 200
 
     # Network
@@ -40,7 +39,7 @@ def do_run(plot):
                             label='grid_pop')
 
     p.Projection(inj_pop, grid_pop, p.FromListConnector(injectionConnection),
-                 p.StaticSynapse(weight=weight_to_spike, delay=5))
+                 p.StaticSynapse(weight=weight_to_spike, delay=delay))
 
     # Connectors
     exc_connector_set = csa.disc(2.5)*csa.euclidMetric2d(grid)
@@ -55,7 +54,7 @@ def do_run(plot):
     p.Projection(grid_pop, grid_pop, inh_connector,
                  p.StaticSynapse(weight=0.5, delay=15))
 
-    grid_pop.record(['v','spikes'])
+    grid_pop.record(['v', 'spikes'])
 
     p.run(runtime)
 

@@ -1,8 +1,8 @@
 import spynnaker8 as p
 from p8_integration_tests.base_test_case import BaseTestCase
 import pylab
-import numpy
 import csa
+
 
 def do_run(plot):
 
@@ -40,15 +40,20 @@ def do_run(plot):
 
     # list of populations
     populations.append(
-        p.Population(nNeurons, p.IF_curr_exp(**cell_params_lif), label='pop_1'))
+        p.Population(nNeurons, p.IF_curr_exp(**cell_params_lif),
+                     label='pop_1'))
     populations.append(
-        p.Population(nNeurons, p.IF_curr_exp(**cell_params_lif), label='pop_2'))
+        p.Population(nNeurons, p.IF_curr_exp(**cell_params_lif),
+                     label='pop_2'))
     populations.append(
-        p.Population(nNeurons, p.IF_curr_exp(**cell_params_lif), label='pop_3'))
+        p.Population(nNeurons, p.IF_curr_exp(**cell_params_lif),
+                     label='pop_3'))
     populations.append(
-        p.Population(nNeurons, p.IF_curr_exp(**cell_params_lif), label='pop_4'))
+        p.Population(nNeurons, p.IF_curr_exp(**cell_params_lif),
+                     label='pop_4'))
     populations.append(
-        p.Population(1, p.SpikeSourceArray(**spikeArray), label='inputSpikes_1'))
+        p.Population(1, p.SpikeSourceArray(**spikeArray),
+                     label='inputSpikes_1'))
 
     # Loop connector: we can just pass in the list we made earlier
     CSA_loop_connector = p.CSAConnector(loopConnections)
@@ -62,7 +67,7 @@ def do_run(plot):
     # This creates a block of size (5,10) with a probability of 0.05; then
     # within the block an individual connection has a probability of 0.3
     CSA_randomblock_connector = p.CSAConnector(
-        csa.block(15,10)*csa.random(0.05)*csa.random(0.3))
+        csa.block(15, 10)*csa.random(0.05)*csa.random(0.3))
 
     # list of projections using the connectors above
     projections.append(p.Projection(
@@ -78,7 +83,8 @@ def do_run(plot):
         populations[2], populations[3], CSA_randomblock_connector,
         p.StaticSynapse(weight=weight_to_spike, delay=delay)))
     projections.append(p.Projection(
-        populations[4], populations[0], p.FromListConnector(injectionConnection),
+        populations[4], populations[0],
+        p.FromListConnector(injectionConnection),
         p.StaticSynapse(weight=weight_to_spike, delay=1)))
 
     populations[0].record(['v', 'spikes'])
