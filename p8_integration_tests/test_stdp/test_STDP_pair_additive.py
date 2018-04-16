@@ -97,18 +97,18 @@ class TestSTDPPairAdditive(BaseTestCase):
         new_weight_exact = (initial_weight + potentiation_1 + potentiation_2
                             - depression_1 - depression_2)
 
-        print "Pre neuron spikes at: {}".format(spike_times)
-        print "Post-neuron spikes at: {}".format(
-                        spikes.segments[0].spiketrains[0].magnitude)
-        print "Potentiation time differences: {}, {},\
+        print("Pre neuron spikes at: {}".format(spike_times))
+        print("Post-neuron spikes at: {}".format(
+            spikes.segments[0].spiketrains[0].magnitude))
+        print("Potentiation time differences: {}, {},\
              \nDepression time difference: {}, {}".format(
-                    potentiation_time_1, potentiation_time_2,
-                    depression_time_1, depression_time_2)
-        print "Ammounts to potentiate: {}, {},\
+                 potentiation_time_1, potentiation_time_2,
+                 depression_time_1, depression_time_2))
+        print("Ammounts to potentiate: {}, {},\
             \nAmount to depress: {}, {},".format(
-            potentiation_1, potentiation_2, depression_1, depression_2)
-        print "New weight exact: {}".format(new_weight_exact)
-        print "New weight SpiNNaker: {}".format(weights[0])
+                potentiation_1, potentiation_2, depression_1, depression_2))
+        print("New weight exact: {}".format(new_weight_exact))
+        print("New weight SpiNNaker: {}".format(weights[0]))
 
         self.assertTrue(numpy.allclose(weights[0],
                                        new_weight_exact, atol=0.001))

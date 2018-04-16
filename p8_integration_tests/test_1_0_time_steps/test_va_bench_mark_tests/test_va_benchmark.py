@@ -168,7 +168,7 @@ class TestVABenchmarkSpikes(BaseTestCase):
             raise SkipTest(ex)
 
         with open(neo_path, "r") as neo_file:
-                recorded_spikes = pickle.load(neo_file)
+            recorded_spikes = pickle.load(neo_file)
         neo_compare.compare_blocks(exc_spikes, recorded_spikes)
 
 

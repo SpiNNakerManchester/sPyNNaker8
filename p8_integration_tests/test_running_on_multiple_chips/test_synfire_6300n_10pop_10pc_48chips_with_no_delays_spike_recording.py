@@ -26,5 +26,5 @@ if __name__ == '__main__':
     results = synfire_npop_run.do_run(n_neurons, n_pops=n_pops,
                                       neurons_per_core=n_neurons)
     spikes = results
-    print len(spikes)
+    print(len(spikes))
     plot_utils.plot_spikes(spikes)

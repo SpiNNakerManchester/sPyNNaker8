@@ -147,7 +147,7 @@ def plot(cond_v, cond_gsyn, cond_spikes, curr_v, curr_gsyn, curr_spikes,
 
     # plot curr spikes
     if len(curr_spikes) != 0:
-        print "curr spikes are {}".format(curr_spikes)
+        print("curr spikes are {}".format(curr_spikes))
         pylab.figure()
         pylab.plot([i[1] for i in curr_spikes],
                    [i[0] for i in curr_spikes], ".")
@@ -156,11 +156,11 @@ def plot(cond_v, cond_gsyn, cond_spikes, curr_v, curr_gsyn, curr_spikes,
         pylab.title('lif curr spikes')
         pylab.show()
     else:
-        print "No curr spikes received"
+        print("No curr spikes received")
 
     # plot cond spikes
     if len(cond_spikes) != 0:
-        print "cond spikes are {}".format(cond_spikes)
+        print("cond spikes are {}".format(cond_spikes))
         pylab.figure()
         pylab.plot([i[1] for i in cond_spikes],
                    [i[0] for i in cond_spikes], ".")
@@ -169,11 +169,11 @@ def plot(cond_v, cond_gsyn, cond_spikes, curr_v, curr_gsyn, curr_spikes,
         pylab.title('lif cond spikes')
         pylab.show()
     else:
-        print "No cond spikes received"
+        print("No cond spikes received")
 
     # plot izk spikes
     if len(izk_spikes) != 0:
-        print "izk spikes are {}".format(izk_spikes)
+        print("izk spikes are {}".format(izk_spikes))
         pylab.figure()
         pylab.plot([i[1] for i in izk_spikes], [i[0] for i in izk_spikes], ".")
         pylab.xlabel('Time/ms')
@@ -181,7 +181,7 @@ def plot(cond_v, cond_gsyn, cond_spikes, curr_v, curr_gsyn, curr_spikes,
         pylab.title('izk curr spikes')
         pylab.show()
     else:
-        print "No izk spikes received"
+        print("No izk spikes received")
 
     # plot curr gsyn
     if len(curr_gsyn) != 0:
@@ -195,7 +195,7 @@ def plot(cond_v, cond_gsyn, cond_spikes, curr_v, curr_gsyn, curr_spikes,
             pylab.plot([i[2] for i in gsyn_for_neuron])
         pylab.show()
     else:
-        print "no curr gsyn received"
+        print("no curr gsyn received")
 
     # plot cond gsyn
     if len(cond_gsyn) != 0:
@@ -209,7 +209,7 @@ def plot(cond_v, cond_gsyn, cond_spikes, curr_v, curr_gsyn, curr_spikes,
             pylab.plot([i[2] for i in gsyn_for_neuron])
         pylab.show()
     else:
-        print "no cond gsyn received"
+        print("no cond gsyn received")
 
     # plot izk gsyn
     if len(izk_gsyn) != 0:
@@ -223,7 +223,7 @@ def plot(cond_v, cond_gsyn, cond_spikes, curr_v, curr_gsyn, curr_spikes,
             pylab.plot([i[2] for i in gsyn_for_neuron])
         pylab.show()
     else:
-        print "no izk gsyn received"
+        print("no izk gsyn received")
 
     # plot curr membrane voltage
     if len(curr_v) != 0:
@@ -237,7 +237,7 @@ def plot(cond_v, cond_gsyn, cond_spikes, curr_v, curr_gsyn, curr_spikes,
             pylab.plot([i[2] for i in v_for_neuron])
         pylab.show()
     else:
-        print "No curr voltage received"
+        print("No curr voltage received")
 
     # plot cond membrane voltage
     if len(cond_v) != 0:
@@ -251,7 +251,7 @@ def plot(cond_v, cond_gsyn, cond_spikes, curr_v, curr_gsyn, curr_spikes,
             pylab.plot([i[2] for i in v_for_neuron])
         pylab.show()
     else:
-        print "no cond membrane voltage is recieved "
+        print("no cond membrane voltage is recieved")
 
     # plot izk membrane voltage
     if len(izk_v) != 0:
@@ -265,7 +265,7 @@ def plot(cond_v, cond_gsyn, cond_spikes, curr_v, curr_gsyn, curr_spikes,
             pylab.plot([i[2] for i in v_for_neuron])
         pylab.show()
     else:
-        print "no izk membrane voltage is recieved "
+        print("no izk membrane voltage is recieved")
 
 
 class CondVsCurrentIzk(BaseTestCase):
@@ -283,8 +283,8 @@ if __name__ == '__main__':
     results = do_run(nNeurons)
     (cond_v, cond_gsyn, cond_spikes, curr_v, curr_gsyn, curr_spikes, izk_v,
      izk_gsyn, izk_spikes) = results
-    print len(cond_spikes)
-    print len(curr_spikes)
-    print len(izk_spikes)
+    print(len(cond_spikes))
+    print(len(curr_spikes))
+    print(len(izk_spikes))
     plot(cond_v, cond_gsyn, cond_spikes, curr_v, curr_gsyn, curr_spikes, izk_v,
          izk_gsyn, izk_spikes)

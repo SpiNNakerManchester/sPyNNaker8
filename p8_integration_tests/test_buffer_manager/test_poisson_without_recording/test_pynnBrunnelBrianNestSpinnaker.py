@@ -18,6 +18,6 @@ class PynnBrunnelBrianNestSpinnaker(BaseTestCase):
 
 if __name__ == '__main__':
     (esp, s, N_E) = script.do_run(Neurons, sim_time, record=record)
-    print esp
-    print s
-    print N_E
+    print(esp)
+    print(s)
+    print(N_E)

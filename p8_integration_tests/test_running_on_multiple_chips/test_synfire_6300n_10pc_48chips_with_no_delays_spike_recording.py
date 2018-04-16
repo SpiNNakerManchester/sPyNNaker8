@@ -34,6 +34,6 @@ if __name__ == '__main__':
                        record_gsyn_inh=record_gsyn)
     spikes = synfire_run.get_output_pop_spikes_numpy()
 
-    print len(spikes)
+    print(len(spikes))
     plot_utils.plot_spikes(spikes)
     # v and gysn are None

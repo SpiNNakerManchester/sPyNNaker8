@@ -30,7 +30,7 @@ def _histogram(a, bins=10, plot_range=None, normed=False):
     # best block size probably depends on processor cache size
     block = 65536
     n = sort(a[:block]).searchsorted(bins)
-    for i in xrange(block, a.size, block):
+    for i in range(block, a.size, block):
         n += sort(a[i:i + block]).searchsorted(bins)
     n = concatenate([n, [len(a)]])
     n = n[1:] - n[:-1]
