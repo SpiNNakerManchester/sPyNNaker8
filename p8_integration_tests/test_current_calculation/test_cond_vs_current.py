@@ -102,7 +102,7 @@ def plot(nNeurons, cond_v, cond_gsyn, cond_spikes, curr_v, curr_gsyn,
 
     # plot curr spikes
     if len(curr_spikes) != 0:
-        print "curr spikes are {}".format(curr_spikes)
+        print("curr spikes are {}".format(curr_spikes))
         pylab.figure()
         pylab.plot([i[1] for i in curr_spikes],
                    [i[0] for i in curr_spikes], ".")
@@ -111,11 +111,11 @@ def plot(nNeurons, cond_v, cond_gsyn, cond_spikes, curr_v, curr_gsyn,
         pylab.title('curr spikes')
         pylab.show()
     else:
-        print "No curr spikes received"
+        print("No curr spikes received")
 
     # plot cond spikes
     if len(cond_spikes) != 0:
-        print "cond spikes are {}".format(cond_spikes)
+        print("cond spikes are {}".format(cond_spikes))
         pylab.figure()
         pylab.plot([i[1] for i in cond_spikes],
                    [i[0] for i in cond_spikes], ".")
@@ -124,7 +124,7 @@ def plot(nNeurons, cond_v, cond_gsyn, cond_spikes, curr_v, curr_gsyn,
         pylab.title('cond spikes')
         pylab.show()
     else:
-        print "No cond spikes received"
+        print("No cond spikes received")
 
     # plot curr membrane voltage
     if len(curr_v) != 0:
@@ -138,7 +138,7 @@ def plot(nNeurons, cond_v, cond_gsyn, cond_spikes, curr_v, curr_gsyn,
             pylab.plot([i[2] for i in v_for_neuron])
         pylab.show()
     else:
-        print "No curr voltage received"
+        print("No curr voltage received")
 
     # plot cond membrane voltage
     if len(cond_v) != 0:
@@ -152,7 +152,7 @@ def plot(nNeurons, cond_v, cond_gsyn, cond_spikes, curr_v, curr_gsyn,
             pylab.plot([i[2] for i in v_for_neuron])
         pylab.show()
     else:
-        print "no cond membrane voltage is recieved "
+        print("no cond membrane voltage is recieved")
 
     # plot curr gsyn
     if len(curr_gsyn) != 0:
@@ -166,7 +166,7 @@ def plot(nNeurons, cond_v, cond_gsyn, cond_spikes, curr_v, curr_gsyn,
             pylab.plot([i[2] for i in gsyn_for_neuron])
         pylab.show()
     else:
-        print "no curr gsyn received"
+        print("no curr gsyn received")
 
     # plot cond gsyn
     if len(cond_gsyn) != 0:
@@ -180,7 +180,7 @@ def plot(nNeurons, cond_v, cond_gsyn, cond_spikes, curr_v, curr_gsyn,
             pylab.plot([i[2] for i in gsyn_for_neuron])
         pylab.show()
     else:
-        print "no cond gsyn received"
+        print("no cond gsyn received")
 
 
 class CondVsCurrent(BaseTestCase):
@@ -197,7 +197,7 @@ if __name__ == '__main__':
     nNeurons = 200  # number of neurons in each population
     results = do_run(nNeurons)
     (cond_v, cond_gsyn, cond_spikes, curr_v, curr_gsyn, curr_spikes) = results
-    print len(cond_spikes)
-    print len(curr_spikes)
+    print(len(cond_spikes))
+    print(len(curr_spikes))
     plot(nNeurons, cond_v, cond_gsyn, cond_spikes, curr_v, curr_gsyn,
          curr_spikes)

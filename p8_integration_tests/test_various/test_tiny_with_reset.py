@@ -45,10 +45,10 @@ class TinyTest(BaseTestCase):
 if __name__ == '__main__':
     all1, all2 = do_run()
     spikes1 = neo_convertor.convert_spiketrains(all1.segments[0].spiketrains)
-    print spikes1
+    print(spikes1)
     spikes2 = neo_convertor.convert_spiketrains(all2.segments[1].spiketrains)
-    print spikes2
+    print(spikes2)
     v1 = neo_convertor.convert_data(all1, name="v", run=0)
-    print v1
+    print(v1)
     v2 = neo_convertor.convert_data(all2, name="v", run=1)
-    print v2
+    print(v2)

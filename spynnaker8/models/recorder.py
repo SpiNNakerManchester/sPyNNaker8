@@ -4,6 +4,8 @@ import os
 import numpy
 import quantities
 from datetime import datetime
+from six import string_types
+from six.moves import xrange
 from neo.io import NeoHdf5IO, PickleIO, NeoMatlabIO
 from spinn_utilities.ordered_set import OrderedSet
 from spinn_utilities.log import FormatAdapter
@@ -61,7 +63,7 @@ class Recorder(RecordingCommon):
             raise Exception("file extension %s not supported" % extension)
 
     def _extract_neo_block(self, variables, clear, annotations):
-        """ extracts block from the vertices and puts them into a neo block
+        """ Extracts block from the vertices and puts them into a neo block
 
         :param variables: the variables to extract
         :param clear: if the variables should be cleared after reading
@@ -96,15 +98,15 @@ class Recorder(RecordingCommon):
         """
         try:
             return self._population.find_units(variable)
-        except Exception as ex:
+        except Exception:
             logger.warning("Population: {} Does not support units for {}",
                            self._population.label, variable)
             if variable in _DEFAULT_UNITS:
                 return _DEFAULT_UNITS[variable]
-            raise ex
+            raise
 
     def cache_data(self):
-        """ store data for later extraction
+        """ Store data for later extraction
         """
         variables = self._get_all_recording_variables()
         if variables:
@@ -144,14 +146,14 @@ class Recorder(RecordingCommon):
         return record_ids
 
     def _clean_variables(self, variables):
-        """ sorts out variables for processing usage
+        """ Sorts out variables for processing usage
 
-        :param variables: list of variables names, or all, or single.
+        :param variables: list of variables names, or 'all', or single.
         :return: ordered set of variables strings.
         """
         # if variable is a base string, plonk into a array for ease of
         # conversion
-        if isinstance(variables, basestring):
+        if isinstance(variables, string_types):
             variables = [variables]
 
         # if all are needed to be extracted, extract each and plonk into the
@@ -164,7 +166,6 @@ class Recorder(RecordingCommon):
         return variables
 
     def _append_current_segment(self, block, variables, clear):
-
         # build segment for the current data to be gathered in
         segment = neo.Segment(
             name="segment{}".format(get_simulator().segment_counter),
@@ -347,7 +348,7 @@ def read_in_spikes(segment, spikes, t, n_neurons, first_id,
     :param first_id: id of first neuron
     :type first_id: int
     :param recording_start_time: time recording started
-    :type  recording_start_time: int
+    :type recording_start_time: int
     :param sampling_interval: how often a neuron is recorded
     :param label: recording elements label
     :type label: str
@@ -383,11 +384,11 @@ def _get_channel_index(ids, block):
 
 def _convert_extracted_data_into_neo_expected_format(
         signal_array, indexes):
-    """ Converts data between spynnaker format and neo format
+    """ Converts data between sPyNNaker format and neo format
 
-    :param signal_array: Draw data in spynnaker format
+    :param signal_array: Draw data in sPyNNaker format
     :type signal_array: nparray
-    :rtype nparray
+    :rtype: nparray
     """
     processed_data = [
         signal_array[:, 2][signal_array[:, 0] == index]

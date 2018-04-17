@@ -90,27 +90,27 @@ if __name__ == '__main__':
     (pre_delays_array, pre_delays_list, pre_weights_array,
         pre_weights_list, post_delays_array, post_delays_list,
         post_weights_array, post_weights_list) = do_run()
-    print "array"
-    print pre_delays_array.shape
-    print pre_delays_array[0]
-    print "list"
-    print pre_delays_list.shape
-    print pre_delays_list[0]
-    print "array"
-    print pre_weights_array.shape
-    print pre_weights_array[0]
-    print "list"
-    print pre_weights_list.shape
-    print pre_weights_list[0]
-    print "array"
-    print post_delays_array.shape
-    print post_delays_array[0].shape
-    print "list"
-    print post_delays_list.shape
-    print post_delays_list[0].shape
-    print "array"
-    print post_weights_array.shape
-    print post_weights_array[0]
-    print "list"
-    print post_weights_list.shape
-    print post_weights_list[0]
+    print("array")
+    print(pre_delays_array.shape)
+    print(pre_delays_array[0])
+    print("list")
+    print(pre_delays_list.shape)
+    print(pre_delays_list[0])
+    print("array")
+    print(pre_weights_array.shape)
+    print(pre_weights_array[0])
+    print("list")
+    print(pre_weights_list.shape)
+    print(pre_weights_list[0])
+    print("array")
+    print(post_delays_array.shape)
+    print(post_delays_array[0].shape)
+    print("list")
+    print(post_delays_list.shape)
+    print(post_delays_list[0].shape)
+    print("array")
+    print(post_weights_array.shape)
+    print(post_weights_array[0])
+    print("list")
+    print(post_weights_list.shape)
+    print(post_weights_list[0])

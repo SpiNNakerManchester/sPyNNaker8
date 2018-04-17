@@ -69,10 +69,10 @@ if __name__ == '__main__':
     v = neo_convertor.convert_data(neo, "v")
     gsyn = neo_convertor.convert_data(neo, "gsyn_exc")
 
-    print spikes
+    print(spikes)
     plot_utils.plot_spikes(spikes)
     plot_utils.heat_plot(v)
     plot_utils.heat_plot(gsyn)
 
     times = set(spikes[:, 1])
-    print n_neurons * len(times), len(spikes)
+    print(n_neurons * len(times), len(spikes))
