@@ -5,13 +5,17 @@ import unittest
 from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt
 import glob
+import matplotlib
+# matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 
 # Test creating 100 single neuron populations (and hence 100 rows in the pop
 # table). The simulation is then run 100 times, where only one source neuron
 # fires in each test, but 100 times, allowing the average pop table lookup to
 # be assessed
 
-num_source_neurons = 10
+num_source_neurons = 31
+profiler_overhead = 0.000350
 
 time_dict = {}
 time_dict['POP_TABLE_GET_FIRST'] = []
@@ -20,7 +24,7 @@ time_dict['POP_TABLE_GET_NEXT'] = []
 
 for i in range(num_source_neurons):
     p.setup(1) # 1 for LIf; 0.1 for Izhikevich
-    runtime = 2000 # Run for one second
+    runtime = 1011 # Run for one second
     source_neurons = 1 # takes value: 1, 2, 100, 256
     target_neurons = 1 # takes value: 1, 2, 100, 256
     recording = False
@@ -80,9 +84,9 @@ for i in range(num_source_neurons):
     for line in file.readlines():
         # print line
         if line.startswith('POP_TABLE_GET_NEXT'):
-            time_dict['POP_TABLE_GET_NEXT'].append(line.split()[2])
+            time_dict['POP_TABLE_GET_NEXT'].append(float(line.split()[2]) - profiler_overhead)
         if line.startswith('POP_TABLE_GET_FIRST'):
-            time_dict['POP_TABLE_GET_FIRST'].append(line.split()[2])
+            time_dict['POP_TABLE_GET_FIRST'].append(float(line.split()[2]) - profiler_overhead)
 
     file.close()
     p.end()
@@ -92,6 +96,18 @@ for i in range(num_source_neurons):
 for t in time_dict['POP_TABLE_GET_FIRST']:
     print t
 
+
+
+print "\n"
 # printing 'get next' times
 for t in time_dict['POP_TABLE_GET_NEXT']:
     print t
+
+l = list(set(time_dict['POP_TABLE_GET_FIRST']))
+l.sort()
+
+num_intervals = int(math.ceil(math.log(num_source_neurons,2)))
+print numpy.histogram(time_dict['POP_TABLE_GET_FIRST'], bins=num_intervals)[0], \
+        l
+plt.hist(time_dict['POP_TABLE_GET_FIRST'], num_intervals)
+plt.show()
