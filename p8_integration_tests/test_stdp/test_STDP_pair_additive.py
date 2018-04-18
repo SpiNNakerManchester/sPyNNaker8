@@ -41,7 +41,7 @@ class TestSTDPPairAdditive(BaseTestCase):
                                 {'spike_times': spike_times2}, label="src2")
 
         # Post-plastic-synapse population
-        pop_exc = p.Population(1, p.IF_curr_exp(),  label="test")
+        pop_exc = p.Population(1, p.extra_models.IF_curr_dual_exp(),  label="test")
 
         # Create projections
         p.Projection(
@@ -60,7 +60,7 @@ class TestSTDPPairAdditive(BaseTestCase):
 
         plastic_synapse = p.Projection(pop_src1, pop_exc,
                                        p.OneToOneConnector(),
-                                       synapse_type=syn_plas)
+                                       synapse_type=syn_plas, receptor_type='excitatory2')
 
         pop_src1.record('all')
         pop_exc.record("all")
