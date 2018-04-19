@@ -80,18 +80,18 @@ def do_run():
 
 
 def plot(spikes):
+    if spikes is None:
+        print("No spikes received")
+        return
     import pylab  # deferred so unittest are not dependent on it
-    if spikes is not None:
-        print spikes
-        pylab.figure()
-        pylab.plot([i[1] for i in spikes],
-                   [i[0] for i in spikes], ".")
-        pylab.xlabel('Time/ms')
-        pylab.ylabel('spikes')
-        pylab.title('spikes')
-        pylab.show()
-    else:
-        print "No spikes received"
+    print(spikes)
+    pylab.figure()
+    pylab.plot([i[1] for i in spikes],
+               [i[0] for i in spikes], ".")
+    pylab.xlabel('Time/ms')
+    pylab.ylabel('spikes')
+    pylab.title('spikes')
+    pylab.show()
 
 
 class TestReadingSpikeArrayDataAndBigSlices(BaseTestCase):
@@ -116,5 +116,5 @@ class TestReadingSpikeArrayDataAndBigSlices(BaseTestCase):
 
 if __name__ == '__main__':
     spikes = do_run()
-    print len(spikes)
+    print(len(spikes))
     plot(spikes)

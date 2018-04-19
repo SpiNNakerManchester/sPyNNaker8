@@ -35,6 +35,6 @@ if __name__ == '__main__':
     spikes = synfire_run.get_output_pop_spikes_numpy()
     weights = synfire_run.get_weights()
 
-    print len(spikes)
-    print len(weights)
+    print(len(spikes))
+    print(len(weights))
     plot_utils.plot_spikes(spikes)

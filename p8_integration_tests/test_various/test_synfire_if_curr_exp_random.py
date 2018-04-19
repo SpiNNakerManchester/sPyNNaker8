@@ -51,7 +51,7 @@ def do_run(nNeurons):
     populations[0].record("spikes")
 
     run_time = (max_delay * nNeurons)
-    print "Running for {} ms".format(run_time)
+    print("Running for {} ms".format(run_time))
     p.run(run_time)
 
     neo = populations[0].get_data(["v", "spikes", "gsyn_exc"])
@@ -76,7 +76,7 @@ class SynfireIfCurrExpRandom(BaseTestCase):
 if __name__ == '__main__':
     nNeurons = 200  # number of neurons in each population
     (v, gsyn, spikes) = do_run(nNeurons)
-    print len(spikes)
+    print(len(spikes))
     plot_utils.plot_spikes(spikes)
     plot_utils.heat_plot(v, title="v")
     plot_utils.heat_plot(gsyn, title="gsyn")

@@ -22,7 +22,7 @@ class TestSpikeSourceArrayGetData(BaseTestCase):
 
     def test_run(self):
         all1 = do_run()
-        print all1
+        print(all1)
 
 
 if __name__ == '__main__':

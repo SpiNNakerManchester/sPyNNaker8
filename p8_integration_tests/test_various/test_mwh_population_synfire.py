@@ -30,9 +30,9 @@ def do_run(nNeurons, neurons_per_core):
         populations.append(p.Population(nNeurons, p.IF_curr_exp,
                                         cell_params_lif,
                                         label='pop_' + str(i)))
-        # print "++++++++++++++++"
-        # print "Added population %s" % (i)
-        # print "o-o-o-o-o-o-o-o-"
+        # print("++++++++++++++++")
+        # print("Added population %s" % (i))
+        # print("o-o-o-o-o-o-o-o-")
     synapse_type = p.StaticSynapse(weight=weight_to_spike, delay=delay)
     for i in range(0, nPopulations):
         projections.append(p.Projection(populations[i],
@@ -42,10 +42,10 @@ def do_run(nNeurons, neurons_per_core):
                                         label="Projection from pop {} to pop "
                                               "{}".format(i, (i + 1) %
                                                           nPopulations)))
-        # print "++++++++++++++++++++++++++++++++++++++++++++++++++++"
-        # print "Added projection from population %s to population %s" \
-        #      % (i, (i + 1) % nPopulations)
-        # print "----------------------------------------------------"
+        # print("++++++++++++++++++++++++++++++++++++++++++++++++++++")
+        # print("Added projection from population %s to population %s" \
+        #      % (i, (i + 1) % nPopulations))
+        # print("----------------------------------------------------")
 
     # from pprint import pprint as pp
     # pp(projections)

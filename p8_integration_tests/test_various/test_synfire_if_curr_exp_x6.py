@@ -3,6 +3,7 @@
 Synfirechain-like example with 6 chains
 """
 
+from __future__ import print_function
 from p8_integration_tests.base_test_case import BaseTestCase
 import spynnaker8 as p
 
@@ -65,4 +66,4 @@ if __name__ == '__main__':
     nNeurons = 200  # number of neurons in each population
     spikes = do_run(nNeurons)
     for x in range(0, 12, 2):
-        print x, len(spikes[x / 2])
+        print(x, len(spikes[x / 2]))
