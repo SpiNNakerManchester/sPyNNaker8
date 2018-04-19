@@ -220,7 +220,7 @@ def run_and_compare_script(
         exc_get_indexes=None,
         record_inh=False, inh_rate=None, inh_rec_indexes=None,
         inh_get_indexes=None,
-        tollerance=sys.maxint):
+        tollerance=sys.maxsize):
     full_prefix = "{}_{}_".format(simtime, n_neurons)
     if (not os.path.exists(
             os.path.join(current_file_path, full_prefix + "spikes.csv")) or
