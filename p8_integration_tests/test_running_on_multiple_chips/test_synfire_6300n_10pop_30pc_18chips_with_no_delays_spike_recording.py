@@ -33,5 +33,5 @@ if __name__ == '__main__':
                                       neurons_per_core=neurons_per_core,
                                       runtime=runtime)
     spikes = results
-    print len(spikes)
+    print(len(spikes))
     plot_utils.plot_spikes(spikes)

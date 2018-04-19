@@ -4,6 +4,8 @@ import os
 import numpy
 import quantities
 from datetime import datetime
+from six import string_types
+from six.moves import xrange
 from neo.io import NeoHdf5IO, PickleIO, NeoMatlabIO
 from spinn_utilities.ordered_set import OrderedSet
 from spinn_utilities.log import FormatAdapter
@@ -98,15 +100,15 @@ class Recorder(RecordingCommon):
         """
         try:
             return self._population.find_units(variable)
-        except Exception as ex:
+        except Exception:
             logger.warning("Population: {} Does not support units for {}",
                            self._population.label, variable)
             if variable in _DEFAULT_UNITS:
                 return _DEFAULT_UNITS[variable]
-            raise ex
+            raise
 
     def cache_data(self):
-        """ store data for later extraction
+        """ Store data for later extraction
         """
         variables = self._get_all_recording_variables()
         if variables:
@@ -146,14 +148,14 @@ class Recorder(RecordingCommon):
         return record_ids
 
     def _clean_variables(self, variables):
-        """ sorts out variables for processing usage
+        """ Sorts out variables for processing usage
 
-        :param variables: list of variables names, or all, or single.
+        :param variables: list of variables names, or 'all', or single.
         :return: ordered set of variables strings.
         """
         # if variable is a base string, plonk into a array for ease of
         # conversion
-        if isinstance(variables, basestring):
+        if isinstance(variables, string_types):
             variables = [variables]
 
         # if all are needed to be extracted, extract each and plonk into the

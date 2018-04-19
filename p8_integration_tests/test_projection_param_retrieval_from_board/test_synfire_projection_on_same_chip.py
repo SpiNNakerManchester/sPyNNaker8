@@ -42,15 +42,15 @@ if __name__ == '__main__':
                        get_delays=get_delays)
     weights = synfire_run.get_weights()
     delays = synfire_run.get_delay()
-    print "weights[0]"
-    print weights[0]
-    print weights[0].shape
-    print "weights[1]"
-    print weights[1]
-    print weights[1].shape
-    print "delays[0]"
-    print delays[0]
-    print delays[0].shape
-    print "delays[1]"
-    print delays[1]
-    print delays[1].shape
+    print("weights[0]")
+    print(weights[0])
+    print(weights[0].shape)
+    print("weights[1]")
+    print(weights[1])
+    print(weights[1].shape)
+    print("delays[0]")
+    print(delays[0])
+    print(delays[0].shape)
+    print("delays[1]")
+    print(delays[1])
+    print(delays[1].shape)

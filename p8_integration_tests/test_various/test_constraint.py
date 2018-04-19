@@ -62,12 +62,12 @@ class ATest(BaseTestCase):
 if __name__ == '__main__':
     nNeurons = 200  # number of neurons in each population
     (v1, gsyn1, v2, gsyn2, spikes1, spikes2) = do_run(nNeurons)
-    print len(spikes1)
-    print spikes1
-    print len(spikes2)
-    print spikes2
+    print(len(spikes1))
+    print(spikes1)
+    print(len(spikes2))
+    print(spikes2)
     plot_utils.plot_spikes([spikes1, spikes2])
-    print np.array_equal(spikes1, spikes2)
+    print(np.array_equal(spikes1, spikes2))
     plot_utils.heat_plot(v1, title="v1")
     plot_utils.heat_plot(v2, title="v2")
     plot_utils.heat_plot(gsyn1, title="gysn1")
