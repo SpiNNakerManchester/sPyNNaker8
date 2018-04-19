@@ -40,11 +40,12 @@ def do_run(plot):
     p.Projection(inj_pop, pop_1, p.FromListConnector(injectionConnection),
                  p.StaticSynapse(weight=weight_to_spike, delay=delay))
 
-    # Simple connectors
+    # Index-based connectors
     index_based_exc = "(i+j)/"+str(n*(n-n/2.0))
     index_based_exc2 = "2.0*(i+j)/"+str(n*(n-n/2.0))
     index_based_inh = "(i+j)/"+str(n*(n+n/2.0))
     print 'index_based_exc: ', index_based_exc
+    print 'index_based_exc2: ', index_based_exc2
     print 'index_based_inh: ', index_based_inh
 
     exc_connector = p.IndexBasedProbabilityConnector(
@@ -54,7 +55,7 @@ def do_run(plot):
     exc_connector2 = p.IndexBasedProbabilityConnector(
         index_based_exc2, allow_self_connections=True)
 
-    # Projections within grid
+    # Projections within populations
     p.Projection(pop_1, pop_1, exc_connector,
                  p.StaticSynapse(weight=2.0, delay=5))
     p.Projection(pop_1, pop_1, inh_connector,
@@ -91,7 +92,7 @@ def do_run(plot):
                   ylabel="Membrane potential pop 2 (mV)",
                   data_labels=[pop_2.label], yticks=True,
                   xlim=(0, runtime), xticks=True),
-            title="Simple grid distance-dependent probability connector",
+            title="Simple index-based probability connector",
             annotations="Simulated with {}".format(p.name())
         )
         plt.show()
@@ -101,7 +102,7 @@ def do_run(plot):
     return v, spikes, v2, spikes2
 
 
-class DistanceDependentProbabilityConnectorTest(BaseTestCase):
+class IndexBasedProbabilityConnectorTest(BaseTestCase):
     def test_run(self):
         v, spikes, v2, spikes2 = do_run(plot=False)
         # any checks go here
