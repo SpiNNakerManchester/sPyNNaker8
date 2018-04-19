@@ -1,3 +1,4 @@
+from __future__ import print_function
 import spynnaker8 as p
 from p8_integration_tests.base_test_case import BaseTestCase
 from pyNN.utility.plotting import Figure, Panel
@@ -44,9 +45,8 @@ def do_run(plot):
     index_based_exc = "(i+j)/"+str(n*(n-n/2.0))
     index_based_exc2 = "2.0*(i+j)/"+str(n*(n-n/2.0))
     index_based_inh = "(i+j)/"+str(n*(n+n/2.0))
-    print 'index_based_exc: ', index_based_exc
-    print 'index_based_exc2: ', index_based_exc2
-    print 'index_based_inh: ', index_based_inh
+    print('index_based_exc: ', index_based_exc)
+    print('index_based_exc2: ', index_based_exc2)
 
     exc_connector = p.IndexBasedProbabilityConnector(
         index_based_exc, allow_self_connections=True)
