@@ -6,6 +6,7 @@ from spynnaker.pyNN.models.neuron.builds.if_curr_exp_semd_base import \
 
 _apv_defs = AbstractPopulationVertex.non_pynn_default_parameters
 
+
 class IFCurrExpSEMDDataHolder(DataHolder):
     def __init__(
             self,
