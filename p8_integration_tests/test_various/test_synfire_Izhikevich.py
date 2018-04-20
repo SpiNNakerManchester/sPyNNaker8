@@ -7,7 +7,6 @@ import spynnaker8 as p
 from spynnaker8.utilities import neo_convertor
 import spynnaker.plot_utils as plot_utils
 import spynnaker.spike_checker as spike_checker
-from unittest import SkipTest
 
 
 def do_run(nNeurons):
@@ -71,18 +70,13 @@ class SynfireIzhikevich(BaseTestCase):
         nNeurons = 200  # number of neurons in each population
         (v, gsyn, spikes) = do_run(nNeurons)
         spike_checker.synfire_spike_checker(spikes, nNeurons)
-        try:
-            self.assertLess(200, len(spikes))
-            self.assertGreater(230, len(spikes))
-        except Exception as ex:
-            # Just in case the range failed
-            raise SkipTest(ex)
+        self.assertEquals(215, len(spikes))
 
 
 if __name__ == '__main__':
     nNeurons = 200  # number of neurons in each population
     (v, gsyn, spikes) = do_run(nNeurons)
-    print len(spikes)
+    print(len(spikes))
     plot_utils.plot_spikes(spikes)
     plot_utils.heat_plot(v, title="v")
     plot_utils.heat_plot(gsyn, title="gsyn")

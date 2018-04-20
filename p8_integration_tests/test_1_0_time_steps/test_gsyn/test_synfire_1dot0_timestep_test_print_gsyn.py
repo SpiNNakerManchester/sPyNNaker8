@@ -6,7 +6,7 @@ Synfirechain-like example
 import os
 import pickle
 from p8_integration_tests.base_test_case import BaseTestCase
-from p8_integration_tests.scripts.synfire_run import TestRun
+from p8_integration_tests.scripts.synfire_run import SynfireRunner
 import spynnaker.plot_utils as plot_utils
 import spynnaker.spike_checker as spike_checker
 import spynnaker.gsyn_tools as gsyn_tools
@@ -21,7 +21,7 @@ delay = 1.7
 runtime = 50
 gsyn_path = os.path.dirname(os.path.abspath(__file__))
 gsyn_path = os.path.join(gsyn_path, "gsyn.pickle")
-synfire_run = TestRun()
+synfire_run = SynfireRunner()
 
 
 class TestPrintGsyn(BaseTestCase):
@@ -51,7 +51,7 @@ if __name__ == '__main__':
     gsyn = synfire_run.get_output_pop_gsyn_exc_numpy()
     v = synfire_run.get_output_pop_voltage_numpy()
     spikes = synfire_run.get_output_pop_spikes_numpy()
-    print len(spikes)
+    print(len(spikes))
     plot_utils.plot_spikes(spikes)
     plot_utils.heat_plot(v)
     plot_utils.heat_plot(gsyn)

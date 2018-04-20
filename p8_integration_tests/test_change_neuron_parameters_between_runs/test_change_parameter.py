@@ -1,16 +1,18 @@
 import spynnaker8 as p
 from p8_integration_tests.base_test_case import BaseTestCase
+from pyNN.random import NumpyRNG
 from unittest import SkipTest
 
 
-def do_run(split):
+def do_run(split, seed=None):
     p.setup(1.0)
 
     if split:
         p.set_number_of_neurons_per_core(p.SpikeSourcePoisson, 27)
         p.set_number_of_neurons_per_core(p.IF_curr_exp, 22)
 
-    inp = p.Population(100, p.SpikeSourcePoisson, {"rate": 100}, label="input")
+    inp = p.Population(100, p.SpikeSourcePoisson(rate=100, seed=seed),
+                       label="input")
     pop = p.Population(100, p.IF_curr_exp, {}, label="pop")
 
     p.Projection(inp, pop, p.OneToOneConnector(),
@@ -34,7 +36,9 @@ def do_run(split):
 
     inp.set(rate=0)
     pop.set(i_offset=1.0)
-    pop.initialize(v=p.RandomDistribution("uniform", [-65.0, -55.0]))
+    vs = p.RandomDistribution(
+        "uniform", [-65.0, -55.0], rng=NumpyRNG(seed=seed))
+    pop.initialize(v=vs)
 
     p.run(100)
 
@@ -54,45 +58,42 @@ def plot_spikes(pop_spikes, inp_spikes):
         pylab.subplot(2, 1, 2)
         pylab.plot(pop_spikes[:, 1], pop_spikes[:, 0], "b.")
         pylab.show()
-    except:
-        print "matplotlib not installed so plotting skipped"
+    except ImportError:
+        print("matplotlib not installed so plotting skipped")
 
 
 class TestChangeParameter(BaseTestCase):
 
     def test_no_split(self):
-        results = do_run(split=False)
+        results = do_run(split=False, seed=self._test_seed)
         (pop_spikes1, inp_spikes1, pop_spikes2, inp_spikes2) = results
         try:
             self.assertLess(1100, len(pop_spikes1))
             self.assertGreater(1300, len(pop_spikes1))
             self.assertLess(1100, len(inp_spikes1))
             self.assertGreater(1300, len(inp_spikes1))
-            self.assertLess(450, len(pop_spikes2))
-            self.assertGreater(600, len(pop_spikes2))
         except Exception as ex:
             # Just in case the range failed
             raise SkipTest(ex)
+        self.assertEqual(300, len(pop_spikes2))
         self.assertEqual(0, len(inp_spikes2))
 
     def test_split(self):
-        results = do_run(split=True)
+        results = do_run(split=True, seed=self._test_seed)
         (pop_spikes1, inp_spikes1, pop_spikes2, inp_spikes2) = results
         try:
             self.assertLess(1100, len(pop_spikes1))
             self.assertGreater(1300, len(pop_spikes1))
             self.assertLess(1100, len(inp_spikes1))
             self.assertGreater(1300, len(inp_spikes1))
-            self.assertLess(450, len(pop_spikes2))
-            self.assertGreater(600, len(pop_spikes2))
         except Exception as ex:
             # Just in case the range failed
             raise SkipTest(ex)
+        self.assertEqual(300, len(pop_spikes2))
         self.assertEqual(0, len(inp_spikes2))
-    # TODO test splitting
 
 
 if __name__ == '__main__':
-    (pop_spikes1, inp_spikes1, pop_spikes2, inp_spikes2) = do_run()
-    plot_spikes([pop_spikes1, inp_spikes1])
-    plot_spikes([pop_spikes2, inp_spikes2])
+    (pop_spikes1, inp_spikes1, pop_spikes2, inp_spikes2) = do_run(split=True)
+    plot_spikes(pop_spikes1, inp_spikes1)
+    plot_spikes(pop_spikes2, inp_spikes2)

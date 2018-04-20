@@ -96,7 +96,7 @@ def do_run(plot):
     for pop_o in populations:
         data = numpy.asarray(neo_convertor.convert_spikes(
             pop_o.get_data('spikes')))
-        print data.shape
+        print(data.shape)
         shapes.append(data.shape)
         if plot:
             p_plot.scatter(data[:, 0], data[:, 1] + id_accumulator,

@@ -17,10 +17,16 @@ class ExternalFPGARetinaDeviceDataHolder(DataHolder):
             label=ExternalFPGARetinaDevice.default_parameters['label'],
             board_address=ExternalFPGARetinaDevice.default_parameters[
                 'board_address']):
-        DataHolder.__init__(
-            self, {'spinnaker_link_id': spinnaker_link_id, 'mode': mode,
-                   'board_address': board_address, 'label': label,
-                   'retina_key': retina_key, 'polarity': polarity})
+        # pylint: disable=too-many-arguments
+        n_neurons = ExternalFPGARetinaDevice.get_n_neurons(mode, polarity)
+        super(ExternalFPGARetinaDeviceDataHolder, self).__init__({
+            'board_address': board_address,
+            'label': label,
+            'mode': mode,
+            'n_neurons': n_neurons,
+            'polarity': polarity,
+            'retina_key': retina_key,
+            'spinnaker_link_id': spinnaker_link_id})
 
     @staticmethod
     def build_model():

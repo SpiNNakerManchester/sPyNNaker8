@@ -2,17 +2,18 @@
 Synfirechain-like example
 """
 from p8_integration_tests.base_test_case import BaseTestCase
-from p8_integration_tests.scripts.synfire_run import TestRun
+from p8_integration_tests.scripts.synfire_run import SynfireRunner
 
 import spynnaker.plot_utils as plot_utils
 import spynnaker.spike_checker as spike_checker
 from spynnaker8.utilities import neo_convertor, neo_compare
+from spynnaker8.utilities.version_util import pynn8_syntax
 
 nNeurons = 200  # number of neurons in each population
 spike_times = [[0, 1050]]
 run_times = [1000, 1000]
 reset = True
-synfire_run = TestRun()
+synfire_run = SynfireRunner()
 
 
 class Synfire1RunReset1RunNo_extraction_if_curr_exp(BaseTestCase):
@@ -29,8 +30,12 @@ class Synfire1RunReset1RunNo_extraction_if_curr_exp(BaseTestCase):
         spike_checker.synfire_spike_checker(spikes_0_0, nNeurons)
         spike_checker.synfire_spike_checker(spikes_1_1, nNeurons)
         # v + gsyn_exc + gsyn_ihn = 3 (spikes not in analogsignalarrays
-        self.assertEquals(3, len(neos[0].segments[0].analogsignalarrays))
-        self.assertEquals(3, len(neos[1].segments[1].analogsignalarrays))
+        if pynn8_syntax:
+            self.assertEquals(3, len(neos[0].segments[0].analogsignalarrays))
+            self.assertEquals(3, len(neos[1].segments[1].analogsignalarrays))
+        else:
+            self.assertEquals(3, len(neos[0].segments[0].analogsignals))
+            self.assertEquals(3, len(neos[1].segments[1].analogsignals))
         neo_compare.compare_segments(neos[0].segments[0], neos[1].segments[0])
         #   neo compare does all the compares so just some safety come once
         v_0_0 = neo_convertor.convert_data(neos[0], "v", 0)
@@ -59,8 +64,8 @@ if __name__ == '__main__':
     v_1_1 = neo_convertor.convert_data(neos[1], "v", 1)
     gsyn_exc_1_0 = neo_convertor.convert_data(neos[1], "gsyn_exc", 0)
     gsyn_exc_1_1 = neo_convertor.convert_data(neos[1], "gsyn_exc", 1)
-    print len(spikes[0])
-    print len(spikes[1])
+    print(len(spikes[0]))
+    print(len(spikes[1]))
     plot_utils.plot_spikes(spikes)
     plot_utils.heat_plot(v_1_0, title="v1")
     plot_utils.heat_plot(gsyn_exc_1_0, title="gysn1")

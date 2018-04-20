@@ -1,8 +1,11 @@
+from __future__ import print_function
 import random
+import unittest
 import spynnaker8 as Frontend
 from spynnaker8.utilities import neo_convertor
 import time
 from threading import Condition
+from spinn_front_end_common.utilities.constants import NOTIFY_PORT
 
 from p8_integration_tests.base_test_case import BaseTestCase
 
@@ -12,9 +15,9 @@ print_condition = Condition()
 
 # Create an initialisation method
 def init_pop(label, n_neurons, run_time_ms, machine_timestep_ms):
-    print "{} has {} neurons".format(label, n_neurons)
-    print "Simulation will run for {}ms at {}ms timesteps".format(
-        run_time_ms, machine_timestep_ms)
+    print("{} has {} neurons".format(label, n_neurons))
+    print("Simulation will run for {}ms at {}ms timesteps".format(
+        run_time_ms, machine_timestep_ms))
 
 
 # Create a sender of packets for the forward population
@@ -22,7 +25,7 @@ def send_input_forward(label, sender):
     for neuron_id in range(0, 100, 20):
         time.sleep(random.random() + 0.5)
         print_condition.acquire()
-        print "Sending forward spike", neuron_id
+        print("Sending forward spike", neuron_id)
         print_condition.release()
         sender.send_spike(label, neuron_id, send_full_keys=True)
 
@@ -33,7 +36,7 @@ def send_input_backward(label, sender):
         real_id = 100 - neuron_id - 1
         time.sleep(random.random() + 0.5)
         print_condition.acquire()
-        print "Sending backward spike", real_id
+        print("Sending backward spike", real_id)
         print_condition.release()
         sender.send_spike(label, real_id)
 
@@ -42,7 +45,7 @@ def send_input_backward(label, sender):
 def receive_spikes(label, time, neuron_ids):
     for neuron_id in neuron_ids:
         print_condition.acquire()
-        print "Received spike at time", time, "from", label, "-", neuron_id
+        print("Received spike at time", time, "from", label, "-", neuron_id)
         print_condition.release()
 
 
@@ -168,7 +171,7 @@ def do_run():
     # Set up the live connection for sending spikes
     live_spikes_connection_send = \
         Frontend.external_devices.SpynnakerLiveSpikesConnection(
-            receive_labels=None, local_port=19999,
+            receive_labels=None, local_port=NOTIFY_PORT,
             send_labels=["spike_injector_forward", "spike_injector_backward"])
 
     # Set up callbacks to occur at initialisation
@@ -219,6 +222,8 @@ def do_run():
 
 class SpikeIoMultiRun(BaseTestCase):
 
+    @unittest.skip("https://github.com/SpiNNakerManchester/sPyNNaker8/issues/"
+                   "83")
     def test_run(self):
         (spikes_forward, spikes_backward) = do_run()
         self.assertEqual(600, len(spikes_forward))
@@ -229,8 +234,8 @@ if __name__ == '__main__':
     import pylab
 
     (spikes_forward, spikes_backward) = do_run()
-    print len(spikes_forward)
-    print len(spikes_backward)
+    print(len(spikes_forward))
+    print(len(spikes_backward))
 
     # If there are spikes, plot using matplotlib
     if len(spikes_forward) != 0 or len(spikes_backward) != 0:
@@ -246,4 +251,4 @@ if __name__ == '__main__':
         pylab.title('spikes')
         pylab.show()
     else:
-        print "No spikes received"
+        print("No spikes received")

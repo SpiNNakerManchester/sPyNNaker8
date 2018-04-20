@@ -39,5 +39,5 @@ class TestProjectionBetweenRun(BaseTestCase):
 
 if __name__ == '__main__':
     first_spikes, second_spikes = do_run()
-    print first_spikes
-    print second_spikes
+    print(first_spikes)
+    print(second_spikes)

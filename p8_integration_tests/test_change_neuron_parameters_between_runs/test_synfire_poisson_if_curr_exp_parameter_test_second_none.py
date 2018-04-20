@@ -1,5 +1,6 @@
+from __future__ import print_function
 from p8_integration_tests.base_test_case import BaseTestCase
-from p8_integration_tests.scripts.synfire_run import TestRun
+from p8_integration_tests.scripts.synfire_run import SynfireRunner
 import spynnaker8 as p
 import spynnaker.spike_checker as spike_checker
 import spynnaker.plot_utils as plot_utils
@@ -19,7 +20,7 @@ set_between_runs = [(1, 'duration', 0)]
 extract_between_runs = False
 record_input_spikes = True
 
-synfire_run = TestRun()
+synfire_run = SynfireRunner()
 
 
 class TestSynfirePoissonIfCurrExpParameterTestSecondNone(BaseTestCase):
@@ -56,7 +57,7 @@ if __name__ == '__main__':
     v = synfire_run.get_output_pop_voltage_numpy()
     input = synfire_run.get_spike_source_spikes_numpy()
     hist = numpy.histogram(input[:, 1], bins=[0, 5000, 10000])
-    print hist[0][0], hist[0][1]
+    print(hist[0][0], hist[0][1])
     spikes = synfire_run.get_output_pop_spikes_numpy()
     plot_utils.plot_spikes(input, spikes2=spikes)
     plot_utils.heat_plot(v)

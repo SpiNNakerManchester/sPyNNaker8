@@ -24,32 +24,34 @@ def _histogram(a, bins=10, plot_range=None, normed=False):
             mn -= 0.5
             mx += 0.5
         bins = linspace(mn, mx, bins, endpoint=False)
-    else:
-        if(bins[1:] - bins[:-1] < 0).any():
-            raise AttributeError("bins must increase monotonically.")
+    elif (bins[1:] - bins[:-1] < 0).any():
+        raise AttributeError("bins must increase monotonically.")
 
     # best block size probably depends on processor cache size
     block = 65536
     n = sort(a[:block]).searchsorted(bins)
-    for i in xrange(block, a.size, block):
+    for i in range(block, a.size, block):
         n += sort(a[i:i + block]).searchsorted(bins)
     n = concatenate([n, [len(a)]])
     n = n[1:] - n[:-1]
 
-    if normed:
-        db = bins[1] - bins[0]
-        return 1.0 / (a.size * db) * n
-    else:
+    if not normed:
         return n
+
+    db = bins[1] - bins[0]
+    return 1.0 / (a.size * db) * n
 
 
 def _make_plot(ts, ts1, gids, neurons, hist, hist_binwidth, grayscale, title,
                xlabel=None, total_time=None, n_neurons=None):
     """
-    Generic plotting routine that constructs a raster plot along with
+    Generic plotting routine that constructs a raster plot along with\
     an optional histogram (common part in all routines above)
     """
-    import pylab  # deferred so unittest are not dependent on it
+    # pylint: disable=import-error
+
+    # deferred so unittest are not dependent on it
+    import pylab  # @UnresolvedImport
 
     pylab.figure()
 

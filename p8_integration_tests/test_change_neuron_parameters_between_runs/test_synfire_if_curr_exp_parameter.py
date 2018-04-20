@@ -1,5 +1,6 @@
+from __future__ import print_function
 from p8_integration_tests.base_test_case import BaseTestCase
-from p8_integration_tests.scripts.synfire_run import TestRun
+from p8_integration_tests.scripts.synfire_run import SynfireRunner
 import spynnaker.plot_utils as plot_utils
 import numpy
 
@@ -7,7 +8,7 @@ n_neurons = 200  # number of neurons in each population
 neurons_per_core = n_neurons / 2
 runtimes = [5000, 5000]
 set_between_runs = [(0, 'i_offset', 30)]
-synfire_run = TestRun()
+synfire_run = SynfireRunner()
 extract_between_runs = False
 
 
@@ -23,7 +24,8 @@ class TestGetGsyn(BaseTestCase):
         spikes = synfire_run.get_output_pop_spikes_numpy()
         # Check spikes increase in second half by at least a factor of ten
         hist = numpy.histogram(spikes[:, 1], bins=[0, 5000, 10000])
-        self.assertLess(hist[0][0] * 10, hist[0][1])
+        self.assertEquals(263, hist[0][0])
+        self.assertEquals(333400, hist[0][1])
 
 
 if __name__ == '__main__':
@@ -35,7 +37,7 @@ if __name__ == '__main__':
     v = synfire_run.get_output_pop_voltage_numpy()
     spikes = synfire_run.get_output_pop_spikes_numpy()
     hist = numpy.histogram(spikes[:, 1], bins=[0, 5000, 10000])
-    print hist[0][0], hist[0][1]
+    print(hist[0][0], hist[0][1])
     plot_utils.plot_spikes(spikes)
     plot_utils.heat_plot(v)
     plot_utils.heat_plot(gsyn)

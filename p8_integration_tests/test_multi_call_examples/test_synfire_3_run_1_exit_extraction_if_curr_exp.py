@@ -2,7 +2,7 @@
 Synfirechain-like example
 """
 from p8_integration_tests.base_test_case import BaseTestCase
-from p8_integration_tests.scripts.synfire_run import TestRun
+from p8_integration_tests.scripts.synfire_run import SynfireRunner
 import spynnaker.plot_utils as plot_utils
 import spynnaker.spike_checker as spike_checker
 
@@ -10,7 +10,7 @@ import spynnaker.spike_checker as spike_checker
 nNeurons = 200  # number of neurons in each population
 run_times = [1000, 1000, 1000]
 reset = False
-synfire_run = TestRun()
+synfire_run = SynfireRunner()
 
 
 class Synfire3Run1ExitExtractionIfCurrExp(BaseTestCase):
@@ -33,9 +33,9 @@ if __name__ == '__main__':
     v = synfire_run.get_output_pop_voltage_list_numpy()
     spikes = synfire_run.get_output_pop_spikes_list_numpy()
 
-    print len(spikes[0])
-    print len(spikes[1])
-    print len(spikes[2])
+    print(len(spikes[0]))
+    print(len(spikes[1]))
+    print(len(spikes[2]))
     plot_utils.plot_spikes(spikes)
     plot_utils.heat_plot(v[0], title="v1")
     plot_utils.heat_plot(gsyn[0], title="gysn1")

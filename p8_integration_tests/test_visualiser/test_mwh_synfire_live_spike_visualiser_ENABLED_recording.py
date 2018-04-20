@@ -45,7 +45,7 @@ def do_run():
     populations[1].add_placement_constraint(0, 0, 3)
 
     run_time = 1000
-    print "Running for {} ms".format(run_time)
+    print("Running for {} ms".format(run_time))
     p.run(run_time)
 
     spikes = neo_convertor.convert_spikes(populations[0].get_data('spikes'))
@@ -66,7 +66,7 @@ if __name__ == '__main__':
     import pylab
     spikes = do_run()
     if spikes is not None:
-        print spikes
+        print(spikes)
         pylab.figure()
         pylab.plot([i[1] for i in spikes], [i[0] for i in spikes], ".")
         pylab.ylabel('neuron id')
@@ -76,7 +76,7 @@ if __name__ == '__main__':
         pylab.title('spikes')
         pylab.show()
     else:
-        print "No spikes received"
+        print("No spikes received")
 
 # Make some graphs
 """ticks = len(v) / nNeurons

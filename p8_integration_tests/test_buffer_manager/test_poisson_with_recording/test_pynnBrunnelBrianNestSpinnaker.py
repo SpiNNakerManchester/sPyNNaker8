@@ -29,15 +29,16 @@ class PynnBrunnelBrianNestSpinnaker(BaseTestCase):
 
     # AttributeError: 'SpikeSourcePoisson' object has no attribute 'describe'
     def test_run(self):
-        (esp, s, N_E) = script.do_run(Neurons, sim_time, record=True)
+        (esp, s, N_E) = script.do_run(
+            Neurons, sim_time, record=True, seed=self._test_seed)
         esp_numpy = neo_convertor.convert_spikes(esp)
         s_numpy = neo_convertor.convert_spikes(s)
+        self.assertEquals(2400, N_E)
         try:
             self.assertLess(200, len(esp_numpy))
             self.assertGreater(300, len(esp_numpy))
             self.assertLess(22000, len(s_numpy))
             self.assertGreater(26000, len(s_numpy))
-            self.assertEquals(2400, N_E)
         except Exception as ex:
             # Just in case the range failed
             raise SkipTest(ex)
@@ -48,6 +49,6 @@ if __name__ == '__main__':
     esp_numpy = neo_convertor.convert_spikes(esp)
     s_numpy = neo_convertor.convert_spikes(s)
     plot(esp_numpy, sim_time, N_E)
-    print len(esp_numpy)
-    print len(s_numpy)
-    print N_E
+    print(len(esp_numpy))
+    print(len(s_numpy))
+    print(N_E)

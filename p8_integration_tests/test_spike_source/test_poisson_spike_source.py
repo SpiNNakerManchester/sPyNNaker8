@@ -37,7 +37,7 @@ class MyTestCase(unittest.TestCase):
         p.run(5000)
 
         spikes = populations[1].get_data("spikes")
-        print spikes
+        print(spikes)
 
         p.end()
 
@@ -74,7 +74,7 @@ class MyTestCase(unittest.TestCase):
         p.run(5000)
 
         spikes = populations[1].get_data("spikes")
-        print spikes
+        print(spikes)
 
         p.end()
 
@@ -112,7 +112,7 @@ class MyTestCase(unittest.TestCase):
         p.run(5000)
 
         spikes = populations[1].get_data("spikes")
-        print spikes
+        print(spikes)
 
         p.end()
 

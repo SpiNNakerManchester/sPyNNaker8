@@ -17,7 +17,7 @@ from spynnaker8.models.model_data_holders.if_curr_exp_semd_data_holder import \
 from spynnaker8.models.synapse_dynamics.timing_dependence \
     import TimingDependenceRecurrent as RecurrentRule
 from spynnaker8.models.synapse_dynamics.timing_dependence \
-    import TimingDependenceSpikeNearestPair as SpikeNearestPair
+    import TimingDependenceSpikeNearestPair as SpikeNearestPairRule
 from spynnaker8.models.synapse_dynamics.timing_dependence \
     import TimingDependenceVogels2011 as Vogels2011Rule
 from spynnaker8.models.synapse_dynamics.timing_dependence \
@@ -35,5 +35,5 @@ __all__ = [
     # spynnaker 8 plastic stuff
     'WeightDependenceAdditiveTriplet',
     'PfisterSpikeTriplet',
-    'SpikeNearestPair',
+    'SpikeNearestPairRule',
     'RecurrentRule', 'Vogels2011Rule']

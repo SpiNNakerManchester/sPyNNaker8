@@ -4,27 +4,19 @@ from spynnaker8.utilities.data_holder import DataHolder
 from spynnaker.pyNN.models.neuron.builds.if_curr_exp_semd_base import \
     IFCurrExpSEMDBase
 
+_apv_defs = AbstractPopulationVertex.non_pynn_default_parameters
 
 class IFCurrExpSEMDDataHolder(DataHolder):
     def __init__(
             self,
 
-            spikes_per_second=AbstractPopulationVertex.
-            none_pynn_default_parameters['spikes_per_second'],
+            spikes_per_second=_apv_defs['spikes_per_second'],
+            ring_buffer_sigma=_apv_defs['ring_buffer_sigma'],
+            incoming_spike_buffer_size=_apv_defs['incoming_spike_buffer_size'],
+            constraints=_apv_defs['constraints'],
+            label=_apv_defs['label'],
 
-            ring_buffer_sigma=AbstractPopulationVertex.
-            none_pynn_default_parameters['ring_buffer_sigma'],
-
-            incoming_spike_buffer_size=AbstractPopulationVertex.
-            none_pynn_default_parameters['incoming_spike_buffer_size'],
-
-            constraints=AbstractPopulationVertex.none_pynn_default_parameters[
-                'constraints'],
-
-            label=AbstractPopulationVertex.none_pynn_default_parameters[
-                'label'],
-
-            v_init=IFCurrExpSEMDBase.none_pynn_default_parameters['v_init'],
+            v_init=IFCurrExpSEMDBase.initialize_parameters['v_init'],
             tau_m=IFCurrExpSEMDBase.default_parameters['tau_m'],
             cm=IFCurrExpSEMDBase.default_parameters['cm'],
             v_rest=IFCurrExpSEMDBase.default_parameters['v_rest'],
