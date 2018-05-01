@@ -40,18 +40,18 @@ class Test_IDMixin(BaseTestCase):
         self.assertEqual(cells[0], view[1])
 
         iterator = iter(view)
-        self.assertEqual(1, iterator.next().id)
-        self.assertEqual(3, iterator.next().id)
+        self.assertEqual(1, next(iterator).id)
+        self.assertEqual(3, next(iterator).id)
         with pytest.raises(StopIteration):
-            iterator.next()
+            next(iterator)
 
         self.assertEqual(2, len(view))
 
         iterator = view.all()
-        self.assertEqual(1, iterator.next().id)
-        self.assertEqual(3, iterator.next().id)
+        self.assertEqual(1, next(iterator).id)
+        self.assertEqual(3, next(iterator).id)
         with pytest.raises(StopIteration):
-            iterator.next()
+            next(iterator)
 
         self.assertEqual(view.can_record("v"), pop_1.can_record("v"))
         self.assertEqual(view.conductance_based, pop_1.conductance_based)

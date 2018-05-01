@@ -85,7 +85,7 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
     def __iter__(self):
         """ Iterate over local cells
         """
-        for id in xrange(self._size):
+        for id in range(self._size):
             yield IDMixin(self, id)
 
     def __getitem__(self, index_or_slice):
@@ -97,7 +97,7 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
 
     def all(self):
         """ Iterator over cell ids on all MPI nodes."""
-        for id in xrange(self._size):
+        for id in range(self._size):
             yield IDMixin(self, id)
 
     @property
@@ -392,7 +392,7 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
     @property
     def all_cells(self):
         cells = []
-        for id in xrange(self._size):
+        for id in range(self._size):
             cells.append(IDMixin(self, id))
         return cells
 

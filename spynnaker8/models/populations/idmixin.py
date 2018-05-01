@@ -46,7 +46,7 @@ class IDMixin(object):
         """
         Set cell parameters, given as a sequence of parameter=value arguments.
         """
-        for (name, value) in parameters.iteritems():
+        for (name, value) in parameters.items():
             self._population.set_by_selector(self._id, name, value)
 
     def get_parameters(self):

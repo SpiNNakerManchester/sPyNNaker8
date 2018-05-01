@@ -124,20 +124,20 @@ class TestPopulation(BaseTestCase):
         pop = sim.Population(4, sim.IF_curr_exp(), label="a label")
 
         iterator = iter(pop)
-        self.assertEqual(0, iterator.next().id)
-        self.assertEqual(1, iterator.next().id)
-        self.assertEqual(2, iterator.next().id)
-        self.assertEqual(3, iterator.next().id)
+        self.assertEqual(0, next(iterator).id)
+        self.assertEqual(1, next(iterator).id)
+        self.assertEqual(2, next(iterator).id)
+        self.assertEqual(3, next(iterator).id)
         with pytest.raises(StopIteration):
-            iterator.next()
+            next(iterator)
 
         iterator = pop.all()
-        self.assertEqual(0, iterator.next().id)
-        self.assertEqual(1, iterator.next().id)
-        self.assertEqual(2, iterator.next().id)
-        self.assertEqual(3, iterator.next().id)
+        self.assertEqual(0, next(iterator).id)
+        self.assertEqual(1, next(iterator).id)
+        self.assertEqual(2, next(iterator).id)
+        self.assertEqual(3, next(iterator).id)
         with pytest.raises(StopIteration):
-            iterator.next()
+            next(iterator)
 
         sim.end()
 

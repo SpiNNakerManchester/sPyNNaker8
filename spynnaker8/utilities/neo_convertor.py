@@ -147,9 +147,9 @@ def convert_spiketrains(spiketrains):
     :rtype: nparray
     """
     neurons = np.concatenate(
-        map(lambda x: np.repeat(x.annotations['source_index'], len(x)),
-            spiketrains))
-    spikes = np.concatenate(map(lambda x: x.magnitude, spiketrains))
+        list(map(lambda x: np.repeat(x.annotations['source_index'], len(x)),
+            spiketrains)))
+    spikes = np.concatenate(list(map(lambda x: x.magnitude, spiketrains)))
     return np.column_stack((neurons, spikes))
 
 
