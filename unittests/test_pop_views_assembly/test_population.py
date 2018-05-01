@@ -41,7 +41,7 @@ class TestPopulation(BaseTestCase):
         pop_1 = sim.Population(n_neurons, sim.IF_curr_exp(), label=label)
         try:
             gen = pop_1.position_generator
-            print gen(0)
+            print(gen(0))
         except NotImplementedError:
             msg = "Depends on https://github.com/SpiNNakerManchester" \
                   "/sPyNNaker8/pull/73"
