@@ -404,7 +404,7 @@ class Recorder(RecordingCommon):
             map_indexes = [data_indexes.index(i) for i in indexes]
             signal_array = signal_array[:, map_indexes]
 
-        ids = map(self._population.index_to_id, indexes)
+        ids = list(map(self._population.index_to_id, indexes))
         if pynn8_syntax:
             data_array = neo.AnalogSignalArray(
                 signal_array,
