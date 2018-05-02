@@ -2,6 +2,7 @@ import logging
 import numpy
 from pyNN import descriptions
 from pyNN.random import NumpyRNG
+from six import integer_types
 
 from spinn_utilities.ranged.abstract_sized import AbstractSized
 from spynnaker8.models.populations import IDMixin, PopulationBase
@@ -96,7 +97,7 @@ class PopulationView(PopulationBase):
             Population(...) p[2] is equivalent to p.__getitem__(2).p[3:6] is
             equivalent to p.__getitem__(slice(3, 6))
         """
-        if isinstance(index, (int, long)):
+        if isinstance(index, integer_types):
             return IDMixin(self._population, index)
         else:
             return PopulationView(self, index, label=self.label+"_" + str(
@@ -219,7 +220,7 @@ class PopulationView(PopulationBase):
 
         assert pv.id_to_index(pv[3]) == 3
         """
-        if isinstance(id, (int, long)):
+        if isinstance(id, integer_types):
             return self._indexes.index(id)
         else:
             result = []
@@ -257,7 +258,7 @@ class PopulationView(PopulationBase):
             p.initialize(v=rand_distr, gsyn_exc=0.0)
             p.initialize(v=lambda i: -65 + i / 10.0)
         """
-        for variable, value in initial_values.iteritems():
+        for variable, value in initial_values.items():
             self._population.set_initial_value(variable, value, self._indexes)
 
     def record(self, variables, to_file=None, sampling_interval=None):
@@ -315,7 +316,7 @@ class PopulationView(PopulationBase):
             p.set(spike_times=[0.3, 0.7, 0.9, 1.4])
             p.set(cm=rand_distr, tau_m=lambda i: 10 + i / 10.0)
         """
-        for (parameter, value) in parameters.iteritems():
+        for (parameter, value) in parameters.items():
             self._population.set_by_selector(
                 selector=self._indexes, parameter=parameter, value=value)
 

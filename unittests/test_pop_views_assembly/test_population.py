@@ -20,7 +20,7 @@ class TestPopulation(BaseTestCase):
         initial_values = pop_1.initial_values
         vs = initial_values["v"]
         assert [-60, -60, -60, -60, -60] == vs
-        v_init = [-60 + index for index in xrange(n_neurons)]
+        v_init = [-60 + index for index in range(n_neurons)]
         pop_1.initialize(v=v_init)
         initial_values = pop_1.initial_values
         vs = initial_values["v"]
