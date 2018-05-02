@@ -232,7 +232,6 @@ class TestGetting(BaseTestCase):
 
         sim.end()
 
-
     def test_get_(self):
         sim.setup(timestep=1.0)
         pop = sim.Population(4, sim.IF_curr_exp(), label="a label")
