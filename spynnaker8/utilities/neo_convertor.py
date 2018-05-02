@@ -21,7 +21,8 @@ def convert_analog_signal(signal_array, time_unit=ms):
         times = signal_array.times.rescale(time_unit).magnitude
     all_times = np.tile(times, len(xs))
     neurons = np.repeat(xs, len(times))
-    values = np.concatenate(map(lambda x: signal_array.magnitude[:, x], xs))
+    values = np.concatenate(list(map(
+        lambda x: signal_array.magnitude[:, x], xs)))
     return np.column_stack((neurons, all_times, values))
 
 
@@ -135,8 +136,8 @@ def convert_gsyn(gsyn_exc, gsyn_inh):
     all_times = np.tile(times, len(ids))
     neurons = np.repeat(ids, len(times))
     idlist = list(range(len(ids)))
-    exc_np = np.concatenate(map(lambda x: exc[:, x], idlist))
-    inh_np = np.concatenate(map(lambda x: inh[:, x], idlist))
+    exc_np = np.concatenate(list(map(lambda x: exc[:, x], idlist)))
+    inh_np = np.concatenate(list(map(lambda x: inh[:, x], idlist)))
     return np.column_stack((neurons, all_times, exc_np, inh_np))
 
 
