@@ -59,11 +59,11 @@ class SynfireIfCurrx6(BaseTestCase):
         nNeurons = 200  # number of neurons in each population
         spikes = do_run(nNeurons)
         for x in range(0, 12, 2):
-            self.assertEqual(999, len(spikes[x / 2]))
+            self.assertEqual(999, len(spikes[x // 2]))
 
 
 if __name__ == '__main__':
     nNeurons = 200  # number of neurons in each population
     spikes = do_run(nNeurons)
     for x in range(0, 12, 2):
-        print(x, len(spikes[x / 2]))
+        print(x, len(spikes[x // 2]))
