@@ -1,41 +1,29 @@
-# pynn imports
+import logging
+import math
+from lazyarray import __version__ as lazyarray_version
+from quantities import __version__ as quantities_version
+from neo import __version__ as neo_version
 from pyNN.common import control as pynn_control
 from pyNN.random import RandomDistribution, NumpyRNG
 from pyNN import __version__ as pynn_version
-
+from spinn_utilities.log import FormatAdapter
 from spinn_front_end_common.utilities import globals_variables
 from spinn_front_end_common.utilities.exceptions import ConfigurationException
 from spinn_front_end_common.utilities.failed_state import FAILED_STATE_MSG
 from spynnaker.pyNN.abstract_spinnaker_common import AbstractSpiNNakerCommon
-from spinn_utilities.log import FormatAdapter
-from spynnaker.pyNN.utilities.spynnaker_failed_state \
-    import SpynnakerFailedState
-
+from spynnaker.pyNN.utilities.spynnaker_failed_state import (
+    SpynnakerFailedState)
 from spynnaker8 import _version
-from spynnaker8.spynnaker8_simulator_interface \
-    import Spynnaker8SimulatorInterface
-from spynnaker8.utilities.random_stats import RandomStatsExponentialImpl
-from spynnaker8.utilities.random_stats import RandomStatsGammaImpl
-from spynnaker8.utilities.random_stats import RandomStatsLogNormalImpl
-from spynnaker8.utilities.random_stats import RandomStatsNormalClippedImpl
-from spynnaker8.utilities.random_stats import RandomStatsNormalImpl
-from spynnaker8.utilities.random_stats import RandomStatsPoissonImpl
-from spynnaker8.utilities.random_stats import RandomStatsRandIntImpl
-from spynnaker8.utilities.random_stats import RandomStatsUniformImpl
-from spynnaker8.utilities.random_stats import RandomStatsVonmisesImpl
-from spynnaker8.utilities.random_stats import RandomStatsBinomialImpl
+from spynnaker8.spynnaker8_simulator_interface import (
+    Spynnaker8SimulatorInterface)
+from spynnaker8.utilities.random_stats import (
+    RandomStatsExponentialImpl, RandomStatsGammaImpl, RandomStatsLogNormalImpl,
+    RandomStatsNormalClippedImpl, RandomStatsNormalImpl,
+    RandomStatsPoissonImpl, RandomStatsRandIntImpl, RandomStatsUniformImpl,
+    RandomStatsVonmisesImpl, RandomStatsBinomialImpl)
 from ._version import __version__ as version
 
-import logging
-import math
-
-from quantities import __version__ as quantities_version
-from neo import __version__ as neo_version
-from lazyarray import __version__ as lazyarray_version
-
-
 log = FormatAdapter(logging.getLogger(__name__))
-
 NAME = "SpiNNaker_under_version({}-{})".format(
     _version.__version__, _version.__version_name__)
 

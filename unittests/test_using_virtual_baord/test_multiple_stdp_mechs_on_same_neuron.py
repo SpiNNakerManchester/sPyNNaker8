@@ -3,7 +3,6 @@
 Synfirechain-like example
 """
 import unittest
-
 import spynnaker8 as p
 from p8_integration_tests.base_test_case import BaseTestCase
 from spynnaker.pyNN.exceptions import SynapticConfigurationException

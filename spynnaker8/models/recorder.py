@@ -1,29 +1,26 @@
 import logging
 import neo
 import os
-import numpy
 import quantities
 from datetime import datetime
+import numpy
 from six import string_types
 from six.moves import xrange
 from neo.io import NeoHdf5IO, PickleIO, NeoMatlabIO
 from spinn_utilities.ordered_set import OrderedSet
 from spinn_utilities.log import FormatAdapter
-
-from spynnaker.pyNN.models.common import AbstractNeuronRecordable
-from spynnaker.pyNN.models.common import AbstractSpikeRecordable
+from spinn_front_end_common.utilities.globals_variables import get_simulator
+from spynnaker.pyNN.models.common import (
+    AbstractNeuronRecordable, AbstractSpikeRecordable)
 from spynnaker.pyNN.models.recording_common import RecordingCommon
 from spynnaker.pyNN.utilities import utility_calls
-from spynnaker.pyNN.utilities.constants import \
-    SPIKES, MEMBRANE_POTENTIAL, GSYN_EXCIT, GSYN_INHIB
-from spinn_front_end_common.utilities.globals_variables import get_simulator
+from spynnaker.pyNN.utilities.constants import (
+    SPIKES, MEMBRANE_POTENTIAL, GSYN_EXCIT, GSYN_INHIB)
 from spynnaker.pyNN.exceptions import InvalidParameterType
 from spynnaker8.models.data_cache import DataCache
 from spynnaker8.utilities.version_util import pynn8_syntax
 
-
 logger = FormatAdapter(logging.getLogger(__name__))
-
 
 _DEFAULT_UNITS = {
     SPIKES: "spikes",
