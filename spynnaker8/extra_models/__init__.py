@@ -22,6 +22,8 @@ from spynnaker8.models.synapse_dynamics.timing_dependence \
     import TimingDependenceVogels2011 as Vogels2011Rule
 from spynnaker8.models.synapse_dynamics.timing_dependence \
     import TimingDependencePfisterSpikeTriplet as PfisterSpikeTriplet
+from spynnaker8.models.synapse_dynamics.timing_dependence \
+    import TimingDependenceCyclic as Cyclic
 
 # plastic weight spynnaker 8
 from spynnaker8.models.synapse_dynamics.weight_dependence \
@@ -36,4 +38,4 @@ __all__ = [
     'WeightDependenceAdditiveTriplet',
     'PfisterSpikeTriplet',
     'SpikeNearestPairRule',
-    'RecurrentRule', 'Vogels2011Rule']
+    'RecurrentRule', 'Vogels2011Rule', 'Cyclic']
