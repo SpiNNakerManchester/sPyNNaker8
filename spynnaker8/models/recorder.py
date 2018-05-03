@@ -191,7 +191,7 @@ class Recorder(RecordingCommon):
             else:
                 (data, indexes, sampling_interval) = self._get_recorded_matrix(
                     variable)
-                ids = map(self._population.index_to_id, indexes)
+                ids = list(map(self._population.index_to_id, indexes))
                 read_in_signal(
                     segment=segment,
                     block=block,
@@ -246,7 +246,7 @@ class Recorder(RecordingCommon):
                     sampling_interval=variable_cache.sampling_interval,
                     label=data_cache.label)
             else:
-                ids = map(self._population.index_to_id, indexes)
+                ids = list(map(self._population.index_to_id, indexes))
                 read_in_signal(
                     segment=segment,
                     block=block,
