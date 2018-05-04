@@ -1,5 +1,5 @@
 import logging
-
+from six import iteritems, string_types
 from spynnaker.pyNN.exceptions import InvalidParameterType
 from spynnaker.pyNN.models.pynn_population_common import PyNNPopulationCommon
 from spynnaker.pyNN.utilities.constants import SPIKES
@@ -93,9 +93,8 @@ class Population(PyNNPopulationCommon, Recorder):
 
     def record(self, variables, to_file=None, sampling_interval=None,
                indexes=None):
-        """
-        Record the specified variable or variables for all cells in the
-        Population or view.
+        """ Record the specified variable or variables for all cells in the\
+            Population or view.
 
         :param variables: either a single variable name or a list of variable\
             names. For a given celltype class, `celltype.recordable` contains\
@@ -116,7 +115,7 @@ class Population(PyNNPopulationCommon, Recorder):
             # note that if record(None) is called, its a reset
             Recorder._turn_off_all_recording(self)
             # handle one element vs many elements
-        elif isinstance(variables, basestring):
+        elif isinstance(variables, string_types):
             # handle special case of 'all'
             if variables == "all":
                 logger.warning(
@@ -157,10 +156,10 @@ class Population(PyNNPopulationCommon, Recorder):
         """
         # pylint: disable=too-many-arguments
         if not gather:
-            logger.warning("Spinnaker only supports gather=True. We will run "
+            logger.warning("sPyNNaker only supports gather=True. We will run "
                            "as if gather was set to True.")
 
-        if isinstance(io, basestring):
+        if isinstance(io, string_types):
             io = self._get_io(io)
 
         data = self._extract_neo_block(variables, clear, annotations)
@@ -225,7 +224,7 @@ class Population(PyNNPopulationCommon, Recorder):
         :rtype: neo.Block
         """
         if not gather:
-            logger.warning("Spinnaker only supports gather=True. We will run "
+            logger.warning("sPyNNaker only supports gather=True. We will run "
                            "as if gather was set to True.")
 
         return self._extract_neo_block(variables, clear, annotations)
@@ -269,14 +268,14 @@ class Population(PyNNPopulationCommon, Recorder):
         return self._get_variable_unit(variable)
 
     def set(self, **kwargs):
-        for parameter, value in kwargs.iteritems():
+        for parameter, value in iteritems(kwargs):
             try:
                 super(Population, self).set(parameter, value)
             except InvalidParameterType:
                 super(Population, self).initialize(parameter, value)
 
     def initialize(self, **kwargs):
-        for parameter, value in kwargs.iteritems():
+        for parameter, value in iteritems(kwargs):
             super(Population, self).initialize(parameter, value)
 
     def get(self, parameter_names, gather=False, simplify=True):

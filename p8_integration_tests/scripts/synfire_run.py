@@ -234,8 +234,8 @@ class SynfireRunner(object):
         if end_before_print:
             if v_path is not None or spike_path is not None or \
                     gsyn_path_exc is not None or gsyn_path_inh is not None:
-                print "NOTICE! end is being called before print.. commands " \
-                      "which could cause an exception"
+                print("NOTICE! end is being called before print.. commands "
+                      "which could cause an exception")
             p.end()
 
         if v_path is not None:

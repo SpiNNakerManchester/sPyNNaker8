@@ -86,17 +86,17 @@ class TestSTDPNearestPairAdditive(BaseTestCase):
             math.exp(-depression_time/tau_minus)
         new_weight_exact = (initial_weight + potentiation - depression)
 
-        print "Pre neuron spikes at: {}".format(spike_times)
-        print "Post-neuron spikes at: {}".format(
-            spikes.segments[0].spiketrains[0].magnitude)
-        print "Potentiation time difference: {},\
+        print("Pre neuron spikes at: {}".format(spike_times))
+        print("Post-neuron spikes at: {}".format(
+            spikes.segments[0].spiketrains[0].magnitude))
+        print("Potentiation time difference: {},\
              \nDepression time difference: {}".format(
-            potentiation_time, depression_time)
-        print "Ammount to potentiate: {}, \
+            potentiation_time, depression_time))
+        print("Ammount to potentiate: {}, \
             \nAmount to depress: {}".format(
-            potentiation, depression)
-        print "New weight exact: {}".format(new_weight_exact)
-        print "New weight SpiNNaker: {}".format(weights[0])
+            potentiation, depression))
+        print("New weight exact: {}".format(new_weight_exact))
+        print("New weight SpiNNaker: {}".format(weights[0]))
 
         self.assertTrue(numpy.allclose(
                         weights[0], new_weight_exact, atol=0.001))

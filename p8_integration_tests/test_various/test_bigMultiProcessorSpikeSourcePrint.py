@@ -66,9 +66,9 @@ if __name__ == '__main__':
     neo = do_run(nNeurons, 60)
     spikes = neo_convertor.convert_spikes(neo)
     plot_utils.plot_spikes(spikes)
-    print spikes
+    print(spikes)
 
     neo = do_run(nNeurons, 70)
     spikes = neo_convertor.convert_spikes(neo)
     plot_utils.plot_spikes(spikes)
-    print spikes
+    print(spikes)

@@ -49,6 +49,6 @@ if __name__ == '__main__':
     esp_numpy = neo_convertor.convert_spikes(esp)
     s_numpy = neo_convertor.convert_spikes(s)
     plot(esp_numpy, sim_time, N_E)
-    print len(esp_numpy)
-    print len(s_numpy)
-    print N_E
+    print(len(esp_numpy))
+    print(len(s_numpy))
+    print(N_E)

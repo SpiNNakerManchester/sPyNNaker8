@@ -63,7 +63,7 @@ if __name__ == '__main__':
     with open(gsyn_path, "r") as gsyn_file:
         gsyn2_neo = pickle.load(gsyn_file)
     gsyn2_numpy = neo_convertor.convert_data(gsyn2_neo, run=0, name="gsyn_exc")
-    print len(spikes)
+    print(len(spikes))
     Figure(SpynnakerPanel(spikes, yticks=True, xticks=True, markersize=4,
                           xlim=(0, runtime)),
            SpynnakerPanel(gsyn2_neo, yticks=True),

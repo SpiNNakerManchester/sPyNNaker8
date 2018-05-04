@@ -110,7 +110,7 @@ def do_run(Neurons, sim_time, record, seed=None):
     # nu_ex*c_e  the factor 1000.0 changes the units from
     # spikes per ms to spikes per second.
     p_rate = 1000.0 * nu_ex * c_e
-    print "Rate is: %f HZ" % (p_rate / 1000)
+    print("Rate is: %f HZ" % (p_rate / 1000))
 
     # Neural Parameters
     pynn.setup(timestep=1.0, min_delay=1.0, max_delay=16.0)
