@@ -29,17 +29,27 @@ def do_run(plot):
     runtime = 5000
     p.set_number_of_neurons_per_core(p.IF_curr_exp, nNeurons / 2)
 
-    # Population
+    # Populations
     pop = p.Population(nNeurons, p.IF_curr_exp(**cell_params_lif),
                        label='pop_1')
+    pop2 = p.Population(nNeurons, p.IF_curr_exp(**cell_params_lif),
+                        label='pop_2')
 
-    # create loopConnections array using numpy linspaces
+    # create loopConnections array for first population using numpy linspaces
     loopConnections = numpy.array(
         [numpy.linspace(0, nNeurons-1, nNeurons),
          numpy.linspace(1, nNeurons, nNeurons)],
         numpy.uint32)
     # connect the final neuron to the first neuron
     loopConnections[1, nNeurons-1] = 0
+
+    # do the same for the second population, but just for even numbered neurons
+    loopConnections2 = numpy.array(
+        [numpy.linspace(0, nNeurons-2, nNeurons/2),
+         numpy.linspace(2, nNeurons+1, nNeurons/2)],
+        numpy.uint32)
+    # connect the final neuron to the first neuron
+    loopConnections2[1, (nNeurons/2)-1] = 0
 
     # SpikeInjector
     injectionConnection = numpy.array([[0], [0]], numpy.uint32)
@@ -50,16 +60,23 @@ def do_run(plot):
     # Projection for injector
     p.Projection(inj_pop, pop, p.ArrayConnector(injectionConnection),
                  p.StaticSynapse(weight=weight_to_spike, delay=1))
+    p.Projection(inj_pop, pop2, p.ArrayConnector(injectionConnection),
+                 p.StaticSynapse(weight=weight_to_spike, delay=1))
 
-    # Projection within population
+    # Projection within populations
     p.Projection(pop, pop, p.ArrayConnector(loopConnections),
+                 p.StaticSynapse(weight=weight_to_spike, delay=delay))
+    p.Projection(pop2, pop2, p.ArrayConnector(loopConnections2),
                  p.StaticSynapse(weight=weight_to_spike, delay=delay))
 
     pop.record(['v', 'spikes'])
+    pop2.record(['v', 'spikes'])
     p.run(runtime)
 
     v = pop.get_data('v')
     spikes = pop.get_data('spikes')
+    v2 = pop2.get_data('v')
+    spikes2 = pop2.get_data('spikes')
 
     if plot:
         Figure(
@@ -71,6 +88,13 @@ def do_run(plot):
                   ylabel="Membrane potential (mV)",
                   data_labels=[pop.label], yticks=True,
                   xlim=(0, runtime), xticks=True),
+            Panel(spikes2.segments[0].spiketrains,
+                  yticks=True, markersize=1.2, xlim=(0, runtime), xticks=True),
+            # membrane potential of the postsynaptic neurons
+            Panel(v2.segments[0].filter(name='v')[0],
+                  ylabel="Membrane potential (mV)",
+                  data_labels=[pop2.label], yticks=True,
+                  xlim=(0, runtime), xticks=True),
             title="Testing ArrayConnector",
             annotations="Simulated with {}".format(p.name())
         )
@@ -78,16 +102,18 @@ def do_run(plot):
 
     p.end()
 
-    return v, spikes
+    return v, spikes, v2, spikes2
 
 
 class ArrayConnectorTest(BaseTestCase):
     def test_run(self):
-        v, spikes = do_run(plot=False)
+        v, spikes, v2, spikes2 = do_run(plot=False)
         # any checks go here
         spikes_test = neo_convertor.convert_spikes(spikes)
+        spikes_test2 = neo_convertor.convert_spikes(spikes2)
         self.assertEquals(263, len(spikes_test))
+        self.assertEquals(263, len(spikes_test2))
 
 
 if __name__ == '__main__':
-    v, spikes = do_run(plot=True)
+    v, spikes, v2, spikes2 = do_run(plot=True)
