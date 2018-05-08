@@ -28,7 +28,6 @@ from spynnaker8.utilities import neo_convertor
 from pyNN.random import NumpyRNG, RandomDistribution
 from pyNN.utility import Timer
 from spinnman.exceptions import SpinnmanTimeoutException
-from unittest import SkipTest
 
 current_file_path = os.path.dirname(os.path.abspath(__file__))
 neo_path = os.path.join(current_file_path, "spikes.pickle")
