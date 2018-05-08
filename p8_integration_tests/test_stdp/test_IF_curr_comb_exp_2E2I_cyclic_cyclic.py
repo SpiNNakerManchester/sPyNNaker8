@@ -5,7 +5,7 @@ import math
 import unittest
 
 
-class TestSTDPCyclicMultiplicative(BaseTestCase):
+class TestSTDPCyclicCyclic(BaseTestCase):
 
     def test_potentiation_and_depression(self):
         p.setup(1)
@@ -53,9 +53,16 @@ class TestSTDPCyclicMultiplicative(BaseTestCase):
             p.StaticSynapse(weight=5.0, delay=1), receptor_type="excitatory")
 
         syn_plas = p.STDPMechanism(
-            timing_dependence=p.extra_models.Cyclic(),
-            weight_dependence=p.MultiplicativeWeightDependence(w_min=min_weight,
-                                                         w_max=max_weight),
+            timing_dependence=p.extra_models.TimingDependenceCyclic(),
+            weight_dependence=p.extra_models.WeightDependenceCyclic(
+                w_min_excit = 2, w_max_excit = 4,
+                    A_plus_excit = 6, A_minus_excit = 8,
+                w_min_excit2 = 10, w_max_excit2 = 12,
+                    A_plus_excit2 = 14, A_minus_excit2 = 16,
+                w_min_inhib = 18, w_max_inhib = 20,
+                    A_plus_inhib = 22, A_minus_inhib = 24,
+                w_min_inhib2 = 26, w_max_inhib2 = 28,
+                    A_plus_inhib2 = 30, A_minus_inhib2 = 32),
             weight=initial_weight, delay=plastic_delay)
 
         plastic_synapse = p.Projection(pop_src1, pop_exc,
