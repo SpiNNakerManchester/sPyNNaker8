@@ -3,7 +3,7 @@
 from spynnaker8.models.model_data_holders\
     import IfCondExpStocDataHolder as IFCondExpStock
 from spynnaker8.models.model_data_holders\
-    import IfCurrDeltaDataHolder as IFCurDelta
+    import IfCurrDeltaDataHolder as IFCurrDelta
 from spynnaker8.models.model_data_holders\
     import IfCurrExpCa2AdaptiveDataHolder as IFCurrExpCa2Adaptive
 from spynnaker8.models.model_data_holders\
@@ -27,7 +27,7 @@ from spynnaker8.models.synapse_dynamics.weight_dependence \
 
 __all__ = [
     # spynnaker 8 models
-    'IFCurDelta', 'IFCurrExpCa2Adaptive', 'IFCondExpStock',
+    'IFCurrDelta', 'IFCurrExpCa2Adaptive', 'IFCondExpStock',
     'Izhikevich_cond', 'IF_curr_dual_exp',
 
     # spynnaker 8 plastic stuff
