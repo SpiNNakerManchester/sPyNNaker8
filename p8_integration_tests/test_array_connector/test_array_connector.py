@@ -45,11 +45,11 @@ def do_run(plot):
 
     # do the same for the second population, but just for even numbered neurons
     loopConnections2 = numpy.array(
-        [numpy.linspace(0, nNeurons-2, nNeurons/2),
-         numpy.linspace(2, nNeurons+1, nNeurons/2)],
+        [numpy.linspace(0, nNeurons-2, nNeurons//2),
+         numpy.linspace(2, nNeurons+1, nNeurons//2)],
         numpy.uint32)
     # connect the final neuron to the first neuron
-    loopConnections2[1, (nNeurons/2)-1] = 0
+    loopConnections2[1, (nNeurons//2)-1] = 0
 
     # SpikeInjector
     injectionConnection = numpy.array([[0], [0]], numpy.uint32)
