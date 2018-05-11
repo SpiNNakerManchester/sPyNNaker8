@@ -18,6 +18,7 @@ def _inject(label, connection):
         time.sleep(0.001)
     print("Finished")
 
+
 @unittest.skip("https://github.com/SpiNNakerManchester/sPyNNaker8/issues/136")
 def test_recordable_spike_injector():
     p.setup(1.0)
