@@ -42,7 +42,8 @@ class BaseTestCase(unittest.TestCase):
         """
         seen = 0
         for record in log_records:
-            if record.levelname == log_level and sub_message in str(record.msg):
+            if record.levelname == log_level and \
+                    sub_message in str(record.msg):
                 seen += 1
         if allow_more and seen > count:
             return
