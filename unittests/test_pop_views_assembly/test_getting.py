@@ -202,7 +202,8 @@ class TestGetting(BaseTestCase):
                 spikes = neo_convertor.convert_spikes(neo)
                 assert numpy.array_equal(spikes,  mock_spikes())
         except UnicodeDecodeError:
-            raise SkipTest("https://github.com/neo-project/neo/issues/227")
+            raise SkipTest(
+                "https://github.com/NeuralEnsemble/python-neo/issues/529")
 
         pop.printSpikes("spikes.pkl")
         try:
@@ -211,7 +212,8 @@ class TestGetting(BaseTestCase):
                 spikes = neo_convertor.convert_spikes(neo)
                 assert numpy.array_equal(spikes,  mock_spikes())
         except UnicodeDecodeError:
-            raise SkipTest("https://github.com/neo-project/neo/issues/227")
+            raise SkipTest(
+                "https://github.com/NeuralEnsemble/python-neo/issues/529")
 
         (target, _, _) = mock_v_all("any")
 
