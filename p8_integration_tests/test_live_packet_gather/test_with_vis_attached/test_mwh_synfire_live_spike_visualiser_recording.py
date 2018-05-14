@@ -2,6 +2,7 @@
 Synfirechain-like example
 """
 # !/usr/bin/python
+import unittest
 import spynnaker.spike_checker as spike_checker
 import spynnaker8 as p
 from spynnaker8.utilities import neo_convertor
@@ -97,6 +98,8 @@ def do_run():
 
 class SynfireChainBB2pop_BStest(BaseTestCase):
 
+    @unittest.skip(
+        "https://github.com/SpiNNakerManchester/sPyNNaker8/issues/136")
     def test_synfire_chain_BB_2pop_ABS_test(self):
         spikes = do_run()
         self.assertEqual(20, len(spikes))

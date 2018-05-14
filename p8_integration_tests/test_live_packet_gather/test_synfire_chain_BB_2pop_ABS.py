@@ -1,5 +1,6 @@
 #!/usr/bin/python
 import numpy
+import unittest
 import spynnaker8 as p
 from spynnaker8.utilities import neo_convertor
 from p8_integration_tests.base_test_case import BaseTestCase
@@ -111,6 +112,8 @@ def do_run(plot):
 
 class SynfireChainBB2popABStest(BaseTestCase):
 
+    @unittest.skip(
+        "https://github.com/SpiNNakerManchester/sPyNNaker8/issues/136")
     def test_synfire_chain_BB_2pop_ABS_test(self):
         shapes = do_run(plot=False)
         self.assertEqual((1493, 2), shapes[0])
