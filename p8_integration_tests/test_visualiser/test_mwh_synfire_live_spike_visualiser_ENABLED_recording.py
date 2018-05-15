@@ -1,3 +1,4 @@
+import unittest
 import spynnaker8 as p
 from p8_integration_tests.base_test_case import BaseTestCase
 from spynnaker8.utilities import neo_convertor
@@ -56,6 +57,8 @@ def do_run():
 
 
 class TestMWHSynfireEnabledRecording(BaseTestCase):
+    @unittest.skip(
+        "https://github.com/SpiNNakerManchester/sPyNNaker8/issues/136")
     def test_run(self):
         spikes = do_run()
         # check something
