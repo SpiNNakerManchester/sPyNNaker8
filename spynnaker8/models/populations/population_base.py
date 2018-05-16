@@ -9,17 +9,15 @@ logger = logging.getLogger(__name__)
 
 @add_metaclass(AbstractBase)
 class PopulationBase(object):
-    """ Shared methods between Populations and Poluation views.
+    """ Shared methods between Populations and Population views.
 
     Mainly pass through and not implemented
-
     """
 
     @property
     def local_cells(self):
-        """
-        An array containing the cell ids of those neurons in the Population
-            that exist on the local MPI node.
+        """ An array containing the cell IDs of those neurons in the\
+            Population that exist on the local MPI node.
         """
         logger.warning("local calls do not really make sense on sPyNNaker so "
                        "local_cells just returns all_cells")
@@ -27,46 +25,47 @@ class PopulationBase(object):
 
     @abstractproperty
     def all_cells(self):
-        """  An array containing the cell ids of all neurons in the
-            Population(all MPI nodes). """
+        """ An array containing the cell IDs of all neurons in the\
+            Population (all MPI nodes). """
 
-    def __add__(other):
-        """ A Population / PopulationView can be added to another
+    def __add__(self, other):
+        """ A Population / PopulationView can be added to another\
             Population, PopulationView or Assembly, returning an Assembly.
         """
         raise NotImplementedError  # pragma: no cover
 
     def getSpikes(self, *args, **kwargs):
-        """ Deprecated.Use get_data('spikes') instead. """
+        """ Deprecated. Use get_data('spikes') instead.
+        """
         logger.warning(
-            'getSpikes is depricated. Call transfered to get_data("spikes") '
-            'without additional arguements')
+            'getSpikes is deprecated. Call transfered to get_data("spikes") '
+            'without additional arguments')
         return self.get_data("spikes")
 
     @abstractmethod
     def get_data(self, variables='all', gather=True, clear=False):
-        """
-        Return a Neo Block containing the data(spikes, state variables)
+        """ Return a Neo Block containing the data(spikes, state variables)\
             recorded from the Population.
 
         variables - either a single variable name or a list of variable names
 
-        Variables must have been previously recorded,
+        Variables must have been previously recorded,\
             otherwise an Exception will be raised.
 
-        For parallel simulators, if gather is True, all data will be
-            gathered to all nodes and the Neo Block will contain data
+        For parallel simulators, if gather is True, all data will be\
+            gathered to all nodes and the Neo Block will contain data\
             from all nodes.
-        Otherwise, the Neo Block will contain only data from the cells
+        Otherwise, the Neo Block will contain only data from the cells\
             simulated on the local node.
 
         If clear is True, recorded data will be deleted from the Population.
         """
 
     def get_gsyn(self, *args, **kwargs):
-        """ Deprecated.Use get_data(['gsyn_exc', 'gsyn_inh']) instead."""
+        """ Deprecated. Use get_data(['gsyn_exc', 'gsyn_inh']) instead.
+        """
         logger.warning(
-            'get_gsy is depricated. '
+            'get_gsy is deprecated. '
             'Call transfered to get_data(["gsyn_exc", "gsyn_inh"]) '
             'without additional arguements')
         return self.get_data(['gsyn_exc', 'gsyn_inh'])
@@ -79,20 +78,21 @@ class PopulationBase(object):
         """
 
     def get_v(self, *args, **kwargs):
-        """ Deprecated.Use get_data('v') instead. """
+        """ Deprecated.Use get_data('v') instead.
+        """
         logger.warning(
-            'getSpikes is depricated. '
+            'getSpikes is deprecated. '
             'Call transfered to get_data("v") without additional arguements')
         return self.get_data("v")
 
     def inject(self, current_source):
-        """ Connect a current source to all cells in the Population."""
+        """ Connect a current source to all cells in the Population.
+        """
         # TODO:
         raise NotImplementedError  # pragma: no cover
 
-    def is_local(self, id):
-        """
-        Indicates whether the cell with the given ID exists on the
+    def is_local(self, id):  # @ReservedAssignment
+        """ Indicates whether the cell with the given ID exists on the\
             local MPI node.
         """
         logger.warning("local calls do not really make sense on sPyNNaker so "
@@ -101,37 +101,41 @@ class PopulationBase(object):
 
     @property
     def local_size(self):
-        """
-        Return the number of cells in the population on the local MPI node
+        """ Return the number of cells in the population on the local MPI node.
         """
         logger.warning("local calls do not really make sense on sPyNNaker so "
                        "is_local always returns size")
         return len(self)
 
     def meanSpikeCount(self, *args, **kwargs):
-        """ Deprecated. Use mean_spike_count() instead. """
+        """ Deprecated. Use mean_spike_count() instead.
+        """
         logger.warning(
-            'meanSpikeCount is depricated. '
+            'meanSpikeCount is deprecated. '
             'Call transfered to mean_spike_count with additional arguements')
         return self.mean_spike_count(*args, **kwargs)
 
     def mean_spike_count(self, gather=True):
-        """ Returns the mean number of spikes per neuron. """
+        """ Returns the mean number of spikes per neuron.
+        """
         counts = self.get_spike_counts()
         return sum(itervalues(counts)) / len(counts)
 
     def nearest(self, position):
-        """ Return the neuron closest to the specified position."""
+        """ Return the neuron closest to the specified position.
+        """
         raise NotImplementedError  # pragma: no cover
 
     @property
     def position_generator(self):
-        """ NO PyNN description of this method """
+        """ NO PyNN description of this method.
+        """
         raise NotImplementedError   # pragma: no cover
 
     @property
     def positions(self):
-        """ NO PyNN description of this method """
+        """ NO PyNN description of this method.
+        """
         raise NotImplementedError   # pragma: no cover
 
     @abstractmethod
@@ -141,7 +145,7 @@ class PopulationBase(object):
             supported by Neo.
 
         :param io: \
-            a Neo IO instance, or a string for where to put a neo instance
+            a Neo IO instance, or a string for where to put a Neo instance
         :type io: neo instance or str
         :param variables: \
             either a single variable name or a list of variable names.\
@@ -151,7 +155,7 @@ class PopulationBase(object):
         :param gather: pointless on sPyNNaker
         :param clear: \
             clears the storage data if set to true after reading it back
-        :param annotations: annotations to put on the neo block
+        :param annotations: annotations to put on the Neo block
         """
         # pylint: disable=too-many-arguments
 
@@ -161,18 +165,17 @@ class PopulationBase(object):
         Note: Method signature is the PyNN0.7 one
         """
         logger.warning(
-            'printSpikes is depricated. '
+            'printSpikes is deprecated. '
             'Call transfered to write_data(file, "spikes", gatherer) instead.')
         self.write_data(filename, 'spikes', gather=True)
 
     def print_gsyn(self, filename, gather=True):
-        """
-        Deprecated. Use write_data(file, ['gsyn_exc', 'gsyn_inh']) instead.
+        """ Deprecated. Use write_data(file, ['gsyn_exc', 'gsyn_inh']) instead.
 
         Note: Method signature is the PyNN0.7 one
         """
         logger.warning(
-            'print_gsyn is depricated. Call transfered to '
+            'print_gsyn is deprecated. Call transfered to '
             'write_data(file, ["gsyn_exc", "gsyn_inh"], gatherer) instead.')
         self.write_data(filename, ['gsyn_exc', 'gsyn_inh'], gather=True)
 
@@ -182,12 +185,13 @@ class PopulationBase(object):
         Note: Method signature is the PyNN0.7 one
         """
         logger.warning(
-            'print_v is depricated. '
+            'print_v is deprecated. '
             'Call transfered to write_data(file, "v", gatherer) instead.')
         self.write_data(filename, 'v', gather=True)
 
     def receptor_types(self):
-        """ NO PyNN description of this method """
+        """ NO PyNN description of this method.
+        """
         raise NotImplementedError   # pragma: no cover
 
     @abstractmethod
@@ -210,11 +214,11 @@ class PopulationBase(object):
     def record_gsyn(self, sampling_interval=1, indexes=None, to_file=None):
         """ Deprecated. Use record(['gsyn_exc', 'gsyn_inh']) instead.
 
-        Note: Method signature is the PyNN0.7 one
-        with the extra None Pynn sampling_interval and indexes
+        Note: Method signature is the PyNN 0.7 one\
+        with the extra non-PyNN sampling_interval and indexes
         """
         logger.warning(
-            'record_gsyn is depricated. Call transfered to '
+            'record_gsyn is deprecated. Call transfered to '
             'record(["gsyn_exc", "gsyn_inh"], tofile) instead.')
         return self.record(
             ['gsyn_exc', 'gsyn_inh'], to_file=to_file,
@@ -223,30 +227,34 @@ class PopulationBase(object):
     def record_v(self, sampling_interval=1, indexes=None, to_file=None):
         """ Deprecated. Use record('v') instead.
 
-        Note: Method signature is the PyNN0.7 one
-        with the extra None Pynn sampling_interval and indexes
+        Note: Method signature is the PyNN 0.7 one\
+        with the extra none-PyNN sampling_interval and indexes
         """
-        logger.warning('record_v is depricated. '
+        logger.warning('record_v is deprecated. '
                        'Call transfered to record(["v"], .....) instead.')
         return self.record(
             'v', to_file=to_file,
             sampling_interval=sampling_interval, indexes=indexes)
 
     def rset(self, *args, **kwargs):
-        """ Deprecated. Use set(parametername=rand_distr) instead. """
+        """ Deprecated. Use set(parametername=rand_distr) instead.
+        """
         raise NotImplementedError(
             " Use set(parametername=rand_distr) instead.")   # pragma: no cover
 
     def save_positions(self, file):
-        """ Save positions to file. The output format is index x y z """
+        """ Save positions to file. The output format is index x y z
+        """
         raise NotImplementedError   # pragma: no cover
 
     @property
     def structure(self):
-        """ The spatial structure of the parent Population. """
+        """ The spatial structure of the parent Population.
+        """
         raise NotImplementedError   # pragma: no cover
 
     def tset(self, *args, **kwargs):
-        """ Deprecated. Use set(parametername=value_array) instead. """
+        """ Deprecated. Use set(parametername=value_array) instead.
+        """
         raise NotImplementedError(
             "Use set(parametername=value_array) instead.")   # pragma: no cover

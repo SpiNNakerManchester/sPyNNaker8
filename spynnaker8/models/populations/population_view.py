@@ -51,32 +51,38 @@ class PopulationView(PopulationBase):
 
     @property
     def size(self):
-        """The total number of neurons in the Population."""
+        """ The total number of neurons in the Population.
+        """
         return len(self._indexes)
 
     @property
     def label(self):
-        """A label for the Population."""
+        """ A label for the Population.
+        """
         return self._label
 
     @property
     def celltype(self):
-        """ The type of neurons making up the Population."""
+        """ The type of neurons making up the Population.
+        """
         return self._population.celltype
 
     @property
     def initial_values(self):
-        """ A dict containing the initial values of the state variables"""
+        """ A dict containing the initial values of the state variables.
+        """
         return self._population.get_initial_values(selector=self._indexes)
 
     @property
     def parent(self):
-        """ A reference to the parent Population(that this is a view of)."""
+        """ A reference to the parent Population(that this is a view of).
+        """
         return self._parent
 
     @property
     def mask(self):
-        """  The selector mask that was used to create this view."""
+        """  The selector mask that was used to create this view.
+        """
         return self._mask
 
     @property
@@ -89,7 +95,7 @@ class PopulationView(PopulationBase):
         return cells
 
     def __getitem__(self, index):
-        """ Return either a single cell(ID object) from the Population,\
+        """ Return either a single cell (ID object) from the Population,\
             if index is an integer, or a subset of the cells\
             (PopulationView object), if index is a slice or array.
 
@@ -104,21 +110,25 @@ class PopulationView(PopulationBase):
                 index))
 
     def __iter__(self):
-        """ Iterator over cell ids on the local node."""
+        """ Iterator over cell IDs on the local node.
+        """
         for _id in self._indexes:
             yield IDMixin(self, _id)
 
     def __len__(self):
-        """  Return the total number of cells in the population(all nodes)."""
+        """ Return the total number of cells in the population(all nodes).
+        """
         return len(self._indexes)
 
     def all(self):
-        """ Iterator over cell ids on all MPI nodes."""
+        """ Iterator over cell IDs on all MPI nodes.
+        """
         for _id in self._indexes:
             yield IDMixin(self, _id)
 
     def can_record(self, variable):
-        """ Determine whether variable can be recorded from this population."""
+        """ Determine whether variable can be recorded from this population.
+        """
         return self._population.can_record(variable)
 
     @property
@@ -224,8 +234,7 @@ class PopulationView(PopulationBase):
             return result
 
     def index_in_grandparent(self, indices):
-        """
-        Given an array of indices, return the indices in the parent
+        """ Given an array of indices, return the indices in the parent\
             population at the root of the tree.
         """
         result = []
@@ -234,7 +243,7 @@ class PopulationView(PopulationBase):
         return result
 
     def initialize(self, **initial_values):
-        """ Set initial values of state variables, e.g.the membrane potential.
+        """ Set initial values of state variables, e.g. the membrane potential.
 
         Values passed to initialize() may be\
         single numeric values (all neurons set to the same value),\
@@ -287,8 +296,7 @@ class PopulationView(PopulationBase):
             label="Random sample size {} from {}".format(n, self.label))
 
     def set(self, **parameters):
-        """
-        Set one or more parameters for every cell in the population.
+        """ Set one or more parameters for every cell in the population.
 
         Values passed to set() may be]
             single values,\

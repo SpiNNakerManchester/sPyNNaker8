@@ -63,13 +63,13 @@ class Recorder(RecordingCommon):
             raise Exception("file extension %s not supported" % extension)
 
     def _extract_neo_block(self, variables, view_indexes, clear, annotations):
-        """ extracts block from the vertices and puts them into a neo block
+        """ Extracts block from the vertices and puts them into a Neo block
 
         :param variables: the variables to extract
         :param view_indexes: the indexes to be included in the view
         :param clear: if the variables should be cleared after reading
-        :param annotations: annotations to put on the neo block
-        :return: The neo block
+        :param annotations: annotations to put on the Neo block
+        :return: The Neo block
         """
 
         block = neo.Block()
@@ -331,12 +331,11 @@ class Recorder(RecordingCommon):
     def read_in_spikes(
             self, segment, spikes, t, n_neurons, recording_start_time,
             sampling_interval, indexes, label):
-        """
-        Converts the data into SpikeTrains and saves them to the segment
+        """ Converts the data into SpikeTrains and saves them to the segment.
 
         :param segment: Segment to add spikes to
         :type segment: neo.Segment
-        :param spikes: Spike data in raw spynnaker format
+        :param spikes: Spike data in raw sPyNNaker format
         :type spikes: nparray
         :param t: last simulation time
         :type t: int
@@ -369,9 +368,8 @@ class Recorder(RecordingCommon):
     def read_in_signal(
             self, segment, block, signal_array, data_indexes, view_indexes,
             variable, recording_start_time, sampling_interval, units, label):
-        """ Reads in a data item that's not spikes (likely v, gsyn e, gsyn i)
-
-        Saves this data to the segment.
+        """ Reads in a data item that's not spikes (likely v, gsyn e, gsyn i)\
+        and saves this data to the segment.
 
         :param segment: Segment to add data to
         :type segment: neo.Segment
@@ -381,8 +379,8 @@ class Recorder(RecordingCommon):
         :type signal_array: nparray
         :param data_indexes: The indexes for the recorded data
         :type data_indexes: list(int)
-        :param view_indexes: The indexes for which data should be returned.
-            If None all data (view_index =  data_indexes)
+        :param view_indexes: The indexes for which data should be returned.\
+            If None all data (view_index = data_indexes)
         :type view_indexes: list(int)
         :param variable: the variable name
         :param recording_start_time: when recording started
@@ -447,9 +445,9 @@ def _get_channel_index(ids, block):
 
 def _convert_extracted_data_into_neo_expected_format(
         signal_array, indexes):
-    """ Converts data between spynnaker format and neo format
+    """ Converts data between sPyNNaker format and Neo format
 
-    :param signal_array: Draw data in spynnaker format
+    :param signal_array: Draw data in sPyNNaker format
     :type signal_array: nparray
     :rtype nparray
     """

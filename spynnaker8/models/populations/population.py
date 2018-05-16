@@ -136,15 +136,15 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         """
         if indexes is not None:
             logger.warn(
-                "record indexes parameter is not standard PyNN so will not "
+                "record indexes parameter is not standard PyNN, so will not "
                 "work on other other simulators. "
-                "It is now depricated and replaced with views")
+                "It is now deprecated and replaced with views")
         self._record_with_indexes(
             variables, to_file, sampling_interval, indexes)
 
     def _record_with_indexes(
             self, variables, to_file, sampling_interval, indexes):
-        """ Same as record but without none standard PyNN warning
+        """ Same as record but without non-standard PyNN warning
 
         This method is none standard PyNN and is intended only to be called by\
         record in a Population, View or Assembly
@@ -356,18 +356,20 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
                 "Population does not support the initialisation")
         return self._vertex.initial_values
 
-    # NONE PYNN API CALL
+    # NON-PYNN API CALL
     def get_initial_value(self, variable, selector=None):
-        """ See AbstractPopulationInitializable.get_initial_value"""
+        """ See AbstractPopulationInitializable.get_initial_value
+        """
         if not self._vertex_population_initializable:
             raise KeyError(
                 "Population does not support the initialisation of {}".format(
                     variable))
         return self._vertex.get_initial_value(variable, selector)
 
-    # NONE PYNN API CALL
+    # NON-PYNN API CALL
     def set_initial_value(self, variable, value, selector=None):
-        """ See AbstractPopulationInitializable.set_initial_value"""
+        """ See AbstractPopulationInitializable.set_initial_value
+        """
         if not self._vertex_population_initializable:
             raise KeyError(
                 "Population does not support the initialisation of {}".format(
@@ -377,9 +379,10 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
             raise Exception("Population does not support changes after run")
         self._vertex.set_initial_value(variable, value, selector)
 
-    # NONE PYNN API CALL
+    # NON-PYNN API CALL
     def get_initial_values(self, selector=None):
-        """ See AbstractPopulationInitializable.get_initial_values"""
+        """ See AbstractPopulationInitializable.get_initial_values
+        """
         if not self._vertex_population_initializable:
             raise KeyError("Population does not support the initialisation")
         return self._vertex.get_initial_values(selector)
@@ -392,8 +395,8 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
     @property
     def all_cells(self):
         cells = []
-        for id in range(self._size):
-            cells.append(IDMixin(self, id))
+        for _id in range(self._size):
+            cells.append(IDMixin(self, _id))
         return cells
 
     @property
@@ -404,11 +407,8 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
 
     @staticmethod
     def create(cellclass, cellparams=None, n=1):
-        """
-        Pass through method to the constructor defined by PyNN
-
-        Create n cells all of the same type.
-
+        """ Pass through method to the constructor defined by PyNN.\
+        Create n cells all of the same type.\
         Returns a Population object.
 
         :param cellclass: see Population.__init__
