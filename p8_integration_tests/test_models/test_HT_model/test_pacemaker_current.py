@@ -5,12 +5,12 @@ import unittest
 from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt
 
-p.setup(0.1)
-runtime = 1000
+p.setup(1)
+runtime = 200
 
 # Spike source to send spike via plastic synapse
 AMPA_src = p.Population(1, p.SpikeSourceArray,
-                        {'spike_times': [10]}, label="src1")
+                        {'spike_times': [10, 100]}, label="src1")
 # NMDA_src = p.Population(1, p.SpikeSourceArray,
 #                         {'spike_times': [60]}, label="src1")
 # GABA_A_src = p.Population(1, p.SpikeSourceArray,
@@ -26,7 +26,7 @@ pop_exc = p.Population(1, p.extra_models.HillTononi(), label="test")
 # # Create projections
 synapse = p.Projection(
     AMPA_src, pop_exc, p.AllToAllConnector(),
-    p.StaticSynapse(weight=1, delay=1), receptor_type="AMPA")
+    p.StaticSynapse(weight=25, delay=1), receptor_type="AMPA")
 # synapse = p.Projection(
 #     NMDA_src, pop_exc, p.AllToAllConnector(),
 #     p.StaticSynapse(weight=0.075, delay=1), receptor_type="NMDA")
