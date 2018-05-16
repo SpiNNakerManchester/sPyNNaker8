@@ -108,8 +108,8 @@ class IDMixin(object):
     def __eq__(self, other):
         if not isinstance(other, IDMixin):
             return False
-        return self._population == other._population and self._id == \
-               other._id
+        return self._population == other._population and \
+            self._id == other._id
 
     def __str__(self):
         return str(self._population) + "[" + str(self._id) + "]"

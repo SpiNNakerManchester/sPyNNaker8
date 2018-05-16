@@ -102,7 +102,6 @@ class DataCache(object):
         :type data: nparray
         :param indexes: population indexes for which data should be returned
         :type indexes: nparray
-        :type nparray
         :param n_neurons: Number of neurons in the population.\
             Regardless of if they where recording or not.
         :type n_neurons: int
