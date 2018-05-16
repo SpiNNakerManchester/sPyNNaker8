@@ -5,11 +5,11 @@
 class IDMixin(object):
     __slots__ = ["_id", "_population"]
 
-    def __init__(self, population, id):
+    def __init__(self, population, id):  # @ReservedAssignment
         self._id = id
         self._population = population
 
-    # NONE PYNN API CALL
+    # NON-PYNN API CALL
     @property
     def id(self):
         return self._id
@@ -20,7 +20,7 @@ class IDMixin(object):
                 selector=self._id, parameter_names=name)[0]
         except Exception as ex:
             try:
-                # try initisable variable
+                # try initialisable variable
                 return self._population.get_initial_value(
                     selector=self._id, variable=name)[0]
             except Exception:
@@ -35,7 +35,7 @@ class IDMixin(object):
                 self._population.set_by_selector(self._id, name, value)
             except Exception as ex:
                 try:
-                    # try initisable variable
+                    # try initialisable variable
                     return self._population.set_initial_value(
                         selector=self._id, variable=name, value=value)
                 except Exception:
@@ -43,14 +43,15 @@ class IDMixin(object):
                     raise ex
 
     def set_parameters(self, **parameters):
-        """
-        Set cell parameters, given as a sequence of parameter=value arguments.
+        """ Set cell parameters, given as a sequence of parameter=value\
+            arguments.
         """
         for (name, value) in parameters.items():
             self._population.set_by_selector(self._id, name, value)
 
     def get_parameters(self):
-        """Return a dict of all cell parameters."""
+        """ Return a dict of all cell parameters.
+        """
         results = dict()
         for name in self.celltype.get_parameter_names():
             results[name] = self._population.get_by_selector(self._id, name)
@@ -65,18 +66,16 @@ class IDMixin(object):
         raise NotImplementedError  # pragma: no cover
 
     def _set_position(self, pos):
-        """
-        Set the cell position in 3D space.
-        Cell positions are stored in an array in the parent Population.
+        """ Set the cell position in 3D space.\
+            Cell positions are stored in an array in the parent Population.
         """
         self._population.positions[self._id] = pos   # pragma: no cover
 
     def _get_position(self):
-        """
-        Return the cell position in 3D space.
-        Cell positions are stored in an array in the parent Population, if any,
-        or within the ID object otherwise. Positions are generated the first
-        time they are requested and then cached.
+        """ Return the cell position in 3D space.\
+            Cell positions are stored in an array in the parent Population,\
+            if any, or within the ID object otherwise. Positions are generated\
+            the first time they are requested and then cached.
         """
         return self._population.positions[:, self._id]   # pragma: no cover
 
@@ -87,27 +86,30 @@ class IDMixin(object):
         return self._population.is_local(self._id)
 
     def inject(self, current_source):
-        """Inject current from a current source object into the cell."""
+        """ Inject current from a current source object into the cell.
+        """
         raise NotImplementedError  # pragma: no cover
 
     def get_initial_value(self, variable):
-        """Get the initial value of a state variable of the cell."""
+        """ Get the initial value of a state variable of the cell.
+        """
         return self._population.get_initial_value(variable, self._id)
 
     def set_initial_value(self, variable, value):
-        """Set the initial value of a state variable of the cell."""
+        """ Set the initial value of a state variable of the cell.
+        """
         self._population.set_initial_value(variable, value, self._id)
 
     def as_view(self):
-        """Return a PopulationView containing just this cell."""
+        """ Return a PopulationView containing just this cell.
+        """
         return self._population[self._id]
 
     def __eq__(self, other):
-        if isinstance(other, IDMixin):
-            return self._population == other._population and self._id == \
-                   other._id
-        else:
+        if not isinstance(other, IDMixin):
             return False
+        return self._population == other._population and self._id == \
+               other._id
 
     def __str__(self):
         return str(self._population) + "[" + str(self._id) + "]"

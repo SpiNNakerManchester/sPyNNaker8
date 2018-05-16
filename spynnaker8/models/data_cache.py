@@ -94,8 +94,8 @@ class DataCache(object):
 
     def save_data(self, variable, data, indexes, n_neurons, units,
                   sampling_interval):
-        """
-        Saves the data for one variable in this segment
+        """ Saves the data for one variable in this segment
+
         :param variable: name of variable data applies to
         :type variable: str
         :param data: raw data in spynnaker format
@@ -103,7 +103,7 @@ class DataCache(object):
         :param indexes: population indexes for which data should be returned
         :type indexes: nparray
         :type nparray
-        :param n_neurons: Number of neurons in the population.
+        :param n_neurons: Number of neurons in the population.\
             Regardless of if they where recording or not.
         :type n_neurons: int
         :param units: the units in which the data is

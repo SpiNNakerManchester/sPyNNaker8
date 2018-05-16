@@ -85,8 +85,8 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
     def __iter__(self):
         """ Iterate over local cells
         """
-        for id in range(self._size):
-            yield IDMixin(self, id)
+        for _id in range(self._size):
+            yield IDMixin(self, _id)
 
     def __getitem__(self, index_or_slice):
         if isinstance(index_or_slice, int):
@@ -96,9 +96,9 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
                 self, index_or_slice, label="view over {}".format(self.label))
 
     def all(self):
-        """ Iterator over cell ids on all MPI nodes."""
-        for id in range(self._size):
-            yield IDMixin(self, id)
+        """ Iterator over cell IDs on all MPI nodes."""
+        for _id in range(self._size):
+            yield IDMixin(self, _id)
 
     @property
     def annotations(self):
@@ -144,9 +144,9 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
 
     def _record_with_indexes(
             self, variables, to_file, sampling_interval, indexes):
-        """ Same as record but without none standard pynn warning
+        """ Same as record but without none standard PyNN warning
 
-        This method is none standard pynn and is intended only to be called by
+        This method is none standard PyNN and is intended only to be called by\
         record in a Population, View or Assembly
         """
         if variables is None:  # reset the list of things to record
