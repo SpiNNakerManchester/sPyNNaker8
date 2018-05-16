@@ -136,8 +136,8 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         """
         if indexes is not None:
             logger.warn(
-                "record indexes parameter is not standard PyNN, so will not "
-                "work on other other simulators. "
+                "record indexes parameter is non-standard PyNN, so may not "
+                "be portable to other simulators. "
                 "It is now deprecated and replaced with views")
         self._record_with_indexes(
             variables, to_file, sampling_interval, indexes)
@@ -146,7 +146,7 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
             self, variables, to_file, sampling_interval, indexes):
         """ Same as record but without non-standard PyNN warning
 
-        This method is none standard PyNN and is intended only to be called by\
+        This method is non-standard PyNN and is intended only to be called by\
         record in a Population, View or Assembly
         """
         if variables is None:  # reset the list of things to record
@@ -157,7 +157,7 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
                     "while sampling_interval!=None implies turn on recording")
             if indexes is not None:
                 logger.warning(
-                    "View.record with variable None is none standard. "
+                    "View.record with variable None is non-standard PyNN. "
                     "Only the neurons in the view have their record turned "
                     "off. Other neurons already set to record will remain "
                     "set to record")
@@ -169,8 +169,8 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
             # handle special case of 'all'
             if variables == "all":
                 logger.warning(
-                    "This is not currently standard PyNN, and therefore "
-                    "may not work in other simulators.")
+                    "This is non-standard PyNN, and therefore may not be "
+                    "portable to other simulators.")
 
                 # get all possible recordings for this vertex
                 variables = self._get_all_possible_recordable_variables()
@@ -311,8 +311,8 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         :return: numpy array of the data
         """
         logger.warning(
-            "This call is not standard PyNN and therefore will not be "
-            "portable to other PyNN simulators. Nor do we guarantee that this "
+            "This call is non-standard PyNN and therefore may not be "
+            "portable to other simulators. Nor do we guarantee that this "
             "function will exist in future releases.")
         if isinstance(variable, list):
             if len(variable) == 1:
