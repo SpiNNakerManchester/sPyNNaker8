@@ -22,10 +22,13 @@ min_weight = 0
 spike_times = [1]# ,11,12,13,14,15,16,17, 18, 19,20]
 spike_times_prob = [100, 110]# ,11,12,13,14,15,16,17, 18, 19,20]
 # Spike source to send spike via plastic synapse
+
+pop_src2 = p.Population(1000, p.SpikeSourcePoisson(rate=10), label="drive")
+
 pop_src1 = p.Population(1, p.SpikeSourceArray,
                         {'spike_times': spike_times}, label="src1")
-pop_src2 = p.Population(1, p.SpikeSourceArray,
-                        {'spike_times': spike_times_prob}, label="src_prob")
+# pop_src2 = p.Population(1, p.SpikeSourceArray,
+#                         {'spike_times': spike_times_prob}, label="src_prob")
 
 p.set_number_of_neurons_per_core(p.SpikeSourceArray, 1)
 
@@ -40,7 +43,7 @@ p.set_number_of_neurons_per_core(p.IF_curr_exp, 1)
 
 # Create projections
 synapse = p.Projection(
-    pop_src2, pop_exc, p.FixedProbabilityConnector(0.1),
+    pop_src2, pop_exc, p.FixedProbabilityConnector(0.000001),
     p.StaticSynapse(weight=0.1, delay=1), receptor_type="excitatory")
 
 synapse2 = p.Projection(
