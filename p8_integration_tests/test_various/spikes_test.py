@@ -6,7 +6,6 @@ import spynnaker8 as p
 from spynnaker8.utilities import neo_convertor
 from p8_integration_tests.base_test_case import BaseTestCase
 import spynnaker.plot_utils as plot_utils
-import unittest
 
 SPIKE_TIMES = [11, 22]
 
@@ -31,8 +30,6 @@ def do_run(nNeurons, timestep):
 
 class SpikesTest(BaseTestCase):
 
-    @unittest.skip("https://github.com/SpiNNakerManchester/sPyNNaker/issues/"
-                   "335")
     def test_many(self):
         nNeurons = 100  # number of neurons in each population
         neo = do_run(nNeurons, timestep=1.0)
