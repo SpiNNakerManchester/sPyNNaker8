@@ -485,8 +485,8 @@ class SynfireRunner(object):
         return self._recorded_gsyn_exc_list
 
     def get_output_pop_gsyn_exc_list_numpy(self):
-        return map(neo_convertor.convert_gsyn_exc_list,
-                   self._recorded_gsyn_exc_list)
+        return list(map(neo_convertor.convert_gsyn_exc_list,
+                        self._recorded_gsyn_exc_list))
 
     def get_output_pop_gsyn_exc_7(self):
         return self._recorded_gsyn_exc_7
@@ -495,8 +495,8 @@ class SynfireRunner(object):
         return self._recorded_gsyn_inh_list
 
     def get_output_pop_gsyn_inh_list_numpy(self):
-        return map(neo_convertor.convert_gsyn_inh_list,
-                   self._recorded_gsyn_inh_list)
+        return list(map(neo_convertor.convert_gsyn_inh_list,
+                        self._recorded_gsyn_inh_list))
 
     def get_output_pop_gsyn_inh_neo(self):
         return self._recorded_gsyn_inh_list[0]
@@ -512,8 +512,8 @@ class SynfireRunner(object):
         return self._recorded_v_list
 
     def get_output_pop_voltage_list_numpy(self):
-        return map(neo_convertor.convert_v_list,
-                   self._recorded_v_list)
+        return list(map(neo_convertor.convert_v_list,
+                        self._recorded_v_list))
 
     def get_output_pop_voltage_neo(self):
         return self._recorded_v_list[0]
@@ -529,7 +529,8 @@ class SynfireRunner(object):
         return self._recorded_spikes_list
 
     def get_output_pop_spikes_list_numpy(self):
-        return map(neo_convertor.convert_spikes, self._recorded_spikes_list)
+        return list(map(
+            neo_convertor.convert_spikes, self._recorded_spikes_list))
 
     def get_output_pop_spikes_neo(self):
         return self._recorded_spikes_list[0]
@@ -551,8 +552,8 @@ class SynfireRunner(object):
         return self._input_spikes_recorded_list
 
     def get_spike_source_spikes_list_numpy(self):
-        return map(neo_convertor.convert_spikes,
-                   self._input_spikes_recorded_list)
+        return list(map(neo_convertor.convert_spikes,
+                        self._input_spikes_recorded_list))
 
     def get_spike_source_spikes_neo(self):
         return self._input_spikes_recorded_list[0]
