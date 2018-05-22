@@ -14,7 +14,7 @@ import os
 
 
 nNeurons = 200  # number of neurons in each population
-constraint = ChipAndCoreConstraint(2, 2)
+constraint = ChipAndCoreConstraint(1, 1)
 delay = 1
 neurons_per_core = 100
 synfire_run = SynfireRunner()
