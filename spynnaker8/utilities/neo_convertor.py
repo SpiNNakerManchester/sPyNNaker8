@@ -148,7 +148,7 @@ def convert_spiketrains(spiketrains):
     :rtype: nparray
     """
     if len(spiketrains) == 0:
-        return np.empty(shape=(0,2))
+        return np.empty(shape=(0, 2))
 
     neurons = np.concatenate(
         list(map(lambda x: np.repeat(x.annotations['source_index'], len(x)),
