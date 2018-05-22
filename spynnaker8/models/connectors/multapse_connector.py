@@ -1,6 +1,8 @@
 from spynnaker.pyNN.models.neural_projections.connectors \
     import MultapseConnector as _BaseClass
 
+import numpy
+
 
 class MultapseConnector(_BaseClass):
     """
@@ -30,15 +32,20 @@ class MultapseConnector(_BaseClass):
             with_replacement=with_replacement, safe=safe, verbose=verbose)
 
     def get_rng_next(self, num_synapses, prob_connect):
-        # This needs to be edited to work with PyNN 0.8+
-        # equivalent PyNN 0.7 call with the allowed "multinomial"
-        # returns an array, this with "binomial" only returns a single value...
+        # Below is how numpy does multinomial internally...
+        size = len(prob_connect)
+        multinomial = numpy.zeros(size, int)
+        total = 1.0
+        dn = num_synapses
+        for j in range(0, size - 1):
+            multinomial[j] = self._rng.next(
+                1, distribution="binomial",
+                parameters={'n': dn, 'p': prob_connect[j] / total})
+            dn = dn - multinomial[j]
+            if dn <= 0:
+                break
+            total = total - prob_connect[j]
+        if dn > 0:
+            multinomial[size - 1] = dn
 
-        # loop over prob connect and do a binomial for each for now
-        n_prob = len(prob_connect)
-        rngs = [
-            self._rng.next(1, distribution="binomial",
-                           parameters={'n': num_synapses,
-                                       'p': prob_connect[i]})[0]
-            for i in range(n_prob)]
-        return rngs
+        return multinomial
