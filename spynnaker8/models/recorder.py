@@ -348,6 +348,9 @@ class Recorder(RecordingCommon):
         :type label: str
         """
         # pylint: disable=too-many-arguments
+        if len(spikes) == 0:
+            return
+
         t_stop = t * quantities.ms
 
         if indexes is None:
