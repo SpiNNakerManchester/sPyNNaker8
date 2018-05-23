@@ -6,13 +6,13 @@ from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt
 
 p.setup(1) # 1 for LIf; 0.1 for Izhikevich
-runtime = 1000 # Run for one second
-source_neurons = 256 # takes value: 1, 2, 100, 256
-target_neurons = 256 # takes value: 1, 2, 100, 256
+runtime = 1050 # Run for one second
+source_neurons = 1 # takes value: 1, 2, 100, 256
+target_neurons = 255 # takes value: 1, 2, 100, 256
 recording = True
 
 ## Create source population of neurons
-spike_times = [10]
+spike_times = range(10,1010,10)
 source_pop = p.Population(source_neurons, p.SpikeSourceArray,
                         {'spike_times': spike_times}, label="src1")
 
