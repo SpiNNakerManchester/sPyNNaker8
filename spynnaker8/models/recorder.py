@@ -348,8 +348,9 @@ class Recorder(RecordingCommon):
         :type label: str
         """
         # pylint: disable=too-many-arguments
+        # Safety check in case spikes are an empty list
         if len(spikes) == 0:
-            return
+            spikes = numpy.empty(shape=(0, 2))
 
         t_stop = t * quantities.ms
 
