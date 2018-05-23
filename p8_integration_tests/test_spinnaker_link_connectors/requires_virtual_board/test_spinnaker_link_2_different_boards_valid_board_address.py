@@ -14,7 +14,7 @@ def do_run():
     retina_device = p.external_devices.ExternalFPGARetinaDevice
 
     p.Population(
-        2000, retina_device,
+        16384, retina_device,
         {'spinnaker_link_id': 0, 'board_address': "127.0.0.1",
          'retina_key': 0x5,
          'mode': retina_device.MODE_128,
@@ -22,7 +22,7 @@ def do_run():
         label='External spinnaker link')
 
     p.Population(
-        2000, retina_device,
+        16384, retina_device,
         {'spinnaker_link_id': 0, 'board_address': "127.0.0.2",
          'retina_key': 0x5,
          'mode': retina_device.MODE_128,
