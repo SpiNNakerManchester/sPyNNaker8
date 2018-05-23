@@ -12,8 +12,8 @@ time_dict = {}
 # time_dict['POP_TABLE_GET_NEXT'] = {}
 time_dict = {}
 
-npc =  [2**pow for pow in range(4,9)]
-cores_contending =  [2**pow for pow in range(5)]
+npc = [256] #[2**pow for pow in range(4,9)]
+cores_contending = [1]#  [2**pow for pow in range(5)]
 
 if npc[-1] is 256:
     npc[-1] = 255
@@ -52,8 +52,8 @@ for i in npc:
         # Connect neurons all-to-all
         a2a_proj = p.Projection(
             source_pop, target_pop,
-#             p.FixedProbabilityConnector(p_connect=0.1),
-            p.AllToAllConnector(),
+            p.FixedProbabilityConnector(p_connect=0.1),
+#             p.AllToAllConnector(),
             p.StaticSynapse(weight=0.1, delay=1), receptor_type="excitatory")
 
         # Set recording and run
