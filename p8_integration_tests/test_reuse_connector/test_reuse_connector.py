@@ -5,8 +5,6 @@ from p8_integration_tests.base_test_case import BaseTestCase
 def do_run():
 
     p.setup(timestep=1.0)
-    #p.setup()
-    #spikeArray = {'spike_times': [[0]]}
     inp = p.Population(1, p.SpikeSourceArray(spike_times=[0]))
     out = p.Population(1, p.IF_curr_exp())
 
@@ -14,7 +12,6 @@ def do_run():
 
     proj_1 = p.Projection(inp, out, connector,
                           p.StaticSynapse(weight=2.0, delay=2.0))
-    #proj_1.set_weights_and_delays(weight=2.0, delay=2.0)
     proj_2 = p.Projection(inp, out, connector,
                           p.StaticSynapse(weight=1.0, delay=1.0))
 
