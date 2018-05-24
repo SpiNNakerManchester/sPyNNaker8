@@ -52,10 +52,10 @@ class Projection(PyNNProjectionCommon):
         if synapse_type is None:
             synapse_type = SynapseDynamicsStatic()
 
-        # move weights and delays over to the connector to satisfy PyNN 8
-        # and 7 compatibility
-        connector.set_weights_and_delays(
-            synapse_type.weight, synapse_type.delay)
+        # Note: the setting of weights and delays has been moved into
+        # synapse_io at the point at which the connector needs them
+
+        # set the space function as required
         connector.set_space(space)
 
         # as a from list connector can have plastic parameters, grab those (
