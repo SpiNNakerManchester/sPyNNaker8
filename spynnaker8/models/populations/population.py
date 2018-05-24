@@ -6,9 +6,10 @@ from spinn_front_end_common.utilities.exceptions import ConfigurationException
 from spynnaker.pyNN.exceptions import InvalidParameterType
 from spynnaker.pyNN.models.pynn_population_common import PyNNPopulationCommon
 from spynnaker.pyNN.utilities.constants import SPIKES
-from spynnaker8.models.populations import IDMixin, PopulationBase
-from spynnaker8.models.populations.population_view import PopulationView
-from spynnaker8.models import Recorder
+from .idmixin import IDMixin
+from .population_base import PopulationBase
+from .population_view import PopulationView
+from spynnaker8.models.recorder import Recorder
 from spynnaker8.utilities import DataHolder
 
 logger = logging.getLogger(__name__)

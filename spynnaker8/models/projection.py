@@ -10,8 +10,7 @@ from spynnaker.pyNN.models.pynn_projection_common import PyNNProjectionCommon
 from spynnaker.pyNN.exceptions import InvalidParameterType
 from spynnaker8.models.connectors import FromListConnector
 from spynnaker8.models.synapse_dynamics import SynapseDynamicsStatic
-from spynnaker8.models.populations.population import Population
-from spynnaker8.models.populations.population_view import PopulationView
+from spynnaker8.models.populations import Population, PopulationView
 from spynnaker8._version import __version__
 
 logger = logging.getLogger(__name__)

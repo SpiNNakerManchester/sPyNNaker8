@@ -4,7 +4,8 @@ from six import integer_types
 from pyNN import descriptions
 from pyNN.random import NumpyRNG
 from spinn_utilities.ranged.abstract_sized import AbstractSized
-from spynnaker8.models.populations import IDMixin, PopulationBase
+from .idmixin import IDMixin
+from .population_base import PopulationBase
 
 logger = logging.getLogger(__name__)
 
