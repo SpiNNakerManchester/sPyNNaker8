@@ -52,8 +52,10 @@ class Projection(PyNNProjectionCommon):
         if synapse_type is None:
             synapse_type = SynapseDynamicsStatic()
 
-        # Note: the setting of weights and delays has been moved into
-        # synapse_io at the point at which the connector needs them
+        # Note: this is still called here because the FromListConnector
+        # is awkward
+        connector.set_weights_and_delays(
+            synapse_type.weight, synapse_type.delay)
 
         # set the space function as required
         connector.set_space(space)
