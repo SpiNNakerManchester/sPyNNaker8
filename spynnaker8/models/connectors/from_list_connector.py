@@ -1,6 +1,5 @@
 from spynnaker.pyNN.models.neural_projections.connectors \
     import FromListConnector as CommonFromListConnector
-from spynnaker.pyNN.utilities.utility_calls import convert_param_to_numpy
 import numpy
 from spynnaker8.utilities.exceptions import InvalidParameterType
 
@@ -12,7 +11,6 @@ class FromListConnector(CommonFromListConnector, Connector):
     """
     __slots__ = [
         "_extra_conn_data",
-        "_converted_weights_and_delays",
         "_conn_list"]
 
     def __init__(
@@ -54,11 +52,6 @@ class FromListConnector(CommonFromListConnector, Connector):
         delays = None
         self._extra_conn_data = None
 
-        # supports setting these at different times
-#        self._weights = None
-#        self._delays = None
-        self._converted_weights_and_delays = False
-
         if column_names is None:
             # if no column names, but more not the expected
             if n_columns == 4:
@@ -88,43 +81,6 @@ class FromListConnector(CommonFromListConnector, Connector):
         # to avoid overwriting the synapse values if possible
         if weights is not None or delays is not None:
             self.set_weights_and_delays(weights, delays)
-
-#     # replicate the PyNN 0.8 "feature" where the connector overwrites
-#     # the weights and delays in the synapse if both are specified
-#     def set_weights_and_delays(self, weights, delays):
-#         """ allows setting of the weights and delays at separate times to the\
-#             init, also sets the dtypes correctly.....
-#
-#         :param weights:
-#         :param delays:
-#         :return:
-#         """
-#         # set the data if not already set (supports none overriding via
-#         # synapse data)
-#         print("set_weights_and_delays")
-#         weight = convert_param_to_numpy(weights, len(self._conn_list))
-#         delay = convert_param_to_numpy(delays, len(self._conn_list))
-#
-#         # if got data, build connlist with correct dtypes
-#         if (weight is not None and delay is not None and not
-#                 self._converted_weights_and_delays):
-#             # add weights and delays to the conn list
-#             temp_conn_list = numpy.dstack(
-#                 (self._conn_list[:, 0], self._conn_list[:, 1],
-#                  weight, delay))[0]
-#
-#             self._conn_list = list()
-#             for element in temp_conn_list:
-#                 self._conn_list.append((element[0], element[1], element[2],
-#                                         element[3]))
-#
-#             # set dtypes (cant we just set them within the array?)
-#             self._conn_list = numpy.asarray(self._conn_list,
-#                                             dtype=self.CONN_LIST_DTYPE)
-#             self._converted_weights_and_delays = True
-#
-#         # send the conn_list to the common connector
-#         CommonFromListConnector.set_conn_list(self, self._conn_list)
 
     def get_extra_parameters(self):
         """ getter for the extra parameters
