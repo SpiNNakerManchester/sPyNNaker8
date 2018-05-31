@@ -1,3 +1,4 @@
+# from __future__ import print_function
 from spynnaker8.utilities.version_util import pynn8_syntax
 
 
@@ -23,7 +24,7 @@ def compare_spiketrain(spiketrain1, spiketrain2):
             .format(len(spiketrain1), len(spiketrain2), id1))
     for spike1, spike2 in zip(spiketrain1, spiketrain2):
         if spike1 != spike2:
-            # print id1, spiketrain1, spiketrain2
+            # print(id1, spiketrain1, spiketrain2)
             raise AssertionError(
                 "spike1 is {} while spike2 is {} for id {}".format(
                     spike1, spike2, id1))
@@ -107,7 +108,7 @@ def compare_analogsignal(as1, as2):
             .format(len(as1), len(as2), as1.name))
 
     for signal1, signal2 in zip(as1, as2):
-        # print signal1, signal2
+        # print(signal1, signal2)
         if len(signal1) != len(signal2):
             raise AssertionError(
                 "signal 1 has len {} while signal 2 has {} for {}".format(

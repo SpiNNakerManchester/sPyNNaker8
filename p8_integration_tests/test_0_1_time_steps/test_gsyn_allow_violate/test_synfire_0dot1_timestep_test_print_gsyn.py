@@ -38,12 +38,17 @@ class TestPrintGsyn(BaseTestCase):
             spikes = synfire_run.get_output_pop_spikes_numpy()
             g_syn = synfire_run.get_output_pop_gsyn_exc_numpy()
             spike_checker.synfire_spike_checker(spikes, n_neurons)
-            with open(gsyn_path, "r") as gsyn_file:
-                gsyn2_neo = pickle.load(gsyn_file)
-            gsyn2_numpy = neo_convertor.convert_data(gsyn2_neo, run=0,
-                                                     name="gsyn_exc")
-            self.assertTrue(numpy.allclose(g_syn, gsyn2_numpy))
-            os.remove(gsyn_path)
+            try:
+                with open(gsyn_path, "r") as gsyn_file:
+                    gsyn2_neo = pickle.load(gsyn_file)
+                gsyn2_numpy = neo_convertor.convert_data(gsyn2_neo, run=0,
+                                                         name="gsyn_exc")
+                self.assertTrue(numpy.allclose(g_syn, gsyn2_numpy))
+            except UnicodeDecodeError:
+                raise SkipTest(
+                    "https://github.com/NeuralEnsemble/python-neo/issues/529")
+            finally:
+                os.remove(gsyn_path)
         except SpinnmanTimeoutException as ex:
             # System intentional overload so may error
             raise SkipTest(ex)
@@ -63,7 +68,7 @@ if __name__ == '__main__':
     with open(gsyn_path, "r") as gsyn_file:
         gsyn2_neo = pickle.load(gsyn_file)
     gsyn2_numpy = neo_convertor.convert_data(gsyn2_neo, run=0, name="gsyn_exc")
-    print len(spikes)
+    print(len(spikes))
     Figure(SpynnakerPanel(spikes, yticks=True, xticks=True, markersize=4,
                           xlim=(0, runtime)),
            SpynnakerPanel(gsyn2_neo, yticks=True),

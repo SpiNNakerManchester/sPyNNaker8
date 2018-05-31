@@ -2,6 +2,7 @@ import spynnaker8 as p
 import time
 from random import randint
 from collections import defaultdict
+from six import iteritems
 
 n_spikes = defaultdict(lambda: 0)
 n_neurons = 100
@@ -14,7 +15,7 @@ def _inject(label, connection):
         n_spikes[neuron_id] += 1
         connection.send_spike(label, neuron_id)
         time.sleep(0.001)
-    print "Finished"
+    print("Finished")
 
 
 def test_recordable_spike_injector():
@@ -37,18 +38,18 @@ def test_recordable_spike_injector():
         i = spiketrain.annotations['source_index']
         if __name__ == "__main__":
             if n_spikes[i] != len(spiketrain):
-                print "Incorrect number of spikes, expected {} but got {}:"\
-                    .format(n_spikes[i], len(spiketrain))
-                print spiketrain
+                print("Incorrect number of spikes, expected {} but got {}:"
+                      .format(n_spikes[i], len(spiketrain)))
+                print(spiketrain)
         else:
             assert n_spikes[i] == len(spiketrain)
         spike_trains[i] = spiketrain
 
-    for (index, count) in n_spikes.iteritems():
+    for (index, count) in iteritems(n_spikes):
         if __name__ == "__main__":
             if index not in spike_trains:
-                print "Neuron {} should have spiked {} times but didn't"\
-                    .format(index, count)
+                print("Neuron {} should have spiked {} times but didn't"
+                      .format(index, count))
         else:
             assert index in spike_trains
 

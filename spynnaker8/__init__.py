@@ -1,5 +1,6 @@
 # common imports
 import numpy as __numpy
+from six import iteritems
 
 # pynn imports
 from pyNN import common as pynn_common
@@ -429,7 +430,7 @@ def list_standard_models():
         simulator.
     """
     results = list()
-    for (key, obj) in globals().iteritems():
+    for (key, obj) in iteritems(globals()):
         if isinstance(obj, type) and issubclass(obj, DataHolder)  \
                 and not obj == DataHolder:
             results.append(key)
