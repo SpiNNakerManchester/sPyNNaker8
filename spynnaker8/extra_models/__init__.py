@@ -11,7 +11,8 @@ from spynnaker8.models.model_data_holders\
 from spynnaker8.models.model_data_holders.izk_cond_exp_data_holder import \
     IzkCondExpDataHolder as Izhikevich_cond
 from spynnaker8.models.model_data_holders. \
-    if_curr_exp_graz_adaptive_data_holder import IFCurrExpGrazAdaptive
+    if_curr_exp_graz_adaptive_data_holder import \
+     IFCurrExpGrazAdaptiveDataHolder as IFCurrExpGrazAdaptive
 
 # plastic timing spynnaker 8
 from spynnaker8.models.synapse_dynamics.timing_dependence \
