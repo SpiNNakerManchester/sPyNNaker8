@@ -6,19 +6,20 @@ import unittest
 from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt
 
-profiler_overhead = 0.000350
+profiler_overhead = 0.00050
 time_dict = {}
 # time_dict['POP_TABLE_GET_FIRST'] = {}
 # time_dict['POP_TABLE_GET_NEXT'] = {}
 time_dict = {}
 
-npc = [256] #[2**pow for pow in range(4,9)]
-cores_contending = [1]#  [2**pow for pow in range(5)]
+npc = [255] # range(1,255,5) #[2**pow for pow in range(4,9)]
+cores_contending = [0.5] #range(1,10,1)#  [2**pow for pow in range(5)]
 
 if npc[-1] is 256:
     npc[-1] = 255
 
 time_dict = {}
+
 for i in npc:
     time_dict[i]={}
     for j in cores_contending:
@@ -31,17 +32,15 @@ for i in npc:
         p.setup(1) # 1 for LIf; 0.1 for Izhikevich
         runtime = 1050 # Run for one second
         source_neurons = 1 # takes value: 1, 2, 100, 256
-        target_neurons = i*j #cores_contending * npc # takes value: 1, 2, 100, 256
+        target_neurons = i*1 #cores_contending * npc # takes value: 1, 2, 100, 256
         recording = False
-
-
 
         ## Create target population of neurons - comment as appropriate
         target_pop = p.Population(target_neurons, p.IF_curr_exp(),  label="test")
         # target_pop = p.Population(target_neurons, p.Izhikevich(),  label="test")
 
         # Partition to single neuron per core
-        p.set_number_of_neurons_per_core(p.IF_curr_exp, npc)
+        p.set_number_of_neurons_per_core(p.IF_curr_exp, i)
 
         ## Create source population of neurons
         spike_times = range(10,1010,10)
@@ -52,9 +51,9 @@ for i in npc:
         # Connect neurons all-to-all
         a2a_proj = p.Projection(
             source_pop, target_pop,
-            p.FixedProbabilityConnector(p_connect=0.1),
+            p.FixedProbabilityConnector(p_connect=0.1 *j),
 #             p.AllToAllConnector(),
-            p.StaticSynapse(weight=0.1, delay=1), receptor_type="excitatory")
+            p.StaticSynapse(weight=0.1, delay=0.1), receptor_type="excitatory")
 
         # Set recording and run
         if recording:
