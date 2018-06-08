@@ -25,13 +25,11 @@ class IFCurrExpGrazAdaptiveDataHolder(DataHolder):
             v_reset=IFCurrExpGrazAdaptive.default_parameters['v_reset'],
 
             # Adaptive threshold parameters
-            v_thresh=IFCurrExpGrazAdaptive.default_parameters['v_thresh'],
-            v_thresh_resting= \
-                IFCurrExpGrazAdaptive.default_parameters['v_thresh_resting'],
-            v_thresh_tau= \
-                IFCurrExpGrazAdaptive.default_parameters['v_thresh_tau'],
-            v_thresh_adaptation=\
-                IFCurrExpGrazAdaptive.default_parameters['v_thresh_adaptation'],
+            thresh_B=IFCurrExpGrazAdaptive.default_parameters['thresh_B'],
+            thresh_b=IFCurrExpGrazAdaptive.default_parameters['thresh_b'],
+            thresh_b_0=IFCurrExpGrazAdaptive.default_parameters['thresh_b_0'],
+            thresh_tau_a=IFCurrExpGrazAdaptive.default_parameters['thresh_tau_a'],
+            thresh_beta=IFCurrExpGrazAdaptive.default_parameters['thresh_beta'],
 
             tau_syn_E=IFCurrExpGrazAdaptive.default_parameters['tau_syn_E'],
             tau_syn_I=IFCurrExpGrazAdaptive.default_parameters['tau_syn_I'],
@@ -49,10 +47,11 @@ class IFCurrExpGrazAdaptiveDataHolder(DataHolder):
             'v_rest': v_rest,
             'v_reset': v_reset,
 
-            'v_thresh': v_thresh,
-            'v_thresh_resting': v_thresh_resting,
-            'v_thresh_tau': v_thresh_tau,
-            'v_thresh_adaptation': v_thresh_adaptation,
+            'thresh_B': thresh_B,
+            'thresh_b': thresh_b,
+            'thresh_b_0': thresh_b_0,
+            'thresh_tau_a': thresh_tau_a,
+            'thresh_beta': thresh_beta,
 
             'tau_syn_E': tau_syn_E,
             'tau_syn_I': tau_syn_I,
