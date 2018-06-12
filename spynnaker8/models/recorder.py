@@ -1,6 +1,5 @@
 import logging
 import neo
-import os
 import numpy
 import quantities
 from datetime import datetime
@@ -12,7 +11,6 @@ from spinn_utilities.log import FormatAdapter
 from spynnaker.pyNN.models.common import AbstractNeuronRecordable
 from spynnaker.pyNN.models.common import AbstractSpikeRecordable
 from spynnaker.pyNN.models.recording_common import RecordingCommon
-from spynnaker.pyNN.utilities import utility_calls
 from spynnaker.pyNN.utilities.constants import \
     SPIKES, MEMBRANE_POTENTIAL, GSYN_EXCIT, GSYN_INHIB
 from spinn_front_end_common.utilities.globals_variables import get_simulator
