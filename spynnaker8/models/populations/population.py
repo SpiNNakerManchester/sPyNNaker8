@@ -1,4 +1,6 @@
 import logging
+import neo
+
 from six import iteritems, string_types
 from spynnaker.pyNN.exceptions import InvalidParameterType
 from spynnaker.pyNN.models.pynn_population_common import PyNNPopulationCommon
@@ -210,7 +212,7 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
                            "as if gather was set to True.")
 
         if isinstance(io, string_types):
-            io = self._get_io(io)
+            io = neo.get_io(io)
 
         data = self._extract_neo_block(variables, None, clear, annotations)
         # write the neo block to the file

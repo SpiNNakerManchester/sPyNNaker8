@@ -6,7 +6,6 @@ import quantities
 from datetime import datetime
 from six import string_types
 from six.moves import xrange
-from neo.io import NeoHdf5IO, PickleIO, NeoMatlabIO
 from spinn_utilities.ordered_set import OrderedSet
 from spinn_utilities.log import FormatAdapter
 
@@ -39,28 +38,6 @@ class Recorder(RecordingCommon):
         super(Recorder, self).__init__(population)
         self._recording_start_time = get_simulator().t
         self._data_cache = {}
-
-    @staticmethod
-    def _get_io(filename):
-        """ Return a Neo IO instance, guessing the type based on the filename\
-            suffix.
-        """
-        logger.debug("Creating Neo IO for filename {}", filename)
-        directory = os.path.dirname(filename)
-        utility_calls.check_directory_exists_and_create_if_not(directory)
-        extension = os.path.splitext(filename)[1]
-        if extension in ('.txt', '.ras', '.v', '.gsyn'):
-            raise IOError(
-                "ASCII-based formats are not currently supported for output"
-                " data. Try using the file extension '.pkl' or '.h5'")
-        elif extension in ('.h5',):
-            return NeoHdf5IO(filename=filename)
-        elif extension in ('.pkl', '.pickle'):
-            return PickleIO(filename=filename)
-        elif extension == '.mat':
-            return NeoMatlabIO(filename=filename)
-        else:  # function to be improved later
-            raise Exception("file extension %s not supported" % extension)
 
     def _extract_neo_block(self, variables, view_indexes, clear, annotations):
         """ Extracts block from the vertices and puts them into a Neo block
@@ -362,7 +339,7 @@ class Recorder(RecordingCommon):
                 t_start=recording_start_time,
                 t_stop=t_stop,
                 units='ms',
-                sampling_rate=sampling_interval,
+                sampling_interval=sampling_interval,
                 source_population=label,
                 source_id=self._population.index_to_id(index),
                 source_index=index)
