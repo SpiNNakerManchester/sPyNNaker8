@@ -74,6 +74,7 @@ class SynapseDynamicsStructuralSTDP(STDPStructuralBaseClass):
             stdp_model=StructuralBaseClass.default_parameters['stdp_model'],
             f_rew=StructuralBaseClass.default_parameters['f_rew'],
             weight=StructuralBaseClass.default_parameters['weight'],
+            max_weight=StructuralBaseClass.default_parameters['max_weight'],
             delay=StructuralBaseClass.default_parameters['delay'],
             s_max=StructuralBaseClass.default_parameters['s_max'],
             sigma_form_forward=StructuralBaseClass.default_parameters[
@@ -94,6 +95,7 @@ class SynapseDynamicsStructuralSTDP(STDPStructuralBaseClass):
             seed=None):
         super(SynapseDynamicsStructuralSTDP, self).__init__(
             stdp_model=stdp_model, f_rew=f_rew, weight=weight, delay=delay,
+            max_weight=max_weight,
             s_max=s_max, sigma_form_forward=sigma_form_forward,
             sigma_form_lateral=sigma_form_lateral,
             p_form_forward=p_form_forward, p_form_lateral=p_form_lateral,
