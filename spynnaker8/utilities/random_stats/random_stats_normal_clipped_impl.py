@@ -9,7 +9,11 @@ class RandomStatsNormalClippedImpl(AbstractRandomStats):
     """
 
     def _get_params(self, dist):
-        return [dist.parameters['low'], dist.parameters['high'],
+        low = ((dist.parameters['low'] - dist.parameters['mu']) /
+               dist.parameters['sigma'])
+        high = ((dist.parameters['high'] - dist.parameters['mu']) /
+                dist.parameters['sigma'])
+        return [low, high,
                 dist.parameters['mu'], dist.parameters['sigma']]
 
     def cdf(self, dist, v):
