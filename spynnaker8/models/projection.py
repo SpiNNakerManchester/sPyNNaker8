@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 
 class Projection(PyNNProjectionCommon):
-    """ spynnaker 8 projection class
+    """ sPyNNaker 8 projection class
     """
     # pylint: disable=redefined-builtin
 
@@ -87,7 +87,7 @@ class Projection(PyNNProjectionCommon):
         if isinstance(param, PopulationView):
             raise NotImplementedError(
                 "Projections over views not currently supported")
-        raise ConfigurationException("Unexpected paramater type {}. Expected "
+        raise ConfigurationException("Unexpected parameter type {}. Expected "
                                      "Population".format(type(param)))
 
     def __len__(self):
@@ -98,12 +98,12 @@ class Projection(PyNNProjectionCommon):
 
     def get(self, attribute_names, format,  # @ReservedAssignment
             gather=True, with_address=True, multiple_synapses='last'):
-        """ get a parameter for pynn 0.8
+        """ Get a parameter for PyNN 0.8
 
         :param attribute_names: list of attributes to gather
         :type attribute_names: str or iterable(str)
         :param format: "list" or "array"
-        :param gather: gather over all nodes (defaulted to true on spinnaker)
+        :param gather: gather over all nodes (defaulted to true on spiNNaker)
         :param with_address: True if the source and target are to be included
         :param multiple_synapses:\
             What to do with the data if format="array" and if the multiple\

@@ -81,14 +81,14 @@ class FromListConnector(CommonFromListConnector, Connector):
             self.set_weights_and_delays(weights, delays)
 
     def get_extra_parameters(self):
-        """ getter for the extra parameters
+        """ Getter for the extra parameters
 
         :return:
         """
         return self._extra_conn_data
 
     def _verify_extra_data_meets_constraints(self):
-        """ safety check for current impl, stops extra params to be\
+        """ Safety check for current impl, stops extra params to be\
             variable per atom
 
         :return:  None

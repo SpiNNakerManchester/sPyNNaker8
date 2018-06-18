@@ -265,7 +265,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 
     @running.setter
     def running(self, new_value):
-        """ setter for the has_ran parameter, only used by the PyNN interface,\
+        """ Setter for the has_ran parameter, only used by the PyNN interface,\
             supports tracking where it thinks its setting this parameter.
 
         :param new_value: the new value for the simulation
@@ -309,7 +309,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 
     @recorders.setter
     def recorders(self, new_value):
-        """ setter for the internal recorders object
+        """ Setter for the internal recorders object
 
         :param new_value: the new value for the recorder
         """
