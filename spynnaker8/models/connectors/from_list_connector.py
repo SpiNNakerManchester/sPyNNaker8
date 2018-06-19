@@ -26,8 +26,8 @@ class FromListConnector(CommonFromListConnector, Connector):
             (e.g. weight, delay, plasticity parameters).
         :param column_names: \
             the names of the parameters p1, p2, etc. If not provided, it is\
-             assumed the parameters are weight, delay (for\
-             backwards compatibility).
+            assumed the parameters are weight, delay (for\
+            backwards compatibility).
         :param safe: \
             if True, check that weights and delays have valid values. If\
             False, this check is skipped.
