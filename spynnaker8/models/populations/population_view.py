@@ -190,7 +190,7 @@ class PopulationView(PopulationBase):
         If clear is True, recorded data will be deleted from the Population.
         """
         if not gather:
-            logger.warning("Spinnaker only supports gather=True. We will run "
+            logger.warning("SpiNNaker only supports gather=True. We will run "
                            "as if gather was set to True.")
         return self._population.get_data_by_indexes(
             variables, self._indexes, clear=clear)

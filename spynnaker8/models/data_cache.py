@@ -98,7 +98,7 @@ class DataCache(object):
 
         :param variable: name of variable data applies to
         :type variable: str
-        :param data: raw data in spynnaker format
+        :param data: raw data in sPyNNaker format
         :type data: nparray
         :param indexes: population indexes for which data should be returned
         :type indexes: nparray

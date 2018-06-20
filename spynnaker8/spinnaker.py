@@ -90,7 +90,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
         front_end_versions.append(("neo_version", neo_version))
         front_end_versions.append(("lazyarray_version", lazyarray_version))
 
-        # spinnaker setup
+        # SpiNNaker setup
         super(SpiNNaker, self).__init__(
             database_socket_addresses=database_socket_addresses,
             user_extra_algorithm_xml_path=built_in_extra_xml_paths,
@@ -259,7 +259,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
         .. note::
             Ties into our has_ran parameter for automatic pause and resume.
 
-        :return: the has_ran variable from the spinnaker main interface
+        :return: the has_ran variable from the SpiNNaker main interface
         """
         return self._has_ran
 

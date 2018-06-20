@@ -103,7 +103,7 @@ class Projection(PyNNProjectionCommon):
         :param attribute_names: list of attributes to gather
         :type attribute_names: str or iterable(str)
         :param format: "list" or "array"
-        :param gather: gather over all nodes (defaulted to true on spiNNaker)
+        :param gather: gather over all nodes (defaulted to true on SpiNNaker)
         :param with_address: True if the source and target are to be included
         :param multiple_synapses:\
             What to do with the data if format="array" and if the multiple\

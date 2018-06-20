@@ -1,5 +1,5 @@
 """
-The :py:mod:`spynnaker.pynn` package contains the front end specifications
+The :py:mod:`spynnaker.pyNN` package contains the front end specifications
 and implementation for the PyNN High-level API
 (http://neuralensemble.org/trac/PyNN)
 """
@@ -110,17 +110,17 @@ __all__ = [
     "MunichRetinaDevice", "MunichMotorDevice", "ArbitraryFPGADevice",
     "PushBotRetinaViewer", "ExternalDeviceLifControl",
 
-    # Pushbot Parameters
+    # PushBot Parameters
     "MunichIoSpiNNakerLinkProtocol",
     "PushBotLaser", "PushBotLED", "PushBotMotor", "PushBotSpeaker",
     "PushBotRetinaResolution",
 
-    # Pushbot Ethernet Parts
+    # PushBot Ethernet Parts
     "PushBotLifEthernet", "PushBotEthernetLaserDevice",
     "PushBotEthernetLEDDevice", "PushBotEthernetMotorDevice",
     "PushBotEthernetSpeakerDevice", "PushBotEthernetRetinaDevice",
 
-    # Pushbot SpiNNaker Link Parts
+    # PushBot SpiNNaker Link Parts
     "PushBotLifSpinnakerLink", "PushBotSpiNNakerLinkLaserDevice",
     "PushBotSpiNNakerLinkLEDDevice", "PushBotSpiNNakerLinkMotorDevice",
     "PushBotSpiNNakerLinkSpeakerDevice", "PushBotSpiNNakerLinkRetinaDevice",
