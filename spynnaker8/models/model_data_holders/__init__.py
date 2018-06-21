@@ -11,10 +11,12 @@ from .if_curr_delta_data_holder import IfCurrDeltaDataHolder
 from .if_curr_alpha_data_holder import IFCurrAlphaDataHolder
 from .if_curr_exp_ca2_adaptive_data_holder \
     import IfCurrExpCa2AdaptiveDataHolder
+from .hill_tononi_neuron_data_holder import HillTononiNeuronDataHolder
 
 __all__ = ["IFCondExpDataHolder", "IFCurrDualExpDataHolder",
            "IFCurrExpDataHolder", "IzkCondExpDataHolder",
            "IzkCurrExpDataHolder", "SpikeSourceArrayDataHolder",
            "SpikeSourcePoissonDataHolder", "SpikeInjectorDataHolder",
            "IfCondExpStocDataHolder", "IfCurrDeltaDataHolder",
-           "IfCurrExpCa2AdaptiveDataHolder", "IFCurrAlphaDataHolder"]
+           "IfCurrExpCa2AdaptiveDataHolder", "IFCurrAlphaDataHolder",
+           "HillTononiNeuronDataHolder"]
