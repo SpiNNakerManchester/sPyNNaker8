@@ -25,8 +25,16 @@ class HillTononiNeuronDataHolder(DataHolder):
             E_K=HillTononiNeuron.default_parameters['E_K'],
             tau_m=HillTononiNeuron.default_parameters['tau_m'],
             i_offset=HillTononiNeuron.default_parameters['i_offset'],
+            g_spike=HillTononiNeuron.default_parameters['g_spike'],
+            tau_spike=HillTononiNeuron.default_parameters['tau_spike'],
+            t_spike=HillTononiNeuron.default_parameters['t_spike'],
 
             v_thresh=HillTononiNeuron.default_parameters['v_thresh'],
+            v_thresh_resting=HillTononiNeuron.default_parameters['v_thresh_resting'],
+            v_thresh_tau=HillTononiNeuron.default_parameters['v_thresh_tau'],
+            v_thresh_Na_reversal=HillTononiNeuron.default_parameters[
+                'v_thresh_Na_reversal'],
+
             tau_syn_E=HillTononiNeuron.default_parameters['tau_syn_E'],
             tau_syn_I=HillTononiNeuron.default_parameters['tau_syn_I'],
             ):
@@ -44,7 +52,16 @@ class HillTononiNeuronDataHolder(DataHolder):
             'E_K': E_K,
             'tau_m': tau_m,
             'i_offset': i_offset,
+
+            'g_spike': g_spike,
+            'tau_spike': tau_spike,
+            't_spike': t_spike,
+
             'v_thresh': v_thresh,
+            'v_thresh_resting': v_thresh_resting,
+            'v_thresh_tau': v_thresh_tau,
+            'v_thresh_Na_reversal': v_thresh_Na_reversal,
+
             'tau_syn_E': tau_syn_E,
             'tau_syn_I': tau_syn_I,
             })
