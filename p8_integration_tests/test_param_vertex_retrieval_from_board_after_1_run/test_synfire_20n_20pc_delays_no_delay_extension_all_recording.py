@@ -48,9 +48,9 @@ class Synfire20n20pcDelaysDelayExtensionsAllRecording(BaseTestCase):
 
         self.assertEquals(n_neurons * runtime, len(v))
         read_v = numpy.loadtxt(v_file, delimiter=',')
-        self.assertTrue(numpy.allclose(read_v, v_7, rtol=1e-04),
+        self.assertTrue(numpy.allclose(read_v, v_7, rtol=1e-03),
                         "v synakker method mismatch")
-        self.assertTrue(numpy.allclose(read_v, v, rtol=1e-04),
+        self.assertTrue(numpy.allclose(read_v, v, rtol=1e-03),
                         "v neo method mismatch")
 
         self.assertEquals(expected_spikes, len(spikes))
@@ -81,7 +81,7 @@ class Synfire20n20pcDelaysDelayExtensionsAllRecording(BaseTestCase):
 
         self.assertEquals(n_neurons * runtime, len(v))
         read_v = numpy.loadtxt(v_file, delimiter=',')
-        self.assertTrue(numpy.allclose(read_v, v, rtol=1e-04),
+        self.assertTrue(numpy.allclose(read_v, v, rtol=1e-03),
                         "v neo method mismatch")
 
         self.assertEquals(expected_spikes, len(spikes))

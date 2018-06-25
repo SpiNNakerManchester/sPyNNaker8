@@ -192,7 +192,7 @@ class StdpExample(BaseTestCase):
         (pre_spikes, post_spikes, weights) = do_run(seed=self._test_seed)
         if self._test_seed == 1:
             self.assertEquals(183, len(pre_spikes))
-            self.assertEquals(80, len(post_spikes))
+            self.assertEquals(91, len(post_spikes))
             self.assertEquals(787, len(weights))
         else:
             try:
