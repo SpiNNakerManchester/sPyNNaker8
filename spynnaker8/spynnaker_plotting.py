@@ -103,8 +103,8 @@ def plot_spikes_numpy(ax, spikes, label='', **options):
 def heat_plot(ax, neurons, times, values, label='', **options):
     """ Plots three lists of neurons, times and values into a heatmap
 
-    :param ax: An Axes in a matplot lib figure
-    :param neurons: List of Neuron ids
+    :param ax: An Axes in a matplotlib figure
+    :param neurons: List of neuron IDs
     :param times: List of times
     :param values: List of values to plot
     :param label: Label for the graph

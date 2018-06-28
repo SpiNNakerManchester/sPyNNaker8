@@ -26,7 +26,8 @@ class PopulationBase(object):
     @abstractproperty
     def all_cells(self):
         """ An array containing the cell IDs of all neurons in the\
-            Population (all MPI nodes). """
+            Population (all MPI nodes).
+        """
 
     def __add__(self, other):
         """ A Population / PopulationView can be added to another\
@@ -35,7 +36,9 @@ class PopulationBase(object):
         raise NotImplementedError  # pragma: no cover
 
     def getSpikes(self, *args, **kwargs):
-        """ Deprecated. Use get_data('spikes') instead.
+        """
+        .. warning::
+            Deprecated. Use `get_data('spikes')` instead.
         """
         logger.warning(
             'getSpikes is deprecated. Call transfered to get_data("spikes") '
@@ -47,22 +50,21 @@ class PopulationBase(object):
         """ Return a Neo Block containing the data(spikes, state variables)\
             recorded from the Population.
 
-        variables - either a single variable name or a list of variable names
-
-        Variables must have been previously recorded,\
+        :param variables: either a single variable name or a list of variable\
+            names. Variables must have been previously recorded,\
             otherwise an Exception will be raised.
-
-        For parallel simulators, if gather is True, all data will be\
-            gathered to all nodes and the Neo Block will contain data\
-            from all nodes.
-        Otherwise, the Neo Block will contain only data from the cells\
-            simulated on the local node.
-
-        If clear is True, recorded data will be deleted from the Population.
+        :param gather: For parallel simulators, if this is True, all data will\
+            be gathered to all nodes and the Neo Block will contain data\
+            from all nodes. Otherwise, the Neo Block will contain only data\
+            from the cells simulated on the local node.
+        :param clear: If this is True, recorded data will be deleted from the\
+            Population.
         """
 
     def get_gsyn(self, *args, **kwargs):
-        """ Deprecated. Use get_data(['gsyn_exc', 'gsyn_inh']) instead.
+        """
+        .. warning::
+            Deprecated. Use `get_data(['gsyn_exc', 'gsyn_inh'])` instead.
         """
         logger.warning(
             'get_gsy is deprecated. '
@@ -78,7 +80,9 @@ class PopulationBase(object):
         """
 
     def get_v(self, *args, **kwargs):
-        """ Deprecated.Use get_data('v') instead.
+        """
+        .. warning::
+            Deprecated. Use `get_data('v')` instead.
         """
         logger.warning(
             'getSpikes is deprecated. '
@@ -108,7 +112,9 @@ class PopulationBase(object):
         return len(self)
 
     def meanSpikeCount(self, *args, **kwargs):
-        """ Deprecated. Use mean_spike_count() instead.
+        """
+        .. warning::
+            Deprecated. Use `mean_spike_count()` instead.
         """
         logger.warning(
             'meanSpikeCount is deprecated. '
@@ -128,13 +134,17 @@ class PopulationBase(object):
 
     @property
     def position_generator(self):
-        """ NO PyNN description of this method.
+        """
+        .. warning::
+            NO PyNN description of this method.
         """
         raise NotImplementedError   # pragma: no cover
 
     @property
     def positions(self):
-        """ NO PyNN description of this method.
+        """
+        .. warning::
+            NO PyNN description of this method.
         """
         raise NotImplementedError   # pragma: no cover
 
@@ -160,9 +170,12 @@ class PopulationBase(object):
         # pylint: disable=too-many-arguments
 
     def printSpikes(self, filename, gather=True):
-        """ Deprecated. Use write_data(file, 'spikes') instead.
+        """
+        .. warning::
+            Deprecated. Use `write_data(file, 'spikes')` instead.
 
-        Note: Method signature is the PyNN0.7 one
+        .. note::
+            Method signature is the PyNN0.7 one
         """
         logger.warning(
             'printSpikes is deprecated. '
@@ -170,9 +183,13 @@ class PopulationBase(object):
         self.write_data(filename, 'spikes', gather=True)
 
     def print_gsyn(self, filename, gather=True):
-        """ Deprecated. Use write_data(file, ['gsyn_exc', 'gsyn_inh']) instead.
+        """
+        .. warning::
+            Deprecated. Use `write_data(file, ['gsyn_exc', 'gsyn_inh'])`\
+            instead.
 
-        Note: Method signature is the PyNN0.7 one
+        .. note::
+            Method signature is the PyNN0.7 one
         """
         logger.warning(
             'print_gsyn is deprecated. Call transfered to '
@@ -180,9 +197,12 @@ class PopulationBase(object):
         self.write_data(filename, ['gsyn_exc', 'gsyn_inh'], gather=True)
 
     def print_v(self, filename, gather=True):
-        """ Deprecated. Use write_data(file, 'v') instead.
+        """
+        .. warning::
+            Deprecated. Use `write_data(file, 'v')` instead.
 
-        Note: Method signature is the PyNN0.7 one
+        .. note::
+            Method signature is the PyNN0.7 one
         """
         logger.warning(
             'print_v is deprecated. '
@@ -212,10 +232,13 @@ class PopulationBase(object):
         """
 
     def record_gsyn(self, sampling_interval=1, indexes=None, to_file=None):
-        """ Deprecated. Use record(['gsyn_exc', 'gsyn_inh']) instead.
+        """
+        .. warning::
+            Deprecated. Use `record(['gsyn_exc', 'gsyn_inh'])` instead.
 
-        Note: Method signature is the PyNN 0.7 one\
-        with the extra non-PyNN sampling_interval and indexes
+        .. note::
+            Method signature is the PyNN 0.7 one\
+            with the extra non-PyNN `sampling_interval` and `indexes`
         """
         logger.warning(
             'record_gsyn is deprecated. Call transfered to '
@@ -225,10 +248,13 @@ class PopulationBase(object):
             sampling_interval=sampling_interval, indexes=indexes)
 
     def record_v(self, sampling_interval=1, indexes=None, to_file=None):
-        """ Deprecated. Use record('v') instead.
+        """
+        .. warning::
+            Deprecated. Use `record('v')` instead.
 
-        Note: Method signature is the PyNN 0.7 one\
-        with the extra none-PyNN sampling_interval and indexes
+        .. note::
+            Method signature is the PyNN 0.7 one\
+            with the extra non-PyNN `sampling_interval` and `indexes`
         """
         logger.warning('record_v is deprecated. '
                        'Call transfered to record(["v"], .....) instead.')
@@ -237,7 +263,9 @@ class PopulationBase(object):
             sampling_interval=sampling_interval, indexes=indexes)
 
     def rset(self, *args, **kwargs):
-        """ Deprecated. Use set(parametername=rand_distr) instead.
+        """
+        .. warning::
+            Deprecated. Use `set(parametername=rand_distr)` instead.
         """
         raise NotImplementedError(
             " Use set(parametername=rand_distr) instead.")   # pragma: no cover
@@ -254,7 +282,9 @@ class PopulationBase(object):
         raise NotImplementedError   # pragma: no cover
 
     def tset(self, *args, **kwargs):
-        """ Deprecated. Use set(parametername=value_array) instead.
+        """
+        .. warning::
+            Deprecated. Use `set(parametername=value_array)` instead.
         """
         raise NotImplementedError(
             "Use set(parametername=value_array) instead.")   # pragma: no cover

@@ -1,5 +1,5 @@
 """
-The :py:mod:`spynnaker.pynn` package contains the front end specifications
+The :py:mod:`spynnaker.pyNN` package contains the front end specifications
 and implementation for the PyNN High-level API
 (http://neuralensemble.org/trac/PyNN)
 """
@@ -73,17 +73,17 @@ __all__ = [
     "MunichRetinaDevice", "MunichMotorDevice", "ArbitraryFPGADevice",
     "PushBotRetinaViewer", "ExternalDeviceLifControl",
 
-    # Pushbot Parameters
+    # PushBot Parameters
     "MunichIoSpiNNakerLinkProtocol",
     "PushBotLaser", "PushBotLED", "PushBotMotor", "PushBotSpeaker",
     "PushBotRetinaResolution",
 
-    # Pushbot Ethernet Parts
+    # PushBot Ethernet Parts
     "PushBotLifEthernet", "PushBotEthernetLaserDevice",
     "PushBotEthernetLEDDevice", "PushBotEthernetMotorDevice",
     "PushBotEthernetSpeakerDevice", "PushBotEthernetRetinaDevice",
 
-    # Pushbot SpiNNaker Link Parts
+    # PushBot SpiNNaker Link Parts
     "PushBotLifSpinnakerLink", "PushBotSpiNNakerLinkLaserDevice",
     "PushBotSpiNNakerLinkLEDDevice", "PushBotSpiNNakerLinkMotorDevice",
     "PushBotSpiNNakerLinkSpeakerDevice", "PushBotSpiNNakerLinkRetinaDevice",
@@ -103,10 +103,10 @@ __all__ = [
 
 
 def run_forever():
-    """ supports running forever in pynn 0.8/0.9 format
+    """ Supports running forever in PyNN 0.8/0.9 format
 
     :return: returns when the application has started running on the\
-    SpiNNaker platform.
+        SpiNNaker platform.
     """
     AbstractSpiNNakerCommon.run(globals_variables.get_simulator(), None)
 
@@ -128,6 +128,7 @@ def EthernetControlPopulation(
         database_notify_port_num=None, database_ack_port_num=None):
     """ Create a PyNN population that can be included in a network to\
         control an external device which is connected to the host
+
     :param n_neurons: The number of neurons in the control population
     :param model: Class of a model that implements AbstractEthernetController
     :param label: An optional label for the population
@@ -181,6 +182,7 @@ def EthernetSensorPopulation(
         database_notify_port_num=None, database_ack_port_num=None):
     """ Create a pyNN population which can be included in a network to\
         receive spikes from a device connected to the host
+
     :param device: Class of a model that implements AbstractEthernetController
     :param local_host:\
         The optional local host IP address to listen on for database\

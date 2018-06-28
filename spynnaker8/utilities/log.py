@@ -16,7 +16,8 @@ class ConfiguredFilter(object):
         self._default_level = levels[conf.get("Logging", "default")]
 
     def filter(self, record):
-        """Get the level for the deepest parent, and filter appropriately."""
+        """ Get the level for the deepest parent, and filter appropriately.
+        """
         level = ConfiguredFormatter.level_of_deepest_parent(
             self._levels, record.name)
 

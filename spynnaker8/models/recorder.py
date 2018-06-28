@@ -139,8 +139,8 @@ class Recorder(RecordingCommon):
         record_ids = list()
         for neuron_id in range(0, len(filter_ids)):
             if filter_ids[neuron_id]:
-                # add population first id to ensure all atoms have a unique
-                # identifier (pynn enforcement)
+                # add population first ID to ensure all atoms have a unique
+                # identifier (PyNN enforcement)
                 record_ids.append(neuron_id + self._population._first_id)
         return record_ids
 
