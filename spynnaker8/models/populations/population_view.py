@@ -338,7 +338,7 @@ class PopulationView(PopulationBase):
             containing only data from the cells simulated on that node.
         :param clear: If this is True, recorded data will be deleted from the\
             Population.
-        :param annotations: should be a dict containing simple data types such as\
-            numbers and strings. The contents will be written into the output\
-            data file as metadata.
+        :param annotations: should be a dict containing simple data types such\
+            as numbers and strings. The contents will be written into the\
+            output data file as metadata.
         """
