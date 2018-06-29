@@ -15,14 +15,12 @@ synfire_run = SynfireRunner()
 
 class SynfireIfCurrExp(BaseTestCase):
 
-    @unittest.skip("https://github.com/SpiNNakerManchester/"
-                   "SpiNNFrontEndCommon/issues/162")
     def test_run(self):
         synfire_run.do_run(n_neurons, neurons_per_core=neurons_per_core,
                            run_times=[runtime], seed=self._test_seed)
         spikes = synfire_run.get_output_pop_spikes_numpy()
 
-        self.assertEquals(158, len(spikes))
+        self.assertEquals(263, len(spikes))
         spike_checker.synfire_spike_checker(spikes, n_neurons)
         synfire_run.get_output_pop_gsyn_exc_numpy()
         synfire_run.get_output_pop_voltage_numpy()
