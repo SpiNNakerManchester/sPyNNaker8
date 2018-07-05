@@ -10,6 +10,8 @@ from spynnaker8.models.model_data_holders\
     import IFCurrDualExpDataHolder as IF_curr_dual_exp
 from spynnaker8.models.model_data_holders.izk_cond_exp_data_holder import \
     IzkCondExpDataHolder as Izhikevich_cond
+from spynnaker8.models.model_data_holders.izk_curr_comb_exp_4E4I_data_holder \
+    import IzkCurrCombExp4E4IDataHolder as IzkCurrCombExp4E4I
 
 # plastic timing spynnaker 8
 from spynnaker8.models.synapse_dynamics.timing_dependence \
@@ -28,7 +30,7 @@ from spynnaker8.models.synapse_dynamics.weight_dependence \
 __all__ = [
     # sPyNNaker 8 models
     'IFCurDelta', 'IFCurrExpCa2Adaptive', 'IFCondExpStock',
-    'Izhikevich_cond', 'IF_curr_dual_exp',
+    'Izhikevich_cond', 'IF_curr_dual_exp', 'IzkCurrCombExp4E4I'
 
     # sPyNNaker 8 plastic stuff
     'WeightDependenceAdditiveTriplet',
