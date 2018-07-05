@@ -39,35 +39,43 @@ pop_exc.set(inh3_b_tau = 1)
 pop_exc.set(inh4_a_tau = 6.9)
 pop_exc.set(inh4_b_tau = 1.9)
 
-
-
+j=0.6
+AMPA_PY_W = j * 0.1
+_AMPA_INT_W = j * 0.2
+_NMDA_W = j * 0.075
+_GABA_A_W = j * 0.33
+_GABA_B_W = j * 0.0132
+_5HT1A_W = j * 0.01375
+_5HT2A_W = j * 0.15
+# originally the weight was 0.2
+_5HT3A_W = j * 0.31
 
 
 
 exc_proj = p.Projection(pop_src, pop_exc,
-        p.OneToOneConnector(), p.StaticSynapse(weight=1, delay=1*d),
+        p.OneToOneConnector(), p.StaticSynapse(weight=AMPA_PY_W, delay=1*d),
         receptor_type="excitatory", label="projTemp")
 exc_proj2 = p.Projection(pop_src, pop_exc,
-        p.OneToOneConnector(), p.StaticSynapse(weight=1, delay=3*d),
+        p.OneToOneConnector(), p.StaticSynapse(weight=_AMPA_INT_W, delay=3*d),
         receptor_type="excitatory2")
 exc_proj3 = p.Projection(pop_src, pop_exc,
-        p.OneToOneConnector(), p.StaticSynapse(weight=1, delay=5*d),
+        p.OneToOneConnector(), p.StaticSynapse(weight=_5HT2A_W, delay=5*d),
         receptor_type="excitatory3")
 exc_proj4 = p.Projection(pop_src, pop_exc,
-        p.OneToOneConnector(), p.StaticSynapse(weight=1, delay=7*d),
+        p.OneToOneConnector(), p.StaticSynapse(weight=_NMDA_W, delay=7*d),
         receptor_type="excitatory4")
 
 inh_proj = p.Projection(pop_src, pop_exc,
-        p.OneToOneConnector(), p.StaticSynapse(weight=1, delay=2*d),
+        p.OneToOneConnector(), p.StaticSynapse(weight=_GABA_A_W, delay=2*d),
         receptor_type="inhibitory")
 inh_proj2 = p.Projection(pop_src, pop_exc,
-        p.OneToOneConnector(), p.StaticSynapse(weight=1, delay=4*d),
+        p.OneToOneConnector(), p.StaticSynapse(weight=_GABA_B_W, delay=4*d),
         receptor_type="inhibitory2")
 inh_proj3 = p.Projection(pop_src, pop_exc,
-        p.OneToOneConnector(), p.StaticSynapse(weight=1, delay=6*d),
+        p.OneToOneConnector(), p.StaticSynapse(weight=_5HT1A_W, delay=6*d),
         receptor_type="inhibitory3")
 inh_proj4 = p.Projection(pop_src, pop_exc,
-        p.OneToOneConnector(), p.StaticSynapse(weight=1, delay=8*d),
+        p.OneToOneConnector(), p.StaticSynapse(weight=_5HT3A_W, delay=8*d),
         receptor_type="inhibitory4")
 
 
