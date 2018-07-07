@@ -380,10 +380,10 @@ def _create_overloaded_functions(spinnaker_simulator):
 
 
 def end(_=True):
-    """ Cleans up the spiNNaker machine and software
+    """ Cleans up the SpiNNaker machine and software
 
     :param _: was named compatible_output, which we don't care about,\
-        so is a none existent parameter
+        so is a non-existent parameter
     :rtype: None
     """
     for (population, variables, filename) in \

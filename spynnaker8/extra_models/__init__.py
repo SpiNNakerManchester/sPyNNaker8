@@ -26,11 +26,11 @@ from spynnaker8.models.synapse_dynamics.weight_dependence \
     import WeightDependenceAdditiveTriplet
 
 __all__ = [
-    # spynnaker 8 models
+    # sPyNNaker 8 models
     'IFCurDelta', 'IFCurrExpCa2Adaptive', 'IFCondExpStoc',
     'Izhikevich_cond', 'IF_curr_dual_exp', 'IF_curr_exp_sEMD',
 
-    # spynnaker 8 plastic stuff
+    # sPyNNaker 8 plastic stuff
     'WeightDependenceAdditiveTriplet',
     'PfisterSpikeTriplet',
     'SpikeNearestPairRule',

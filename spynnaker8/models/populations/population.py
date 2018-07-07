@@ -236,10 +236,16 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
             names. Variables must have been previously recorded, otherwise an
             Exception will be raised.
         :type variables: str or list
-        :param: Whether to collect data from all MPI nodes or just the current\
-            node (irrelevant on sPyNNaker, which always behaves as if True)
+        :param gather: Whether to collect data from all MPI nodes or just the\
+            current node.
+
+            .. note::
+                This is irrelevant on sPyNNaker, which always behaves as if
+                this parameter is True.
+
         :type gather: bool
-        :param: Whether recorded data will be deleted from the `Assembly`.
+        :param clear: \
+            Whether recorded data will be deleted from the `Assembly`.
         :type clear: bool
         :param annotations: annotations to put on the neo block
         :type annotations: dict
