@@ -10,4 +10,3 @@ class TestListStandardModules(unittest.TestCase):
         self.assertIn('Izhikevich', results)
         self.assertIn('SpikeSourceArray', results)
         self.assertIn('SpikeSourcePoisson', results)
-        self.assertNotIn('DataHolder', results)

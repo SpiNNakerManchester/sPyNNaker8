@@ -3,8 +3,7 @@ Synfirechain-like example
 """
 import spynnaker8 as p
 from spinnman.exceptions import SpinnmanTimeoutException
-from p8_integration_tests.scripts.fake_if_curr_exp_data_holder \
-    import FakeIFCurrExpDataHolder
+from p8_integration_tests.scripts.fake_if_curr import FakeIFCurrExp
 from p8_integration_tests.base_test_case import BaseTestCase
 
 
@@ -36,7 +35,7 @@ class ProvenanceWhenNotFinishedTest(BaseTestCase):
                 loopConnections.append(singleConnection)
             injectionConnection = [(0, 0, weight_to_spike, 1)]
             spikeArray = {'spike_times': [[0]]}
-            populations.append(p.Population(nNeurons, FakeIFCurrExpDataHolder,
+            populations.append(p.Population(nNeurons, FakeIFCurrExp,
                                             cell_params_lif, label='pop_1'))
             populations.append(p.Population(1, p.SpikeSourceArray, spikeArray,
                                label='inputSpikes_1'))
