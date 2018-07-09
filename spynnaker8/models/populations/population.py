@@ -3,7 +3,7 @@ from six import iteritems, string_types
 from spynnaker.pyNN.exceptions import InvalidParameterType
 from spynnaker.pyNN.models.pynn_population_common import PyNNPopulationCommon
 from spynnaker.pyNN.utilities.constants import SPIKES
-from spynnaker.pyNN.models.abstract_models import AbstractPyNNModel
+from spynnaker.pyNN.models.abstract_pynn_model import AbstractPyNNModel
 from spinn_front_end_common.utilities import globals_variables
 from spinn_front_end_common.utilities.exceptions import ConfigurationException
 

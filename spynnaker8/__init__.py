@@ -16,8 +16,7 @@ from spinn_front_end_common.utilities.exceptions import ConfigurationException
 from spinn_front_end_common.utilities import globals_variables
 from spinn_front_end_common.utilities.failed_state import FAILED_STATE_MSG
 
-from spynnaker.pyNN.models.abstract_models.abstract_pynn_model \
-    import AbstractPyNNModel
+from spynnaker.pyNN.models.abstract_pynn_model import AbstractPyNNModel
 
 # connections
 # noinspection PyUnresolvedReferences
