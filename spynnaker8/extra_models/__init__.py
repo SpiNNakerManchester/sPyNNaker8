@@ -1,7 +1,8 @@
 
 # spynnaker 8 extra models
 from spynnaker.pyNN.models.neuron.builds.if_cond_exp_stoc import IFCondExpStoc
-from spynnaker.pyNN.models.neuron.builds.if_curr_delta import IFCurrDelta
+from spynnaker.pyNN.models.neuron.builds.if_curr_delta \
+    import IFCurrDelta as IFCurDelta
 from spynnaker.pyNN.models.neuron.builds.if_curr_exp_ca2_adaptive \
     import IFCurrExpCa2Adaptive
 from spynnaker.pyNN.models.neuron.builds.if_curr_dual_exp_base \
