@@ -445,7 +445,7 @@ def set_number_of_neurons_per_core(neuron_type, max_permitted):
         raise ConfigurationException(msg)
     simulator = globals_variables.get_simulator()
     simulator.set_number_of_neurons_per_core(
-        neuron_type.build_model(), max_permitted)
+        neuron_type, max_permitted)
 
 
 # These methods will deffer to PyNN methods if a simulator exists

@@ -37,8 +37,11 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
             if not issubclass(cellclass, AbstractPyNNModel):
                 raise TypeError(
                     "cellclass must be a subclass of AbstractPyNNModel")
-            model = cellclass(**cellparams)
-        self._celltype = model.__class__
+            if cellparams is None:
+                model = cellclass()
+            else:
+                model = cellclass(**cellparams)
+        self._celltype = model
 
         if not isinstance(model, AbstractPyNNModel):
             raise TypeError("cellclass must extend AbstractPyNNModel")
