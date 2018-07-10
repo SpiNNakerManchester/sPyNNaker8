@@ -28,6 +28,8 @@ class FakeIFCurrExp(AbstractPopulationVertex):
         'v_thresh': -50.0, 'tau_syn_E': 5.0, 'tau_syn_I': 5.0,
         'tau_refrac': 0.1, 'i_offset': 0}
 
+    initialize_parameters = {'v_init': None}
+
     def __init__(
             self, n_neurons,
             spikes_per_second=None, ring_buffer_sigma=None, constraints=None,
@@ -39,7 +41,8 @@ class FakeIFCurrExp(AbstractPopulationVertex):
             tau_syn_E=default_parameters['tau_syn_E'],
             tau_syn_I=default_parameters['tau_syn_I'],
             tau_refrac=default_parameters['tau_refrac'],
-            i_offset=default_parameters['i_offset'], v_init=None):
+            i_offset=default_parameters['i_offset'],
+            v_init=initialize_parameters['v_init']):
         # pylint: disable=protected-access
 
         # add to the path the location of the dodgy binary
