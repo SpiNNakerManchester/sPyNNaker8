@@ -20,13 +20,13 @@ def compare_spiketrain(spiketrain1, spiketrain2):
                 id1, id2))
     if len(spiketrain1) != len(spiketrain2):
         raise AssertionError(
-            "spiketrains1 has {} spikes while spiketrains2 as {} for id {}"
+            "spiketrains1 has {} spikes while spiketrains2 as {} for ID {}"
             .format(len(spiketrain1), len(spiketrain2), id1))
     for spike1, spike2 in zip(spiketrain1, spiketrain2):
         if spike1 != spike2:
             # print(id1, spiketrain1, spiketrain2)
             raise AssertionError(
-                "spike1 is {} while spike2 is {} for id {}".format(
+                "spike1 is {} while spike2 is {} for ID {}".format(
                     spike1, spike2, id1))
 
 
@@ -88,7 +88,7 @@ def compare_analogsignal(as1, as2):
     for id1, id2 in zip(as1_index, as2_index):
         if id1 != id2:
             raise AssertionError(
-                "id 1 is {} while id 2 is {} for {}".format(
+                "ID 1 is {} while ID 2 is {} for {}".format(
                     id1, id2, as1.name))
 
     if len(as1.times) != len(as2.times):

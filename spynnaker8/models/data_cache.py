@@ -87,7 +87,7 @@ class DataCache(object):
 
         :param variable: name of variable to get cache for
         :rtype variable: str
-        :return: The cache data, ids, indexes and units
+        :return: The cache data, IDs, indexes and units
         :rtype: VariableCache
         """
         return self._cache[variable]
@@ -98,7 +98,7 @@ class DataCache(object):
 
         :param variable: name of variable data applies to
         :type variable: str
-        :param data: raw data in spynnaker format
+        :param data: raw data in sPyNNaker format
         :type data: nparray
         :param indexes: population indexes for which data should be returned
         :type indexes: nparray
