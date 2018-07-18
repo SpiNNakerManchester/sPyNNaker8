@@ -6,7 +6,6 @@ import spynnaker8 as p
 from spynnaker8.utilities import neo_convertor
 from p8_integration_tests.base_test_case import BaseTestCase
 import spynnaker.plot_utils as plot_utils
-import unittest
 
 SPIKE_TIMES = [11, 22]
 
@@ -14,7 +13,7 @@ SPIKE_TIMES = [11, 22]
 def do_run(nNeurons, timestep):
 
     spike_list = {'spike_times': SPIKE_TIMES}
-    print spike_list
+    print(spike_list)
     p.setup(timestep=timestep, min_delay=timestep, max_delay=timestep*10)
 
     pop = p.Population(nNeurons, p.SpikeSourceArray, spike_list, label='input')
@@ -31,8 +30,6 @@ def do_run(nNeurons, timestep):
 
 class SpikesTest(BaseTestCase):
 
-    @unittest.skip("https://github.com/SpiNNakerManchester/sPyNNaker/issues/"
-                   "335")
     def test_many(self):
         nNeurons = 100  # number of neurons in each population
         neo = do_run(nNeurons, timestep=1.0)
@@ -85,4 +82,4 @@ if __name__ == '__main__':
     neo = do_run(nNeurons)
     spikes = neo_convertor.convert_spikes()
     plot_utils.plot_spikes(spikes)
-    print spikes
+    print(spikes)

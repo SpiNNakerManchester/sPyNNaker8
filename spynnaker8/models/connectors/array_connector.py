@@ -1,12 +1,19 @@
 from spynnaker.pyNN.models.neural_projections.connectors \
-    import AbstractConnector
-from pyNN.connectors import ArrayConnector as PyNNArrayConnector
+    import ArrayConnector as CommonArrayConnector
 
 
-class ArrayConnector(AbstractConnector, PyNNArrayConnector):
+class ArrayConnector(CommonArrayConnector):
+    """
+    Create an array connector.
 
-    def __init__(self, array, safe=True, callback=None):
-        AbstractConnector.__init__(self, safe=safe)
-        PyNNArrayConnector.__init__(
-            self, array=array, safe=safe, callback=callback)
-        raise NotImplementedError
+    :param array: an array of integers
+    :type array: integer
+    """
+    __slots__ = []
+
+    def __init__(
+            self, array, safe=True, callback=None, verbose=False):
+        # pylint: disable=too-many-arguments
+        super(ArrayConnector, self).__init__(
+            array=array,
+            safe=safe, callback=callback, verbose=verbose)

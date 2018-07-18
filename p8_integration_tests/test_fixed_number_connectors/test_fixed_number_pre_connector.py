@@ -1,3 +1,4 @@
+from __future__ import print_function
 import spynnaker8 as p
 from p8_integration_tests.base_test_case import BaseTestCase
 import pylab
@@ -48,7 +49,7 @@ def do_run(plot):
     all_populations = []
 
     # Create Groups
-    print "Creating ", n_groups, " SynfireGroups"
+    print("Creating ", n_groups, " SynfireGroups")
     for group_index in range(n_groups):
         # create the excitatory Population
         exc_pop = p.Population(n_exc, p.IF_cond_exp(**cell_params),
@@ -70,7 +71,7 @@ def do_run(plot):
                      receptor_type='inhibitory')
 
     # Create Stimulus and connect it to first group
-    print "Create Stimulus Population"
+    print("Create Stimulus Population")
     # We create a Population of SpikeSourceArrays of the same dimension
     # as excitatory neurons in a synfire group
     pop_stim = p.Population(n_exc, p.SpikeSourceArray({}), label="pop_stim")
@@ -94,7 +95,7 @@ def do_run(plot):
     pop_stim.set(spike_times=all_spiketimes)
 
     # Connect Groups with the subsequent ones
-    print "Connecting Groups with subsequent ones"
+    print("Connecting Groups with subsequent ones")
     for group_index in range(n_groups-1):
         p.Projection(exc_pops[group_index % n_groups],
                      exc_pops[(group_index+1) % n_groups],
@@ -120,7 +121,7 @@ def do_run(plot):
                  receptor_type='excitatory')
 
     # Connect the Stimulus to the first group
-    print "Connecting Stimulus to first group"
+    print("Connecting Stimulus to first group")
     p.Projection(pop_stim, inh_pops[0],
                  p.FixedNumberPreConnector(20, rng=rng),
                  synapse_type=p.StaticSynapse(weight=weight_exc, delay=20.),
@@ -137,11 +138,11 @@ def do_run(plot):
         pop.record('spikes')
 
     # Run
-    print "Run the simulation"
+    print("Run the simulation")
     p.run(sim_duration)
 
     # Get data
-    print "Simulation finished, now collect all spikes and plot them"
+    print("Simulation finished, now collect all spikes and plot them")
 
     stim_spikes = pop_stim.spinnaker_get_data('spikes')
     stim_spikes[:, 0] -= n_exc

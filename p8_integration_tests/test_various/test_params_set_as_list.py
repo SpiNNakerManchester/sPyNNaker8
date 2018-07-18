@@ -104,7 +104,7 @@ class ParamsSetAsList(BaseTestCase):
 if __name__ == '__main__':
     nNeurons = 225  # number of neurons in each population
     (v, gsyn, spikes) = do_run(nNeurons)
-    print len(spikes)
+    print(len(spikes))
     plot_utils.plot_spikes(spikes)
     plot_utils.line_plot(v, title="v")
     plot_utils.heat_plot(gsyn, title="gsyn")

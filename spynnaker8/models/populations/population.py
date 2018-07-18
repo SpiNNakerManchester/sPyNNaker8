@@ -1,12 +1,14 @@
 import logging
-
+from six import iteritems, string_types
 from spynnaker.pyNN.exceptions import InvalidParameterType
 from spynnaker.pyNN.models.pynn_population_common import PyNNPopulationCommon
 from spynnaker.pyNN.utilities.constants import SPIKES
 from spinn_front_end_common.utilities import globals_variables
 from spinn_front_end_common.utilities.exceptions import ConfigurationException
 
-from spynnaker8.models import Recorder
+from spynnaker8.models.recorder import Recorder
+from spynnaker8.models.populations import IDMixin, PopulationBase
+from spynnaker8.models.populations.population_view import PopulationView
 from spynnaker8.utilities import DataHolder
 
 from pyNN import descriptions
@@ -14,7 +16,7 @@ from pyNN import descriptions
 logger = logging.getLogger(__name__)
 
 
-class Population(PyNNPopulationCommon, Recorder):
+class Population(PyNNPopulationCommon, Recorder, PopulationBase):
     """ PyNN 0.8/0.9 population object
     """
 
@@ -36,7 +38,10 @@ class Population(PyNNPopulationCommon, Recorder):
         # cellparams being retained for backwards compatibility, but use
         # is deprecated
         elif issubclass(cellclass, DataHolder):
-            internal_params = dict(cellparams)
+            if cellparams is None:
+                internal_params = dict()
+            else:
+                internal_params = dict(cellparams)
             cell_label = None
             if 'label' in internal_params:
                 cell_label = internal_params['label']
@@ -77,6 +82,24 @@ class Population(PyNNPopulationCommon, Recorder):
         # annotations used by neo objects
         self._annotations = dict()
 
+    def __iter__(self):
+        """ Iterate over local cells
+        """
+        for _id in range(self._size):
+            yield IDMixin(self, _id)
+
+    def __getitem__(self, index_or_slice):
+        if isinstance(index_or_slice, int):
+            return IDMixin(self, index_or_slice)
+        else:
+            return PopulationView(
+                self, index_or_slice, label="view over {}".format(self.label))
+
+    def all(self):
+        """ Iterator over cell IDs on all MPI nodes."""
+        for _id in range(self._size):
+            yield IDMixin(self, _id)
+
     @property
     def annotations(self):
         """ The annotations given by the end user
@@ -91,11 +114,15 @@ class Population(PyNNPopulationCommon, Recorder):
         """
         return self._vertex_holder
 
+    def can_record(self, variable):
+        """ Determine whether `variable` can be recorded from this population.
+        """
+        return variable in self._get_all_possible_recordable_variables()
+
     def record(self, variables, to_file=None, sampling_interval=None,
                indexes=None):
-        """
-        Record the specified variable or variables for all cells in the
-        Population or view.
+        """ Record the specified variable or variables for all cells in the\
+            Population or view.
 
         :param variables: either a single variable name or a list of variable\
             names. For a given celltype class, `celltype.recordable` contains\
@@ -109,19 +136,41 @@ class Population(PyNNPopulationCommon, Recorder):
         """
         if indexes is not None:
             logger.warn(
-                "record indexes parameter is not standard PyNN so will not "
-                "work on other other simulators. "
-                "In the future this will be replaced with views")
+                "record indexes parameter is non-standard PyNN, so may not "
+                "be portable to other simulators. "
+                "It is now deprecated and replaced with views")
+        self._record_with_indexes(
+            variables, to_file, sampling_interval, indexes)
+
+    def _record_with_indexes(
+            self, variables, to_file, sampling_interval, indexes):
+        """ Same as record but without non-standard PyNN warning
+
+        This method is non-standard PyNN and is intended only to be called by\
+        record in a Population, View or Assembly
+        """
         if variables is None:  # reset the list of things to record
+            if sampling_interval is not None:
+                raise ConfigurationException(
+                    "Clash between parameters in record."
+                    "variables=None turns off recording,"
+                    "while sampling_interval!=None implies turn on recording")
+            if indexes is not None:
+                logger.warning(
+                    "View.record with variable None is non-standard PyNN. "
+                    "Only the neurons in the view have their record turned "
+                    "off. Other neurons already set to record will remain "
+                    "set to record")
+
             # note that if record(None) is called, its a reset
-            Recorder._turn_off_all_recording(self)
+            Recorder._turn_off_all_recording(self, indexes)
             # handle one element vs many elements
-        elif isinstance(variables, basestring):
+        elif isinstance(variables, string_types):
             # handle special case of 'all'
             if variables == "all":
                 logger.warning(
-                    "This is not currently standard PyNN, and therefore "
-                    "may not work in other simulators.")
+                    "This is non-standard PyNN, and therefore may not be "
+                    "portable to other simulators.")
 
                 # get all possible recordings for this vertex
                 variables = self._get_all_possible_recordable_variables()
@@ -157,13 +206,13 @@ class Population(PyNNPopulationCommon, Recorder):
         """
         # pylint: disable=too-many-arguments
         if not gather:
-            logger.warning("Spinnaker only supports gather=True. We will run "
+            logger.warning("sPyNNaker only supports gather=True. We will run "
                            "as if gather was set to True.")
 
-        if isinstance(io, basestring):
+        if isinstance(io, string_types):
             io = self._get_io(io)
 
-        data = self._extract_neo_block(variables, clear, annotations)
+        data = self._extract_neo_block(variables, None, clear, annotations)
         # write the neo block to the file
         io.write(data)
 
@@ -215,20 +264,47 @@ class Population(PyNNPopulationCommon, Recorder):
             names. Variables must have been previously recorded, otherwise an
             Exception will be raised.
         :type variables: str or list
-        :param: Whether to collect data from all MPI nodes or just the current\
-            node (irrelevant on sPyNNaker, which always behaves as if True)
+        :param gather: Whether to collect data from all MPI nodes or just the\
+            current node.
+
+            .. note::
+                This is irrelevant on sPyNNaker, which always behaves as if
+                this parameter is True.
+
         :type gather: bool
-        :param: Whether recorded data will be deleted from the `Assembly`.
+        :param clear: \
+            Whether recorded data will be deleted from the `Assembly`.
         :type clear: bool
         :param annotations: annotations to put on the neo block
         :type annotations: dict
         :rtype: neo.Block
         """
         if not gather:
-            logger.warning("Spinnaker only supports gather=True. We will run "
+            logger.warning("sPyNNaker only supports gather=True. We will run "
                            "as if gather was set to True.")
 
-        return self._extract_neo_block(variables, clear, annotations)
+        return self._extract_neo_block(variables, None, clear, annotations)
+
+    def get_data_by_indexes(
+            self, variables, indexes, clear=False, annotations=None):
+        """ Return a Neo `Block` containing the data\
+            (spikes, state variables) recorded from the Assembly.
+
+        :param variables: either a single variable name or a list of variable\
+            names. Variables must have been previously recorded, otherwise an
+            Exception will be raised.
+        :type variables: str or list
+        :param indexes: List of neuron indexes to include in the data.
+            Clearly only neurons recording will actually have any data
+            If None will be taken as all recording as get_data
+        :type indexes: list (int)
+        :param clear: Whether recorded data will be deleted.
+        :type clear: bool
+        :param annotations: annotations to put on the neo block
+        :type annotations: dict
+        :rtype: neo.Block
+        """
+        return self._extract_neo_block(variables, indexes, clear, annotations)
 
     def spinnaker_get_data(self, variable):
         """ Public accessor for getting data as a numpy array, instead of\
@@ -241,8 +317,8 @@ class Population(PyNNPopulationCommon, Recorder):
         :return: numpy array of the data
         """
         logger.warning(
-            "This call is not standard PyNN and therefore will not be "
-            "portable to other PyNN simulators. Nor do we guarantee that this "
+            "This call is non-standard PyNN and therefore may not be "
+            "portable to other simulators. Nor do we guarantee that this "
             "function will exist in future releases.")
         if isinstance(variable, list):
             if len(variable) == 1:
@@ -269,17 +345,81 @@ class Population(PyNNPopulationCommon, Recorder):
         return self._get_variable_unit(variable)
 
     def set(self, **kwargs):
-        for parameter, value in kwargs.iteritems():
+        for parameter, value in iteritems(kwargs):
             try:
                 super(Population, self).set(parameter, value)
             except InvalidParameterType:
                 super(Population, self).initialize(parameter, value)
 
     def initialize(self, **kwargs):
-        for parameter, value in kwargs.iteritems():
+        for parameter, value in iteritems(kwargs):
             super(Population, self).initialize(parameter, value)
+
+    @property
+    def initial_values(self):
+        if not self._vertex_population_initializable:
+            raise KeyError(
+                "Population does not support the initialisation")
+        return self._vertex.initial_values
+
+    # NON-PYNN API CALL
+    def get_initial_value(self, variable, selector=None):
+        """ See AbstractPopulationInitializable.get_initial_value
+        """
+        if not self._vertex_population_initializable:
+            raise KeyError(
+                "Population does not support the initialisation of {}".format(
+                    variable))
+        return self._vertex.get_initial_value(variable, selector)
+
+    # NON-PYNN API CALL
+    def set_initial_value(self, variable, value, selector=None):
+        """ See AbstractPopulationInitializable.set_initial_value
+        """
+        if not self._vertex_population_initializable:
+            raise KeyError(
+                "Population does not support the initialisation of {}".format(
+                    variable))
+        if globals_variables.get_not_running_simulator().has_ran \
+                and not self._vertex_changeable_after_run:
+            raise Exception("Population does not support changes after run")
+        self._vertex.set_initial_value(variable, value, selector)
+
+    # NON-PYNN API CALL
+    def get_initial_values(self, selector=None):
+        """ See AbstractPopulationInitializable.get_initial_values
+        """
+        if not self._vertex_population_initializable:
+            raise KeyError("Population does not support the initialisation")
+        return self._vertex.get_initial_values(selector)
 
     def get(self, parameter_names, gather=False, simplify=True):
         if simplify is not True:
             logger.warning("The simplify value is ignored if not set to true")
         return super(Population, self).get(parameter_names, gather)
+
+    @property
+    def all_cells(self):
+        cells = []
+        for _id in range(self._size):
+            cells.append(IDMixin(self, _id))
+        return cells
+
+    @property
+    def position_generator(self):
+        def gen(i):
+            return self.positions[:, i]
+        return gen
+
+    @staticmethod
+    def create(cellclass, cellparams=None, n=1):
+        """ Pass through method to the constructor defined by PyNN.\
+        Create n cells all of the same type.\
+        Returns a Population object.
+
+        :param cellclass: see Population.__init__
+        :param cellparams: see Population.__init__
+        :param n: see Population.__init__(size...)
+        :return: A New Population
+        """
+        return Population(size=n, cellclass=cellclass, cellparams=cellparams)

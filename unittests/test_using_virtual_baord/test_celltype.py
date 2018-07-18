@@ -26,4 +26,4 @@ class Test_celltype(BaseTestCase):
 if __name__ == '__main__':
     nNeurons = 20  # number of neurons in each population
     celltype = before_run(nNeurons)
-    print celltype
+    print(celltype)

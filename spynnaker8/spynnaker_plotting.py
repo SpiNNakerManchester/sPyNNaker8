@@ -1,25 +1,22 @@
-from neo import SpikeTrain
-from neo import Block, Segment
-import numpy as np
-from quantities import ms
-try:
-    # pylint: disable=import-error
-    from pyNN.utility.plotting import repeat
-    import matplotlib.pyplot as plt
-    matplotlib_missing = False
-except Exception as e:
-    matplotlib_missing = True
-from spynnaker8.utilities.version_util import pynn8_syntax
-if pynn8_syntax:
-    from neo import AnalogSignalArray as AnalogSignal
-else:
-    from neo import AnalogSignal
-
-
 """
 Plotting tools to be used together with
 https://github.com/NeuralEnsemble/PyNN/blob/master/pyNN/utility/plotting.py
 """
+
+from neo import SpikeTrain, Block, Segment
+import numpy as np
+from quantities import ms
+try:
+    from pyNN.utility.plotting import repeat
+    import matplotlib.pyplot as plt
+    matplotlib_missing = False
+except ImportError:
+    matplotlib_missing = True
+from spynnaker8.utilities.version_util import pynn8_syntax
+if pynn8_syntax:
+    from neo import AnalogSignalArray as AnalogSignalType  # @UnresolvedImport
+else:
+    from neo import AnalogSignal as AnalogSignalType  # @Reimport
 
 
 def handle_options(ax, options):
@@ -106,8 +103,8 @@ def plot_spikes_numpy(ax, spikes, label='', **options):
 def heat_plot(ax, neurons, times, values, label='', **options):
     """ Plots three lists of neurons, times and values into a heatmap
 
-    :param ax: An Axes in a matplot lib figure
-    :param neurons: List of Neuron ids
+    :param ax: An Axes in a matplotlib figure
+    :param neurons: List of neuron IDs
     :param times: List of times
     :param values: List of values to plot
     :param label: Label for the graph
@@ -151,7 +148,7 @@ def heat_plot_neo(ax, signal_array, label='', **options):
     if label is None:
         label = signal_array.name
     n_neurons = signal_array.shape[-1]
-    xs = range(n_neurons)
+    xs = list(range(n_neurons))
     times = signal_array.times / signal_array.sampling_period
     times = np.rint(times.magnitude).astype(int)
     all_times = np.tile(times, n_neurons)
@@ -185,16 +182,15 @@ def plot_segment(axes, segment, label='', **options):
         if name == 'spikes':
             plot_spiketrains(axes, segment.spiketrains, label=label, **options)
         else:
-            heat_plot_neo(axes, segment.filter(name=name)[0], label=label,
-                          **options)
+            heat_plot_neo(
+                axes, segment.filter(name=name)[0], label=label, **options)
     elif segment.spiketrains:
         if len(analogsignals) > 1:
             raise Exception("Block.segment[0] has spikes and "
-                            "other data please specify one to plot")
+                            "other data; please specify one to plot")
         plot_spiketrains(axes, segment.spiketrains, label=label, **options)
     elif len(analogsignals) == 1:
-        heat_plot_neo(axes, analogsignals[0], label=label,
-                      **options)
+        heat_plot_neo(axes, analogsignals[0], label=label, **options)
     elif len(analogsignals) > 1:
         raise Exception("Block.segment[0] has {} types of data; "
                         "please specify one to plot using name="
@@ -261,9 +257,8 @@ class SpynnakerPanel(object):
             if isinstance(datum, list):
                 self.__plot_list(axes, datum, label, properties)
             # AnalogSignalArray / AnalogSignal is also a ndarray
-            # but data format different!
-            # In pynn8_syntax AnalogSignalArray is imported as AnalogSignal
-            elif isinstance(datum, AnalogSignal):
+            # but data format different! We import them as a single name here
+            elif isinstance(datum, AnalogSignalType):
                 heat_plot_neo(axes, datum, label=label, **properties)
             elif isinstance(datum, np.ndarray):
                 self.__plot_array(axes, datum, label, properties)

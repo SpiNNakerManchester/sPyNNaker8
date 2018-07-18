@@ -38,8 +38,8 @@ if __name__ == '__main__':
     v = synfire_run.get_output_pop_voltage_list_numpy()
     spikes = synfire_run.get_output_pop_spikes_list_numpy()
 
-    print len(spikes[0])
-    print len(spikes[1])
+    print(len(spikes[0]))
+    print(len(spikes[1]))
     plot_utils.plot_spikes(spikes[0], spikes[1])
     plot_utils.heat_plot(v[0], title="v1")
     plot_utils.heat_plot(gsyn[0], title="gysn1")

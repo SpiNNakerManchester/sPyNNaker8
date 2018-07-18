@@ -67,11 +67,11 @@ class TestIfCurrExpSingleNeuron(BaseTestCase):
 
 if __name__ == '__main__':
     results = do_run()
-    (noise_spike_times, s_pop_spikes,  s_pop_voltages) = results
-    print noise_spike_times
-    print len(noise_spike_times)
-    print s_pop_spikes
-    print len(s_pop_spikes)
-    print s_pop_voltages
+    (noise_spike_times, s_pop_spikes, s_pop_voltages) = results
+    print(noise_spike_times)
+    print(len(noise_spike_times))
+    print(s_pop_spikes)
+    print(len(s_pop_spikes))
+    print(s_pop_voltages)
     plot_utils.plot_spikes([noise_spike_times, s_pop_spikes])
     plot_utils.line_plot(s_pop_voltages, title="s_pop_voltages")
