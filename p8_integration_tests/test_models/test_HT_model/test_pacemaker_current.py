@@ -1,78 +1,106 @@
 import spynnaker8 as p
 import numpy
+import numpy as np
 import math
 import unittest
 from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt
+from matplotlib import cm
 
-p.setup(1)
-runtime = 200
+dt=1.0
+p.setup(timestep=dt)
+runtime = 10000
+clamps_voltage = numpy.arange(-55,-105,-5)
+clamps_number = len(clamps_voltage)
+clamp_protocol = [[-65.0, clamps_voltage[i], -65.0 ] for i in range(clamps_number)]
+changes = len(clamp_protocol[0])
 
 # Spike source to send spike via plastic synapse
 AMPA_src = p.Population(1, p.SpikeSourceArray,
-                        {'spike_times': [10, 100]}, label="src1")
-# NMDA_src = p.Population(1, p.SpikeSourceArray,
-#                         {'spike_times': [60]}, label="src1")
-# GABA_A_src = p.Population(1, p.SpikeSourceArray,
-#                         {'spike_times': [30]}, label="src1")
-# GABA_B_src = p.Population(1, p.SpikeSourceArray,
-#                         {'spike_times': [160]}, label="src1")
+                        {'spike_times': [runtime/10, 6 * runtime/10]}, label="src1")
 
-
+clamp_pops = []
 # Post-synapse population
-pop_exc = p.Population(1, p.extra_models.HillTononi(), label="test")
-# pop_exc.set(i_offset=1.0)
+for i in range(clamps_number):
+    pop_exc = p.Population(changes, p.extra_models.HillTononi(), label="population %d"%i) 
+    pop_exc.set(v_reset = clamp_protocol[i]) 
+    clamp_pops.append(pop_exc)
 
 # # Create projections
-synapse = p.Projection(
-    AMPA_src, pop_exc, p.AllToAllConnector(),
-    p.StaticSynapse(weight=25, delay=1), receptor_type="AMPA")
-# synapse = p.Projection(
-#     NMDA_src, pop_exc, p.AllToAllConnector(),
-#     p.StaticSynapse(weight=0.075, delay=1), receptor_type="NMDA")
-# synapse = p.Projection(
-#     GABA_A_src, pop_exc, p.AllToAllConnector(),
-#     p.StaticSynapse(weight=0.33, delay=1), receptor_type="GABA_A")
-# synapse = p.Projection(
-#     GABA_B_src, pop_exc, p.AllToAllConnector(),
-#     p.StaticSynapse(weight=0.0132, delay=1), receptor_type="GABA_B")
-
-pop_exc.record("all")
+    synapse = p.Projection(
+        AMPA_src, clamp_pops[i], p.AllToAllConnector(),
+        p.StaticSynapse(weight=25, delay=1), receptor_type="AMPA")
+    clamp_pops[i].record("all")
 
 p.run(runtime)
-# pop_exc.set(i_offset=0.0)
-# p.run(runtime/2)
 
-weights = []
+exc_data = []
+for i in range(clamps_number):
+    exc_data.append(clamp_pops[i].get_data())
+    print "Post-synaptic neuron firing frequency: {} Hz".format(
+        len(exc_data[i].segments[0].spiketrains[0]))
 
+clamps = []
+for i in range(clamps_number):
+    clamps.append(exc_data[i].segments[0].filter(name='gsyn_inh')[0])
 
-runtime = runtime/0.1 # temporary scaling to account for new recording
-# weights.append(synapse.get('weight', 'list',
-#                                    with_address=False)[0])
+# begin simulation of floating point Ih
+hold_voltage = -65.0
 
-exc_data = pop_exc.get_data()
+def additional_input_get_input_value_as_current(m, membrane_voltage):
+    g_H = 0.015
+    m_inf = 1 / (1 + np.exp((membrane_voltage+75)/5.5))
+    e_to_t_on_tau_m = np.exp(-1.0 *
+                (np.exp(-14.59 - 0.086 * membrane_voltage)
+                 + np.exp(-1.87 + 0.0701 * membrane_voltage)))    
+    m_factor = m_inf + (m - m_inf)
+    m = m_inf + (m - m_inf) * e_to_t_on_tau_m
+    I_H = g_H * m * (membrane_voltage - -43)
+    return m, I_H
+#    return m, m
+#    return m, e_to_t_on_tau_m
+#    return m, m_factor
+#    return m, m_inf
 
-print "Post-synaptic neuron firing frequency: {} Hz".format(
-    len(exc_data.segments[0].spiketrains[0]))
+I_h =[[] for clamp in range(clamps_number)]
 
-# Plot
-Figure(
-    # plot data for postsynaptic neuron
-    Panel(exc_data.segments[0].filter(name='v')[0],
-          ylabel="Membrane potential (mV)",
-          data_labels=[pop_exc.label], yticks=True, xlim=(0, runtime)),
-    Panel(exc_data.segments[0].filter(name='gsyn_exc')[0],
-          ylabel="gsyn excitatory (mV)",
-          data_labels=[pop_exc.label], yticks=True, xlim=(0, runtime)),
-    Panel(exc_data.segments[0].filter(name='gsyn_inh')[0],
-          ylabel="gsyn inhibitory (mV)",
-          data_labels=[pop_exc.label], yticks=True, xlim=(0, runtime)),
-    Panel(exc_data.segments[0].spiketrains,
-          yticks=True, markersize=0.2, xlim=(0, runtime)),
-    annotations="Post-synaptic neuron firing frequency: {} Hz".format(
-    len(exc_data.segments[0].spiketrains[0]))
-)
+for clamp in range(clamps_number):
+    m = 1 / (1 + np.exp((hold_voltage + 75) / 5.5))
+    for time in np.arange(0, runtime, dt):
+        if time >  runtime/10 + 2 and time < 3+runtime * 6 /10:
+                membrane_voltage = clamps_voltage[clamp]
+        else: 
+            membrane_voltage = hold_voltage
+        m, current = additional_input_get_input_value_as_current(m, membrane_voltage)
+        I_h[clamp].append(current )
+
+new = [map(lambda x: x.magnitude.flatten(), clamps[i]) for i in range(clamps_number)]
+
+plt.subplot(1, 2, 1)
+plt.plot(np.transpose(I_h[0]), color='black', linestyle='dotted', label='Floating-point')
+plt.plot(np.transpose(new[0])[0], color='black', linestyle='dashed', label='SpiNNaker Fixed-point')
+plt.plot(np.transpose(I_h), linestyle='dotted')
+plt.plot(np.transpose(new)[0], linestyle='dashed')
+plt.legend(loc='lower right');
+plt.xlabel('Time (ms)');
+plt.ylabel('I_h (mV)');
+plt.title('I_h current')
+plt.subplot(1, 2, 2)
+plt.plot(np.transpose(new)[0] - np.transpose(I_h), linestyle='solid')
+plt.xlabel('Time (ms)');
+plt.ylabel('I_h (mV)');
+plt.title('I_h current')
 plt.show()
+
+#Figure(
+#    # plot data for postsynaptic neuron
+#    Panel(*clamps, ylabel='Pacemaker Intrinsic Current (?)', xlabel='time (ms)', data_labels = [clamp_pops[i].label for i in range(clamps_number)], yticks=True, xlim=(0,runtime)),
+#    annotations="Post-synaptic neuron firing frequency: {} Hz".format(1)
+#    
+#)
+#plt.show()
+
+#end simulator
 p.end()
 
-
+print('-->> this simulation was ran using test_pacemaker_impl_current.py')
