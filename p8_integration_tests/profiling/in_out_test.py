@@ -19,9 +19,9 @@ def _print_results(diffs, k):
 runtime = 1010 # Run for one second
 n_neurons = [1]
 # n_neurons = [2, 255]
-n_neurons.extend(range(2, 258, 32))
+# n_neurons.extend(range(2, 256, 2))
 # n_neurons.extend(range(2, 150, 1))
-n_neurons.append(255)
+# n_neurons.append(255)
 print n_neurons
 #, 2, 4, 8, 16, 32, 64, 128, 255] # takes value 1, 2, 100, 256
 source_neurons = 2
@@ -107,7 +107,7 @@ for n in n_neurons:
 
     print "Timing measurement output:"
     _print_results(diffs, n)
-#     print "{}, {},  {},  {},  {}".format(n, round(np.mean(diffs[n]),0), min(diffs[n]), max(diffs[n]), np.std(diffs[n]))
+    _print_results(diffs, -n)
 
     print "Length: {}".format(len(diffs[n]))
 #
@@ -117,10 +117,14 @@ for n in n_neurons:
     p.end()
 
 
-
+print "index 1"
 for k in n_neurons:
     _print_results(diffs, k)
-#     print "{}, {},  {},  {},  {}".format(k, round(np.mean(diffs[k]),0), min(diffs[k]), max(diffs[k]), np.std(diffs[k]))
+
+print "index 0"
+for k in n_neurons:
+    _print_results(diffs, -k)
+
 
 
 
