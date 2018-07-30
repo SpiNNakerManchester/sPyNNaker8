@@ -116,4 +116,4 @@ class TestCreatePoissons(BaseTestCase):
 
 
 if __name__ == '__main__':
-    do_run()
+    do_run(do_print=True)
