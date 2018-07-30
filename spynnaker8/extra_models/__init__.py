@@ -25,6 +25,11 @@ from spynnaker8.models.synapse_dynamics.timing_dependence \
 from spynnaker8.models.synapse_dynamics.weight_dependence \
     import WeightDependenceAdditiveTriplet
 
+# Variable rate poisson
+from spynnaker8.models.model_data_holders\
+    .spike_source_poisson_variable_data_holder \
+    import SpikeSourcePoissonVariableDataHolder as SpikeSourcePoissonVariable
+
 __all__ = [
     # sPyNNaker 8 models
     'IFCurDelta', 'IFCurrExpCa2Adaptive', 'IFCondExpStock',
@@ -34,4 +39,7 @@ __all__ = [
     'WeightDependenceAdditiveTriplet',
     'PfisterSpikeTriplet',
     'SpikeNearestPairRule',
-    'RecurrentRule', 'Vogels2011Rule']
+    'RecurrentRule', 'Vogels2011Rule',
+
+    # Variable rate Poisson
+    'SpikeSourcePoissonVariable']
