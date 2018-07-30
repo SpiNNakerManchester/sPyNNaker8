@@ -1,3 +1,4 @@
+from __future__ import print_function
 import spynnaker8 as p
 from p8_integration_tests.base_test_case import BaseTestCase
 
@@ -89,9 +90,9 @@ def do_run(do_print=False):
         for pop in [pop_a, pop_b, pop_c, pop_d, pop_e, pop_f, pop_g, pop_h,
                     pop_i, pop_j, pop_k, pop_l, pop_m, pop_n, pop_o]:
             spikes = pop.get_data("spikes").segments[0].spiketrains
-            print ""
-            print "=============================="
-            print pop.label
+            print("")
+            print("==============================")
+            print(pop.label)
             if isinstance(pop.celltype, p.SpikeSourcePoisson):
                 names = ["rate", "start", "duration"]
             else:
@@ -103,8 +104,8 @@ def do_run(do_print=False):
                 for name in names:
                     output += "{}: {{}}; ".format(name)
                     values.append(pop.get(name)[i])
-                print output.format(*values)
-                print spikes[i]
+                print(output.format(*values))
+                print(spikes[i])
 
     p.end()
 
