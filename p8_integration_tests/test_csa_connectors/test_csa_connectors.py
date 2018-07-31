@@ -66,8 +66,8 @@ def do_run(plot):
 
     # This creates a block of size (5,10) with a probability of 0.05; then
     # within the block an individual connection has a probability of 0.3
-    CSA_randomblock_connector = p.CSAConnector(
-        csa.block(15, 10)*csa.random(0.05)*csa.random(0.3))
+    csa_block_random = csa.block(15, 10)*csa.random(0.05)*csa.random(0.3)
+    CSA_randomblock_connector = p.CSAConnector(csa_block_random)
 
     # list of projections using the connectors above
     projections.append(p.Projection(

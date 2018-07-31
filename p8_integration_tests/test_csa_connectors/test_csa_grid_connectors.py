@@ -84,7 +84,7 @@ def do_run(plot):
         pylab.show()
 
         pylab.figure()
-        ticks = len(v) / (n*n)
+        ticks = len(v) // (n*n)
         for pos in range(0, n*n):
             v_for_neuron = v[pos * ticks: (pos + 1) * ticks]
             pylab.plot([i[2] for i in v_for_neuron])
@@ -93,6 +93,8 @@ def do_run(plot):
         pylab.title('membrane voltages per neuron')
 
         pylab.show()
+
+    p.end()
 
     return v, spikes
 
