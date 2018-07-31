@@ -6,7 +6,7 @@ import os
 def version_satisfies(module, requirement):
     """ Perform a version check. This code could be smarter...
     """
-    return Version(module.__version__) > Version(requirement)
+    return Version(module.__version__) >= Version(requirement)
 
 
 def install_sPyNNaker8_into(module):
@@ -27,7 +27,7 @@ def install_sPyNNaker8_into(module):
 # Check the version; we really want PyNN 0.9
 if not version_satisfies(pyNN, "0.9"):
     raise Exception(
-        "PyNN version {} found; SpyNNaker 9 requires PyNN version 0.9".format(
+        "PyNN version {} found; sPyNNaker 9 requires PyNN version 0.9".format(
             pyNN.__version__))
 
 # Perform the installation

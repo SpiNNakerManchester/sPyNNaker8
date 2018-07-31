@@ -20,7 +20,7 @@ class Synfire2RunNewPopIfCurrExpLower(BaseTestCase):
                                new_pop=new_pop)
         except NotImplementedError:
             # This is the current behaviour but would not be wrong if changed.
-            print "Adding populations without reset not yet supported"
+            print("Adding populations without reset not yet supported")
 
 
 if __name__ == '__main__':

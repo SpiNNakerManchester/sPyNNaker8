@@ -1,5 +1,6 @@
 # common imports
 import numpy as __numpy
+from six import iteritems
 
 # pynn imports
 from pyNN import common as pynn_common
@@ -377,10 +378,10 @@ def _create_overloaded_functions(spinnaker_simulator):
 
 
 def end(_=True):
-    """ Cleans up the spiNNaker machine and software
+    """ Cleans up the SpiNNaker machine and software
 
     :param _: was named compatible_output, which we don't care about,\
-        so is a none existent parameter
+        so is a non-existent parameter
     :rtype: None
     """
     for (population, variables, filename) in \
@@ -423,7 +424,7 @@ def list_standard_models():
         simulator.
     """
     results = list()
-    for (key, obj) in globals().iteritems():
+    for (key, obj) in iteritems(globals()):
         if isinstance(obj, type) and issubclass(obj, DataHolder)  \
                 and not obj == DataHolder:
             results.append(key)

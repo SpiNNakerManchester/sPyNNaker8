@@ -1,5 +1,7 @@
 language: python
-python: "2.7"
+python:
+  - 2.7
+  - 3.6
 dist: trusty
 
 cache: pip
@@ -39,7 +41,7 @@ script:
   # Tests
   - py.test unittests --cov spynnaker8
   # Code quality check
-  - flake8
+  - flake8 spynnaker8 unittests p8_fga_tests p8_integration_tests
   # Doc check
   - cd doc/source
   - sphinx-build -T -E -b html -d _build/doctrees-readthedocsdirhtml -D language=en . _build/html

@@ -47,8 +47,8 @@ class TestPoisson(BaseTestCase):
 
 if __name__ == '__main__':
     (spikes1, spikes2) = do_run()
-    print (len(spikes1))
-    print (spikes1)
-    print (len(spikes2))
-    print (spikes2)
+    print(len(spikes1))
+    print(spikes1)
+    print(len(spikes2))
+    print(spikes2)
     plot_utils.plot_spikes([spikes1, spikes2])

@@ -167,9 +167,13 @@ class TestVABenchmarkSpikes(BaseTestCase):
             # Just in case the range failed
             raise SkipTest(ex)
 
-        with open(neo_path, "r") as neo_file:
+        try:
+            with open(neo_path, "r") as neo_file:
                 recorded_spikes = pickle.load(neo_file)
-        neo_compare.compare_blocks(exc_spikes, recorded_spikes)
+            neo_compare.compare_blocks(exc_spikes, recorded_spikes)
+        except UnicodeDecodeError:
+            raise SkipTest(
+                "https://github.com/NeuralEnsemble/python-neo/issues/529")
 
 
 if __name__ == '__main__':

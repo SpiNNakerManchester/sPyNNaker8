@@ -77,7 +77,7 @@ def do_run():
     populations[1].set_constraint(ChipAndCoreConstraint(0, 0, 5))
 
     run_time = 100
-    print "Running for {} ms".format(run_time)
+    print("Running for {} ms".format(run_time))
 
     populations[0].record(['spikes'])
     p.run(run_time)
@@ -88,7 +88,7 @@ def do_run():
     spikes = neo_convertor.convert_spikes(populations[0].get_data(['spikes']))
     # print(projections[0].getWeights())
     # print(projections[0].getDelays())
-    # print delays
+    # print(delays)
 
     p.end()
 
@@ -108,7 +108,7 @@ if __name__ == '__main__':
 
     spikes = do_run()
     if spikes is not None:
-        print spikes
+        print(spikes)
         pylab.figure()
         pylab.plot([i[1] for i in spikes], [i[0] for i in spikes], ".")
         pylab.ylabel('neuron id')
@@ -118,7 +118,7 @@ if __name__ == '__main__':
         pylab.title('spikes')
         pylab.show()
     else:
-        print "No spikes received"
+        print("No spikes received")
 
     # Make some graphs
     """ticks = len(v) / nNeurons

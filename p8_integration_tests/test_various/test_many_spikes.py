@@ -56,4 +56,4 @@ if __name__ == '__main__':
     nNeurons = 600  # number of neurons in each population
     spikes = do_run(nNeurons, 69)
     plot_utils.plot_spikes(spikes)
-    print spikes
+    print(spikes)

@@ -1,3 +1,4 @@
+from __future__ import print_function
 """
 Synfirechain-like example
 """
@@ -6,6 +7,7 @@ from p8_integration_tests.scripts.synfire_run import SynfireRunner
 import spynnaker.plot_utils as plot_utils
 from spynnaker8.utilities import neo_convertor
 import spynnaker.spike_checker as spike_checker
+from six.moves import reduce
 
 n_neurons = 200  # number of neurons in each population
 runtimes = [1000, 1000, 1000, 1000, 1000]
@@ -59,7 +61,7 @@ if __name__ == '__main__':
                   map(len, spikes_neos[3].segments[0].spiketrains))
     len4 = reduce(lambda x, y: x + y,
                   map(len, spikes_neos[4].segments[0].spiketrains))
-    print len0, len1, len2, len3, len4
+    print(len0, len1, len2, len3, len4)
 
     spikes = map(neo_convertor.convert_spikes, spikes_neos)
     plot_utils.plot_spikes(spikes)

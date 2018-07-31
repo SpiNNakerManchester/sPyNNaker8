@@ -30,7 +30,7 @@ def _histogram(a, bins=10, plot_range=None, normed=False):
     # best block size probably depends on processor cache size
     block = 65536
     n = sort(a[:block]).searchsorted(bins)
-    for i in xrange(block, a.size, block):
+    for i in range(block, a.size, block):
         n += sort(a[i:i + block]).searchsorted(bins)
     n = concatenate([n, [len(a)]])
     n = n[1:] - n[:-1]
@@ -89,8 +89,9 @@ def _make_plot(ts, ts1, gids, neurons, hist, hist_binwidth, grayscale, title,
         heights = 1000 * n / (hist_binwidth * num_neurons)
         pylab.bar(t_bins, heights, width=hist_binwidth, color=color_bar,
                   edgecolor=color_edge)
-        pylab.yticks(map(lambda x: int(x),
-                         numpy.linspace(0.0, int(max(heights) * 1.1) + 5, 4)))
+        pylab.yticks(
+            list(map(lambda x: int(x),
+                     numpy.linspace(0.0, int(max(heights) * 1.1) + 5, 4))))
         pylab.ylabel("Rate (Hz)")
         pylab.xlabel(xlabel)
         pylab.xlim(xlim)

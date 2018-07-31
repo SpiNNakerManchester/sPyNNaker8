@@ -10,7 +10,7 @@ logger = logging.getLogger(__file__)
 
 class FixedNumberPostConnector(CommonFixedNumberPostConnector,
                                PyNNFixedNumberPostConnector):
-    """ pynn connector that puts a fixed number of connections on each of the\
+    """ PyNN connector that puts a fixed number of connections on each of the\
         post neurons
     """
     __slots__ = []
