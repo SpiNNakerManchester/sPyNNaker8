@@ -30,7 +30,8 @@ diffs = {}
 mins = {}
 maxs = {}
 
-num_source_neurons = 1024
+layers = 4
+num_source_neurons = 2**layers - 1
 
 
 p.setup(1) # 1 for LIf; 0.1 for Izhikevich
@@ -90,7 +91,7 @@ if recording:
 
 # Read profiler log to extract spike time
 # Read iobuf log to extract neuron update times
-path = p.globals_variables.get_simulator()._report_default_directory + "/provenance_data/iobuf*0_0*_3*"
+path = p.globals_variables.get_simulator()._report_default_directory + "/provenance_data/iobuf*1_0*_2*"
 n = 0
 diffs[n] = []
 

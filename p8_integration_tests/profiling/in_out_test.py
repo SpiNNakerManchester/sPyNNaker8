@@ -17,17 +17,19 @@ def _print_results(diffs, k):
 
 
 runtime = 1010 # Run for one second
+runtime = 100 # Run for one second
 n_neurons = [1]
+# n_neurons = [2, 16, 32, 64, 128, 255]
 # n_neurons = [2, 255]
-# n_neurons.extend(range(2, 256, 2))
+n_neurons.extend(range(2, 256, 4))
 # n_neurons.extend(range(2, 150, 1))
-# n_neurons.append(255)
+n_neurons.append(255)
 print n_neurons
 #, 2, 4, 8, 16, 32, 64, 128, 255] # takes value 1, 2, 100, 256
-source_neurons = 2
+source_neurons = 1
 recording = False
 
-alternating = True
+alternating = False
 grab = False
 
 diffs = {}
@@ -46,6 +48,7 @@ for n in n_neurons:
 
     # create spike source array to send spike
     spike_times = range(10,1010,10)
+    spike_times = range(1,101,1)
     source_pop = p.Population(source_neurons, p.SpikeSourceArray,
                         {'spike_times': spike_times}, label="src1")
 
@@ -107,10 +110,11 @@ for n in n_neurons:
 
     print "Timing measurement output:"
     _print_results(diffs, n)
-    _print_results(diffs, -n)
+    if alternating:
+        _print_results(diffs, -n)
 
     print "Length: {}".format(len(diffs[n]))
-#
+
 #     for d in diffs[n]:
 #         print d
 
@@ -121,9 +125,10 @@ print "index 1"
 for k in n_neurons:
     _print_results(diffs, k)
 
-print "index 0"
-for k in n_neurons:
-    _print_results(diffs, -k)
+if alternating:
+    print "index 0"
+    for k in n_neurons:
+        _print_results(diffs, -k)
 
 
 
