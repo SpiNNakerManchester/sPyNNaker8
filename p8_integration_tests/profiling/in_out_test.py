@@ -18,10 +18,10 @@ def _print_results(diffs, k):
 
 runtime = 1010 # Run for one second
 runtime = 100 # Run for one second
-n_neurons = [1]
+n_neurons = [150]
 # n_neurons = [2, 16, 32, 64, 128, 255]
 # n_neurons = [2, 255]
-n_neurons.extend(range(2, 256, 4))
+# n_neurons.extend(range(2, 256, 4))
 # n_neurons.extend(range(2, 150, 1))
 n_neurons.append(255)
 print n_neurons
