@@ -16,17 +16,17 @@ def _print_results(diffs, k):
         np.std(diffs[k]))
 
 
-runtime = 1010 # Run for one second
-runtime = 100 # Run for one second
-n_neurons = [128]
-# n_neurons = [2, 16, 32, 64, 128, 255]
+runtime = 20 # Run for one second
+# runtime = 100 # Run for one second
+# n_neurons = [128]
+n_neurons = [2, 16, 32, 64, 128, 255]
 # n_neurons = [2, 255]
 # n_neurons.extend(range(2, 256, 4))
 # n_neurons.extend(range(2, 150, 1))
 # n_neurons.append(255)
 print n_neurons
 #, 2, 4, 8, 16, 32, 64, 128, 255] # takes value 1, 2, 100, 256
-source_neurons = 1
+source_neurons = 15
 recording = False
 
 alternating = False
@@ -47,15 +47,24 @@ for n in n_neurons:
 #     pop = p.Population(n, p.extra_models.Izhikevich_cond(),  label="test")
 
     # create spike source array to send spike
-    spike_times = range(10,1010,10)
-    spike_times = range(1,101,1)
+    spike_times = range(10, runtime, 10)
+#     spike_times = range(1,101,1)
     source_pop = p.Population(source_neurons, p.SpikeSourceArray,
                         {'spike_times': spike_times}, label="src1")
 
+#     source_pop_2 = p.Population(source_neurons, p.SpikeSourceArray,
+#                         {'spike_times': spike_times}, label="src2")
+
     # Connect neurons all-to-all
     a2a_proj = p.Projection(
-        source_pop, target_pop, p.AllToAllConnector(),
-        p.StaticSynapse(weight=0.01, delay=1), receptor_type="excitatory")
+    source_pop, target_pop, p.AllToAllConnector(),
+    p.StaticSynapse(weight=0.01, delay=1), receptor_type="excitatory")
+
+#     # Connect neurons all-to-all
+#     a2a_proj_2 = p.Projection(
+#     source_pop_2, target_pop, p.AllToAllConnector(),
+#     p.StaticSynapse(weight=0.1, delay=5), receptor_type="excitatory")
+
 
     # Set recording and run
     if recording:
@@ -98,6 +107,12 @@ for n in n_neurons:
                     diffs[n].append(to_append)
 
     file.close()
+
+
+    # Remove first and last two elements to limit timing measurements to subsequent spikes (not first or last)
+    diffs[n].remove(diffs[n][0])
+    diffs[n].remove(diffs[n][-1])
+    diffs[n].remove(diffs[n][-1])
 
     print "Timing measurement output:"
     _print_results(diffs, n)

@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 
 
 runtime = 100 # Run for one second
-n_neurons = [1, 2, 4, 8, 16, 32, 64, 128, 255] # takes value 1, 2, 100, 256
+n_neurons = [3] #[1, 2, 4, 8, 16, 32, 64, 128, 255] # takes value 1, 2, 100, 256
 recording = True
 
 for n in n_neurons:
@@ -21,6 +21,7 @@ for n in n_neurons:
 #     pop = p.Population(n, p.Izhikevich(),  label="test")
 #     pop = p.Population(n, p.extra_models.Izhikevich_cond(),  label="test")
 
+#     pop.set(i_offset=5)
 
     # Set recording and run
     if recording:
@@ -46,7 +47,8 @@ for n in n_neurons:
     file = open(glob.glob(path)[0])
     for line in file.readlines():
         if line.__contains__("Diff"):
-            diffs[n].append(float(line.split(" ")[-1].split("\n")[0]))
+            if float(line.split(" ")[-1].split("\n")[0]):
+                diffs[n].append(float(line.split(" ")[-1].split("\n")[0]))
 
     file.close()
 
