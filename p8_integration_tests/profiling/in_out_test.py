@@ -21,7 +21,7 @@ runtime = 100 # Run for one second
 n_neurons = [128]
 # n_neurons = [2, 16, 32, 64, 128, 255]
 # n_neurons = [2, 255]
-# n_neurons.extend(range(2, 256, 4))
+n_neurons.extend(range(2, 256, 4))
 # n_neurons.extend(range(2, 150, 1))
 # n_neurons.append(255)
 print n_neurons
@@ -55,7 +55,7 @@ for n in n_neurons:
     # Connect neurons all-to-all
     a2a_proj = p.Projection(
         source_pop, target_pop, p.AllToAllConnector(),
-        p.StaticSynapse(weight=0.01, delay=1), receptor_type="excitatory")
+        p.StaticSynapse(weight=0.001, delay=1), receptor_type="excitatory")
 
     # Set recording and run
     if recording:
