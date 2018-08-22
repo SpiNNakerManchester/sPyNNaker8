@@ -18,7 +18,7 @@ neuron_params = {
 
 # pop_exc = p.Population(1, p.Izhikevich(**neuron_params),  label="LIF Neuron")
 
-pop_exc = p.Population(1, p.extra_models.IFCurrCombExp2E2I(**neuron_params),  label="LIF Neuron")
+pop_exc = p.Population(32, p.extra_models.IFCurrCombExp2E2I(**neuron_params),  label="LIF Neuron")
 
 
 spike_times = [10, 15, 17, 19, 21]
@@ -29,7 +29,8 @@ pop_src1 = p.Population(1, p.SpikeSourceArray,
 
 # Create projection
 synapse = p.Projection(
-    pop_src1, pop_exc, p.OneToOneConnector(0.6),
+    pop_src1, pop_exc, p.AllToAllConnector(),
+    #pop_src1, pop_exc, p.OneToOneConnector(0.6),
     p.StaticSynapse(weight=2, delay=1), receptor_type="excitatory2")
 
 pop_src1.record('all')
