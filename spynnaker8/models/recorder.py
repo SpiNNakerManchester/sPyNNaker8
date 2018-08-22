@@ -354,6 +354,10 @@ def read_in_spikes(segment, spikes, t, n_neurons, first_id,
     :type label: str
     """
     # pylint: disable=too-many-arguments
+    # Safety check in case spikes are an empty list
+    if len(spikes) == 0:
+        spikes = numpy.empty(shape=(0, 2))
+
     t_stop = t * quantities.ms
 
     for index in xrange(n_neurons):
