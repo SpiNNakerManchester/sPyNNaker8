@@ -70,6 +70,11 @@ class HillTononiNeuronDataHolder(DataHolder):
             inh2_b_B=HillTononiNeuron.default_parameters['inh2_b_B'],
             inh2_b_tau=HillTononiNeuron.default_parameters['inh2_b_tau'],
 
+            ampa_rev_E=HillTononiNeuron.default_parameters['ampa_rev_E'],
+            nmda_rev_E=HillTononiNeuron.default_parameters['nmda_rev_E'],
+            gaba_a_rev_E=HillTononiNeuron.default_parameters['gaba_a_rev_E'],
+            gaba_b_rev_E=HillTononiNeuron.default_parameters['gaba_b_rev_E']
+
             ):
 
         # pylint: disable=too-many-arguments, too-many-locals
@@ -127,6 +132,14 @@ class HillTononiNeuronDataHolder(DataHolder):
             'inh2_b_response': inh2_b_response,
             'inh2_b_B': inh2_b_B,
             'inh2_b_tau': inh2_b_tau,
+
+            # #### Input Type ####
+            'ampa_rev_E': ampa_rev_E,
+            'nmda_rev_E': nmda_rev_E,
+            'gaba_a_rev_E': gaba_a_rev_E,
+            'gaba_b_rev_E': gaba_b_rev_E
+
+
 
             })
 
