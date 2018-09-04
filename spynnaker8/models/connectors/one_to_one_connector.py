@@ -14,8 +14,7 @@ class OneToOneConnector(CommonOneToOneConnector, PyNNOneToOneConnector):
     __slots__ = []
 
     def __init__(self, safe=True, callback=None):
-        """ the one to one connector constructor
-
+        """
         :param safe: if True, check that weights and delays have valid values.\
             If False, this check is skipped.
         :param callback: a function that will be called with the fractional \
