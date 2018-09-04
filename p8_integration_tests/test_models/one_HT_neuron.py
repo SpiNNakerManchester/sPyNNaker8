@@ -35,7 +35,7 @@ pop_src1 = p.Population(1, p.SpikeSourceArray,
 # Create projection
 synapse = p.Projection(
     pop_src1, pop_exc, p.OneToOneConnector(0.6),
-    p.StaticSynapse(weight=100, delay=1), receptor_type="excitatory")
+    p.StaticSynapse(weight=100, delay=1), receptor_type="AMPA")
 
 # pop_src1.record('all')
 
