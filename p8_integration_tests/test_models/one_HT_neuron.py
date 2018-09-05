@@ -43,7 +43,6 @@ weights = []
 # pre_spikes = pop_src1.get_data('spikes')
 exc_data = pop_exc.get_data()
 
-
 # Plot
 Figure(
     # raster plot of the presynaptic neuron spike times
