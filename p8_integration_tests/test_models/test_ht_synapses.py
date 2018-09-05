@@ -1,7 +1,4 @@
 import spynnaker8 as p
-import numpy
-import math
-import unittest
 from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt
 
@@ -14,10 +11,9 @@ AMPA_src = p.Population(1, p.SpikeSourceArray,
 NMDA_src = p.Population(1, p.SpikeSourceArray,
                         {'spike_times': [60]}, label="src1")
 GABA_A_src = p.Population(1, p.SpikeSourceArray,
-                        {'spike_times': [30]}, label="src1")
+                          {'spike_times': [30]}, label="src1")
 GABA_B_src = p.Population(1, p.SpikeSourceArray,
-                        {'spike_times': [160]}, label="src1")
-
+                          {'spike_times': [160]}, label="src1")
 
 # Post-synapse population
 pop_exc = p.Population(1, p.extra_models.HillTononiNeuron(),  label="test")
@@ -38,7 +34,6 @@ synapse_GABA_B = p.Projection(
 pop_exc.record("all")
 p.run(runtime)
 weights = []
-
 
 # runtime = runtime/0.1 # temporary scaling to account for new recording
 # weights.append(synapse_GABA_B.get('weight', 'list',
@@ -64,9 +59,7 @@ Figure(
     Panel(exc_data.segments[0].spiketrains,
           yticks=True, markersize=0.2, xlim=(0, runtime)),
     annotations="Post-synaptic neuron firing frequency: {} Hz".format(
-    len(exc_data.segments[0].spiketrains[0]))
+        len(exc_data.segments[0].spiketrains[0]))
 )
 plt.show()
 # p.end()
-
-

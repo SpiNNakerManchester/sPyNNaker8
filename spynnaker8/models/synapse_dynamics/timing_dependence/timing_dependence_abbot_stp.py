@@ -2,6 +2,7 @@ from spynnaker.pyNN.models.neuron.plasticity.stdp.timing_dependence \
     import TimingDependenceAbbotSTP as \
     CorrectAbbotSTP
 
+
 class TimingDependenceAbbotSTP(
        CorrectAbbotSTP):
 
@@ -36,4 +37,3 @@ class TimingDependenceAbbotSTP(
     @A_minus.setter
     def A_minus(self, new_value):
         self._a_minus = new_value
-

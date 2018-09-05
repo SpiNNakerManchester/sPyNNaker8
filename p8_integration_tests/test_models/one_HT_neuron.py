@@ -1,17 +1,14 @@
 import spynnaker8 as p
-import numpy
-import math
-import unittest
 from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt
 
 timestep = 0.1
-p.setup(timestep) # set simulation timestep (ms)
+p.setup(timestep)  # set simulation timestep (ms)
 runtime = 750
 
 # Post-synapse population
 neuron_params = {
-        'v_init': -65,
+#         'v_init': -65,
         'g_Na': 0.2,
         'E_Na': 30.0,
         'g_K': 1.85,
@@ -35,7 +32,7 @@ pop_src1 = p.Population(1, p.SpikeSourceArray,
 # Create projection
 synapse = p.Projection(
     pop_src1, pop_exc, p.OneToOneConnector(0.6),
-    p.StaticSynapse(weight=100, delay=1), receptor_type="AMPA")
+    p.StaticSynapse(weight=1, delay=1), receptor_type="AMPA")
 
 # pop_src1.record('all')
 
@@ -50,8 +47,8 @@ exc_data = pop_exc.get_data()
 # Plot
 Figure(
     # raster plot of the presynaptic neuron spike times
-#     Panel(pre_spikes_slow.segments[0].spiketrains,
-#           yticks=True, markersize=0.2, xlim=(0, runtime)),
+    # Panel(pre_spikes_slow.segments[0].spiketrains,
+    # yticks=True, markersize=0.2, xlim=(0, runtime)),
     # plot data for postsynaptic neuron
     Panel(exc_data.segments[0].filter(name='v')[0],
           ylabel="Membrane potential (mV)",
@@ -68,5 +65,3 @@ Figure(
 
 plt.show()
 p.end()
-
-

@@ -135,7 +135,8 @@ __all__ = [
     'StaticSynapse',
     # plastic stuff
     'STDPMechanism', 'AdditiveWeightDependence',
-    'MultiplicativeWeightDependence', 'SpikePairRule',
+    'MultiplicativeWeightDependence', 'STPOnlyWeightDependence',
+    'SpikePairRule', 'AbbotSTP',
     # neuron stuff
     'IF_cond_exp', 'IF_curr_exp', "IF_curr_alpha",
     'Izhikevich', 'SpikeSourceArray', 'SpikeSourcePoisson',

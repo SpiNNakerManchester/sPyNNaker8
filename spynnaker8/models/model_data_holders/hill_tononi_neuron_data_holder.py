@@ -32,41 +32,50 @@ class HillTononiNeuronDataHolder(DataHolder):
 
             # #### Threshold Model ####
             v_thresh=HillTononiNeuron.default_parameters['v_thresh'],
-            v_thresh_resting=HillTononiNeuron.default_parameters['v_thresh_resting'],
+            v_thresh_resting=HillTononiNeuron.default_parameters[
+                'v_thresh_resting'],
             v_thresh_tau=HillTononiNeuron.default_parameters['v_thresh_tau'],
             v_thresh_Na_reversal=HillTononiNeuron.default_parameters[
                 'v_thresh_Na_reversal'],
 
             # #### Synapse Model ####
             # AMPA - excitatory
-            exc_a_response=HillTononiNeuron.default_parameters['exc_a_response'],
+            exc_a_response=HillTononiNeuron.default_parameters[
+                'exc_a_response'],
             exc_a_A=HillTononiNeuron.default_parameters['exc_a_A'],
             exc_a_tau=HillTononiNeuron.default_parameters['exc_a_tau'],
-            exc_b_response=HillTononiNeuron.default_parameters['exc_b_response'],
+            exc_b_response=HillTononiNeuron.default_parameters[
+                'exc_b_response'],
             exc_b_B=HillTononiNeuron.default_parameters['exc_b_B'],
             exc_b_tau=HillTononiNeuron.default_parameters['exc_b_tau'],
 
             # NMDA - excitatory2
-            exc2_a_response=HillTononiNeuron.default_parameters['exc2_a_response'],
+            exc2_a_response=HillTononiNeuron.default_parameters[
+                'exc2_a_response'],
             exc2_a_A=HillTononiNeuron.default_parameters['exc2_a_A'],
             exc2_a_tau=HillTononiNeuron.default_parameters['exc2_a_tau'],
-            exc2_b_response=HillTononiNeuron.default_parameters['exc2_b_response'],
+            exc2_b_response=HillTononiNeuron.default_parameters[
+                'exc2_b_response'],
             exc2_b_B=HillTononiNeuron.default_parameters['exc2_b_B'],
             exc2_b_tau=HillTononiNeuron.default_parameters['exc2_b_tau'],
 
             # GABA_A - inhibitory
-            inh_a_response=HillTononiNeuron.default_parameters['inh_a_response'],
+            inh_a_response=HillTononiNeuron.default_parameters[
+                'inh_a_response'],
             inh_a_A=HillTononiNeuron.default_parameters['inh_a_A'],
             inh_a_tau=HillTononiNeuron.default_parameters['inh_a_tau'],
-            inh_b_response=HillTononiNeuron.default_parameters['inh_b_response'],
+            inh_b_response=HillTononiNeuron.default_parameters[
+                'inh_b_response'],
             inh_b_B=HillTononiNeuron.default_parameters['inh_b_B'],
             inh_b_tau=HillTononiNeuron.default_parameters['inh_b_tau'],
 
             # GABA_B - inhibitory2
-            inh2_a_response=HillTononiNeuron.default_parameters['inh2_a_response'],
+            inh2_a_response=HillTononiNeuron.default_parameters[
+                'inh2_a_response'],
             inh2_a_A=HillTononiNeuron.default_parameters['inh2_a_A'],
             inh2_a_tau=HillTononiNeuron.default_parameters['inh2_a_tau'],
-            inh2_b_response=HillTononiNeuron.default_parameters['inh2_b_response'],
+            inh2_b_response=HillTononiNeuron.default_parameters[
+                'inh2_b_response'],
             inh2_b_B=HillTononiNeuron.default_parameters['inh2_b_B'],
             inh2_b_tau=HillTononiNeuron.default_parameters['inh2_b_tau'],
 
@@ -74,7 +83,6 @@ class HillTononiNeuronDataHolder(DataHolder):
             nmda_rev_E=HillTononiNeuron.default_parameters['nmda_rev_E'],
             gaba_a_rev_E=HillTononiNeuron.default_parameters['gaba_a_rev_E'],
             gaba_b_rev_E=HillTononiNeuron.default_parameters['gaba_b_rev_E']
-
             ):
 
         # pylint: disable=too-many-arguments, too-many-locals
@@ -138,9 +146,6 @@ class HillTononiNeuronDataHolder(DataHolder):
             'nmda_rev_E': nmda_rev_E,
             'gaba_a_rev_E': gaba_a_rev_E,
             'gaba_b_rev_E': gaba_b_rev_E
-
-
-
             })
 
     @staticmethod
