@@ -101,8 +101,9 @@ class lib_test_inhib2():
          patt = pg.pattern(nInhibNeurons, nInhibFiring, patternCycleTime, 10, numBins, rng=rng, spikeTrain=False, jitterSD = myJitter, spuriousSpikeProb = 0.0)
          patt.events = list()
          for j in range(50):
+            #j = 22
             patt.events.append((j, 0.5*j))
-         inPatterns.append(patt)
+         inInhibPatterns.append(patt)
          # Output pattern: (1 neuron firing at t = 15 ms)
          patt = pg.pattern(nExcitNeurons, nExcitFiring, patternCycleTime, 1, numBins, rng=rng, spikeTrain=False, jitterSD = myJitter, spuriousSpikeProb = 0.0)
          patt.events = [(1, 15.0)]
@@ -146,7 +147,7 @@ class lib_test_inhib2():
       patternTiming = myStimulus.buildStream(numSources=nStimulusNeurons, patterns=inPatterns, interPatternGap=interPatternGap, offset=0.0, rng = rng, noise = None, runTime = runTime, order=patternPresentationOrder)   # noise was 1Hz
       
       myInhibStimulus=pg.spikeStream()
-      inhibPatternTiming = myInhibStimulus.buildStream(numSources=nInhibNeurons, patterns=inPatterns, interPatternGap=interPatternGap, offset=0.0, rng = rng, noise = None, runTime = runTime, order=patternPresentationOrder)   # noise was 1Hz
+      inhibPatternTiming = myInhibStimulus.buildStream(numSources=nInhibNeurons, patterns=inInhibPatterns, interPatternGap=interPatternGap, offset=0.0, rng = rng, noise = None, runTime = runTime, order=patternPresentationOrder)   # noise was 1Hz
       
       teachingInput=pg.spikeStream()
       teachingInput.buildStream(numSources=nExcitNeurons, patterns=outPatterns, interPatternGap=interPatternGap, offset=-1.0, rng = rng, noise = None, runTime = runTime, order=teachingOrder)
