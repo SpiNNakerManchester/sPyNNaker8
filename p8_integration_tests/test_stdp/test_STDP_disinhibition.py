@@ -81,9 +81,10 @@ class TestSTDPNearestPairAdditive(BaseTestCase):
         spikes = pop_exc.get_data('spikes')
 
         potentiation_time = (spikes.segments[0].spiketrains[0].magnitude[0] +
-                             plastic_delay) - spike_times[0]
-        depression_time = spike_times[1] - (
-            spikes.segments[0].spiketrains[0].magnitude[1] + plastic_delay)
+                             plastic_delay) #- spike_times[0]
+        print potentiation_time
+#         depression_time = spike_times[1] - (
+#             spikes.segments[0].spiketrains[0].magnitude[1] + plastic_delay)
 
         potentiation = max_weight * a_plus * \
             math.exp(-potentiation_time/tau_plus)
