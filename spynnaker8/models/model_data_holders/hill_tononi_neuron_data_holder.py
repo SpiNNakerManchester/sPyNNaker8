@@ -79,10 +79,47 @@ class HillTononiNeuronDataHolder(DataHolder):
             inh2_b_B=HillTononiNeuron.default_parameters['inh2_b_B'],
             inh2_b_tau=HillTononiNeuron.default_parameters['inh2_b_tau'],
 
+            # #### Input Type ####
             ampa_rev_E=HillTononiNeuron.default_parameters['ampa_rev_E'],
             nmda_rev_E=HillTononiNeuron.default_parameters['nmda_rev_E'],
             gaba_a_rev_E=HillTononiNeuron.default_parameters['gaba_a_rev_E'],
-            gaba_b_rev_E=HillTononiNeuron.default_parameters['gaba_b_rev_E']
+            gaba_b_rev_E=HillTononiNeuron.default_parameters['gaba_b_rev_E'],
+
+            # #### Additional Input ####
+            # Pacemaker
+            I_H=HillTononiNeuron.default_parameters['I_H'],
+            g_H=HillTononiNeuron.default_parameters['g_H'],
+            E_H=HillTononiNeuron.default_parameters['E_H'],
+            m_H=HillTononiNeuron.default_parameters['m_H'],
+            m_inf_H=HillTononiNeuron.default_parameters['m_inf_H'],
+            e_to_t_on_tau_m_H=HillTononiNeuron.default_parameters['e_to_t_on_tau_m_H'],
+            # Calcium
+            I_T=HillTononiNeuron.default_parameters['I_T'],
+            g_T=HillTononiNeuron.default_parameters['g_T'],
+            E_T=HillTononiNeuron.default_parameters['E_T'],
+            m_T=HillTononiNeuron.default_parameters['m_T'],
+            m_inf_T=HillTononiNeuron.default_parameters['m_inf_T'],
+            e_to_t_on_tau_m_T=HillTononiNeuron.default_parameters['e_to_t_on_tau_m_T'],
+            h_T=HillTononiNeuron.default_parameters['h_T'],
+            h_inf_T=HillTononiNeuron.default_parameters['h_inf_T'],
+            e_to_t_on_tau_h_T=HillTononiNeuron.default_parameters['e_to_t_on_tau_h_T'],
+            # Sodium
+            I_NaP=HillTononiNeuron.default_parameters['I_NaP'],
+            g_NaP=HillTononiNeuron.default_parameters['g_NaP'],
+            E_NaP=HillTononiNeuron.default_parameters['E_NaP'],
+            m_inf_NaP=HillTononiNeuron.default_parameters['m_inf_NaP'],
+            # Potassium
+            I_DK=HillTononiNeuron.default_parameters['I_DK'],
+            g_DK=HillTononiNeuron.default_parameters['g_DK'],
+            E_DK=HillTononiNeuron.default_parameters['E_DK'],
+            m_inf_DK=HillTononiNeuron.default_parameters['m_inf_DK'],
+            e_to_t_on_tau_m_DK=HillTononiNeuron.default_parameters['e_to_t_on_tau_m_DK'],
+            D=HillTononiNeuron.default_parameters['D'],
+            D_infinity=HillTononiNeuron.default_parameters['D_infinity'],
+            # Voltage Clamp
+            v_clamp=HillTononiNeuron.default_parameters['v_clamp'],
+            s_clamp=HillTononiNeuron.default_parameters['s_clamp'],
+            t_clamp=HillTononiNeuron.default_parameters['t_clamp'],
             ):
 
         # pylint: disable=too-many-arguments, too-many-locals
@@ -145,7 +182,9 @@ class HillTononiNeuronDataHolder(DataHolder):
             'ampa_rev_E': ampa_rev_E,
             'nmda_rev_E': nmda_rev_E,
             'gaba_a_rev_E': gaba_a_rev_E,
-            'gaba_b_rev_E': gaba_b_rev_E
+            'gaba_b_rev_E': gaba_b_rev_E,
+
+            # #### Additional Input ####
             })
 
     @staticmethod
