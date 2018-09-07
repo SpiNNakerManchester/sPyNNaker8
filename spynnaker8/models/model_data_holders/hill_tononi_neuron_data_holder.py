@@ -185,6 +185,40 @@ class HillTononiNeuronDataHolder(DataHolder):
             'gaba_b_rev_E': gaba_b_rev_E,
 
             # #### Additional Input ####
+            # Pacemaker Current
+            'I_H': I_H,
+            'g_H': g_H,
+            'E_H': E_H,
+            'm_H': m_H,
+            'm_inf_H': m_inf_H,
+            'e_to_t_on_tau_m_H': e_to_t_on_tau_m_H,
+            # Calcium Current
+            'I_T': I_T,
+            'g_T': g_T,
+            'E_T': E_T,
+            'm_T': m_T,
+            'm_inf_T': m_inf_T,
+            'e_to_t_on_tau_m_T': e_to_t_on_tau_m_T,
+            'h_T': h_T,
+            'h_inf_T': h_inf_T,
+            'e_to_t_on_tau_h_T': e_to_t_on_tau_h_T,
+            # Sodium Current
+            'I_NaP': I_NaP,
+            'g_NaP': g_NaP,
+            'E_NaP': E_NaP,
+            'm_inf_NaP': m_inf_NaP,
+            # Potassium Current
+            'I_DK': I_DK,
+            'g_DK': g_DK,
+            'E_DK': E_DK,
+            'm_inf_DK': m_inf_DK,
+            'e_to_t_on_tau_m_DK': e_to_t_on_tau_m_DK,
+            'D': D,
+            'D_infinity': D_infinity,
+            # Voltage Clamp
+            'v_clamp': v_clamp,
+            's_clamp': s_clamp,
+            't_clamp': t_clamp
             })
 
     @staticmethod

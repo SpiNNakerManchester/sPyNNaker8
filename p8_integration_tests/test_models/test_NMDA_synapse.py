@@ -37,7 +37,7 @@ synapse = p.Projection(
 pop_exc.record("all")
 for i in range(num_intervals):
     p.run(runtime/num_intervals)
-    new_i_offset += 10
+    new_i_offset += 12.5
     pop_exc.set(i_offset=new_i_offset)
 
 # pre_spikes = pop_src1.get_data('spikes')
@@ -52,9 +52,9 @@ Figure(
     Panel(exc_data.segments[0].filter(name='v')[0],
           ylabel="Membrane potential (mV)",
           data_labels=[pop_exc.label], yticks=True, xlim=(0, runtime)),
-    # Panel(exc_data.segments[0].filter(name='gsyn_inh')[0],
-    #       ylabel="Threshold (mV)",
-    #       data_labels=[pop_exc.label], yticks=True, xlim=(0, runtime)),
+    Panel(exc_data.segments[0].filter(name='gsyn_inh')[0],
+          ylabel="Threshold (mV)",
+          data_labels=[pop_exc.label], yticks=True, xlim=(0, runtime)),
     # Panel(exc_data.segments[0].filter(name='gsyn_exc')[0],
     #       ylabel="gsyn excitatory (mV)",
     #       data_labels=[pop_exc.label], yticks=True, xlim=(0, runtime)),

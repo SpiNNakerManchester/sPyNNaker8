@@ -15,7 +15,7 @@ neuron_params = {
         'E_K': -90.0,
         'tau_m': 16,
         't_spike': 2,
-        'i_offset': 35,
+#         'i_offset': 35,
         }
 
 pop_exc = p.Population(1,
