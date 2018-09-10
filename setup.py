@@ -67,5 +67,7 @@ setup(
         'pynn >= 0.9.1, < 0.10.0 ',
         'lazyarray >= 0.2.9, <= 0.2.9',
         'appdirs >= 1.4.2 , < 2.0.0',
-        'neo >= 0.5.2, < 0.6.0']
+        'neo >= 0.5.2, < 0.6.0'],
+    maintainer="SpiNNakerTeam",
+    maintainer_email="spinnakerusers@googlegroups.com"
 )
