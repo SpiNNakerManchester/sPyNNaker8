@@ -11,10 +11,12 @@ from .if_curr_delta_data_holder import IfCurrDeltaDataHolder
 from .if_curr_alpha_data_holder import IFCurrAlphaDataHolder
 from .if_curr_exp_ca2_adaptive_data_holder \
     import IfCurrExpCa2AdaptiveDataHolder
+from .if_cond_exp_2E2I_data_holder import IFCondExp2E2IDataHolder
 
 __all__ = ["IFCondExpDataHolder", "IFCurrDualExpDataHolder",
            "IFCurrExpDataHolder", "IzkCondExpDataHolder",
            "IzkCurrExpDataHolder", "SpikeSourceArrayDataHolder",
            "SpikeSourcePoissonDataHolder", "SpikeInjectorDataHolder",
            "IfCondExpStocDataHolder", "IfCurrDeltaDataHolder",
-           "IfCurrExpCa2AdaptiveDataHolder", "IFCurrAlphaDataHolder"]
+           "IfCurrExpCa2AdaptiveDataHolder", "IFCurrAlphaDataHolder",
+           "IFCondExp2E2IDataHolder"]
