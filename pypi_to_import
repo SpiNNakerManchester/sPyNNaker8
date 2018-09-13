@@ -1,0 +1,16 @@
+SpiNNUtilities:spinn_utilities
+SpiNNMachine:spinn_machine
+SpiNNMan:spinnman
+SpiNNStorageHandlers:spinn_storage_handlers
+SpiNNaker_PACMAN:pacman
+SpiNNaker_DataSpecification:data_specification
+spalloc:spalloc
+SpiNNFrontEndCommon:spinn_front_end_common
+sPyNNaker:spynnaker
+quantities:quantities
+pynn:pyNN
+lazyarray:lazyarray
+appdirs:appdirs
+neo:neo
+matplotlib:matplotlib
+csa:csa
