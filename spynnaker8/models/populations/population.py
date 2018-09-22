@@ -3,7 +3,6 @@ from six import iteritems, string_types
 from spynnaker.pyNN.exceptions import InvalidParameterType
 from spynnaker.pyNN.models.pynn_population_common import PyNNPopulationCommon
 from spynnaker.pyNN.utilities.constants import SPIKES
-from spynnaker.pyNN.models.abstract_pynn_model import AbstractPyNNModel
 from spinn_front_end_common.utilities import globals_variables
 from spinn_front_end_common.utilities.exceptions import ConfigurationException
 
@@ -26,7 +25,6 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
             initial_values=None, label=None, constraints=None,
             additional_parameters=None):
         # pylint: disable=too-many-arguments
-        size = self._roundsize(size, label)
 
         # hard code initial values as required
         if initial_values is None:
@@ -34,17 +32,11 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
 
         model = cellclass
         if inspect.isclass(cellclass):
-            if not issubclass(cellclass, AbstractPyNNModel):
-                raise TypeError(
-                    "cellclass must be a subclass of AbstractPyNNModel")
             if cellparams is None:
                 model = cellclass()
             else:
                 model = cellclass(**cellparams)
         self._celltype = model
-
-        if not isinstance(model, AbstractPyNNModel):
-            raise TypeError("cellclass must extend AbstractPyNNModel")
 
         # build our initial objects
         super(Population, self).__init__(
