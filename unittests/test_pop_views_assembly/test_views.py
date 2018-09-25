@@ -110,7 +110,7 @@ class Test_IDMixin(BaseTestCase):
         view = PopulationView(pop, [1, 3], label="Odds")
         view2 = PopulationView(pop, [1, 2], label="OneTwo")
         view_iv = view.initial_values
-        self.assertEqual(1, len(view_iv))
+        self.assertEqual(3, len(view_iv))
         self.assertEqual([-65, -65], view_iv["v"])
         view.initialize(v=-60)
         self.assertEqual([-65, -60, -65, -60, -65], pop.get_initial_value("v"))
