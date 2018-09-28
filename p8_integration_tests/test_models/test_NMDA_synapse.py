@@ -4,11 +4,11 @@ import matplotlib.pyplot as plt
 
 timestep = 0.1
 p.setup(timestep)  # set simulation timestep (ms)
-runtime = 2000
+runtime = 20000
 
 # Post-synapse population
 new_i_offset = -20
-num_intervals = 7
+num_intervals = 12
 neuron_params = {
         'v_init': -88.1,
         'g_Na': 0.2,
@@ -18,6 +18,8 @@ neuron_params = {
         'tau_m': 16,
         't_spike': 2,
         'i_offset': new_i_offset,
+        'v_thresh': 50,
+        'v_thresh_resting': 50
         }
 
 pop_exc = p.Population(1,
