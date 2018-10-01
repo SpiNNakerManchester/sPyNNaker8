@@ -15,7 +15,6 @@ class DataCache(object):
 
     __slots__ = ("_cache",
                  "_description",
-                 "_first_id",
                  "_label",
                  "_rec_datetime",
                  "_recording_start_time",
@@ -23,7 +22,7 @@ class DataCache(object):
                  "_t")
 
     def __init__(self, label, description, segment_number,
-                 recording_start_time, t, first_id):
+                 recording_start_time, t):
         """
         :param label: cache label
         :param description: cache description
@@ -31,7 +30,6 @@ class DataCache(object):
         :param recording_start_time: \
             when this cache was started in recording space.
         :param t: time
-        :param first_id: first atom
         """
         # pylint: disable=too-many-arguments
         self._label = label
@@ -39,7 +37,6 @@ class DataCache(object):
         self._segment_number = segment_number
         self._recording_start_time = recording_start_time
         self._t = t
-        self._first_id = first_id
         self._cache = dict()
         self._rec_datetime = None
 
@@ -72,10 +69,6 @@ class DataCache(object):
         return self._t
 
     @property
-    def first_id(self):
-        return self._first_id
-
-    @property
     def rec_datetime(self):
         return self._rec_datetime
 
@@ -94,24 +87,29 @@ class DataCache(object):
 
         :param variable: name of variable to get cache for
         :rtype variable: str
-        :return: The cache data, ids, indexes and units
+        :return: The cache data, IDs, indexes and units
         :rtype: VariableCache
         """
         return self._cache[variable]
 
-    def save_data(self, variable, data, indexes, units, sampling_interval):
+    def save_data(self, variable, data, indexes, n_neurons, units,
+                  sampling_interval):
         """ Saves the data for one variable in this segment
 
         :param variable: name of variable data applies to
         :type variable: str
-        :param data: raw data in spynnaker format
+        :param data: raw data in sPyNNaker format
         :type data: nparray
         :param indexes: population indexes for which data should be returned
         :type indexes: nparray
+        :param n_neurons: Number of neurons in the population.\
+            Regardless of if they where recording or not.
+        :type n_neurons: int
         :param units: the units in which the data is
         :type units: str
         :rtype: None
         """
         self._rec_datetime = datetime.now()
-        variable_cache = VariableCache(data, indexes, units, sampling_interval)
+        variable_cache = VariableCache(
+            data, indexes, n_neurons, units, sampling_interval)
         self._cache[variable] = variable_cache

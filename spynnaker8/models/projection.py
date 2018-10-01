@@ -7,6 +7,8 @@ from pyNN.space import Space as PyNNSpace
 
 from spynnaker8.models.connectors import FromListConnector
 from spynnaker8.models.synapse_dynamics import SynapseDynamicsStatic
+from spynnaker8.models.populations.population import Population
+from spynnaker8.models.populations.population_view import PopulationView
 from spynnaker8._version import __version__
 
 from spynnaker.pyNN.models.pynn_projection_common import PyNNProjectionCommon
@@ -20,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 
 class Projection(PyNNProjectionCommon):
-    """ spynnaker 8 projection class
+    """ sPyNNaker 8 projection class
     """
     # pylint: disable=redefined-builtin
 
@@ -36,6 +38,9 @@ class Projection(PyNNProjectionCommon):
             raise InvalidParameterType(
                 "sPyNNaker8 {} does not yet support multi-compartmental "
                 "cells.".format(__version__))
+
+        self._check_population_param(pre_synaptic_population)
+        self._check_population_param(post_synaptic_population)
 
         # set space object if not set
         if space is None:
@@ -76,6 +81,15 @@ class Projection(PyNNProjectionCommon):
             user_max_delay=self._simulator.max_delay, label=label,
             time_scale_factor=self._simulator.time_scale_factor)
 
+    def _check_population_param(self, param):
+        if isinstance(param, Population):
+            return  # Good that is what we want
+        if isinstance(param, PopulationView):
+            raise NotImplementedError(
+                "Projections over views not currently supported")
+        raise ConfigurationException("Unexpected parameter type {}. Expected "
+                                     "Population".format(type(param)))
+
     def __len__(self):
         raise NotImplementedError
 
@@ -84,12 +98,12 @@ class Projection(PyNNProjectionCommon):
 
     def get(self, attribute_names, format,  # @ReservedAssignment
             gather=True, with_address=True, multiple_synapses='last'):
-        """ get a parameter for pynn 0.8
+        """ Get a parameter for PyNN 0.8
 
         :param attribute_names: list of attributes to gather
         :type attribute_names: str or iterable(str)
         :param format: "list" or "array"
-        :param gather: gather over all nodes (defaulted to true on spinnaker)
+        :param gather: gather over all nodes (defaulted to true on SpiNNaker)
         :param with_address: True if the source and target are to be included
         :param multiple_synapses:\
             What to do with the data if format="array" and if the multiple\

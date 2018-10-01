@@ -42,16 +42,20 @@ class TestMallocKeyAllocatorWithSynfire(BaseTestCase):
             v_read = synfire_run.get_output_pop_voltage_neo()
             gsyn_read = synfire_run.get_output_pop_gsyn_exc_neo()
 
-            with open(current_spike_file_path, "r") as spike_file:
-                spikes_saved = pickle.load(spike_file)
-            with open(current_v_file_path, "r") as v_file:
-                v_saved = pickle.load(v_file)
-            with open(current_gsyn_file_path, "r") as gsyn_file:
-                gsyn_saved = pickle.load(gsyn_file)
+            try:
+                with open(current_spike_file_path, "r") as spike_file:
+                    spikes_saved = pickle.load(spike_file)
+                with open(current_v_file_path, "r") as v_file:
+                    v_saved = pickle.load(v_file)
+                with open(current_gsyn_file_path, "r") as gsyn_file:
+                    gsyn_saved = pickle.load(gsyn_file)
 
-            neo_compare.compare_blocks(spikes_read, spikes_saved)
-            neo_compare.compare_blocks(v_read, v_saved)
-            neo_compare.compare_blocks(gsyn_read, gsyn_saved)
+                neo_compare.compare_blocks(spikes_read, spikes_saved)
+                neo_compare.compare_blocks(v_read, v_saved)
+                neo_compare.compare_blocks(gsyn_read, gsyn_saved)
+            except UnicodeDecodeError:
+                raise SkipTest(
+                    "https://github.com/NeuralEnsemble/python-neo/issues/529")
 
         except SpinnmanTimeoutException as ex:
             # System sometimes times outs

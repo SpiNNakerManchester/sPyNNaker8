@@ -84,7 +84,8 @@ def do_run(plot):
     for cell in range(len(pop_stim)):
         spiketimes = []
         for pulse in range(pp_a):
-            spiketimes.append(next(rd))  # draw from the random distribution
+            # next method is misnamed! It is not normal next() bad PyNN
+            spiketimes.append(rd.next())  # draw from the random distribution
         spiketimes.sort()
         all_spiketimes.append(spiketimes)
 
