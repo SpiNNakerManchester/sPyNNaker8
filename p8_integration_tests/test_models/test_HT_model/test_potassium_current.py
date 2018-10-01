@@ -12,7 +12,7 @@ p.setup(timestep=dt)
 runtime = 200
 
 # Clamp parameters.
-clamps_voltage = numpy.arange(-5,-105,-5)
+clamps_voltage = numpy.arange(30,-101,-10)
 clamp_start = runtime / 10
 clamp_duration = runtime - 2* clamp_start
 clamps_number = len(clamps_voltage)
@@ -54,16 +54,15 @@ for i in range(clamps_number):
     print "Post-synaptic neuron firing frequency: {} Hz".format(
         len(exc_data[i].segments[0].spiketrains[0]))
 
-# begin simulation of floating point IDK
+# Begin simulation of floating point IDK.
 hold_voltage = -65.0
-
 def potassium_additional_input_get_input_value_as_current(D, membrane_voltage):
     g_DK = 1.25
-    e_to_t_on_tau = 0.367879 
+    e_to_t_on_tau = 0.367879
     NaInflux = 0.025 / (1. + np.exp(-(membrane_voltage- -10) * 0.2))
     D_infinity = 1250 * NaInflux + 0.001
     D = D_infinity + (D - D_infinity) * e_to_t_on_tau
-    m_inf = 1. / (1. + (0.0078125 /(D**3.5))) 
+    m_inf = 1. / (1. + (0.0078125 /(D**3)))
     I_DK = - g_DK * m_inf * (membrane_voltage - -90)
     return D, I_DK
 
@@ -75,16 +74,43 @@ for clamp in range(clamps_number):
     for time in np.arange(0, runtime, dt):
         if time >=  clamp_start and time < clamp_start+clamp_duration:
                 membrane_voltage = clamps_voltage[clamp]
-        else: 
+        else:
             membrane_voltage = hold_voltage
         D, current = potassium_additional_input_get_input_value_as_current(D, membrane_voltage)
         I_DK[clamp].append(current )
 
-new = map(lambda x: x.magnitude.flatten(), clamps)
-
+# # begin simulation of floating point IDK
+# hold_voltage = -65.0
+# 
+# def potassium_additional_input_get_input_value_as_current(D, membrane_voltage):
+#     g_DK = 1.25
+#     e_to_t_on_tau = 0.367879 
+#     NaInflux = 0.025 / (1. + np.exp(-(membrane_voltage- -10) * 0.2))
+#     D_infinity = 1250 * NaInflux + 0.001
+#     D = D_infinity + (D - D_infinity) * e_to_t_on_tau
+#     m_inf = 1. / (1. + (0.0078125 /(D**3)+0.00000001)) 
+#     I_DK = - g_DK * m_inf * (membrane_voltage - -90)  #+ 5.6402035021220295e-06
+#     return D, I_DK
+# 
+# I_DK =[[] for clamp in range(clamps_number)]
+# 
+# for clamp in range(clamps_number):
+#     NaInflux = 0.025 / (1 + np.exp(-(hold_voltage - -10) * 0.2))
+#     D = 1250 * NaInflux + 0.001
+#     for time in np.arange(0, runtime, dt):
+#         if time >=  clamp_start and time < clamp_start+clamp_duration:
+#             membrane_voltage = clamps_voltage[clamp]
+#         else: 
+#             membrane_voltage = hold_voltage
+#         D, current = potassium_additional_input_get_input_value_as_current(D, membrane_voltage)
+#         I_DK[clamp].append(current)
 
 # Prepare recorded data for comparisson with floating point results.
 I_spinnaker = [map(lambda x: x.magnitude.flatten(), clamps[i]) for i in range(clamps_number)]
+diff = np.transpose(I_spinnaker)[0] - np.transpose(I_DK)
+error = 100 * np.absolute(diff) / np.transpose(I_DK) # percentual error w.r.t. I_floating
+maxdiff= np.amax(diff)
+error_at_max_diff = error.flatten()[np.argmax(diff)]
 
 # try keep same color code for curves.
 NUM_COLORS = clamps_number
@@ -100,16 +126,30 @@ plt.plot(np.transpose(I_spinnaker)[0], linestyle='dashed')
 plt.legend(loc='lower left');
 plt.xlabel('Time (ms)');
 plt.ylabel('I_DK (nA)');  # TODO: verify it is really nano Ampers
-plt.title('I_DK current (nA)')
-plt.subplot(1, 2, 2)
-plt.plot(np.transpose(I_spinnaker)[0] - np.transpose(I_DK), linestyle='solid')
+plt.title('I_potassium');
+ax2 = plt.subplot(2, 2, 2)
+ax2.set_color_cycle([cm(1.*i/NUM_COLORS) for i in range(NUM_COLORS)])
+plt.plot(error, linestyle='solid')
 plt.xlabel('Time (ms)');
-plt.ylabel('I_DK (nA)');
-plt.title('I_DK current (nA)')
+plt.ylabel('percent error (%)');
+plt.title('Percent Error (error at max diff = %0.2f %% )'%error_at_max_diff)
+ax2 = plt.subplot(2, 2, 4)
+ax2.set_color_cycle([cm(1.*i/NUM_COLORS) for i in range(NUM_COLORS)])
+plt.plot(-diff, linestyle='solid')
+plt.xlabel('Time (ms)');
+plt.ylabel('difference (nA)');
+plt.title('max diff = %0.4f nA'%np.amax(diff))
+plt.tight_layout()
 plt.show()
 
-
+print('steady values at half runtime for Floating-point:')
+for val in np.transpose(I_DK)[runtime/2]:
+    print(val)
+print('steady values at half runtime for Fixed-point:')
+for val in np.transpose(I_spinnaker)[0][runtime/2]:
+    print(val)
 
 p.end()
 
-print('-->>this simulation was ran using test_potassium_current.py')
+print('-->> this simulation was ran using %s'%__file__)
+

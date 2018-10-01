@@ -12,7 +12,7 @@ p.setup(timestep=dt)
 runtime = 300
 
 # Clamp parameters.
-clamps_voltage = numpy.arange(-55,-105,-5)
+clamps_voltage = numpy.arange(30,-101,-10)
 clamp_start = runtime / 10
 clamp_duration = runtime - 2* clamp_start
 clamps_number = len(clamps_voltage)
@@ -76,6 +76,10 @@ for clamp in range(clamps_number):
 
 # Prepare recorded data for comparisson with floating point results.
 I_spinnaker = [map(lambda x: x.magnitude.flatten(), clamps[i]) for i in range(clamps_number)]
+diff = np.transpose(I_spinnaker)[0] - np.transpose(I_NaP)
+error = 100 * np.absolute(diff) / np.transpose(I_NaP) # percentual error w.r.t. I_floating
+maxdiff= np.amax(diff)
+error_at_max_diff = error.flatten()[np.argmax(diff)]
 
 # try keep same color code for curves.
 NUM_COLORS = clamps_number
@@ -91,16 +95,31 @@ plt.plot(np.transpose(I_spinnaker)[0], linestyle='dashed')
 plt.legend(loc='lower left');
 plt.xlabel('Time (ms)');
 plt.ylabel('I_NaP (nA)');  # TODO: verify it is really nano Ampers
-plt.title('I_NaP current (nA)')
-plt.subplot(1, 2, 2)
-plt.plot(np.transpose(I_spinnaker)[0] - np.transpose(I_NaP), linestyle='solid')
+plt.title('I_sodium');
+ax2 = plt.subplot(2, 2, 2)
+ax2.set_color_cycle([cm(1.*i/NUM_COLORS) for i in range(NUM_COLORS)])
+plt.plot(error, linestyle='solid')
 plt.xlabel('Time (ms)');
-plt.ylabel('I_NaP (nA)');
-plt.title('I_NaP current (nA)')
+plt.ylabel('percent error (%)');
+plt.title('Percent Error (error at max diff = %0.2f %% )'%error_at_max_diff)
+ax2 = plt.subplot(2, 2, 4)
+ax2.set_color_cycle([cm(1.*i/NUM_COLORS) for i in range(NUM_COLORS)])
+plt.plot(-diff, linestyle='solid')
+plt.xlabel('Time (ms)');
+plt.ylabel('difference (nA)');
+plt.title('max diff = %0.4f nA'%np.amax(diff))
+plt.tight_layout()
 plt.show()
+
+print('steady values at half runtime for Floating-point:')
+for val in np.transpose(I_NaP)[runtime/2]:
+    print(val)
+print('steady values at half runtime for Fixed-point:')
+for val in np.transpose(I_spinnaker)[0][runtime/2]:
+    print(val)
 
 #end simulator
 p.end()
 
-print('-->> this simulation was ran using test_sodium_current.py')
+print('-->> this simulation was ran using %s'%__file__)
 

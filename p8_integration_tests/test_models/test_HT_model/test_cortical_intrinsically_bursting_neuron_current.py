@@ -9,12 +9,12 @@ from matplotlib import cm
 
 dt=1.0
 p.setup(timestep=dt)
-runtime = 1500
+runtime = 23000
 
 # Clamp parameters.
-clamps_voltage = numpy.arange(40,-205,-5)
+clamps_voltage = numpy.arange(30,-101, -10)
 clamp_start = runtime / 10
-clamp_duration = runtime - 6* clamp_start
+clamp_duration = runtime - 4* clamp_start
 clamps_number = len(clamps_voltage)
 
 # Spike source to send spike via plastic synapse.
@@ -81,7 +81,6 @@ for clamp in range(clamps_number):
         m, current = additional_input_get_input_value_as_current(m, membrane_voltage)
         I_h[clamp].append(current )
 
-# No simulation of IT for this neuron type.
 # Begin simulation of floating point INaP.
 def sodium_additional_input_get_input_value_as_current(membrane_voltage):
     g_NaP = 0.007
@@ -96,7 +95,7 @@ for clamp in range(clamps_number):
         if time >=  clamp_start and time < clamp_start+clamp_duration:
             membrane_voltage = clamps_voltage[clamp]
         else:
-            membrane_voltage = -65.0
+            membrane_voltage = hold_voltage 
         current = sodium_additional_input_get_input_value_as_current( membrane_voltage)
         I_NaP[clamp].append(current )
 
@@ -107,7 +106,7 @@ def potassium_additional_input_get_input_value_as_current(D, membrane_voltage):
     NaInflux = 0.025 / (1. + np.exp(-(membrane_voltage- -10) * 0.2))
     D_infinity = 1250 * NaInflux + 0.001
     D = D_infinity + (D - D_infinity) * e_to_t_on_tau
-    m_inf = 1. / (1. + (0.0078125 /(D**3.5)))
+    m_inf = 1. / (1. + (0.0078125 /(D**3)))
     I_DK = - g_DK * m_inf * (membrane_voltage - -90)
     return D, I_DK
 
@@ -129,6 +128,10 @@ I_floating = reduce(np.add, [I_h, I_NaP, I_DK])
 
 # Prepare recorded data for comparisson with floating point results.
 I_spinnaker = [map(lambda x: x.magnitude.flatten(), clamps[i]) for i in range(clamps_number)]
+diff = np.transpose(I_spinnaker)[0] - np.transpose(I_floating)
+error = 100 * np.absolute(diff) / np.transpose(I_floating) # percentual error w.r.t. I_floating
+maxdiff= np.amax(diff)
+error_at_max_diff = error.flatten()[np.argmax(diff)]
 
 # try keep same color code for curves.
 NUM_COLORS = clamps_number
@@ -145,12 +148,27 @@ plt.legend(loc='lower right');
 plt.xlabel('Time (ms)');
 plt.ylabel('I_intrinsically_bursting (nA)');
 plt.title('I_intrinsically_bursting (nA)') # TODO: verify it is really nano Ampers
-plt.subplot(1, 2, 2)
-plt.plot(np.transpose(I_spinnaker)[0] - np.transpose(I_floating), linestyle='solid')
+ax2 = plt.subplot(2, 2, 2)
+ax2.set_color_cycle([cm(1.*i/NUM_COLORS) for i in range(NUM_COLORS)])
+plt.plot(error, linestyle='solid')
 plt.xlabel('Time (ms)');
-plt.ylabel('Difference (nA)');
-plt.title('Difference (nA)')
+plt.ylabel('percent error (%)');
+plt.title('Percent Error (error at max diff = %0.2f %% )'%error_at_max_diff)
+ax2 = plt.subplot(2, 2, 4)
+ax2.set_color_cycle([cm(1.*i/NUM_COLORS) for i in range(NUM_COLORS)])
+plt.plot(-diff, linestyle='solid')
+plt.xlabel('Time (ms)');
+plt.ylabel('difference (nA)');
+plt.title('max diff = %0.4f nA'%np.amax(diff))
+plt.tight_layout()
 plt.show()
+
+print('steady values at half runtime for Floating-point:')
+for val in np.transpose(I_floating)[runtime/2]:
+    print(val)
+print('steady values at half runtime for Fixed-point:')
+for val in np.transpose(I_spinnaker)[0][runtime/2]:
+    print(val)
 
 #Figure(
 #    # plot data for postsynaptic neuron
@@ -163,4 +181,5 @@ plt.show()
 #end simulator
 p.end()
 
-print('-->> this simulation was ran using test_all_currents_current.py')
+print('-->> this simulation was ran using %s'%__file__)
+
