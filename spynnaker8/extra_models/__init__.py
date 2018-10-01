@@ -11,8 +11,8 @@ from spynnaker.pyNN.models.neuron.builds.izk_cond_exp_base import \
     IzkCondExpBase as Izhikevich_cond
 from spynnaker.pyNN.models.neuron.builds.if_curr_exp_semd_base import \
     IFCurrExpSEMDBase as IF_curr_exp_sEMD
-from spynnaker8.models.model_data_holders\
-    import IFCondExp2E2IDataHolder as IFCondExp2E2I
+from spynnaker.pyNN.models.neuron.builds.if_cond_exp_2E2I\
+    import IFCondExp2E2I as IFCondExp2E2I
 
 # plastic timing spynnaker 8
 from spynnaker8.models.synapse_dynamics.timing_dependence \
