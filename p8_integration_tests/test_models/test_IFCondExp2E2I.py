@@ -23,20 +23,18 @@ pop_exc.set(e_rev_E2=-10)
 pop_exc.set(e_rev_E2=-80)
 pop_exc.set(e_rev_E2=-50)
 
-
-
-synapse_exc = p.Projection(
-    exc_src, pop_exc, p.OneToOneConnector(),
-    p.StaticSynapse(weight=0.1, delay=1), receptor_type="excitatory2")
-synapse_exc2 = p.Projection(
-    exc2_src, pop_exc, p.AllToAllConnector(),
-    p.StaticSynapse(weight=.1, delay=1), receptor_type="excitatory")
+# synapse_exc = p.Projection(
+#     exc_src, pop_exc, p.OneToOneConnector(),
+#     p.StaticSynapse(weight=0.1, delay=1), receptor_type="excitatory")
+# synapse_exc2 = p.Projection(
+#     exc2_src, pop_exc, p.AllToAllConnector(),
+#     p.StaticSynapse(weight=.1, delay=1), receptor_type="excitatory2")
 synapse_inh = p.Projection(
     inh_src, pop_exc, p.OneToOneConnector(),
-    p.StaticSynapse(weight=0.33, delay=1), receptor_type="inhibitory2")
+    p.StaticSynapse(weight=0.33, delay=1), receptor_type="inhibitory")
 synapse_inh2 = p.Projection(
     inh2_src, pop_exc, p.AllToAllConnector(),
-    p.StaticSynapse(weight=1.32, delay=1), receptor_type="inhibitory")
+    p.StaticSynapse(weight=1.32, delay=1), receptor_type="inhibitory2")
 
 pop_exc.record("all")
 p.run(runtime)
