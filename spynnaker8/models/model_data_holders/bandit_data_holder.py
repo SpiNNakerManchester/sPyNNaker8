@@ -14,13 +14,14 @@ class BanditDataHolder(DataHolder):
             constraints=_defs['constraints'],
             label=_defs['label'],
             incoming_spike_buffer_size=_defs['incoming_spike_buffer_size'],
-            simulation_duration_ms=_defs['duration']):
+            simulation_duration_ms=_defs['duration'],
+            rand_seed=_defs['random_seed']):
         # pylint: disable=too-many-arguments
 
         super(BanditDataHolder, self).__init__({
             'arms': arms, 'reward_delay': reward_delay,
             'constraints': constraints, 'label': label, 'incoming_spike_buffer_size':incoming_spike_buffer_size,
-            'simulation_duration_ms': simulation_duration_ms})
+            'simulation_duration_ms': simulation_duration_ms, 'rand_seed': rand_seed})
 
     @staticmethod
     def build_model():
