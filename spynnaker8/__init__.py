@@ -90,6 +90,7 @@ from spynnaker8.models.model_data_holders.spike_source_array_data_holder \
 # noinspection PyUnresolvedReferences
 from spynnaker8.models.model_data_holders.spike_source_poisson_data_holder \
     import SpikeSourcePoissonDataHolder as SpikeSourcePoisson
+from spynnaker8.models.model_data_holders.bandit_data_holder import BanditDataHolder as Bandit
 
 # pops
 # noinspection PyUnresolvedReferences
@@ -134,6 +135,7 @@ __all__ = [
     # neuron stuff
     'IF_cond_exp', 'IF_curr_exp', "IF_curr_alpha",
     'Izhikevich', 'SpikeSourceArray', 'SpikeSourcePoisson',
+    'Bandit',
     # pops
     'Assembly', 'Population', 'PopulationView',
     # projection
