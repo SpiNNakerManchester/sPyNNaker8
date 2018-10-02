@@ -30,12 +30,12 @@ pipeline {
         }
         stage('Before Script') {
             steps {
-                sh 'echo "[Machine]" > ~/.spynnaker.cfg
-                sh 'echo "machineName = $SPINNAKER_BOARD_ADDRESS" >> ~/.spynnaker.cfg
-                sh 'echo "version = ${SPINNAKER_BOARD_VERSION:-5}" >> ~/.spynnaker.cfg
-                sh 'echo "[Database]" >> ~/.spynnaker.cfg
-                sh 'echo "[Simulation]" >> ~/.spynnaker.cfg
-                sh 'echo "[Buffers]" >> ~/.spynnaker.cfg
+                sh 'echo "[Machine]" > ~/.spynnaker.cfg'
+                sh 'echo "machineName = $SPINNAKER_BOARD_ADDRESS" >> ~/.spynnaker.cfg'
+                sh 'echo "version = ${SPINNAKER_BOARD_VERSION:-5}" >> ~/.spynnaker.cfg'
+                sh 'echo "[Database]" >> ~/.spynnaker.cfg'
+                sh 'echo "[Simulation]" >> ~/.spynnaker.cfg'
+                sh 'echo "[Buffers]" >> ~/.spynnaker.cfg'
             }
         }
     }
