@@ -33,6 +33,7 @@ pipeline {
                 // C Build
                 sh 'make -C $SPINN_DIRS'
                 sh 'make -C spinn_common install'
+                sh 'make -C SpiNNFrontEndCommon/c_common'
                 sh 'make -C SpiNNFrontEndCommon/c_common install'
                 sh 'make -C sPyNNaker/neural_modelling'
                 // Python install
