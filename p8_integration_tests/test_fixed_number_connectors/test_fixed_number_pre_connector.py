@@ -190,7 +190,7 @@ class FixedNumberPreConnectorTest(BaseTestCase):
         self.assertEquals(500, len(stim_spikes))
         self.assertGreater(1550, len(spklist_exc))
         self.assertGreater(350, len(spklist_inh))
-        self.assertLess(1000, len(spklist_exc))
+        self.assertLess(900, len(spklist_exc))
         self.assertLess(200, len(spklist_inh))
 
 
