@@ -6,6 +6,8 @@ from pyNN import __version__ as pynn_version
 from spinn_front_end_common.utilities import globals_variables
 from spinn_front_end_common.utilities.exceptions import ConfigurationException
 from spinn_front_end_common.utilities.failed_state import FAILED_STATE_MSG
+from spinn_utilities.citation.tool_citation_generation import \
+    CitationAggregator
 from spynnaker.pyNN.abstract_spinnaker_common import AbstractSpiNNakerCommon
 from spinn_utilities.log import FormatAdapter
 from spynnaker.pyNN.utilities.spynnaker_failed_state \
@@ -337,6 +339,19 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 
     def get_pynn_NumpyRNG(self):
         return NumpyRNG()
+
+    def generate_bibtex(self, doi_title, zenodo_access_token):
+        """ helper method for building bibtex from citation.cff's
+
+        :param doi_title: the title of the doi
+        :param zenodo_access_token: the access token for zenodo
+        :rtype: None
+        """
+        import spynnaker8
+        AbstractSpiNNakerCommon.generate_bibtex(
+            self, top_module=spynnaker8, doi_title=doi_title,
+            zenodo_access_token=zenodo_access_token,
+            tools_doi=CitationAggregator.locate_citation_doi(spynnaker8))
 
 
 # Defined in this file to prevent an import loop
