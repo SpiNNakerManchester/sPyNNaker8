@@ -17,12 +17,11 @@ pipeline {
                 sh 'support/pipinstall.sh git://github.com/SpiNNakerManchester/PACMAN.git'
                 sh 'support/pipinstall.sh git://github.com/SpiNNakerManchester/DataSpecification.git'
                 sh 'support/pipinstall.sh git://github.com/SpiNNakerManchester/spalloc.git'
-                sh 'support/pipinstall.sh git://github.com/SpiNNakerManchester/SpiNNFrontEndCommon.git'
                 // C dependencies
-                sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/sPyNNaker.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/spinnaker_tools.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/spinn_common.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/SpiNNFrontEndCommon.git'
+                sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/sPyNNaker.git'
             }
         }
         stage('Install') {
@@ -37,6 +36,7 @@ pipeline {
                 sh 'make -C SpiNNFrontEndCommon/c_common install'
                 sh 'make -C sPyNNaker/neural_modelling'
                 // Python install
+                sh 'cd SpiNNFrontEndCommon && python setup.py install'
                 sh 'cd sPyNNaker && python setup.py install'
                 sh 'pip install -r requirements-test.txt'
                 sh 'pip install python-coveralls "coverage>=4.4"'
