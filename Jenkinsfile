@@ -6,7 +6,6 @@ pipeline {
         stage('Before Install') {
             steps {
                 sh 'git clone https://github.com/SpiNNakerManchester/SupportScripts.git support'
-                sh 'python support/travis_blocking_stdout.py'
                 // Bring pip up to date
                 sh 'pip install --upgrade pip setuptools wheel'
                 sh 'pip install --only-binary=numpy,scipy,matplotlib numpy scipy matplotlib'
@@ -39,9 +38,9 @@ pipeline {
             }
         }
     }
-    post {
+    /* post {
         always {
             cleanWs()
         }
-    }
+    } */
 }
