@@ -18,13 +18,28 @@ pipeline {
                 sh 'support/pipinstall.sh git://github.com/SpiNNakerManchester/DataSpecification.git'
                 sh 'support/pipinstall.sh git://github.com/SpiNNakerManchester/spalloc.git'
                 sh 'support/pipinstall.sh git://github.com/SpiNNakerManchester/SpiNNFrontEndCommon.git'
-                sh 'support/pipinstall.sh git://github.com/SpiNNakerManchester/sPyNNaker.git'
+                // C dependencies
+                sh 'support/gitclone.sh git://github.com/SpiNNakerManchester/sPyNNaker.git'
+                sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/spinnaker_tools.git'
+                sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/spinn_common.git'
+                sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/SpiNNFrontEndCommon.git'
             }
         }
         stage('Install') {
+            environment {
+                SPINN_DIRS = '${workspace}/spinnaker_tools'
+                NEURAL_MODELLING_DIRS = '${workspace}/neural_modelling'
+            }
             steps {
                 sh 'pip install -r requirements-test.txt'
                 sh 'pip install python-coveralls "coverage>=4.4"'
+                // C Build
+                sh 'make -C $SPINN_DIRS'
+                sh 'make -C spinn_common install'
+                sh 'make -C SpiNNFrontEndCommon/c_common install'
+                sh 'make -C sPyNNaker/neural_modelling'
+                // Python install
+                sh 'cd sPyNNaker && python setup.py install'
                 sh 'python ./setup.py install'
                 sh 'python -m spynnaker8.setup_pynn'
             }
