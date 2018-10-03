@@ -12,6 +12,7 @@ from .if_curr_alpha_data_holder import IFCurrAlphaDataHolder
 from .if_curr_exp_ca2_adaptive_data_holder \
     import IfCurrExpCa2AdaptiveDataHolder
 from .bandit_data_holder import BanditDataHolder
+from .breakout_data_holder import BreakoutDataHolder
 
 __all__ = ["IFCondExpDataHolder", "IFCurrDualExpDataHolder",
            "IFCurrExpDataHolder", "IzkCondExpDataHolder",
@@ -19,4 +20,4 @@ __all__ = ["IFCondExpDataHolder", "IFCurrDualExpDataHolder",
            "SpikeSourcePoissonDataHolder", "SpikeInjectorDataHolder",
            "IfCondExpStocDataHolder", "IfCurrDeltaDataHolder",
            "IfCurrExpCa2AdaptiveDataHolder", "IFCurrAlphaDataHolder",
-           "BanditDataHolder"]
+           "BanditDataHolder", "BreakoutDataHolder"]

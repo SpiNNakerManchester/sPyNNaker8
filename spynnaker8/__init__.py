@@ -91,6 +91,7 @@ from spynnaker8.models.model_data_holders.spike_source_array_data_holder \
 from spynnaker8.models.model_data_holders.spike_source_poisson_data_holder \
     import SpikeSourcePoissonDataHolder as SpikeSourcePoisson
 from spynnaker8.models.model_data_holders.bandit_data_holder import BanditDataHolder as Bandit
+from spynnaker8.models.model_data_holders.breakout_data_holder import BreakoutDataHolder as Breakout
 
 # pops
 # noinspection PyUnresolvedReferences
