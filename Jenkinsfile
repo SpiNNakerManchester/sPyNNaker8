@@ -28,7 +28,7 @@ pipeline {
         stage('Install') {
             environment {
                 SPINN_DIRS = "${workspace}/spinnaker_tools"
-                NEURAL_MODELLING_DIRS = "${workspace}/neural_modelling"
+                NEURAL_MODELLING_DIRS = "${workspace}/sPyNNaker/neural_modelling"
             }
             steps {
                 // C Build
