@@ -24,23 +24,32 @@ pipeline {
         stage('Install') {
             steps {
                 sh 'pip install -r requirements-test.txt'
+                sh 'pip install python-coveralls "coverage>=4.4"'
                 sh 'python ./setup.py install'
+                sh 'python -m spynnaker8.setup_pynn'
             }
         }
         stage('Before Script') {
             steps {
                 sh 'echo "[Machine]" > ~/.spynnaker.cfg'
-                sh 'echo "machineName = $SPINNAKER_BOARD_ADDRESS" >> ~/.spynnaker.cfg'
-                sh 'echo "version = ${SPINNAKER_BOARD_VERSION:-5}" >> ~/.spynnaker.cfg'
-                sh 'echo "[Database]" >> ~/.spynnaker.cfg'
-                sh 'echo "[Simulation]" >> ~/.spynnaker.cfg'
-                sh 'echo "[Buffers]" >> ~/.spynnaker.cfg'
+                sh 'echo "spalloc_server = spinnaker.cs.man.ac.uk >> ~/.spynnaker.cfg'
+                sh 'echo "spalloc_user = Jenkins >> ~/.spynnaker.cfg'
+            }
+        }
+        stage('Script') {
+            steps {
+                sh 'py.test p8_integration_tests --cov spynnaker8'
+            }
+        }
+        stage('Coverage') {
+            steps {
+                sh 'COVERALLS_REPO_TOKEN=l0cQjQq6Sm5MGb67RiWkY2WE4r74YFAfk COVERALLS_PARALLEL=true coveralls'
             }
         }
     }
-    /* post {
+    post {
         always {
             cleanWs()
         }
-    } */
+    }
 }
