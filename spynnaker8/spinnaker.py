@@ -3,7 +3,6 @@ from pyNN.common import control as pynn_control
 from pyNN.random import RandomDistribution, NumpyRNG
 from pyNN import __version__ as pynn_version
 
-import spynnaker8
 from spinn_front_end_common.utilities import globals_variables
 from spinn_front_end_common.utilities.exceptions import ConfigurationException
 from spinn_front_end_common.utilities.failed_state import FAILED_STATE_MSG
@@ -104,8 +103,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
             hostname=hostname, min_delay=min_delay,
             max_delay=max_delay, timestep=timestep,
             time_scale_factor=time_scale_factor,
-            front_end_versions=front_end_versions,
-            top_level_module=spynnaker8)
+            front_end_versions=front_end_versions)
 
     def run(self, simtime):
         """ Run the simulation for a span of simulation time.
