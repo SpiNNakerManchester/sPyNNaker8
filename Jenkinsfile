@@ -65,7 +65,11 @@ pipeline {
     }
     post {
         always {
-            junit 'results.xml'
+            if (fileExists('results.xml')) {
+                junit 'results.xml'
+            } else {
+                echo "Results XML not found"
+            }
             cleanWs()
         }
     }
