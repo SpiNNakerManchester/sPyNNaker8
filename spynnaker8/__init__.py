@@ -62,6 +62,8 @@ from spynnaker8.models.synapse_dynamics.synapse_dynamics_static import \
 # plastic stuff
 from spynnaker8.models.synapse_dynamics.synapse_dynamics_stdp import \
     SynapseDynamicsSTDP as STDPMechanism
+from spynnaker8.models.synapse_dynamics.synapse_dynamics_structural_stdp \
+    import SynapseDynamicsStructuralSTDP as StructuralMechanismSTDP
 from spynnaker8.models.synapse_dynamics.weight_dependence\
     .weight_dependence_additive import WeightDependenceAdditive as \
     AdditiveWeightDependence
