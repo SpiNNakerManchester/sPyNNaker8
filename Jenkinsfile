@@ -40,6 +40,7 @@ pipeline {
                 sh 'cd sPyNNaker && python setup.py install'
                 sh 'pip install -r requirements-test.txt'
                 sh 'pip install python-coveralls "coverage>=4.4"'
+                sh 'pip install pytest-instafail'
                 sh 'python ./setup.py install'
                 sh 'python -m spynnaker8.setup_pynn'
             }
@@ -51,9 +52,9 @@ pipeline {
                 sh 'echo "spalloc_user = Jenkins" >> ~/.spynnaker.cfg'
             }
         }
-        stage('Script') {
+        stage('Test') {
             steps {
-                sh 'py.test p8_integration_tests --cov spynnaker8'
+                sh 'py.test p8_integration_tests --instafail --cov spynnaker8 --junitxml results.xml'
             }
         }
         stage('Coverage') {
@@ -64,6 +65,7 @@ pipeline {
     }
     post {
         always {
+            junit 'results.xml'
             cleanWs()
         }
     }
