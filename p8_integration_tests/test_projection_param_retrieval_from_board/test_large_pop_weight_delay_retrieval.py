@@ -30,6 +30,8 @@ def do_run():
     projections.append(p.Projection(populations[0], populations[1],
                                     connectors, synapse_type=synapse_type))
 
+    p.run(1)
+
     # before
     pre_delays_array = projections[0].get(attribute_names=["delay"],
                                           format="nparray")
