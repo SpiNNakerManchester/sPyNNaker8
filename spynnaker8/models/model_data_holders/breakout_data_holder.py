@@ -17,14 +17,14 @@ class BreakoutDataHolder(DataHolder):
             MAX_SIM_DURATION=_defs['duration']):
         # pylint: disable=too-many-arguments
 
-        super(BanditDataHolder, self).__init__({
+        super(BreakoutDataHolder, self).__init__({
             'width': WIDTH_PIXELS,
             'height': HEIGHT_PIXELS,
             'colour_bits': COLOUR_BITS,
             'constraints': constraints,
             'label': label,
             'incoming_spike_buffer_size': incoming_spike_buffer_size,
-            'duration': MAX_SIM_DURATION
+            'simulation_duration_ms': MAX_SIM_DURATION
         })
 
     @staticmethod
