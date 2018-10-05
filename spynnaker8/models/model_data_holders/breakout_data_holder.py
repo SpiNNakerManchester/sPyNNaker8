@@ -1,4 +1,4 @@
-from BreakOut.spinn_breakout.python_models.breakout import Breakout
+from spinn_breakout.python_models.breakout import Breakout
 from spynnaker8.utilities import DataHolder
 
 _defs = Breakout.default_parameters
