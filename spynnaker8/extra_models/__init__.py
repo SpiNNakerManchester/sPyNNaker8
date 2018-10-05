@@ -1,7 +1,7 @@
 
 # spynnaker 8 extra models
-from spynnaker8.models.model_data_holders\
-    import IFCurrCombExp2E2IDataHolder as IFCurrCombExp2E2I
+from spynnaker.pyNN.models.neuron.builds\
+    import IFCurrCombExp2E2I
 from spynnaker.pyNN.models.neuron.builds.if_cond_exp_stoc import IFCondExpStoc
 from spynnaker.pyNN.models.neuron.builds.if_curr_delta \
     import IFCurrDelta as IFCurDelta
@@ -15,6 +15,8 @@ from spynnaker.pyNN.models.neuron.builds.if_curr_exp_semd_base import \
     IFCurrExpSEMDBase as IF_curr_exp_sEMD
 from spynnaker.pyNN.models.neuron.builds.if_cond_exp_2E2I\
     import IFCondExp2E2I as IFCondExp2E2I
+from spynnaker.pyNN.models.neuron.builds.if_cond_comb_exp_2E2I\
+    import IFCondCombExp2E2I as IFCondCombExp2E2I
 
 # plastic timing spynnaker 8
 from spynnaker8.models.synapse_dynamics.timing_dependence \
@@ -38,7 +40,7 @@ __all__ = [
     # spynnaker 8 models
     'IFCurDelta', 'IFCurrExpCa2Adaptive', 'IFCondExpStock',
     'Izhikevich_cond', 'IF_curr_dual_exp', 'IF_curr_exp_sEMD',
-    "IFCurrCombExp2E2I", 'IFCondExp2E2I',
+    "IFCurrCombExp2E2I", 'IFCondExp2E2I', 'IFCondCombExp2E2I',
 
     # spynnaker 8 plastic stuff
     'WeightDependenceAdditiveTriplet',
