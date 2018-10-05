@@ -4,6 +4,7 @@ from spynnaker8.utilities import DataHolder
 
 _defs = Bandit.default_parameters
 
+print "accessed def params bandit"
 
 class BanditDataHolder(DataHolder):
     __slots__ = []
