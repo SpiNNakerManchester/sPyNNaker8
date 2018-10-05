@@ -20,10 +20,10 @@ pop_exc = p.Population(1, p.extra_models.IFCondCombExp2E2I(),  label="test")
 # pop_exc = p.Population(1, p.extra_models.IFCurrCombExp2E2I(),  label="test")
 # pop_exc = p.Population(1, p.extra_models.IFCondExp2E2I(),  label="test")
 
-pop_exc.set(e_rev_E=-40)
-pop_exc.set(e_rev_E2=50)
-# pop_exc.set(e_rev_E2=-80)
-# pop_exc.set(e_rev_E2=-50)
+pop_exc.set(e_rev_E=-50)
+pop_exc.set(e_rev_E2=-40)
+pop_exc.set(e_rev_I=-80)
+pop_exc.set(e_rev_I2=-50)
 
 synapse_exc = p.Projection(
     exc_src, pop_exc, p.OneToOneConnector(),
