@@ -1,5 +1,5 @@
 # from n_arm_bandit.bandit.spinn_bandit import Bandit
-from n_arm_bandit.bandit.spinn_bandit.python_models.bandit import Bandit
+from spinn_bandit.python_models.bandit import Bandit
 from spynnaker8.utilities import DataHolder
 
 _defs = Bandit.default_parameters
