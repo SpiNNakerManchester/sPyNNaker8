@@ -59,7 +59,7 @@ pipeline {
         stage('Test') {
             steps {
                 sh 'echo "<testsuite tests="0"></testsuite>" > results.xml'
-                sh 'py.test p8_integration_tests --instafail --cov spynnaker8 --junitxml results.xml'
+                sh 'py.test -s p8_integration_tests --instafail --cov spynnaker8 --junitxml results.xml'
             }
         }
         stage('Coverage') {
