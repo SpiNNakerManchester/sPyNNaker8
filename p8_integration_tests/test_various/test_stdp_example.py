@@ -189,6 +189,7 @@ class StdpExample(BaseTestCase):
     # The number of params does not equal with
     # the number of atoms in the vertex
     def test_run(self):
+        self._test_seed = None
         (pre_spikes, post_spikes, weights) = do_run(seed=self._test_seed)
         if self._test_seed == 1:
             self.assertEquals(183, len(pre_spikes))
