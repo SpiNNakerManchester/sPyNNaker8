@@ -5,7 +5,7 @@ pipeline {
     stages {
         stage('Before Install') {
             environment {
-                TRAVIS_BRANCH = "${GIT_BRANCH#*/}"
+                TRAVIS_BRANCH = env.BRANCH_NAME
             }
             steps {
                 sh 'git clone https://github.com/SpiNNakerManchester/SupportScripts.git support'
