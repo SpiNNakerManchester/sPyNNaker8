@@ -4,6 +4,9 @@ pipeline {
     }
     stages {
         stage('Before Install') {
+            environment {
+                TRAVIS_BRANCH = "${GIT_BRANCH#*/}"
+            }
             steps {
                 sh 'git clone https://github.com/SpiNNakerManchester/SupportScripts.git support'
                 // Bring pip up to date
@@ -49,7 +52,7 @@ pipeline {
         stage('Before Script') {
             steps {
                 sh 'echo "[Machine]" > ~/.spynnaker.cfg'
-                sh 'echo "spalloc_server = spinnaker.cs.man.ac.uk" >> ~/.spynnaker.cfg'
+                sh 'echo "spalloc_server = 10.11.192.11" >> ~/.spynnaker.cfg'
                 sh 'echo "spalloc_user = Jenkins" >> ~/.spynnaker.cfg'
             }
         }
