@@ -1,17 +1,18 @@
 
 # spynnaker 8 extra models
-from spynnaker8.models.model_data_holders\
-    import IfCondExpStocDataHolder as IFCondExpStock
-from spynnaker8.models.model_data_holders\
-    import IfCurrDeltaDataHolder as IFCurDelta
-from spynnaker8.models.model_data_holders\
-    import IfCurrExpCa2AdaptiveDataHolder as IFCurrExpCa2Adaptive
-from spynnaker8.models.model_data_holders\
-    import IFCurrDualExpDataHolder as IF_curr_dual_exp
-from spynnaker8.models.model_data_holders.izk_cond_exp_data_holder import \
-    IzkCondExpDataHolder as Izhikevich_cond
-from spynnaker8.models.model_data_holders.hill_tononi_neuron_data_holder \
-    import HillTononiNeuronDataHolder as HillTononiNeuron
+from spynnaker.pyNN.models.neuron.builds.if_cond_exp_stoc import IFCondExpStoc
+from spynnaker.pyNN.models.neuron.builds.if_curr_delta \
+    import IFCurrDelta as IFCurDelta
+from spynnaker.pyNN.models.neuron.builds.if_curr_exp_ca2_adaptive \
+    import IFCurrExpCa2Adaptive
+from spynnaker.pyNN.models.neuron.builds.if_curr_dual_exp_base \
+    import IFCurrDualExpBase as IF_curr_dual_exp
+from spynnaker.pyNN.models.neuron.builds.izk_cond_exp_base import \
+    IzkCondExpBase as Izhikevich_cond
+from spynnaker.pyNN.models.neuron.builds.if_curr_exp_semd_base import \
+    IFCurrExpSEMDBase as IF_curr_exp_sEMD
+from spynnaker.pyNN.models.neuron.builds.ht \
+    import HillTononiNeuron as HillTononiNeuron
 
 # plastic timing spynnaker 8
 from spynnaker8.models.synapse_dynamics.timing_dependence \
@@ -30,7 +31,8 @@ from spynnaker8.models.synapse_dynamics.weight_dependence \
 __all__ = [
     # sPyNNaker 8 models
     'IFCurDelta', 'IFCurrExpCa2Adaptive', 'IFCondExpStock',
-    'Izhikevich_cond', 'IF_curr_dual_exp', 'HillTononiNeuron',
+    'Izhikevich_cond', 'IF_curr_dual_exp', 'IF_curr_exp_sEMD', 
+    'HillTononiNeuron',
 
     # sPyNNaker 8 plastic stuff
     'WeightDependenceAdditiveTriplet',

@@ -16,6 +16,8 @@ from spinn_front_end_common.utilities.exceptions import ConfigurationException
 from spinn_front_end_common.utilities import globals_variables
 from spinn_front_end_common.utilities.failed_state import FAILED_STATE_MSG
 
+from spynnaker.pyNN.models.abstract_pynn_model import AbstractPyNNModel
+
 # connections
 # noinspection PyUnresolvedReferences
 from spynnaker8.models.connectors.all_to_all_connector import \
@@ -77,24 +79,23 @@ from spynnaker8.models.synapse_dynamics.weight_dependence\
 
 # neuron stuff
 # noinspection PyUnresolvedReferences
-from spynnaker8.utilities.data_holder import DataHolder
-from spynnaker8.models.model_data_holders.if_cond_exp_data_holder import \
-    IFCondExpDataHolder as IF_cond_exp
+from spynnaker.pyNN.models.neuron.builds.if_cond_exp_base import \
+    IFCondExpBase as IF_cond_exp
 # noinspection PyUnresolvedReferences
-from spynnaker8.models.model_data_holders.if_curr_exp_data_holder import \
-    IFCurrExpDataHolder as IF_curr_exp
+from spynnaker.pyNN.models.neuron.builds.if_curr_exp_base import \
+    IFCurrExpBase as IF_curr_exp
 # noinspection PyUnresolvedReferences
-from spynnaker8.models.model_data_holders.if_curr_alpha_data_holder import \
-    IFCurrAlphaDataHolder as IF_curr_alpha
+from spynnaker.pyNN.models.neuron.builds.if_curr_alpha import \
+    IFCurrAlpha as IF_curr_alpha
 # noinspection PyUnresolvedReferences
-from spynnaker8.models.model_data_holders.izk_curr_exp_data_holder import \
-    IzkCurrExpDataHolder as Izhikevich
+from spynnaker.pyNN.models.neuron.builds.izk_curr_exp_base import \
+    IzkCurrExpBase as Izhikevich
 # noinspection PyUnresolvedReferences
-from spynnaker8.models.model_data_holders.spike_source_array_data_holder \
-    import SpikeSourceArrayDataHolder as SpikeSourceArray
+from spynnaker.pyNN.models.spike_source.spike_source_array \
+    import SpikeSourceArray
 # noinspection PyUnresolvedReferences
-from spynnaker8.models.model_data_holders.spike_source_poisson_data_holder \
-    import SpikeSourcePoissonDataHolder as SpikeSourcePoisson
+from spynnaker.pyNN.models.spike_source.spike_source_poisson \
+    import SpikeSourcePoisson
 
 # pops
 # noinspection PyUnresolvedReferences
@@ -431,8 +432,7 @@ def list_standard_models():
     """
     results = list()
     for (key, obj) in iteritems(globals()):
-        if isinstance(obj, type) and issubclass(obj, DataHolder)  \
-                and not obj == DataHolder:
+        if isinstance(obj, type) and issubclass(obj, AbstractPyNNModel):
             results.append(key)
     return results
 
@@ -451,7 +451,7 @@ def set_number_of_neurons_per_core(neuron_type, max_permitted):
         raise ConfigurationException(msg)
     simulator = globals_variables.get_simulator()
     simulator.set_number_of_neurons_per_core(
-        neuron_type.build_model(), max_permitted)
+        neuron_type, max_permitted)
 
 
 # These methods will deffer to PyNN methods if a simulator exists
