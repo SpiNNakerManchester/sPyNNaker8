@@ -222,8 +222,6 @@ def do_run():
 
 class SpikeIoMultiRun(BaseTestCase):
 
-    @unittest.skip("https://github.com/SpiNNakerManchester/sPyNNaker8/issues/"
-                   "83")
     def test_run(self):
         (spikes_forward, spikes_backward) = do_run()
         self.assertEqual(600, len(spikes_forward))

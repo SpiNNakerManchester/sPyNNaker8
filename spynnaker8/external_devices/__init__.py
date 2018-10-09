@@ -282,5 +282,4 @@ def SpikeInjector(
         add_database_socket_address(database_notify_host,
                                     database_notify_port_num,
                                     database_ack_port_num)
-    return ExternalDeviceSpikeInjector(
-        label=label, port=port, virtual_key=virtual_key)
+    return ExternalDeviceSpikeInjector()
