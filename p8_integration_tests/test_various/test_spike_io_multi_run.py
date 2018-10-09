@@ -1,6 +1,5 @@
 from __future__ import print_function
 import random
-import unittest
 import spynnaker8 as Frontend
 from spynnaker8.utilities import neo_convertor
 import time
