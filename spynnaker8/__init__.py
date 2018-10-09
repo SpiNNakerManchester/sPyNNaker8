@@ -72,6 +72,8 @@ from spynnaker8.models.synapse_dynamics.timing_dependence\
     .timing_dependence_spike_pair import TimingDependenceSpikePair as \
     SpikePairRule
 
+
+
 # neuron stuff
 # noinspection PyUnresolvedReferences
 from spynnaker.pyNN.models.neuron.builds.if_cond_exp_base import \
@@ -131,7 +133,8 @@ __all__ = [
     'StaticSynapse',
     # plastic stuff
     'STDPMechanism', 'AdditiveWeightDependence',
-    'MultiplicativeWeightDependence', 'SpikePairRule',
+    'MultiplicativeWeightDependence', 'SpikePairRule', 'TimingDependencePFPC'
+    'WeightDependencePFPC',
     # neuron stuff
     'IF_cond_exp', 'IF_curr_exp', "IF_curr_alpha",
     'Izhikevich', 'SpikeSourceArray', 'SpikeSourcePoisson',

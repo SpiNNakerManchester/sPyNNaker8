@@ -11,6 +11,8 @@ from spynnaker.pyNN.models.neuron.builds.izk_cond_exp_base import \
     IzkCondExpBase as Izhikevich_cond
 from spynnaker.pyNN.models.neuron.builds.if_curr_exp_semd_base import \
     IFCurrExpSEMDBase as IF_curr_exp_sEMD
+from spynnaker.pyNN.models.neuron.builds.if_cond_exp_cerebellum import \
+    IFCondExpCerebellum
 
 # plastic timing spynnaker 8
 from spynnaker8.models.synapse_dynamics.timing_dependence \
@@ -21,6 +23,13 @@ from spynnaker8.models.synapse_dynamics.timing_dependence \
     import TimingDependenceVogels2011 as Vogels2011Rule
 from spynnaker8.models.synapse_dynamics.timing_dependence \
     import TimingDependencePfisterSpikeTriplet as PfisterSpikeTriplet
+# Cerebellum Plasticity
+from spynnaker8.models.synapse_dynamics.timing_dependence\
+    .timing_dependence_pfpc import TimingDependencePFPC as \
+    TimingDependencePFPC
+from spynnaker8.models.synapse_dynamics.weight_dependence\
+    .weight_dependence_pfpc import \
+    WeightDependencePFPC as WeightDependencePFPC
 
 # plastic weight spynnaker 8
 from spynnaker8.models.synapse_dynamics.weight_dependence \
@@ -30,9 +39,12 @@ __all__ = [
     # sPyNNaker 8 models
     'IFCurDelta', 'IFCurrExpCa2Adaptive', 'IFCondExpStoc',
     'Izhikevich_cond', 'IF_curr_dual_exp', 'IF_curr_exp_sEMD',
+    "IFCondExpCerebellum",
 
     # sPyNNaker 8 plastic stuff
     'WeightDependenceAdditiveTriplet',
     'PfisterSpikeTriplet',
     'SpikeNearestPairRule',
-    'RecurrentRule', 'Vogels2011Rule']
+    'RecurrentRule', 'Vogels2011Rule',
+    "TimingDependencePFPC", "WeightDependencePFPC"
+    ]
