@@ -52,7 +52,7 @@ pfpc_plas = p.STDPMechanism(
                                              w_max=max_weight),
     weight=initial_weight, delay=plastic_delay)
 
-synapse = p.Projection(
+synapse_pfpc = p.Projection(
     granular_cell, purkinje_cell, p.AllToAllConnector(),
     synapse_type=pfpc_plas, receptor_type="excitatory")
 
@@ -72,6 +72,9 @@ p.run(runtime)
 granluar_cell_spikes = granular_cell.get_data('spikes')
 climbing_fibre_spikes = climbing_fibre.get_data('spikes')
 purkinje_data = purkinje_cell.get_data()
+
+pf_weights = synapse_pfpc.get('weight', 'list', with_address=False)
+print pf_weights
 
 # Plot
 F = Figure(
