@@ -29,7 +29,7 @@ purkinje_cell = p.Population(1, # number of neurons
 
 
 # Spike source to send spike via synapse
-spike_times = [50, 150, 200]
+spike_times = [50, 150, 270]
 
 granular_cell = p.Population(1, # number of sources
                         p.SpikeSourceArray, # source type
@@ -38,7 +38,7 @@ granular_cell = p.Population(1, # number of sources
                         )
 
 # Spike source to send spike via synapse from climbing fibre
-spike_times_2 = [100, 104, 107, 170]
+spike_times_2 = [100, 104, 107, 246]
 climbing_fibre = p.Population(1, # number of sources
                         p.SpikeSourceArray, # source type
                         {'spike_times': spike_times_2}, # source spike times
@@ -47,7 +47,7 @@ climbing_fibre = p.Population(1, # number of sources
 
 # Create projection from GC to PC
 pfpc_plas = p.STDPMechanism(
-    timing_dependence=p.extra_models.TimingDependencePFPC(),
+    timing_dependence=p.extra_models.TimingDependencePFPC(A_plus = 0.01),
     weight_dependence=p.extra_models.WeightDependencePFPC(w_min=min_weight,
                                              w_max=max_weight),
     weight=initial_weight, delay=plastic_delay)
