@@ -8,14 +8,14 @@ runtime = 750
 
 # Post-synapse population
 neuron_params = {
-        # 'v_init': -65,
+        # 'v': -65,
         'g_Na': 0.2,
         'E_Na': 30.0,
         'g_K': 1.85,
         'E_K': -90.0,
         'tau_m': 16,
         't_spike': 2,
-#         'i_offset': 35,
+        'i_offset': 35,
         }
 
 pop_exc = p.Population(1,
@@ -31,7 +31,7 @@ pop_src1 = p.Population(1, p.SpikeSourceArray,
 
 # Create projection
 synapse = p.Projection(
-    pop_src1, pop_exc, p.OneToOneConnector(0.6),
+    pop_src1, pop_exc, p.OneToOneConnector(),
     p.StaticSynapse(weight=1, delay=1), receptor_type="AMPA")
 
 # pop_src1.record('all')
