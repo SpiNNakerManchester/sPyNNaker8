@@ -8,6 +8,8 @@ class BreakoutDataHolder(DataHolder):
 
     def __init__(
             self,
+            X_FACTOR=_defs['x_factor'],
+            Y_FACTOR=_defs['y_factor'],
             WIDTH_PIXELS=_defs['width'],
             HEIGHT_PIXELS=_defs['height'],
             COLOUR_BITS=_defs['colour_bits'],
@@ -18,6 +20,8 @@ class BreakoutDataHolder(DataHolder):
         # pylint: disable=too-many-arguments
 
         super(BreakoutDataHolder, self).__init__({
+            'x_factor': X_FACTOR,
+            'y_factor': Y_FACTOR,
             'width': WIDTH_PIXELS,
             'height': HEIGHT_PIXELS,
             'colour_bits': COLOUR_BITS,
