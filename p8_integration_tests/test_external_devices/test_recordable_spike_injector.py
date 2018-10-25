@@ -58,5 +58,4 @@ class TestRecordableSpikeInjector(BaseTestCase):
 
 
 if __name__ == "__main__":
-    uinttest.main()
-    # test_recordable_spike_injector()
+    unittest.main()
