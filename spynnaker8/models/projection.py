@@ -54,8 +54,9 @@ class Projection(PyNNProjectionCommon):
 
         # Note: this is still called here because the FromListConnector
         # is awkward
+        allow_lists = False
         connector.set_weights_and_delays(
-            synapse_type.weight, synapse_type.delay)
+            synapse_type.weight, synapse_type.delay, allow_lists)
 
         # set the space function as required
         connector.set_space(space)

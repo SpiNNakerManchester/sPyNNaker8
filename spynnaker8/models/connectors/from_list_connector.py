@@ -74,10 +74,11 @@ class FromListConnector(CommonFromListConnector, Connector):
             self, conn_list=conn_list, safe=safe, verbose=verbose)
         Connector.__init__(self, safe=safe, callback=callback)
 
+        allow_lists = True
         # set weights and / or delays if given in list,
         # to avoid overwriting the synapse values if possible
         if weights is not None or delays is not None:
-            self.set_weights_and_delays(weights, delays)
+            self.set_weights_and_delays(weights, delays, allow_lists)
 
     def get_extra_parameters(self):
         """ Getter for the extra parameters.
