@@ -29,6 +29,7 @@ class PynnBrunnelBrianNestSpinnaker(BaseTestCase):
 
     # AttributeError: 'SpikeSourcePoisson' object has no attribute 'describe'
     def test_run(self):
+        self.assert_not_spin_three()
         (esp, s, N_E) = script.do_run(
             Neurons, sim_time, record=True, seed=self._test_seed)
         esp_numpy = neo_convertor.convert_spikes(esp)

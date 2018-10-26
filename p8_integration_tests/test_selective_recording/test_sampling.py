@@ -29,7 +29,7 @@ def run_script(
     sim.Projection(input1, pop_1, sim.AllToAllConnector(),
                    synapse_type=sim.StaticSynapse(weight=5, delay=1))
     input2 = sim.Population(n_neurons, sim.SpikeSourcePoisson(
-        rate=100.0, seed=1),  label="Stim_Exc")
+        rate=100.0),  label="Stim_Exc", additional_parameters={"seed": 1})
     sim.Projection(input2, pop_1, sim.OneToOneConnector(),
                    synapse_type=sim.StaticSynapse(weight=5, delay=1))
     if record_spikes:
