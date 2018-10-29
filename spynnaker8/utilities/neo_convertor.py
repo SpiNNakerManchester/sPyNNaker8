@@ -27,7 +27,7 @@ def convert_analog_signal(signal_array, time_unit=ms):
 
 
 def convert_data(data, name, run=0):
-    """ Converts the data into a numpy array in the format id, time, value
+    """ Converts the data into a numpy array in the format ID, time, value
 
     :param data: Data as returned by a getData() call
     :type data: SpynnakerNeoBlock
@@ -52,7 +52,7 @@ def convert_data(data, name, run=0):
 
 
 def convert_data_list(data, name, runs=None):
-    """ Converts the data into a list of numpy arrays in the format id, time,\
+    """ Converts the data into a list of numpy arrays in the format ID, time,\
         value
 
     :param data: Data as returned by a getData() call
@@ -74,7 +74,7 @@ def convert_data_list(data, name, runs=None):
 
 def convert_v_list(data):
     """ Converts the voltage into a list numpy array one per segment (all\
-        runs) in the format id, time, value
+        runs) in the format ID, time, value
 
     :param data: The data to convert; it must have V data in it
     :type data: SpynnakerNeoBlock
@@ -85,7 +85,7 @@ def convert_v_list(data):
 
 def convert_gsyn_exc_list(data):
     """ Converts the gsyn_exc into a list numpy array one per segment (all\
-        runs) in the format id, time, value
+        runs) in the format ID, time, value
 
     :param data: The data to convert; it must have Gsyn_exc data in it
     :type data: SpynnakerNeoBlock
@@ -96,7 +96,7 @@ def convert_gsyn_exc_list(data):
 
 def convert_gsyn_inh_list(data):
     """ Converts the gsyn_inh into a list numpy array one per segment (all\
-        runs) in the format id, time, value
+        runs) in the format ID, time, value
 
     :param data: The data to convert; it must have Gsyn_inh data in it
     :type data: SpynnakerNeoBlock
@@ -121,10 +121,10 @@ def convert_gsyn(gsyn_exc, gsyn_inh):
     ids2 = inh.channel_index
     if len(ids) != len(ids2):
         raise ValueError(
-            "Found {} neuron ids in gsyn_exc but {} in  gsyn_inh".format(
+            "Found {} neuron IDs in gsyn_exc but {} in  gsyn_inh".format(
                 len(ids), len(ids2)))
     if not np.allclose(ids, ids2):
-        raise ValueError("ids in gsyn_exc and gsyn_inh do not match")
+        raise ValueError("IDs in gsyn_exc and gsyn_inh do not match")
     times = exc.times.rescale(ms)
     times2 = inh.times.rescale(ms)
     if len(times) != len(times2):
@@ -147,6 +147,9 @@ def convert_spiketrains(spiketrains):
     :param spiketrains: List of SpikeTrains
     :rtype: nparray
     """
+    if len(spiketrains) == 0:
+        return np.empty(shape=(0, 2))
+
     neurons = np.concatenate(
         list(map(lambda x: np.repeat(x.annotations['source_index'], len(x)),
              spiketrains)))

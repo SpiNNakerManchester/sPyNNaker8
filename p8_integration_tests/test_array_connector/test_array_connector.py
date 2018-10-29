@@ -36,23 +36,24 @@ def do_run(plot):
                         label='pop_2')
 
     # create loopConnections array for first population using numpy linspaces
-    loopConnections = numpy.array(
-        [numpy.linspace(0, nNeurons-1, nNeurons),
-         numpy.linspace(1, nNeurons, nNeurons)],
-        numpy.uint32)
-    # connect the final neuron to the first neuron
-    loopConnections[1, nNeurons-1] = 0
+    loopConnections = numpy.zeros((nNeurons, nNeurons))
+    for i in range(nNeurons):
+        if i != (nNeurons-1):
+            loopConnections[i, i+1] = True
+        else:
+            loopConnections[i, 0] = True
 
     # do the same for the second population, but just for even numbered neurons
-    loopConnections2 = numpy.array(
-        [numpy.linspace(0, nNeurons-2, nNeurons//2),
-         numpy.linspace(2, nNeurons+1, nNeurons//2)],
-        numpy.uint32)
-    # connect the final neuron to the first neuron
-    loopConnections2[1, (nNeurons//2)-1] = 0
+    loopConnections2 = numpy.zeros((nNeurons, nNeurons))
+    for i in range(0, nNeurons, 2):
+        if i != (nNeurons - 2):
+            loopConnections2[i, i+2] = True
+        else:
+            loopConnections2[i, 0] = True
 
     # SpikeInjector
-    injectionConnection = numpy.array([[0], [0]], numpy.uint32)
+    injectionConnection = numpy.zeros((1, nNeurons))
+    injectionConnection[0, 0] = True
     spikeArray = {'spike_times': [[0]]}
     inj_pop = p.Population(1, p.SpikeSourceArray(**spikeArray),
                            label='inputSpikes_1')

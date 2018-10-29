@@ -142,8 +142,8 @@ class Recorder(RecordingCommon):
         record_ids = list()
         for neuron_id in range(0, len(filter_ids)):
             if filter_ids[neuron_id]:
-                # add population first id to ensure all atoms have a unique
-                # identifier (pynn enforcement)
+                # add population first ID to ensure all atoms have a unique
+                # identifier (PyNN enforcement)
                 record_ids.append(neuron_id + self._population._first_id)
         return record_ids
 
@@ -348,6 +348,10 @@ class Recorder(RecordingCommon):
         :type label: str
         """
         # pylint: disable=too-many-arguments
+        # Safety check in case spikes are an empty list
+        if len(spikes) == 0:
+            spikes = numpy.empty(shape=(0, 2))
+
         t_stop = t * quantities.ms
 
         if indexes is None:
