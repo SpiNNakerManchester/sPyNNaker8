@@ -4,13 +4,13 @@ import matplotlib.pyplot as plt
 
 timestep = 0.1
 p.setup(timestep)  # set simulation timestep (ms)
-runtime = 20000
+runtime = 10000
 
 # Post-synapse population
-new_i_offset = -20
-num_intervals = 12
+new_i_offset = -50
+num_intervals = 10
 neuron_params = {
-        'v_init': -88.1,
+        'v': -88.1,
         'g_Na': 0.2,
         'E_Na': 30.0,
         'g_K': 1.85,
@@ -18,8 +18,8 @@ neuron_params = {
         'tau_m': 16,
         't_spike': 2,
         'i_offset': new_i_offset,
-        'v_thresh': 50,
-        'v_thresh_resting': 50
+#         'v_thresh': 50,
+#         'v_thresh_resting': 50
         }
 
 pop_exc = p.Population(1,
@@ -33,7 +33,7 @@ pop_src1 = p.Population(1, p.SpikeSourceArray,
 
 # Create projection
 synapse = p.Projection(
-    pop_src1, pop_exc, p.OneToOneConnector(0.6),
+    pop_src1, pop_exc, p.OneToOneConnector(),
     p.StaticSynapse(weight=1, delay=1), receptor_type="NMDA")
 
 pop_exc.record("all")

@@ -52,7 +52,7 @@ depress_syn_plas = p.STDPMechanism(
 # Create projections
 synapse = p.Projection(facil_src,
                        pop_exc,
-                       p.OneToOneConnector(),
+                       p.FromListConnector([(0,0,0.3,1)]),
                        synapse_type=facil_syn_plas,
                        receptor_type='NMDA')
 
