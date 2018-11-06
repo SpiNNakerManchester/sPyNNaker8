@@ -1,9 +1,6 @@
 import spynnaker8 as p
 from p8_integration_tests.base_test_case import BaseTestCase
 import matplotlib.pyplot as plt
-from spynnaker8.utilities import neo_convertor
-
-import os
 import numpy as np
 
 
@@ -34,18 +31,16 @@ def do_run(plot):
     spikeArray = {'spike_times': [[0], []]}
 
     input_pop = p.Population(nNeurons, p.SpikeSourceArray(**spikeArray),
-                         label='inputSpikes_1')
+                             label='inputSpikes_1')
 
     target_pop = p.Population(nNeurons, model(**cell_params_lif),
-                          label='pop_1')
+                              label='pop_1')
 
-    one_to_one_conn = p.Projection(
-        input_pop, target_pop, p.OneToOneConnector(),
-        p.StaticSynapse(weight=weight_to_spike, delay=delay))
+    p.Projection(input_pop, target_pop, p.OneToOneConnector(),
+                 p.StaticSynapse(weight=weight_to_spike, delay=delay))
 
-    all_to_all_conn = p.Projection(
-        input_pop, target_pop, p.AllToAllConnector(),
-        p.StaticSynapse(weight=all_weight_to_spike, delay=delay))
+    p.Projection(input_pop, target_pop, p.AllToAllConnector(),
+                 p.StaticSynapse(weight=all_weight_to_spike, delay=delay))
 
     target_pop.record(['spikes'])
 
