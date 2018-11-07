@@ -13,11 +13,12 @@ class FixedProbabilityConnector(
     def __init__(
             self, p_connect, allow_self_connections=True, safe=True,
             verbose=False, rng=None, callback=None):
-        """ For each pair of pre-post cells, the connection probability is
-         constant.
+        """ For each pair of pre-post cells, the connection probability is\
+            constant.
 
-        :param p_connect: a float between zero and one. Each potential\
+        :param p_connect: a number between zero and one. Each potential\
             connection is created with this probability.
+        :type p_connect: float
         :param allow_self_connections: if the connector is used to connect a\
             Population to itself, this flag determines whether a neuron is\
             allowed to connect to itself, or only to other neurons in the\
