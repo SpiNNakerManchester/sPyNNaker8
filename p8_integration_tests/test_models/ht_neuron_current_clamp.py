@@ -1,11 +1,61 @@
 import spynnaker8 as p
 from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt
+import numpy as np
 
 timestep = 0.1
 p.setup(timestep)  # set simulation timestep (ms)
 runtime = 500
-new_i_offset = 10
+new_i_offset = 10 # can be: 0, 10, 20, or 30
+
+
+case_dict = {0:1, 10:2, 20: 3, 30: 4}
+
+
+# read V data
+f = open("Current_injection-V.txt", "r")
+
+l = f.readlines()[0].split("\r")
+l.remove(l[0])
+f.close
+
+NEST_v_data = np.zeros((len(l)-1,5))
+
+for i in range(len(l)-1):
+    d = l[i].split()
+    for j in range(len(d)):
+        NEST_v_data[i,j] = float(d[j])
+
+
+# read I_DK
+f = open("Current_injection-IKNa.txt", "r")
+
+l = f.readlines()[0].split("\r")
+l.remove(l[0])
+f.close
+
+NEST_I_DK_data = np.zeros((len(l)-1,5))
+
+for i in range(len(l)-1):
+    d = l[i].split()
+    for j in range(len(d)):
+        NEST_I_DK_data[i,j] = float(d[j])
+
+
+#read I_NaP
+f = open("Current_injection-INaP.txt", "r")
+
+l = f.readlines()[0].split("\r")
+l.remove(l[0])
+f.close
+
+NEST_I_NaP_data = np.zeros((len(l)-1,5))
+
+for i in range(len(l)-1):
+    d = l[i].split()
+    for j in range(len(d)):
+        NEST_I_NaP_data[i,j] = float(d[j])
+
 
 # Post-synapse population
 neuron_params = {
@@ -23,56 +73,100 @@ neuron_params = {
         'g_DK': 0.5
         }
 
-pop_exc = p.Population(1,
+
+pop_exc_1 = p.Population(1,
                        p.extra_models.HillTononiNeuron(**neuron_params),
                        label="HT Neuron")
-#
-# spike_times = [10, 15, 17, 170, 190, 192, 200, 205, 400, 405, 410, 415, 420,
-#                425, 430, 435, 440, 721]
-# # Spike source to send spike via synapse
-# pop_src1 = p.Population(1, p.SpikeSourceArray,
-#                         {'spike_times': spike_times}, label="src1")
+pop_exc_2 = p.Population(1,
+                       p.extra_models.HillTononiNeuron(**neuron_params),
+                       label="HT Neuron")
+pop_exc_3 = p.Population(1,
+                       p.extra_models.HillTononiNeuron(**neuron_params),
+                       label="HT Neuron")
+pop_exc_4 = p.Population(1,
+                       p.extra_models.HillTononiNeuron(**neuron_params),
+                       label="HT Neuron")
 
-
-# # Create projection
-# synapse = p.Projection(
-#     pop_src1, pop_exc, p.OneToOneConnector(),
-#     p.StaticSynapse(weight=1, delay=1), receptor_type="AMPA")
 
 # pop_src1.record('all')
 total_runtime = 0
-pop_exc.record("all")
+pop_exc_1.record("all")
+pop_exc_2.record("all")
+pop_exc_3.record("all")
+pop_exc_4.record("all")
 
 p.run(runtime)
 total_runtime += runtime
-pop_exc.set(i_offset=new_i_offset)
+pop_exc_1.set(i_offset=0)
+pop_exc_2.set(i_offset=10)
+pop_exc_3.set(i_offset=20)
+pop_exc_4.set(i_offset=30)
 
 p.run(runtime)
 total_runtime += runtime
-pop_exc.set(i_offset=0)
+pop_exc_1.set(i_offset=0)
+pop_exc_2.set(i_offset=0)
+pop_exc_3.set(i_offset=0)
+pop_exc_4.set(i_offset=0)
+
 p.run(runtime)
 total_runtime += runtime
-# pre_spikes = pop_src1.get_data('spikes')
-exc_data = pop_exc.get_data()
 
-# Plot
-Figure(
-    # raster plot of the presynaptic neuron spike times
-    # Panel(pre_spikes_slow.segments[0].spiketrains,
-    # yticks=True, markersize=0.2, xlim=(0, runtime)),
-    # plot data for postsynaptic neuron
-    Panel(exc_data.segments[0].filter(name='v')[0],
-          ylabel="Membrane potential (mV)",
-          data_labels=[pop_exc.label], yticks=True, xlim=(0, total_runtime)),
-    Panel(exc_data.segments[0].filter(name='gsyn_inh')[0],
-          ylabel="Threshold (mV)",
-          data_labels=[pop_exc.label], yticks=True, xlim=(0, total_runtime)),
-    Panel(exc_data.segments[0].filter(name='gsyn_exc')[0],
-          ylabel="Sum intrinsic currents (mV)",
-          data_labels=[pop_exc.label], yticks=True, xlim=(0, total_runtime)),
-    Panel(exc_data.segments[0].spiketrains,
-          yticks=True, markersize=0.2, xlim=(0, runtime)),
-    )
+exc_data = {}
+exc_data[1] = pop_exc_1.get_data()
+exc_data[2] = pop_exc_2.get_data()
+exc_data[3] = pop_exc_3.get_data()
+exc_data[4] = pop_exc_4.get_data()
+
+titles = {1: "0 nA", 2: "10 nA", 3: "20 nA", 4: "30 nA"}
+
+plt.figure()
+plt.suptitle("Membrane Potential (mV)")
+index=1
+for case in case_dict.keys():
+    # Plot Voltage
+    plt.subplot(4,1,index)
+    plt.title(titles[index])
+    plt.plot(NEST_v_data[:,0], NEST_v_data[:,case_dict[case]], label="NEST")
+    plt.plot(NEST_v_data[:,0],
+             exc_data[index].segments[0].filter(name='v')[0].magnitude[
+                 0:len(NEST_v_data[:,case_dict[new_i_offset]])], label="SpiNNaker")
+    plt.legend()
+    plt.tight_layout()
+    plt.show(block=False)
+    index+=1
+
+# Plot I_DK
+plt.figure()
+plt.suptitle("Intrinsic Current I_DK")
+index=1
+for case in case_dict.keys():
+    plt.subplot(4,1,index)
+    plt.title(titles[index], loc='right')
+    plt.plot(NEST_I_DK_data[:,0], -NEST_I_DK_data[:,case_dict[case]], label="NEST")
+    plt.plot(NEST_I_DK_data[:,0],
+             exc_data[index].segments[0].filter(name='gsyn_inh')[0].magnitude[
+                 0:len(NEST_I_DK_data[:,case_dict[new_i_offset]])], label="SpiNNaker")
+    plt.legend()
+    plt.tight_layout()
+    plt.show(block=False)
+    index+=1
+
+# Plot I_NaP
+plt.figure()
+plt.suptitle("Intrinsic Current I_NaP")
+index=1
+for case in case_dict.keys():
+    plt.subplot(4,1,index)
+    plt.title(titles[index])
+    plt.plot(NEST_I_NaP_data[:,0], -NEST_I_NaP_data[:,case_dict[case]], label="NEST")
+    plt.plot(NEST_I_NaP_data[:,0],
+             exc_data[index].segments[0].filter(name='gsyn_exc')[0].magnitude[
+                 0:len(NEST_I_NaP_data[:,case_dict[new_i_offset]])], label="SpiNNaker")
+    plt.legend()
+    plt.tight_layout()
+    plt.show(block=False)
+    index+=1
 
 plt.show()
 p.end()
