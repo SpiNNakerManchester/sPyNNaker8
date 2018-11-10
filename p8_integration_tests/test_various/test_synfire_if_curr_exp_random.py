@@ -10,7 +10,6 @@ from spynnaker8.utilities import neo_convertor
 from p8_integration_tests.base_test_case import BaseTestCase
 
 
-
 def do_run(nNeurons):
     p.setup(timestep=1.0, min_delay=1.0, max_delay=144.0)
     max_delay = 50
