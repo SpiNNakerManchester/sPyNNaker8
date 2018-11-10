@@ -1,7 +1,6 @@
+import numpy
 from spynnaker.pyNN.models.neural_projections.connectors import (
     MultapseConnector as _BaseClass)
-
-import numpy
 
 
 class MultapseConnector(_BaseClass):

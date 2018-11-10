@@ -1,8 +1,8 @@
 """
 Synfirechain-like example
 """
-import spynnaker8 as p
 from spinnman.exceptions import SpinnmanTimeoutException
+import spynnaker8 as p
 from p8_integration_tests.scripts.fake_if_curr import FakeIFCurrExp
 from p8_integration_tests.base_test_case import BaseTestCase
 

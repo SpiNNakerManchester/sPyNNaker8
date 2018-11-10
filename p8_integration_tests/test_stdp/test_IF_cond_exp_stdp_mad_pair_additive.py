@@ -1,8 +1,8 @@
-import spynnaker8 as p
-from p8_integration_tests.base_test_case import BaseTestCase
-import numpy
 import math
 import unittest
+import numpy
+import spynnaker8 as p
+from p8_integration_tests.base_test_case import BaseTestCase
 
 
 class TestIFCondExpSTDPPairAdditive(BaseTestCase):

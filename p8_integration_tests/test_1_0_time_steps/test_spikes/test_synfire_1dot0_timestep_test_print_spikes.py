@@ -1,16 +1,13 @@
 """
 Synfirechain-like example
 """
-# general imports
 import os
 import pickle
 import unittest
 from unittest import SkipTest
-
+from spynnaker8.utilities import neo_compare
 from p8_integration_tests.base_test_case import BaseTestCase
 from p8_integration_tests.scripts.synfire_run import SynfireRunner
-from spynnaker8.utilities import neo_compare
-
 
 n_neurons = 200  # number of neurons in each population
 runtime = 500
