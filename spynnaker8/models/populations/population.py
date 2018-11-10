@@ -1,4 +1,5 @@
 import logging
+import inspect
 from six import iteritems, string_types
 from pyNN import descriptions
 from spinn_front_end_common.utilities import globals_variables
@@ -10,7 +11,6 @@ from .idmixin import IDMixin
 from .population_base import PopulationBase
 from .population_view import PopulationView
 from spynnaker8.models.recorder import Recorder
-from spynnaker8.utilities import DataHolder
 
 logger = logging.getLogger(__name__)
 
@@ -19,63 +19,30 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
     """ PyNN 0.8/0.9 population object
     """
 
-    def __init__(self, size, cellclass, cellparams=None, structure=None,
-                 initial_values=None, label=None):
+    def __init__(
+            self, size, cellclass, cellparams=None, structure=None,
+            initial_values=None, label=None, constraints=None,
+            additional_parameters=None):
         # pylint: disable=too-many-arguments
-        size = self._roundsize(size, label)
 
         # hard code initial values as required
         if initial_values is None:
             initial_values = {}
 
-        if isinstance(cellclass, DataHolder):
-            self._vertex_holder = cellclass
-            self._vertex_holder.add_item(
-                'label', self.create_label(
-                    self._vertex_holder.data_items['label'], label))
-            assert cellparams is None
-        # cellparams being retained for backwards compatibility, but use
-        # is deprecated
-        elif issubclass(cellclass, DataHolder):
+        model = cellclass
+        if inspect.isclass(cellclass):
             if cellparams is None:
-                internal_params = dict()
+                model = cellclass()
             else:
-                internal_params = dict(cellparams)
-            cell_label = None
-            if 'label' in internal_params:
-                cell_label = internal_params['label']
-            internal_params['label'] = self.create_label(cell_label, label)
-            self._vertex_holder = cellclass(**internal_params)
-            # emit deprecation warning
-        else:
-            raise TypeError(
-                "cellclass must be an instance or subclass of BaseCellType,"
-                " not a %s" % type(cellclass))
-
-        if 'n_neurons' in self._vertex_holder.data_items:
-            if size is None:
-                size = self._vertex_holder.data_items['n_neurons']
-            elif size != self._vertex_holder.data_items['n_neurons']:
-                raise ConfigurationException(
-                    "Size parameter is {} but the {} expects a size of {}"
-                    "".format(size, cellclass,
-                              self._vertex_holder.data_items['n_neurons']))
-        else:
-            if size is None:
-                raise ConfigurationException(
-                    "Size parameter can not be None for {}".format(cellclass))
-            self._vertex_holder.add_item('n_neurons', size)
-
-        # convert between data holder and model (uses ** so that its taken
-        # the dictionary to be the parameters themselves)
-        vertex = self._vertex_holder.build_model()(
-            **self._vertex_holder.data_items)
+                model = cellclass(**cellparams)
+        self._celltype = model
 
         # build our initial objects
         super(Population, self).__init__(
             spinnaker_control=globals_variables.get_simulator(),
-            size=size, vertex=vertex,
-            structure=structure, initial_values=initial_values)
+            size=size, label=label, constraints=constraints,
+            model=model, structure=structure, initial_values=initial_values,
+            additional_parameters=additional_parameters)
         Recorder.__init__(self, population=self)
 
         # annotations used by neo objects
@@ -111,7 +78,7 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
 
         :return: The celltype this property has been set to
         """
-        return self._vertex_holder
+        return self._celltype
 
     def can_record(self, variable):
         """ Determine whether `variable` can be recorded from this population.
@@ -348,11 +315,11 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
             try:
                 super(Population, self).set(parameter, value)
             except InvalidParameterType:
-                super(Population, self).initialize(parameter, value)
+                super(Population, self)._initialize(parameter, value)
 
     def initialize(self, **kwargs):
         for parameter, value in iteritems(kwargs):
-            super(Population, self).initialize(parameter, value)
+            super(Population, self)._initialize(parameter, value)
 
     @property
     def initial_values(self):

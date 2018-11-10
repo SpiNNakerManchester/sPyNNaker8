@@ -3,7 +3,6 @@ The :py:mod:`spynnaker.pyNN` package contains the front end specifications
 and implementation for the PyNN High-level API
 (http://neuralensemble.org/trac/PyNN)
 """
-
 import logging
 import os
 from spinn_utilities.socket_address import SocketAddress
@@ -13,12 +12,24 @@ from spinn_front_end_common.abstract_models import (
 from spinn_front_end_common.utility_models import LivePacketGather
 from spinn_front_end_common.utilities import globals_variables
 from spynnaker.pyNN.abstract_spinnaker_common import AbstractSpiNNakerCommon
+from spynnaker.pyNN.external_devices_models import (
+    AbstractEthernetController, AbstractEthernetSensor,
+    ArbitraryFPGADevice, ExternalCochleaDevice, ExternalFPGARetinaDevice,
+    MunichMotorDevice, MunichRetinaDevice)
+from spynnaker.pyNN.models.utility_models import (
+    SpikeInjector as
+    ExternalDeviceSpikeInjector)
 from spynnaker.pyNN import model_binaries
 from spynnaker.pyNN.connections import (
     EthernetCommandConnection, EthernetControlConnection,
     SpynnakerLiveSpikesConnection, SpynnakerPoissonControlConnection)
-from spynnaker.pyNN.external_devices_models import (
-    AbstractEthernetController, AbstractEthernetSensor)
+from spynnaker.pyNN.external_devices_models import ExternalDeviceLifControl
+from spynnaker.pyNN.external_devices_models.push_bot.push_bot_control_modules \
+    import (
+        PushBotLifEthernet, PushBotLifSpinnakerLink)
+from spynnaker.pyNN.external_devices_models.push_bot.push_bot_spinnaker_link \
+    import (
+        PushBotSpiNNakerLinkRetinaDevice)
 from spynnaker.pyNN.external_devices_models.push_bot.push_bot_ethernet \
     import (
         PushBotEthernetLaserDevice, PushBotEthernetLEDDevice,
@@ -34,24 +45,9 @@ from spynnaker.pyNN.external_devices_models.push_bot.push_bot_spinnaker_link \
         PushBotSpiNNakerLinkMotorDevice, PushBotSpiNNakerLinkSpeakerDevice)
 from spynnaker.pyNN.protocols import MunichIoSpiNNakerLinkProtocol
 from spynnaker.pyNN.spynnaker_external_device_plugin_manager import (
-    SpynnakerExternalDevicePluginManager as Plugins)
+    SpynnakerExternalDevicePluginManager as
+    Plugins)
 from spynnaker8.models.populations import Population
-from spynnaker8.external_device_models import (
-    ArbitraryFPGADeviceDataHolder as ArbitraryFPGADevice,
-    ExternalCochleaDeviceDataHolder as ExternalCochleaDevice,
-    ExternalFPGARetinaDeviceDataHolder as ExternalFPGARetinaDevice,
-    MunichMotorDeviceDataHolder as MunichMotorDevice,
-    MunichRetinaDeviceDataHolder as MunichRetinaDevice)
-from spynnaker8.models.model_data_holders import (
-    SpikeInjectorDataHolder as ExternalDeviceSpikeInjector)
-from spynnaker8.external_device_models import (
-    ExternalDeviceLifControlDataHolder as ExternalDeviceLifControl)
-from spynnaker8.external_device_models.push_bot.push_bot_control_models \
-    import (
-        PushBotLifEthernetDataHolder as PushBotLifEthernet,
-        PushBotLifSpinnakerLinkDataHolder as PushBotLifSpinnakerLink,
-        PushBotSpinnakerLinkRetinaDeviceDataHolder
-        as PushBotSpiNNakerLinkRetinaDevice)
 
 # useful functions
 add_database_socket_address = Plugins.add_database_socket_address
@@ -116,7 +112,7 @@ def register_database_notification_request(hostname, notify_port, ack_port):
 
     :param hostname: hostname to connect to
     :param notify_port: port num for the notify command
-    :param ack_port: port num for the ack command
+    :param ack_port: port num for the acknowledge command
     :rtype: None
     """
     spynnaker_external_devices.add_socket_address(
@@ -130,7 +126,9 @@ def EthernetControlPopulation(
         control an external device which is connected to the host
 
     :param n_neurons: The number of neurons in the control population
-    :param model: Class of a model that implements AbstractEthernetController
+    :param model:\
+        Class of a model that creates a vertex of type\
+        AbstractEthernetController
     :param label: An optional label for the population
     :param local_host:\
         The optional local host IP address to listen on for commands
@@ -147,11 +145,11 @@ def EthernetControlPopulation(
         Projection, but it might not send spikes.
     """
     # pylint: disable=protected-access, too-many-arguments, too-many-locals
-    if not issubclass(model.build_model(), AbstractEthernetController):
-        raise Exception(
-            "Model must be a subclass of AbstractEthernetController")
     population = Population(n_neurons, model, label=label)
     vertex = population._get_vertex
+    if not isinstance(vertex, AbstractEthernetController):
+        raise Exception(
+            "Vertex must be an instance of AbstractEthernetController")
     translator = vertex.get_message_translator()
     ethernet_control_connection = EthernetControlConnection(
         translator, local_host, local_port)
@@ -250,5 +248,4 @@ def SpikeInjector(
         add_database_socket_address(database_notify_host,
                                     database_notify_port_num,
                                     database_ack_port_num)
-    return ExternalDeviceSpikeInjector(
-        label=label, port=port, virtual_key=virtual_key)
+    return ExternalDeviceSpikeInjector()
