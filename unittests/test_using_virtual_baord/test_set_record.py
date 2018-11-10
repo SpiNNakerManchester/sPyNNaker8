@@ -1,6 +1,6 @@
 import six
-import spynnaker8 as sim
 from spynnaker.pyNN.models.common import NeuronRecorder
+import spynnaker8 as sim
 from p8_integration_tests.base_test_case import BaseTestCase
 
 
