@@ -401,8 +401,7 @@ class SynfireRunner(object):
             populations.append(p.Population(
                 1, input_class(
                     rate=rate, start=start_time, duration=duration),
-                additional_parameters={"seed": seed},
-                label='inputSSP_1'))
+                label='inputSSP_1', additional_parameters={"seed": seed}))
 
         # handle projections
         if use_spike_connections:
