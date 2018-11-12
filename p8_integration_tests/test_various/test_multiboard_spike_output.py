@@ -12,6 +12,7 @@ class TestMultiBoardSpikeOutput(BaseTestCase):
         TestMultiBoardSpikeOutput.counts[label] += len(neuron_ids)
 
     def test_multi_board_spike_output(self):
+        self.assert_not_spin_three()
         TestMultiBoardSpikeOutput.counts = dict()
         p.setup(1.0, n_chips_required=((48 * 2) + 1))
         machine = p.get_machine()

@@ -34,7 +34,7 @@ class TestProjectionBetweenRun(BaseTestCase):
     def test_run(self):
         first_spikes, second_spikes = do_run()
         assert len(first_spikes) == 0
-        assert len(second_spikes) == 2
+        assert len(second_spikes[0]) == 2
 
 
 if __name__ == '__main__':

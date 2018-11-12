@@ -17,10 +17,11 @@ def do_run(seed=None):
             rate=10.0, start=0, duration=simtime), label="pg_pop2")
     else:
         pg_pop1 = sim.Population(2, sim.SpikeSourcePoisson(
-            rate=10.0, start=0, duration=simtime, seed=seed), label="pg_pop1")
+            rate=10.0, start=0, duration=simtime),
+            additional_parameters={"seed": seed}, label="pg_pop1")
         pg_pop2 = sim.Population(2, sim.SpikeSourcePoisson(
-            rate=10.0, start=0, duration=simtime, seed=seed+1),
-                                 label="pg_pop2")
+            rate=10.0, start=0, duration=simtime),
+            additional_parameters={"seed": seed+1}, label="pg_pop2")
 
     pg_pop1.record("spikes")
     pg_pop2.record("spikes")
