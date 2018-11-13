@@ -27,9 +27,8 @@ from spynnaker8.models.synapse_dynamics.weight_dependence \
     import WeightDependenceAdditiveTriplet
 
 # Variable rate poisson
-from spynnaker8.models.model_data_holders\
-    .spike_source_poisson_variable_data_holder \
-    import SpikeSourcePoissonVariableDataHolder as SpikeSourcePoissonVariable
+from spynnaker.pyNN.models.spike_source.spike_source_poisson_variable \
+    import SpikeSourcePoissonVariable
 
 __all__ = [
     # sPyNNaker 8 models
