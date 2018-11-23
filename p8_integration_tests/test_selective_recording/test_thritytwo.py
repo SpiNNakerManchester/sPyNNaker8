@@ -1,6 +1,7 @@
 import spynnaker8 as sim
 from p8_integration_tests.base_test_case import BaseTestCase
 
+
 class TestSampling(BaseTestCase):
 
     def test_thrtytwo(self):
@@ -8,9 +9,10 @@ class TestSampling(BaseTestCase):
         sim.set_number_of_neurons_per_core(sim.IF_curr_exp, 100)
 
         pop_1 = sim.Population(40, sim.IF_curr_exp(), label="pop_1")
-        input = sim.Population(1, sim.SpikeSourceArray(spike_times=[0]), label="input")
-        input_proj = sim.Projection(input, pop_1, sim.AllToAllConnector(),
-                                    synapse_type=sim.StaticSynapse(weight=5, delay=1))
+        input = sim.Population(1, sim.SpikeSourceArray(spike_times=[0]),
+                               label="input")
+        sim.Projection(input, pop_1, sim.AllToAllConnector(),
+                       synapse_type=sim.StaticSynapse(weight=5, delay=1))
         pop_1.record(["spikes", "v"], indexes=range(32))
         simtime = 10
         sim.run(simtime)
