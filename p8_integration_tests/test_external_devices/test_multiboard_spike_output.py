@@ -36,6 +36,7 @@ class TestMultiBoardSpikeOutput(BaseTestCase):
 
         p.run(1000)
         p.end()
+        live_output.close()
 
         for label in labels:
             print("Received {} of 1000 spikes from {}".format(
