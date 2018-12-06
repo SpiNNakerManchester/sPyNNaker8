@@ -66,11 +66,11 @@ delay_e2e      = RandomDistribution('uniform', (timeStep, timeStep * 5.0), rng=r
 pconn_e2e      = 0.1
 
 # 0.6 0.2
-delay_e2i      = RandomDistribution('normal_clipped', (0.2, 0.4, timeStep, timeStep * 5.0), rng=rng) # Was 0.2 # ms
+delay_e2i      = p.RandomDistribution('normal_clipped', mu=0.2, sigma=0.4, low=timeStep, high=timeStep * 5.0, rng=rng) # Was 0.2 # ms
 pconn_e2i      = 0.08
 weight_e2i     = 0.12  # Working with no i2i when 0.12
 
-delay_i2e      = RandomDistribution('normal_clipped', (0.2, 0.4, timeStep, timeStep * 5.0), rng=rng) # 0.2 # XXX was 0.2 # ms
+delay_i2e      = p.RandomDistribution('normal_clipped', mu=0.2, sigma=0.4, low=timeStep, high=timeStep * 5.0, rng=rng) # 0.2 # XXX was 0.2 # ms
 pconn_i2e      = 0.2  # 0.2 was too little
 weight_i2e     = 0.15
 
@@ -83,7 +83,7 @@ accPotThresholdExcit   = 6 # was 6
 depressionRateExcit    = 0.0 # was 0.11 # 0.0  # was 0.4
 accDepThresholdExcit   = -6
 meanPreWindowExcit     = 12.0 # 8
-meanPostWindowExcit    = 8.0 # 8 
+meanPostWindowExcit    = 8.0 # 8
 maxWeightExcit         = 0.5/20.0 # was 5 was 0.175
 minWeightExcit         = 0.1
 # Excitatory2:
@@ -92,7 +92,7 @@ accPotThresholdExcit2  = 7
 depressionRateExcit2   = 0.0 # was 0.11 # 0.0  # was 0.4
 accDepThresholdExcit2  = -7
 meanPreWindowExcit2    = 11.0 # 8
-meanPostWindowExcit2   = 12.0 # 8 
+meanPostWindowExcit2   = 12.0 # 8
 maxWeightExcit2        = 0.01
 minWeightExcit2        = 0.00
 # Inhibitory:
@@ -329,7 +329,7 @@ populations[excit].set(e_rev_I2=-5.0)
 
 #populations.append(p.Population(nExcitNeurons, p.extra_models.IF_curr_comb_exp_2E2I, cell_params_lif_2E2I, label='excit_pop'))  # numInhibPartitions + 1
 
-populations.append(p.Population(nTeachNeurons, p.SpikeSourceArray, teachingSpikeArray, label='teaching_ss_array')) 
+populations.append(p.Population(nTeachNeurons, p.SpikeSourceArray, teachingSpikeArray, label='teaching_ss_array'))
 
 stdp_model = p.STDPMechanism(
       timing_dependence=p.extra_models.TimingDependenceCyclic(accum_decay = accDecayPerSecond,
@@ -501,7 +501,7 @@ if True:
              wName = dirName + "/w_%d" % i
              numpy.save(wName, final_weights)
              gotAll = True
-          except: 
+          except:
              failCount += 1
              final_weights = list()
              traceback.print_exc()
@@ -541,7 +541,7 @@ if True:
 # End if False (weight stats)
 
 # Weight stats for inhib-2 weights (maintains network activity at constant level):
-if False: 
+if False:
    count_plus = 0
    count_minus = 0
    w_count = 0.0
@@ -554,7 +554,7 @@ if False:
           try:
              final_weights = projections[inhibProj+i].getWeights(format="list")
              gotAll = True
-          except: 
+          except:
              failCount += 1
              final_weights = list()
              traceback.print_exc()
@@ -577,7 +577,7 @@ if False:
        # Clear memory holding unneeded weight data:
        projections[inhibProj+i]._host_based_synapse_list = None
 
-   print "Inhib partitions: ", numInhibPartitions 
+   print "Inhib partitions: ", numInhibPartitions
    print "NumI2 weights ", numI2Weights
    mean_inhib2_weight = -1
    if numI2Weights > 0:
@@ -606,7 +606,7 @@ if doPlots:
         Panel(spikes.segments[0].spiketrains,
               yticks=True, ylabel="Memory ID", xticks = True, xlabel = "Memory Time (ms)", xlim=(0, runTime))
         #Panel(memPots.segments[0].filter(name='v')[0], ylabel="Membrane potential (mV)", yticks=True, xlim=(0, runTime))
-        # data_labels=[pop_src1.label], 
+        # data_labels=[pop_src1.label],
         #Panel(exc_data.segments[0].filter(name='gsyn_exc')[0],
         #      ylabel="gsyn excitatory (mV)",
         #      data_labels=[pop_src1.label], yticks=True, xlim=(0, runtime)),
@@ -619,7 +619,7 @@ if doPlots:
         #len(exc_data.segments[0].spiketrains[0]))
     )
     plt.show()
-    
+
     os.system('date')
 
 p.end()
