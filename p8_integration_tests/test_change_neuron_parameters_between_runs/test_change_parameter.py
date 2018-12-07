@@ -1,7 +1,6 @@
 import spynnaker8 as p
 from p8_integration_tests.base_test_case import BaseTestCase
 from pyNN.random import NumpyRNG
-from unittest import SkipTest
 
 
 def do_run(split, seed=None):
