@@ -82,6 +82,7 @@ def do_run(nNeurons, neurons_per_core):
 class MwhPopulationSynfire(BaseTestCase):
 
     def test_run_heavy(self):
+        self.assert_not_spin_three()
         try:
             nNeurons = 200  # number of neurons in each population
             neurons_per_core = 256

@@ -159,11 +159,11 @@ def do_run(Neurons, sim_time, record, seed=None):
             label="Poisson_pop_I")
     else:
         poisson_ext_e = pynn.Population(
-            n_e, pynn.SpikeSourcePoisson(rate=10.0, seed=seed),
-            label="Poisson_pop_E")
+            n_e, pynn.SpikeSourcePoisson(rate=10.0),
+            label="Poisson_pop_E", additional_parameters={"seed": seed})
         poisson_ext_i = pynn.Population(
-            n_i, pynn.SpikeSourcePoisson(rate=10.0, seed=seed+1),
-            label="Poisson_pop_I")
+            n_i, pynn.SpikeSourcePoisson(rate=10.0),
+            label="Poisson_pop_I", additional_parameters={"seed": seed+1})
 
     # Connectors
     e_conn = pynn.FixedProbabilityConnector(epsilon)
