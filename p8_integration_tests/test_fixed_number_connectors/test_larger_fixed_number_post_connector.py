@@ -77,7 +77,8 @@ def do_run(plot):
     pop_stim = p.Population(n_exc, p.SpikeSourceArray({}), label="pop_stim")
 
     # We create a normal distribution around pp_start with sigma = pp_sigma
-    rd = pyNN.random.RandomDistribution('normal', [pp_start, pp_sigma])
+    rd = pyNN.random.RandomDistribution(
+        'normal', [pp_start, pp_sigma], rng=rng)
     all_spiketimes = []
     # for each cell in the population, we take pp_a values from the
     # random distribution
