@@ -30,6 +30,12 @@ from spynnaker8.models.synapse_dynamics.timing_dependence\
 from spynnaker8.models.synapse_dynamics.weight_dependence\
     .weight_dependence_pfpc import \
     WeightDependencePFPC as WeightDependencePFPC
+from spynnaker8.models.synapse_dynamics.timing_dependence\
+    .timing_dependence_mfvn import TimingDependenceMFVN as \
+    TimingDependenceMFVN
+from spynnaker8.models.synapse_dynamics.weight_dependence\
+    .weight_dependence_mfvn import \
+    WeightDependenceMFVN as WeightDependenceMFVN
 
 # plastic weight spynnaker 8
 from spynnaker8.models.synapse_dynamics.weight_dependence \
@@ -46,5 +52,6 @@ __all__ = [
     'PfisterSpikeTriplet',
     'SpikeNearestPairRule',
     'RecurrentRule', 'Vogels2011Rule',
-    "TimingDependencePFPC", "WeightDependencePFPC"
+    "TimingDependencePFPC", "WeightDependencePFPC",
+    'TimingDependenceMFVN', 'WeightDependenceMFVN'
     ]
