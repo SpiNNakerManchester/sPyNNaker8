@@ -6,7 +6,7 @@ from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt
 
 p.setup(1) # simulation timestep (ms)
-runtime = 500
+runtime = 1000
 
 # Post-synapse population
 neuron_params = {
@@ -25,12 +25,12 @@ plastic_delay = 4
 
 purkinje_cell = p.Population(1, # number of neurons
                        p.extra_models.IFCondExpCerebellum(**neuron_params),  # Neuron model
-                       label="Purkinje Cell" # identifier
+                       label="Vestibular Nuclei" # identifier
                        )
 
 
 # Spike source to send spike via synapse
-spike_times = [11, 21, 31, 41, 51, 61, 71, 81, 91]
+spike_times = [1, 101, 201, 301, 401, 501, 601, 701, 801, 901]
 
 granular_cell = p.Population(1, # number of sources
                         p.SpikeSourceArray, # source type
@@ -40,15 +40,15 @@ granular_cell = p.Population(1, # number of sources
 
 
 # Create projection from GC to PC
-pfpc_plas = p.STDPMechanism(
-    timing_dependence=p.extra_models.TimingDependencePFPC(A_plus = a_plus),
-    weight_dependence=p.extra_models.WeightDependencePFPC(w_min=min_weight,
+mfvn_plas = p.STDPMechanism(
+    timing_dependence=p.extra_models.TimingDependenceMFVN(A_plus = a_plus),
+    weight_dependence=p.extra_models.WeightDependenceMFVN(w_min=min_weight,
                                              w_max=max_weight),
     weight=initial_weight, delay=plastic_delay)
 
 synapse_pfpc = p.Projection(
     granular_cell, purkinje_cell, p.AllToAllConnector(),
-    synapse_type=pfpc_plas, receptor_type="excitatory")
+    synapse_type=mfvn_plas, receptor_type="excitatory")
 
 
 
@@ -59,7 +59,7 @@ purkinje_cell.record("all")
 
 pf_weights = []
 for i in range(len(spike_times)):
-    p.run(10)
+    p.run(100)
     pf_weights.append(synapse_pfpc.get('weight', 'list', with_address=False))
 
 granluar_cell_spikes = granular_cell.get_data('spikes')
