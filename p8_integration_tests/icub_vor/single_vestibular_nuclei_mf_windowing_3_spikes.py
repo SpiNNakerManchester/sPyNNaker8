@@ -19,7 +19,7 @@ neuron_params = {
 # Learning parameters
 min_weight = 0
 max_weight = 0.1
-initial_weight = 0.05
+initial_weight = 0.01
 plastic_delay = 4
 
 vestibular_nuclei = p.Population(1, # number of neurons
@@ -29,7 +29,7 @@ vestibular_nuclei = p.Population(1, # number of neurons
 
 
 # Spike source to send spike via synapse
-mf_spike_times = [50, 60, 65, 85, 101, 400]#, 150, 175, 180, 190, 240, 250, 255,
+mf_spike_times = [50, 60, 65]#, 150, 175, 180, 190, 240, 250, 255,
 #                270, 300, 345, 350, 360, 370, 400, 422, 425, 427, 429]
 
 mossy_fibre_src = p.Population(1, # number of sources
@@ -39,11 +39,11 @@ mossy_fibre_src = p.Population(1, # number of sources
                         )
 
 # Spike source to send spike via synapse from climbing fibre
-pc_spike_times = [55, 80, 90, 95, 96, 201]#, 104, 107, 246]
+pc_spike_times = [60]#, 104, 107, 246]
 purkinje_cell_src = p.Population(1, # number of sources
                         p.SpikeSourceArray, # source type
                         {'spike_times': pc_spike_times}, # source spike times
-                        label="src2" # identifier
+                        label="purkinje_cell_src" # identifier
                         )
 
 # Create projection from GC to PC
