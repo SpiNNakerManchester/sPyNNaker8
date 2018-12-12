@@ -19,6 +19,8 @@ neuron_params = {
 # Learning parameters
 min_weight = 0
 max_weight = 0.1
+pot_alpha=0.01
+t_peak=100
 initial_weight = 0.05
 plastic_delay = 4
 
@@ -48,9 +50,10 @@ climbing_fibre = p.Population(1, # number of sources
 
 # Create projection from GC to PC
 pfpc_plas = p.STDPMechanism(
-    timing_dependence=p.extra_models.TimingDependencePFPC(A_plus = 0.01),
+    timing_dependence=p.extra_models.TimingDependencePFPC(t_peak=t_peak),
     weight_dependence=p.extra_models.WeightDependencePFPC(w_min=min_weight,
-                                             w_max=max_weight),
+                                                          w_max=max_weight,
+                                                          pot_alpha=pot_alpha),
     weight=initial_weight, delay=plastic_delay)
 
 synapse_pfpc = p.Projection(
@@ -98,4 +101,4 @@ F = Figure(
 plt.show()
 p.end()
 
-
+print "Job Complete"

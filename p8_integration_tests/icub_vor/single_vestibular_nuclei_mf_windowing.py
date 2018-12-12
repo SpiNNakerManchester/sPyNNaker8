@@ -19,6 +19,12 @@ neuron_params = {
 # Learning parameters
 min_weight = 0
 max_weight = 0.1
+pot_alpha = 0.01 # this is alpha in the paper
+
+beta = 11
+sigma = 201
+initial_weight = 0.005
+
 initial_weight = 0.05
 plastic_delay = 4
 
@@ -48,9 +54,11 @@ purkinje_cell_src = p.Population(1, # number of sources
 
 # Create projection from GC to PC
 mfvn_plas = p.STDPMechanism(
-    timing_dependence=p.extra_models.TimingDependenceMFVN(A_plus = 0.01),
+    timing_dependence=p.extra_models.TimingDependenceMFVN(beta=beta,
+                                                          sigma=sigma),
     weight_dependence=p.extra_models.WeightDependenceMFVN(w_min=min_weight,
-                                             w_max=max_weight),
+                                                          w_max=max_weight,
+                                                          pot_alpha=pot_alpha),
     weight=initial_weight, delay=plastic_delay)
 
 synapse_mfvn = p.Projection(
@@ -98,4 +106,4 @@ F = Figure(
 plt.show()
 p.end()
 
-
+print "Job Complete"

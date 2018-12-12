@@ -17,8 +17,14 @@ neuron_params = {
                  }
 
 # Learning parameters
+pot_alpha = 0.01
+beta = 11
+sigma = 201
+
+pot_alpha = 0.01
 min_weight = 0
 max_weight = 0.1
+
 initial_weight = 0.01
 plastic_delay = 4
 
@@ -48,9 +54,11 @@ purkinje_cell_src = p.Population(1, # number of sources
 
 # Create projection from GC to PC
 mfvn_plas = p.STDPMechanism(
-    timing_dependence=p.extra_models.TimingDependenceMFVN(A_plus = 0.01),
+    timing_dependence=p.extra_models.TimingDependenceMFVN(beta=beta,
+                                                          sigma=sigma),
     weight_dependence=p.extra_models.WeightDependenceMFVN(w_min=min_weight,
-                                             w_max=max_weight),
+                                                          w_max=max_weight,
+                                                          pot_alpha=pot_alpha),
     weight=initial_weight, delay=plastic_delay)
 
 synapse_mfvn = p.Projection(
@@ -75,7 +83,7 @@ purkinje_cell_src_spikes = purkinje_cell_src.get_data('spikes')
 vestibular_nuclei_data = vestibular_nuclei.get_data()
 
 mf_weights = synapse_mfvn.get('weight', 'list', with_address=False)
-print mf_weights
+print "\n {}".format(mf_weights)
 
 # Plot
 F = Figure(
@@ -97,5 +105,6 @@ F = Figure(
 
 plt.show()
 p.end()
+print "Job Complete"
 
 

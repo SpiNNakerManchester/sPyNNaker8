@@ -19,8 +19,12 @@ neuron_params = {
 # Learning parameters
 min_weight = 0
 max_weight = 0.1
-a_plus = 0.005 # this is alpha in the paper
+pot_alpha = 0.01 # this is alpha in the paper
+
+beta = 11
+sigma = 201
 initial_weight = 0.005
+
 plastic_delay = 4
 
 vestibular_neuclei = p.Population(1, # number of neurons
@@ -41,9 +45,11 @@ mossy_fibre_src = p.Population(1, # number of sources
 
 # Create projection from MF to VN
 mfvn_plas = p.STDPMechanism(
-    timing_dependence=p.extra_models.TimingDependenceMFVN(A_plus = a_plus),
+    timing_dependence=p.extra_models.TimingDependenceMFVN(beta=beta,
+                                                          sigma=sigma),
     weight_dependence=p.extra_models.WeightDependenceMFVN(w_min=min_weight,
-                                             w_max=max_weight),
+                                                          w_max=max_weight,
+                                                          pot_alpha=pot_alpha),
     weight=initial_weight, delay=plastic_delay)
 
 synapse_mfvn = p.Projection(
@@ -86,4 +92,4 @@ F = Figure(
 plt.show()
 p.end()
 
-
+print "Job Complete"

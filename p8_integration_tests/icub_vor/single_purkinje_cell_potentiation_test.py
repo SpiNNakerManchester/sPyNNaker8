@@ -6,7 +6,7 @@ from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt
 
 p.setup(1) # simulation timestep (ms)
-runtime = 500
+runtime = 1000
 
 # Post-synapse population
 neuron_params = {
@@ -19,7 +19,10 @@ neuron_params = {
 # Learning parameters
 min_weight = 0
 max_weight = 0.1
-a_plus = 0.01 # this is alpha in the paper
+pot_alpha = 0.002 # this is alpha in the paper
+
+t_peak = 101 # ms
+
 initial_weight = 0.05
 plastic_delay = 4
 
@@ -30,7 +33,7 @@ purkinje_cell = p.Population(1, # number of neurons
 
 
 # Spike source to send spike via synapse
-spike_times = [11, 21, 31, 41, 51, 61, 71, 81, 91]
+spike_times = [101, 201, 301, 401, 501, 601, 701, 801, 901]
 
 granular_cell = p.Population(1, # number of sources
                         p.SpikeSourceArray, # source type
@@ -41,9 +44,10 @@ granular_cell = p.Population(1, # number of sources
 
 # Create projection from GC to PC
 pfpc_plas = p.STDPMechanism(
-    timing_dependence=p.extra_models.TimingDependencePFPC(A_plus = a_plus),
+    timing_dependence=p.extra_models.TimingDependencePFPC(t_peak=t_peak),
     weight_dependence=p.extra_models.WeightDependencePFPC(w_min=min_weight,
-                                             w_max=max_weight),
+                                                          w_max=max_weight,
+                                                          pot_alpha=pot_alpha),
     weight=initial_weight, delay=plastic_delay)
 
 synapse_pfpc = p.Projection(
@@ -59,7 +63,7 @@ purkinje_cell.record("all")
 
 pf_weights = []
 for i in range(len(spike_times)):
-    p.run(10)
+    p.run(100)
     pf_weights.append(synapse_pfpc.get('weight', 'list', with_address=False))
 
 granluar_cell_spikes = granular_cell.get_data('spikes')
@@ -87,4 +91,5 @@ F = Figure(
 plt.show()
 p.end()
 
+print "Job Complete"
 
