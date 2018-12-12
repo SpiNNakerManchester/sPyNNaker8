@@ -166,13 +166,13 @@ def do_run(Neurons, sim_time, record, seed=None):
             label="Poisson_pop_I", additional_parameters={"seed": seed+1})
 
     # Connectors
-    e_conn = pynn.FixedProbabilityConnector(epsilon)
-    i_conn = pynn.FixedProbabilityConnector(epsilon)
+    rng = NumpyRNG(seed=seed)
+    e_conn = pynn.FixedProbabilityConnector(epsilon, rng=rng)
+    i_conn = pynn.FixedProbabilityConnector(epsilon, rng=rng)
 
     # Use random delays for the external noise and
     # set the initial membrane voltage below the resting potential
     # to avoid the overshoot of activity in the beginning of the simulation
-    rng = NumpyRNG(seed=seed)
     delay_distr = RandomDistribution('uniform', [1.0, 16.0], rng=rng)
     ext_conn = pynn.OneToOneConnector()
 

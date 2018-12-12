@@ -77,7 +77,8 @@ def do_run(plot):
     pop_stim = p.Population(n_exc, p.SpikeSourceArray({}), label="pop_stim")
 
     # We create a normal distribution around pp_start with sigma = pp_sigma
-    rd = pyNN.random.RandomDistribution('normal', [pp_start, pp_sigma])
+    rd = pyNN.random.RandomDistribution(
+        'normal', [pp_start, pp_sigma], rng=rng)
     all_spiketimes = []
     # for each cell in the population, we take pp_a values from the
     # random distribution
@@ -188,11 +189,10 @@ class FixedNumberPostConnectorTest(BaseTestCase):
         stim_spikes, spklist_exc, spklist_inh = do_run(plot=False)
         # any checks go here
         self.assertEquals(500, len(stim_spikes))
-        self.assertGreater(700, len(spklist_exc))
-        self.assertGreater(350, len(spklist_inh))
-        self.assertLess(350, len(spklist_exc))
-        self.assertLess(200, len(spklist_inh))
+        self.assertEquals(481, len(spklist_exc))
+        self.assertEquals(286, len(spklist_inh))
 
 
 if __name__ == '__main__':
     stim_spikes, spklist_exc, spklist_inh = do_run(plot=True)
+    print(len(stim_spikes), len(spklist_exc), len(spklist_inh))

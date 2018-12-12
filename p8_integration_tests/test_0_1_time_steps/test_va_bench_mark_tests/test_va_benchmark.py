@@ -96,9 +96,9 @@ def do_run():
 
     if simulator_name == 'spiNNaker':
         # this will set 100 neurons per core
-        p.set_number_of_neurons_per_core(p.IF_curr_exp, 100)
+        p.set_number_of_neurons_per_core(p.IF_curr_exp, 10)
         # this will set 50 neurons per core
-        p.set_number_of_neurons_per_core(p.IF_cond_exp, 50)
+        p.set_number_of_neurons_per_core(p.IF_cond_exp, 10)
 
     # node_id = 1
     # np = 1
@@ -169,8 +169,8 @@ class TestVABenchmarkSpikes(BaseTestCase):
         except SpinnmanTimeoutException as ex:
             raise SkipTest(ex)
         spike_count = neo_convertor.count_spikes(exc_spikes)
-        self.assertLess(1900, spike_count)
-        self.assertGreater(2700, spike_count)
+        print(spike_count)
+        self.assertEqual(2559, spike_count)
         try:
             with open(neo_path, "r") as neo_file:
                 recorded_spikes = pickle.load(neo_file)
