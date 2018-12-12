@@ -35,7 +35,6 @@ import spynnaker.plot_utils as plot_utils
 from spynnaker8.utilities import neo_convertor
 from p8_integration_tests.base_test_case import BaseTestCase
 from pyNN.random import NumpyRNG
-from unittest import SkipTest
 import random
 
 

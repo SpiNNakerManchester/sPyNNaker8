@@ -159,7 +159,6 @@ class TestVABenchmarkSpikes(BaseTestCase):
     def test_va_benchmark(self):
 
         exc_spikes = do_run(seed=self._test_seed)
-        spike_count = neo_convertor.count_spikes(exc_spikes)
         try:
             with open(neo_path, "r") as neo_file:
                 recorded_spikes = pickle.load(neo_file)
