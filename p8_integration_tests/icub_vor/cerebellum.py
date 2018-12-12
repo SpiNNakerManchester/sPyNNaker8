@@ -4,7 +4,7 @@ import numpy as np
 #import logging
 import matplotlib.pyplot as plt
 
-from spynnaker8.utilities import DataHolder
+#from spynnaker8.utilities import DataHolder
 from pacman.model.constraints.key_allocator_constraints import FixedKeyAndMaskConstraint
 from pacman.model.graphs.application import ApplicationSpiNNakerLinkVertex
 from pacman.model.routing_info import BaseKeyAndMask
@@ -15,56 +15,60 @@ from pyNN.utility import Timer
 from pyNN.utility.plotting import Figure, Panel
 from pyNN.random import RandomDistribution, NumpyRNG
 
+from spynnaker.pyNN.models.neuron.plasticity.stdp.common \
+    import plasticity_helpers
+
+
 RETINA_X_SIZE = 304
 RETINA_Y_SIZE = 240
 RETINA_BASE_KEY = 0x00000000
 RETINA_MASK = 0xFF000000
 RETINA_Y_BIT_SHIFT = 9
 
-class ICUBInputVertex(
-        ApplicationSpiNNakerLinkVertex,
-        # AbstractProvidesNKeysForPartition,
-         AbstractProvidesOutgoingPartitionConstraints):
-
-    def __init__(self, n_neurons, spinnaker_link_id, board_address=None,
-                 constraints=None, label=None):
-
-        ApplicationSpiNNakerLinkVertex.__init__(
-            self, n_neurons, spinnaker_link_id=spinnaker_link_id,
-            board_address=board_address, label=label, constraints=constraints)
-        #AbstractProvidesNKeysForPartition.__init__(self)
-        AbstractProvidesOutgoingPartitionConstraints.__init__(self)
-
-#    @overrides(AbstractProvidesNKeysForPartition.get_n_keys_for_partition)
-#    def get_n_keys_for_partition(self, partition, graph_mapper):
-#        return 1048576
-
-    @overrides(AbstractProvidesOutgoingPartitionConstraints.
-               get_outgoing_partition_constraints)
-    def get_outgoing_partition_constraints(self, partition):
-        return [FixedKeyAndMaskConstraint(
-            keys_and_masks=[BaseKeyAndMask(
-                base_key=0, #upper part of the key
-                mask=0xFFFFFC00)])]
-                #keys, i.e. neuron addresses of the input population that sits in the ICUB vertex
-                # this mask removes all spikes that have a "1" in the MSB and lets the spikes go only if the MSB are at "0"
-                # it must have enough keys to host the input addressing space and the output (with the same keys)
-class ICUBInputVertexDataHolder(DataHolder):
-
-    def __init__(self, spinnaker_link_id, board_address=None,
-                 constraints=None, label=None):
-        DataHolder.__init__(
-            self, {"spinnaker_link_id": spinnaker_link_id,"board_address": board_address, "label": label})
-
-    @staticmethod
-    def build_model():
-        return ICUBInputVertex
-#logger = logging.getLogger(__name__)
+# class ICUBInputVertex(
+#         ApplicationSpiNNakerLinkVertex,
+#         # AbstractProvidesNKeysForPartition,
+#          AbstractProvidesOutgoingPartitionConstraints):
+#
+#     def __init__(self, n_neurons, spinnaker_link_id, board_address=None,
+#                  constraints=None, label=None):
+#
+#         ApplicationSpiNNakerLinkVertex.__init__(
+#             self, n_neurons, spinnaker_link_id=spinnaker_link_id,
+#             board_address=board_address, label=label, constraints=constraints)
+#         #AbstractProvidesNKeysForPartition.__init__(self)
+#         AbstractProvidesOutgoingPartitionConstraints.__init__(self)
+#
+# #    @overrides(AbstractProvidesNKeysForPartition.get_n_keys_for_partition)
+# #    def get_n_keys_for_partition(self, partition, graph_mapper):
+# #        return 1048576
+#
+#     @overrides(AbstractProvidesOutgoingPartitionConstraints.
+#                get_outgoing_partition_constraints)
+#     def get_outgoing_partition_constraints(self, partition):
+#         return [FixedKeyAndMaskConstraint(
+#             keys_and_masks=[BaseKeyAndMask(
+#                 base_key=0, #upper part of the key
+#                 mask=0xFFFFFC00)])]
+#                 #keys, i.e. neuron addresses of the input population that sits in the ICUB vertex
+#                 # this mask removes all spikes that have a "1" in the MSB and lets the spikes go only if the MSB are at "0"
+#                 # it must have enough keys to host the input addressing space and the output (with the same keys)
+# class ICUBInputVertexDataHolder(DataHolder):
+#
+#     def __init__(self, spinnaker_link_id, board_address=None,
+#                  constraints=None, label=None):
+#         DataHolder.__init__(
+#             self, {"spinnaker_link_id": spinnaker_link_id,"board_address": board_address, "label": label})
+#
+#     @staticmethod
+#     def build_model():
+#         return ICUBInputVertex
+# #logger = logging.getLogger(__name__)
 
 # Synapsis parameters
 gc_pc_weights = 0.005
 mf_vn_weights = 0.001
-pc_vn_weights = 0.00002
+pc_vn_weights = -0.00002
 io_pc_weights = 0.0
 mf_gc_weights = 0.0006
 go_gc_weights = -0.0002
@@ -80,35 +84,105 @@ num_PC_neurons = 200
 num_VN_neurons = 200
 num_IO_neurons = 200
 
-GO_PARAMS = {'cm': 0.002,
-             'v_rest': -70.0,
-             'tau_m': 100.0,
-             'e_rev_E': 0.0,
-             'e_rev_I': -75.0,
-             'v_reset': -70.0,
-             'v_thresh': -40.0,
-             'tau_refrac': 1.0,
-             'tau_syn_E': 0.5,
-             'tau_syn_I': 2.0}
+# Random distribution for synapses delays and weights (MF and GO)
+delay_distr = RandomDistribution('uniform', (1.0, 10.0), rng=NumpyRNG(seed=85524))
+weight_distr_MF = RandomDistribution('uniform', (mf_gc_weights*0.8, mf_gc_weights*1.2), rng=NumpyRNG(seed=85524))
+weight_distr_GO = RandomDistribution('uniform', (go_gc_weights*0.8, go_gc_weights*1.2), rng=NumpyRNG(seed=24568))
 
+# Post-synapse population
+neuron_params = {
+    "v_thresh": -50,
+    "v_reset": -70,
+    "v_rest": -65,
+    "i_offset": 0 # DC input
+                 }
+
+# Learning parameters cos rule (MF to VN)
+min_weight_c = 0
+max_weight_c = 0.1
+pot_alpha_c = 0.01 # this is alpha in the paper
+beta_c = 11
+sigma_c = 201
+initial_weight_c = 0.005
+initial_weight_c = 0.05
+plastic_delay_c = 4
+
+# Learning parameters sin rule (GrC to PC)
+min_weight_s = 0
+max_weight_s = 0.1
+pot_alpha_s =0.01
+t_peak_s =100
+initial_weight_s = 0.05
+plastic_delay_s = 4
 
 sim.setup(timestep=1.)
 #sim.set_number_of_neurons_per_core(sim.IF_curr_exp, 255)
 
-# set up populations
-num_pxl = 304 * 240;
-retina_pop = sim.Population(1024, ICUBInputVertexDataHolder(spinnaker_link_id=0), label='pop_retina')
+# set up input populations
+# num_pxl = 304 * 240;
+# retina_pop = sim.Population(1024, ICUBInputVertexDataHolder(spinnaker_link_id=0), label='pop_retina')
+# input activity from vestibulus
+MAX_AMPLITUDE = 0.8
+RELATIVE_AMPLITUDE = 1.0
+_head_pos = []
+_head_vel = []
+
+i = np.arange(0,2,0.01)
+for t in i:
+    desired_speed=-np.cos(t*2*np.pi)*MAX_AMPLITUDE*RELATIVE_AMPLITUDE*2.0*3.141592
+    desired_pos=-np.sin(t*2*np.pi)*MAX_AMPLITUDE*RELATIVE_AMPLITUDE
+    _head_pos.append(desired_pos)
+    _head_vel.append(desired_speed)
+
+# single point over time
+head_pos = _head_pos[10]
+head_vel = _head_vel[10]
+
+head_pos = ((head_pos + 0.8) / 1.6)
+head_vel = ((head_vel + 0.8 * 2 * 3.14) / (1.6 * 2 * 3.14))
+
+if head_pos > 1.0:
+    head_pos = 1.0
+elif head_pos < 0.0:
+    head_pos = 0.0
+if head_vel > 1.0:
+    head_vel = 1.0
+elif head_vel < 0.0:
+    head_vel = 0.0
+
+min_rate = 0.0
+max_rate = 600.0
+sigma = 0.02
+MF_pos_activity = np.zeros((50))
+MF_vel_activity = np.zeros((50))
+
+for i in range(50):
+    mean = float(i) / 50.0 + 0.01
+    gaussian = np.exp(-((head_pos - mean) * (head_pos - mean))/(2.0 * sigma * sigma))
+    MF_pos_activity[i] = min_rate + gaussian * (max_rate - min_rate)
+
+for i in range(50):
+    mean = float(i) / 50.0 + 0.01
+    gaussian = np.exp(-((head_vel - mean) * (head_vel - mean))/(2.0 * sigma * sigma))
+    MF_vel_activity[i] = min_rate + gaussian * (max_rate - min_rate)
+
+#sa_mean_freq = np.arange(0,1000,10)
+sa_mean_freq = np.concatenate((MF_pos_activity, MF_vel_activity))
+
+# plt.plot(sa_mean_freq)
+# plt.show()
+
+SA_population = sim.Population(num_MF_neurons, # number of sources
+                        sim.SpikeSourcePoisson, # source type
+                        {'rate': sa_mean_freq}, # source spike times
+                        label="sa_population" # identifier
+                        )
 
 
-
-# Create GOC population
 # Create MF population
-
-#MF_population = sim.Population(num_MF_neurons,parrot_neuron,{},label='MFLayer')
 MF_population = sim.Population(num_MF_neurons, sim.IF_curr_exp(),label='MFLayer')
 
 # Create GOC population
-#GOC_population = sim.Population(num_GOC_neurons,spynnaker.pyNN.models.neuron.builds.if_cond_alpha.IFCondAlpha(),label='GOCLayer')
 GOC_population = sim.Population(num_GOC_neurons, sim.IF_cond_exp() ,label='GOCLayer')
 
 # Create MF-GO connections
@@ -118,28 +192,36 @@ mf_go_connections = sim.Projection(MF_population,
                                    sim.StaticSynapse(delay=1.0, weight=mf_go_weights))
 
 # Create GrC population
-#GC_population = sim.Population(num_GC_neurons,sim.IF_cond_alpha(**GR_PARAMS),label='GCLayer')
 GC_population = sim.Population(num_GC_neurons,sim.IF_curr_exp(),label='GCLayer')
 
-# Random distribution for synapses delays and weights
-delay_distr = RandomDistribution('uniform', (1.0, 10.0), rng=NumpyRNG(seed=85524))
-weight_distr_MF = RandomDistribution('uniform', (mf_gc_weights*0.8, mf_gc_weights*1.2), rng=NumpyRNG(seed=85524))
-weight_distr_GO = RandomDistribution('uniform', (go_gc_weights*0.8, go_gc_weights*1.2), rng=NumpyRNG(seed=24568))
+# create PC population
+PC_population = sim.Population(num_PC_neurons, # number of neurons
+                       sim.extra_models.IFCondExpCerebellum(**neuron_params),  # Neuron model
+                       label="Purkinje Cell" # identifier
+                       )
 
+# create VN population
+VN_population = sim.Population(num_VN_neurons, # number of neurons
+                       sim.extra_models.IFCondExpCerebellum(**neuron_params),  # Neuron model
+                       label="Vestibular Nuclei" # identifier
+                       )
+
+# Create IO population
+IO_population = sim.Population(num_IO_neurons,sim.IF_curr_exp(),label='IOLayer')
+
+# Create connections
 
 # Create MF-GC and GO-GC connections
 float_num_MF_neurons = float (num_MF_neurons)
 
-
 list_GOC_GC = []
 list_MF_GC = []
 list_GOC_GC_2 = []
+# projections to subpopulations https://github.com/SpiNNakerManchester/sPyNNaker8/issues/168)
 for i in range (num_MF_neurons):
         GC_medium_index = int(round((i / float_num_MF_neurons ) * num_GC_neurons))
         GC_lower_index = GC_medium_index - 40
         GC_upper_index = GC_medium_index + 60
-
-        #print GC_lower_index, GC_medium_index, GC_upper_index
 
         if(GC_lower_index < 0):
                 GC_lower_index = 0
@@ -153,49 +235,22 @@ for i in range (num_MF_neurons):
         for j in range(GC_medium_index + 20 - GC_medium_index):
             list_MF_GC.append((i, GC_medium_index + j))
 
-        for j in range(GC_upper_index - GC_medium_index + 20):
+
+        for j in range(GC_upper_index - GC_medium_index - 20):
             list_GOC_GC_2.append((i, GC_medium_index + 20 + j))
 
 GO_GC_con1 = sim.Projection(GOC_population,
               GC_population,
               sim.FromListConnector(list_GOC_GC, weight_distr_GO, delay_distr))
-              #sim.StaticSynapse(delay=delay_distr, weight=weight_distr_GO))
-
 
 MF_GC_con2 = sim.Projection(MF_population,
               GC_population,
               sim.FromListConnector(list_MF_GC, weight_distr_MF, delay_distr))
-              #sim.StaticSynapse(delay=delay_distr, weight=weight_distr_MF))
 
 GO_GC_con3 = sim.Projection(GOC_population,
               GC_population,
               sim.FromListConnector(list_GOC_GC_2, weight_distr_GO, delay_distr))
-              #sim.StaticSynapse(delay=delay_distr, weight=weight_distr_GO))
 
-
-#PC_population = sim.Population(num_PC_neurons,pc_neuron(**PC_PARAMS),label='PCLayer')
-PC_population = sim.Population(num_PC_neurons,sim.IF_curr_exp(),label='PCLayer')
-
-
-#VN_population = sim.Population(num_VN_neurons,vn_neuron(**VN_PARAMS),label='VNLayer')
-VN_population = sim.Population(num_VN_neurons,sim.IF_curr_exp(),label='VNLayer')
-
-
-# Create IO population
-#IO_population = sim.Population(num_IO_neurons,parrot_neuron,{},label='IOLayer')
-IO_population = sim.Population(num_IO_neurons,sim.IF_curr_exp(),label='IOLayer')
-
-
-
-# # Create MF-VN learning rule (THIS MODEL HAS BEEN DEFINED IN THE CEREBELLUMMODULE PACKAGE: https://github.com/jgarridoalcazar/SpikingCerebellum/)
-# stdp_cos = sim.native_synapse_type('stdp_cos_synapse')(**{'weight':mf_vn_weights,
-#                                                       'delay':1.0,
-#                                                       'exponent': 2.0,
-#                                                       'tau_cos': 5.0,
-#                                                       'A_plus': 0.0000009,
-#                                                       'A_minus': 0.00001,
-#                                                       'Wmin': 0.0005,
-#                                                       'Wmax': 0.007})
 
 # Create PC-VN connections
 pc_vn_connections = sim.Projection(PC_population,
@@ -204,40 +259,38 @@ pc_vn_connections = sim.Projection(PC_population,
                                #receptor_type='GABA',
                                synapse_type = sim.StaticSynapse(delay=1.0, weight=pc_vn_weights))
 
+# Create MF-VN learning rule - cos
+mfvn_plas = sim.STDPMechanism(
+    timing_dependence=sim.extra_models.TimingDependenceMFVN(beta=beta_c,
+                                                          sigma=sigma_c),
+    weight_dependence=sim.extra_models.WeightDependenceMFVN(w_min=min_weight_c,
+                                                          w_max=max_weight_c,
+                                                          pot_alpha=pot_alpha_c),
+    weight=initial_weight_c, delay=plastic_delay_c)
 
-# This second synapse with "receptor_type=TEACHING_SIGNAL" propagates the learning signals that drive the plasticity mechanisms in MF-VN synapses
-pc_vn_connections = sim.Projection(PC_population,
-                               VN_population,
-                               sim.OneToOneConnector(),
-                               #receptor_type='TEACHING_SIGNAL',
-                               synapse_type = sim.StaticSynapse(delay=1.0, weight=0.0))
+# Create MF to VN connections
+mf_vn_connections = sim.Projection(
+    MF_population, VN_population, sim.AllToAllConnector(),
+    synapse_type=mfvn_plas, receptor_type="excitatory")
 
+# Create projection from PC to VN -- replaces "TEACHING SIGNAL"
+pc_vn_connections = sim.Projection(
+    PC_population, VN_population, sim.OneToOneConnector(),
+    sim.StaticSynapse(weight=0.0, delay=1), receptor_type="excitatory")
 
-timing_rule = sim.SpikePairRule(tau_plus=20.0, tau_minus=20.0,
-                                A_plus=0.5, A_minus=0.5)
-weight_rule = sim.AdditiveWeightDependence(w_max=5.0, w_min=0.0)
+# create PF-PC learning rule - sin
+pfpc_plas = sim.STDPMechanism(
+    timing_dependence=sim.extra_models.TimingDependencePFPC(t_peak=t_peak_s),
+    weight_dependence=sim.extra_models.WeightDependencePFPC(w_min=min_weight_s,
+                                                          w_max=max_weight_s,
+                                                          pot_alpha=pot_alpha_s),
+    weight=initial_weight_s, delay=plastic_delay_s)
 
-stdp_model = sim.STDPMechanism(timing_dependence=timing_rule,
-                               weight_dependence=weight_rule,
-                               weight=0.0, delay=5.0)
+# Create PF-PC connections
+pf_pc_connections = sim.Projection(
+    GC_population, PC_population, sim.AllToAllConnector(),
+    synapse_type=pfpc_plas, receptor_type="excitatory")
 
-mf_vn_connections = sim.Projection(MF_population, VN_population, sim.AllToAllConnector(),
-                                 synapse_type=stdp_model)
-
-
-# # Create MF-VN learning rule (THIS MODEL HAS BEEN DEFINED IN THE CEREBELLUMMODULE PACKAGE: https://github.com/jgarridoalcazar/SpikingCerebellum/)
-# stdp_syn = sim.native_synapse_type('stdp_sin_synapse')(**{'weight':gc_pc_weights,
-#                                                       'delay':1.0,
-#                                                       'exponent': 10,
-#                                                       'peak': 100.0,
-#                                                       'A_plus': 0.000014,
-#                                                       'A_minus': 0.00008,
-#                                                       'Wmin': 0.000,
-#                                                       'Wmax': 0.010})
-
-# Create GC-PC connections
-gc_pc_connections = sim.Projection(GC_population, PC_population, sim.AllToAllConnector(),
-                                 synapse_type=stdp_model)
 # Create IO-PC connections. This synapse with "receptor_type=COMPLEX_SPIKE" propagates the learning signals that drive the plasticity mechanisms in GC-PC synapses
 io_pc_connections = sim.Projection(IO_population,
                                PC_population,
@@ -253,23 +306,23 @@ out_pop = sim.Population(128, sim.IF_curr_exp(), label='pop_out')
 
 
 
-sim.Projection(
-    lif_pop, out_pop, sim.OneToOneConnector(),
-    synapse_type=sim.StaticSynapse(weight=0.1))
-
-
-# live output of the input vertex (retina_pop) to the first pynn population (lif_pop)
-sim.external_devices.activate_live_output_to(out_pop,retina_pop)
-
-
-#recordings and simulations
-lif_pop.record(["spikes"])
-
-out_pop.record(["spikes"])
-
-
-
-sim.run(10)
-
-sim.end()
+# sim.Projection(
+#     lif_pop, out_pop, sim.OneToOneConnector(),
+#     synapse_type=sim.StaticSynapse(weight=0.1))
+#
+#
+# # live output of the input vertex (retina_pop) to the first pynn population (lif_pop)
+# sim.external_devices.activate_live_output_to(out_pop,retina_pop)
+#
+#
+# #recordings and simulations
+# lif_pop.record(["spikes"])
+#
+# out_pop.record(["spikes"])
+#
+#
+#
+# sim.run(10)
+#
+# sim.end()
 
