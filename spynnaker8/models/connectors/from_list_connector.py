@@ -1,9 +1,13 @@
 from spynnaker.pyNN.models.neural_projections.connectors \
     import FromListConnector as CommonFromListConnector
-import numpy
 from spynnaker8.utilities.exceptions import InvalidParameterType
 
 from pyNN.connectors import Connector
+
+import numpy
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class FromListConnector(CommonFromListConnector, Connector):
@@ -34,11 +38,15 @@ class FromListConnector(CommonFromListConnector, Connector):
             if given, a callable that display a progress bar on the terminal.
         """
         # pylint: disable=too-many-arguments
-        if conn_list is None or not len(conn_list):
+        if conn_list is None:
             raise InvalidParameterType(
                 "The connection list for the FromListConnector must contain"
-                " at least a list of tuples, each of which should contain at "
-                "least: (pre_idx, post_idx)")
+                " either a list of tuples, each of which should contain at "
+                "least: (pre_idx, post_idx), or be an empty list")
+
+        if not len(conn_list):
+            logger.warning(
+                'An empty list has been passed into a FromListConnector!')
 
         conn_list = numpy.array(conn_list)
 
@@ -50,19 +58,20 @@ class FromListConnector(CommonFromListConnector, Connector):
         delays = None
         self._extra_conn_data = None
 
-        if column_names is None:
-            # if no column names, but more not the expected
-            if n_columns == 4:
-                column_names = ('pre_idx', 'post_idx', 'weight', 'delay')
+        if (n_columns != 0):
+            if column_names is None:
+                # if no column names, but more not the expected
+                if n_columns == 4:
+                    column_names = ('pre_idx', 'post_idx', 'weight', 'delay')
+                    conn_list, weights, delays, self._extra_conn_data = \
+                        self._split_conn_list(conn_list, column_names)
+                elif n_columns != 2:
+                    raise TypeError("Argument 'column_names' is required.")
+            else:
+                # separate conn list to pre, source, weight, delay and the
+                # other things
                 conn_list, weights, delays, self._extra_conn_data = \
                     self._split_conn_list(conn_list, column_names)
-            elif n_columns != 2:
-                raise TypeError("Argument 'column_names' is required.")
-        else:
-            # separate conn list to pre, source, weight, delay and the
-            # other things
-            conn_list, weights, delays, self._extra_conn_data = \
-                self._split_conn_list(conn_list, column_names)
 
         # verify that the rest of the parameters are constant, as we don't
         # support synapse params changing per atom yet
