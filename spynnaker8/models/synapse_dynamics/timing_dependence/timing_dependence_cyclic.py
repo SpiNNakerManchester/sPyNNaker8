@@ -33,6 +33,7 @@ class TimingDependenceCyclic(_BaseClass):
             pre_window_tc_inhib2=_defaults['pre_window_tc_inhib2'],
             post_window_tc_inhib2=_defaults['post_window_tc_inhib2'],
             seed=_defaults['seed'],
+            random_enabled=_defaults['random_enabled'],
             A_plus=0.01, A_minus=0.01):
 
         # pylint: disable=too-many-arguments
@@ -54,6 +55,7 @@ class TimingDependenceCyclic(_BaseClass):
             accum_pot_thresh_inhib2=accum_pot_thresh_inhib2,
             pre_window_tc_inhib2=pre_window_tc_inhib2,
             post_window_tc_inhib2=post_window_tc_inhib2,
+            random_enabled=random_enabled,
             seed=None)
 #             accumulator_depression=accumulator_depression,
 #             accumulator_potentiation=accumulator_potentiation,
