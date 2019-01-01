@@ -241,7 +241,7 @@ class Projection(PyNNProjectionCommon):
         if with_address:
             metadata["columns"] = ["i", "j"] + list(metadata["columns"])
         self._get_data(
-            attribute_names, format, gather, with_address,
+            attribute_names, format, with_address,
             notify=functools.partial(
                 self._save_callback, args=[file, format, metadata]))
 

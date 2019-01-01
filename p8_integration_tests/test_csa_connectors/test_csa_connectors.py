@@ -149,7 +149,7 @@ class CSAConnectorTest(BaseTestCase):
         self.assertLess(2300, len(spikes3))
         self.assertGreater(2600, len(spikes3))
         self.assertLess(3000, len(spikes4))
-        self.assertGreater(9000, len(spikes4))
+        self.assertGreater(11000, len(spikes4))
 
 
 if __name__ == '__main__':

@@ -1,13 +1,13 @@
 import spynnaker8 as p
 from p8_integration_tests.base_test_case import BaseTestCase
-import unittest
 
 
 def do_run():
     p.setup(1.0)
 
     inp = p.Population(
-        100, p.SpikeSourcePoisson(rate=2, seed=417), label="input")
+        100, p.SpikeSourcePoisson(rate=2), label="input",
+        additional_parameters={"seed": 417})
     inp.record("spikes")
 
     p.run(100)
@@ -23,8 +23,6 @@ def do_run():
 
 class TestChangeParameter(BaseTestCase):
 
-    @unittest.skip("https://github.com/SpiNNakerManchester/sPyNNaker/"
-                   "issues/423")
     def test_no_split(self):
         do_run()
 
