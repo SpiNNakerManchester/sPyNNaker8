@@ -13,6 +13,7 @@ from spynnaker.pyNN.models.neuron.builds.if_curr_exp_semd_base import \
     IFCurrExpSEMDBase as IF_curr_exp_sEMD
 from spynnaker.pyNN.models.neuron.builds.ht \
     import HillTononiNeuron as HillTononiNeuron
+from spynnaker.pyNN.models.neuron.builds.patch_clamped import PatchClamped
 
 # plastic timing spynnaker 8
 from spynnaker8.models.synapse_dynamics.timing_dependence \
@@ -31,8 +32,8 @@ from spynnaker8.models.synapse_dynamics.weight_dependence \
 __all__ = [
     # sPyNNaker 8 models
     'IFCurDelta', 'IFCurrExpCa2Adaptive', 'IFCondExpStock',
-    'Izhikevich_cond', 'IF_curr_dual_exp', 'IF_curr_exp_sEMD', 
-    'HillTononiNeuron',
+    'Izhikevich_cond', 'IF_curr_dual_exp', 'IF_curr_exp_sEMD',
+    'HillTononiNeuron', 'PatchClamped',
 
     # sPyNNaker 8 plastic stuff
     'WeightDependenceAdditiveTriplet',
