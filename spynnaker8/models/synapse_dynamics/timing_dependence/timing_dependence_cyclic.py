@@ -34,6 +34,7 @@ class TimingDependenceCyclic(_BaseClass):
             post_window_tc_inhib2=_defaults['post_window_tc_inhib2'],
             seed=_defaults['seed'],
             random_enabled=_defaults['random_enabled'],
+            v_diff_pot_threshold=_defaults['v_diff_pot_threshold'],
             A_plus=0.01, A_minus=0.01):
 
         # pylint: disable=too-many-arguments
@@ -56,6 +57,7 @@ class TimingDependenceCyclic(_BaseClass):
             pre_window_tc_inhib2=pre_window_tc_inhib2,
             post_window_tc_inhib2=post_window_tc_inhib2,
             random_enabled=random_enabled,
+            v_diff_pot_threshold=v_diff_pot_threshold,
             seed=None)
 #             accumulator_depression=accumulator_depression,
 #             accumulator_potentiation=accumulator_potentiation,
