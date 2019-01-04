@@ -19,62 +19,15 @@ from spynnaker.pyNN.models.neuron.plasticity.stdp.common \
     import plasticity_helpers
 
 
-RETINA_X_SIZE = 304
-RETINA_Y_SIZE = 240
-RETINA_BASE_KEY = 0x00000000
-RETINA_MASK = 0xFF000000
-RETINA_Y_BIT_SHIFT = 9
-
-# class ICUBInputVertex(
-#         ApplicationSpiNNakerLinkVertex,
-#         # AbstractProvidesNKeysForPartition,
-#          AbstractProvidesOutgoingPartitionConstraints):
-#
-#     def __init__(self, n_neurons, spinnaker_link_id, board_address=None,
-#                  constraints=None, label=None):
-#
-#         ApplicationSpiNNakerLinkVertex.__init__(
-#             self, n_neurons, spinnaker_link_id=spinnaker_link_id,
-#             board_address=board_address, label=label, constraints=constraints)
-#         #AbstractProvidesNKeysForPartition.__init__(self)
-#         AbstractProvidesOutgoingPartitionConstraints.__init__(self)
-#
-# #    @overrides(AbstractProvidesNKeysForPartition.get_n_keys_for_partition)
-# #    def get_n_keys_for_partition(self, partition, graph_mapper):
-# #        return 1048576
-#
-#     @overrides(AbstractProvidesOutgoingPartitionConstraints.
-#                get_outgoing_partition_constraints)
-#     def get_outgoing_partition_constraints(self, partition):
-#         return [FixedKeyAndMaskConstraint(
-#             keys_and_masks=[BaseKeyAndMask(
-#                 base_key=0, #upper part of the key
-#                 mask=0xFFFFFC00)])]
-#                 #keys, i.e. neuron addresses of the input population that sits in the ICUB vertex
-#                 # this mask removes all spikes that have a "1" in the MSB and lets the spikes go only if the MSB are at "0"
-#                 # it must have enough keys to host the input addressing space and the output (with the same keys)
-# class ICUBInputVertexDataHolder(DataHolder):
-#
-#     def __init__(self, spinnaker_link_id, board_address=None,
-#                  constraints=None, label=None):
-#         DataHolder.__init__(
-#             self, {"spinnaker_link_id": spinnaker_link_id,"board_address": board_address, "label": label})
-#
-#     @staticmethod
-#     def build_model():
-#         return ICUBInputVertex
-# #logger = logging.getLogger(__name__)
-
 # Synapsis parameters
 gc_pc_weights = 0.005
 mf_vn_weights = 0.001
 pc_vn_weights = -0.00002
-io_pc_weights = 0.0
+cf_pc_weights = 0.0
 mf_gc_weights = 0.0006
 go_gc_weights = -0.0002
 input_weights = 0.00025
 mf_go_weights = 0.0006
-
 
 # Network parameters
 num_MF_neurons = 100
@@ -82,7 +35,7 @@ num_GC_neurons = 2000
 num_GOC_neurons = 100
 num_PC_neurons = 200
 num_VN_neurons = 200
-num_IO_neurons = 200
+num_CF_neurons = 200
 
 # Random distribution for synapses delays and weights (MF and GO)
 delay_distr = RandomDistribution('uniform', (1.0, 10.0), rng=NumpyRNG(seed=85524))
@@ -116,14 +69,14 @@ initial_weight_s = 0.05
 plastic_delay_s = 4
 
 sim.setup(timestep=1.)
-#sim.set_number_of_neurons_per_core(sim.IF_curr_exp, 255)
-
-# set up input populations
-# num_pxl = 304 * 240;
-# retina_pop = sim.Population(1024, ICUBInputVertexDataHolder(spinnaker_link_id=0), label='pop_retina')
 
 # Sensorial Activity: input activity from vestibulus (will come from the head IMU, now it is a test bench)
-def sensorial_activity(pt):
+# We simulate the output of the head encoders with a sinusoidal function. Each "sensorial activity" value is derived from the
+# head position and velocity. From that value, we generate the mean firing rate of the MF neurons (later this will be an input
+# that will come from the robot, through the spinnLink)
+# the neurons that are active depend on the value of the sensorial activity. For each a gaussian is created centered on a specific neuron
+
+def sensorial_activity(pt): # pt is a single point in time at which we measure the head encoder's output
     MAX_AMPLITUDE = 0.8
     RELATIVE_AMPLITUDE = 1.0
     _head_pos = []
@@ -158,6 +111,7 @@ def sensorial_activity(pt):
     MF_pos_activity = np.zeros((50))
     MF_vel_activity = np.zeros((50))
 
+# generate gaussian distributions around the neuron tuned to a given sensorial activity
     for i in range(50):
         mean = float(i) / 50.0 + 0.01
         gaussian = np.exp(-((head_pos - mean) * (head_pos - mean))/(2.0 * sigma * sigma))
@@ -168,89 +122,17 @@ def sensorial_activity(pt):
         gaussian = np.exp(-((head_vel - mean) * (head_vel - mean))/(2.0 * sigma * sigma))
         MF_vel_activity[i] = min_rate + gaussian * (max_rate - min_rate)
 
-    #sa_mean_freq = np.arange(0,1000,10)
     sa_mean_freq = np.concatenate((MF_pos_activity, MF_vel_activity))
     out = [sa_mean_freq,head_pos,head_vel]
     return out
 
 # Error Activity: error from eye and head encoders
-def error_activity(pt):
-    def compute_P_error(kp, head_position, eye_position):
-        error = kp * (head_position + eye_position)
-        return error
-    def compute_D_error(kd, head_velocity, eye_velocity):
-        error = kd * (head_velocity + eye_velocity)
-        return error
-
-    MAX_AMPLITUDE = 0.8
-    MAX_AMPLITUDE_EYE = 0.35
-    RELATIVE_AMPLITUDE_EYE = 1.0
-    phaseShift  = 1.0*np.pi # simulated error between eye and head signals, error is zero if the waves are in opposite phase
-    _eye_pos = []
-    _eye_vel = []
-    ea_rate = []
-    i = np.arange(0,2,0.01)
-    for t_eye in i:
-        desired_speed = -np.cos(t_eye*2*np.pi+phaseShift) * MAX_AMPLITUDE_EYE * RELATIVE_AMPLITUDE_EYE * 2.0 * np.pi
-        desired_pos = -np.sin(t_eye*2*np.pi+phaseShift) * MAX_AMPLITUDE_EYE * RELATIVE_AMPLITUDE_EYE
-        _eye_pos.append(desired_pos)
-        _eye_vel.append(desired_speed)
-
-    # single point over time
-    eye_pos = _eye_pos[pt]
-    eye_vel = _eye_vel[pt]
-    #print 'eye_pos ea',eye_pos
-
-    head = sensorial_activity(pt)
-    head_pos = head[1]
-    head_vel = head[2]
-
-    #print head_pos, eye_pos
-    kp=15.0
-    position_error = compute_P_error(kp, head_pos, eye_pos)
-    kd=15.0
-    velocity_error = compute_D_error(kd, head_vel, eye_vel)
-
-    error=(position_error * 0.1 + (velocity_error/(2.0*np.pi)) * 0.9)/(MAX_AMPLITUDE*5)
-
-    #print position_error, velocity_error, error
+def error_activity(error_):
 
     min_rate = 1.0
     max_rate = 25.0
-    err = np.linspace(-2.0, 2.0, 20)
-#    err = [1]
-    for j in range(len(err)):
-        error_ = err[j]
-        #print error_
-        low_neuron_ID_threshold = abs(error_) * 100.0
-        up_neuron_ID_threshold = low_neuron_ID_threshold - 100.0
-        IO_agonist = np.zeros((100))
-        IO_antagonist = np.zeros((100))
 
-        rate = []
-        for i in range (100):
-            if(i < up_neuron_ID_threshold):
-                rate.append(max_rate)
-            elif(i<low_neuron_ID_threshold):
-                aux_rate=max_rate - (max_rate-min_rate)*((i - up_neuron_ID_threshold)/(low_neuron_ID_threshold - up_neuron_ID_threshold))
-                rate.append(aux_rate)
-            else:
-                rate.append(min_rate)
-
-            if error_>=0.0:
-                IO_agonist[0:100]=min_rate
-                IO_antagonist=rate
-            else:
-                IO_antagonist[0:100]=min_rate
-                IO_agonist=rate
-
-            ea_rate = np.concatenate((IO_agonist,IO_antagonist))
-        #print j
-#         plt.plot(np.linspace(up_neuron_ID_threshold,low_neuron_ID_threshold,200) ,ea_rate)
-#         plt.plot(ea_rate)
-#     plt.show()
-
-    low_neuron_ID_threshold = abs(error) * 100.0
+    low_neuron_ID_threshold = abs(error_) * 100.0
     up_neuron_ID_threshold = low_neuron_ID_threshold - 100.0
     IO_agonist = np.zeros((100))
     IO_antagonist = np.zeros((100))
@@ -265,7 +147,7 @@ def error_activity(pt):
         else:
             rate.append(min_rate)
 
-        if error>=0.0:
+        if error_>=0.0:
             IO_agonist[0:100]=min_rate
             IO_antagonist=rate
         else:
@@ -274,30 +156,18 @@ def error_activity(pt):
 
         ea_rate = np.concatenate((IO_agonist,IO_antagonist))
 
-#     plt.plot(ea_rate)
-#     plt.show()
-
     return ea_rate
 
-#### 
+####
 
+# Create MF population - fake input population that will be substituted by external input from robot
 
-for j in range (200):
-    x = error_activity(j)
-    plt.plot(x)
-
-plt.show()
-
-SA_population = sim.Population(num_MF_neurons, # number of sources
+MF_population = sim.Population(num_MF_neurons, # number of sources
                         sim.SpikeSourcePoisson, # source type
                         #{'rate': sa_mean_freq}, # source spike times
                         {'rate': sensorial_activity(10)[0]}, # source spike times
-                        label="sa_population" # identifier
+                        label="MFLayer" # identifier
                         )
-# plt.plot(sensorial_activity())
-# plt.show()
-# Create MF population
-MF_population = sim.Population(num_MF_neurons, sim.IF_curr_exp(),label='MFLayer')
 
 # Create GOC population
 GOC_population = sim.Population(num_GOC_neurons, sim.IF_cond_exp() ,label='GOCLayer')
@@ -323,8 +193,20 @@ VN_population = sim.Population(num_VN_neurons, # number of neurons
                        label="Vestibular Nuclei" # identifier
                        )
 
-# Create IO population
-IO_population = sim.Population(num_IO_neurons,sim.IF_curr_exp(),label='IOLayer')
+
+# generate fake error (it should be calculated from sensorial activity in error activity, but we skip it and just generate an error from -1.5 to 1.5)
+
+err = -0.7 # other values to test: -0.3 0 0.3 0.7
+
+# Create CF population - fake input population that will be substituted by external input from robot
+
+CF_population = sim.Population(num_CF_neurons, # number of sources
+                        sim.SpikeSourcePoisson, # source type
+                        #{'rate': sa_mean_freq}, # source spike times
+                        {'rate': error_activity(err)}, # source spike times
+                        label="CFLayer" # identifier
+                        )
+
 
 # Create connections
 
@@ -409,11 +291,11 @@ pf_pc_connections = sim.Projection(
     synapse_type=pfpc_plas, receptor_type="excitatory")
 
 # Create IO-PC connections. This synapse with "receptor_type=COMPLEX_SPIKE" propagates the learning signals that drive the plasticity mechanisms in GC-PC synapses
-io_pc_connections = sim.Projection(IO_population,
+cf_pc_connections = sim.Projection(CF_population,
                                PC_population,
                                sim.OneToOneConnector(),
                                #receptor_type='COMPLEX_SPIKE',
-                               synapse_type = sim.StaticSynapse(delay=1.0, weight=io_pc_weights))
+                               synapse_type = sim.StaticSynapse(delay=1.0, weight=cf_pc_weights))
 
 
 
