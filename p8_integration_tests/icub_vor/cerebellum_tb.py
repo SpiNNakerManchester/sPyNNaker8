@@ -18,7 +18,7 @@ from pyNN.random import RandomDistribution, NumpyRNG
 from spynnaker.pyNN.models.neuron.plasticity.stdp.common \
     import plasticity_helpers
 
-
+# cerebellum test bench
 # Synapsis parameters
 gc_pc_weights = 0.005
 mf_vn_weights = 0.001

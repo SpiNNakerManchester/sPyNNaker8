@@ -18,7 +18,7 @@ from pyNN.random import RandomDistribution, NumpyRNG
 from spynnaker.pyNN.models.neuron.plasticity.stdp.common \
     import plasticity_helpers
 
-
+# cerebellum with simulated input
 RETINA_X_SIZE = 304
 RETINA_Y_SIZE = 240
 RETINA_BASE_KEY = 0x00000000
@@ -279,7 +279,7 @@ def error_activity(pt):
 
     return ea_rate
 
-#### 
+####
 
 
 for j in range (200):
