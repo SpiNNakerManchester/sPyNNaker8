@@ -14,7 +14,7 @@ neuron_params = {
     'v': base_potential,
     'g_H': 0,
     'g_T': 0,
-    'g_NaP': 0.,
+    'g_NaP': 0.5,
     'g_DK': 0.5
     }
 
