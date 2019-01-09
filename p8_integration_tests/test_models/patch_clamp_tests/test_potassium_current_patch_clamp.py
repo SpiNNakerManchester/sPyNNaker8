@@ -78,7 +78,7 @@ for i in clamp_voltages:
 
 # Extract SpiNNaker data and add to plot
 exc_data = patch_clamped_neuron.get_data()
-I_DK_SpiNNaker = exc_data.segments[0].filter(name='gsyn_inh')[0].magnitude
+I_DK_SpiNNaker = exc_data.segments[0].filter(name='gsyn_exc')[0].magnitude
 
 
 # #############################################################################
