@@ -97,11 +97,11 @@ for i in range(I_Nap_SpiNNaker.shape[1]):
             (I_Nap_Python[i][j] - I_Nap_SpiNNaker[j, i]) / I_Nap_Python[i][j])
     plt.subplot(3, 1, 2)
     plt.plot(rel_error, label='Rel Err: {} mV, (max: {} nA)'.format(
-        clamp_voltages[1][i], max(rel_error)), linestyle='-',
+        clamp_voltages[1][i], max(rel_error, key=abs)), linestyle='-',
         color=plt_colours[i])
     plt.subplot(3, 1, 3)
     plt.plot(abs_error, label='Abs Err: {} mV, (max: {})'.format(
-        clamp_voltages[1][i], max(abs_error)), linestyle='-',
+        clamp_voltages[1][i], max(abs_error, key=abs)), linestyle='-',
         color=plt_colours[i])
 
 plt.subplot(3, 1, 2)
