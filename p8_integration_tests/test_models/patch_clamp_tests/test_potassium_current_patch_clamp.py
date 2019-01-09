@@ -7,11 +7,11 @@ import matplotlib.pyplot as plt
 # #############################################################################
 timestep = 0.1
 runtime = 500
-clamp_voltages = [[-65, -65, -65, -65, -65, -65, -65],
-                  [-50, -40, -30, -20, -10,   0,  10],
-                  [-65, -65, -65, -65, -65, -65, -65]]
 
-plt.figure()
+v_base = -65
+clamp_voltages = [[v_base, v_base, v_base, v_base, v_base, v_base, v_base],
+                  [   -50,    -40,    -30,    -20,    -10,      0,     10],
+                  [v_base, v_base, v_base, v_base, v_base, v_base, v_base]]
 
 neuron_params = {
     'v': clamp_voltages[0],
@@ -29,7 +29,6 @@ plt_colours = ['b', 'g', 'r', 'c', 'm', 'y', 'k', 'w']
 # #############################################################################
 # Setup and run patch clamp test in Python
 # #############################################################################
-
 def potassium_additional_input_get_input_value_as_current(D, membrane_voltage):
     e_to_t_on_tau = np.exp(
         -timestep / neuron_params['e_to_t_on_tau_m_DK'])  # 0.367879
@@ -59,7 +58,6 @@ for k in range(len(clamp_voltages[0])):
 # #############################################################################
 # Setup and run patch clamp test on SpiNNaker
 # #############################################################################
-
 p.setup(timestep)  # set simulation timestep (ms)
 
 patch_clamped_neuron = p.Population(len(clamp_voltages[0]),
@@ -84,16 +82,53 @@ I_DK_SpiNNaker = exc_data.segments[0].filter(name='gsyn_exc')[0].magnitude
 # #############################################################################
 # Create Plot
 # #############################################################################
+plt.figure()
+
+# Plot current traces
+plt.subplot(3, 1, 1)
 for i in range(I_DK_SpiNNaker.shape[1]):
     plt.plot(I_DK_Python[i], label='Python: ' + str(clamp_voltages[1][i]),
              linestyle='-.', color=plt_colours[i])
     plt.plot(I_DK_SpiNNaker[:, i], label='SpiNNaker: ' +
              str(clamp_voltages[1][i]), linestyle='--', color=plt_colours[i])
 
-plt.legend()
+plt.legend(ncol=2)
 plt.title('I_DK Current Patch Clamp Analysis')
 plt.xlabel('Time (ms)')
 plt.ylabel('Current (nA)')
+plt.show(block=False)
+
+# Plot absolute and relative error
+for i in range(I_DK_SpiNNaker.shape[1]):
+    rel_error = []
+    abs_error = []
+    for j in range(len(I_DK_Python[i])):
+        abs_error.append(I_DK_Python[i][j] - I_DK_SpiNNaker[j, i])
+        rel_error.append(
+            (I_DK_Python[i][j] - I_DK_SpiNNaker[j, i]) / I_DK_Python[i][j])
+    plt.subplot(3, 1, 2)
+    plt.plot(rel_error, label='Rel Err: {} mV, (max: {} nA)'.format(
+        clamp_voltages[1][i], max(rel_error)), linestyle='-',
+        color=plt_colours[i])
+    plt.subplot(3, 1, 3)
+    plt.plot(abs_error, label='Abs Err: {} mV, (max: {})'.format(
+        clamp_voltages[1][i], max(abs_error)), linestyle='-',
+        color=plt_colours[i])
+
+plt.subplot(3, 1, 2)
+plt.title('Relative Error')
+plt.legend()
+plt.ylabel('Relative Error (nA)')
+plt.xlabel('Time (ms)')
+plt.tight_layout()
+
+plt.subplot(3, 1, 3)
+plt.title('Absolute Error')
+plt.legend()
+plt.ylabel('Absolute Error (nA)')
+plt.xlabel('Time (ms)')
+plt.tight_layout()
+
 plt.show()
 
 p.end()
