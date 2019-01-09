@@ -83,7 +83,7 @@ for i in range(I_Nap_SpiNNaker.shape[1]):
 
 plt.legend(ncol=2)
 plt.title('I_NaP Current Patch Clamp Analysis')
-plt.xlabel('Time (ms)')
+plt.xlabel('Time (0.1 ms)')
 plt.ylabel('Current (nA)')
 plt.show(block=False)
 
@@ -96,25 +96,25 @@ for i in range(I_Nap_SpiNNaker.shape[1]):
         rel_error.append(
             (I_Nap_Python[i][j] - I_Nap_SpiNNaker[j, i]) / I_Nap_Python[i][j])
     plt.subplot(3, 1, 2)
-    plt.plot(rel_error, label='Rel Err: {} mV, (max: {})'.format(
-        clamp_voltages[1][i], max(rel_error, key=abs)), linestyle='-',
-        color=plt_colours[i])
-    plt.subplot(3, 1, 3)
     plt.plot(abs_error, label='Abs Err: {} mV, (max: {} nA)'.format(
         clamp_voltages[1][i], max(abs_error, key=abs)), linestyle='-',
         color=plt_colours[i])
+    plt.subplot(3, 1, 3)
+    plt.plot(rel_error, label='Rel Err: {} mV, (max: {})'.format(
+        clamp_voltages[1][i], max(rel_error, key=abs)), linestyle='-',
+        color=plt_colours[i])
 
 plt.subplot(3, 1, 2)
-plt.title('Relative Error')
+plt.title('Absolute Error')
 plt.legend()
-plt.ylabel('Relative Error (nA)')
+plt.ylabel('Absolute Error (nA)')
 plt.xlabel('Time (0.1 ms)')
 plt.tight_layout()
 
 plt.subplot(3, 1, 3)
-plt.title('Absolute Error')
+plt.title('Relative Error')
 plt.legend()
-plt.ylabel('Absolute Error (nA)')
+plt.ylabel('Relative Error')
 plt.xlabel('Time (0.1 ms)')
 plt.tight_layout()
 
