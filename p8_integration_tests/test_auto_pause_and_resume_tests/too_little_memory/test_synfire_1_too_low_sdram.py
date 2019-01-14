@@ -13,12 +13,12 @@ neurons_per_core = n_neurons / 2
 synfire_run = SynfireRunner()
 
 
-class TestGsyn(BaseTestCase):
+class TestTooLow(BaseTestCase):
     """
     tests the printing of get gsyn given a simulation
     """
 
-    def test_get_gsyn(self):
+    def test_too_low(self):
         with pytest.raises(PacmanPartitionException):
             synfire_run.do_run(n_neurons, neurons_per_core=neurons_per_core,
                                run_times=[runtime])
