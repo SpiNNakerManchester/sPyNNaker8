@@ -17,7 +17,7 @@ Adapted to PyNN8 by Christian Brenninkmeijer
 $Id:VAbenchmarks.py 5 2007-04-16 15:01:24Z davison $
 """
 import os
-import pickle
+from neo.io import PickleIO
 # import socket
 import unittest
 from unittest import SkipTest
@@ -170,14 +170,12 @@ class TestVABenchmarkSpikes(BaseTestCase):
             raise SkipTest(ex)
         spike_count = neo_convertor.count_spikes(exc_spikes)
         print(spike_count)
-        self.assertEqual(2559, spike_count)
-        try:
-            with open(neo_path, "r") as neo_file:
-                recorded_spikes = pickle.load(neo_file)
-            neo_compare.compare_blocks(exc_spikes, recorded_spikes)
-        except UnicodeDecodeError:
-            raise SkipTest(
-                "https://github.com/NeuralEnsemble/python-neo/issues/529")
+        #CB Jan 14 2019 Result varie between runs
+        self.assertLessEqual(2558, spike_count)
+        self.assertGreaterEqual(2559, spike_count)
+        io = PickleIO(filename=neo_path)
+        recorded_spikes = io.read()[0]
+        neo_compare.compare_blocks(exc_spikes, recorded_spikes)
 
 
 if __name__ == '__main__':

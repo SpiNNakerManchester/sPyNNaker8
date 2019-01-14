@@ -2,7 +2,7 @@
 Synfirechain-like example
 """
 import os
-import pickle
+from neo.io import PickleIO
 import unittest
 from p8_integration_tests.base_test_case import BaseTestCase
 from p8_integration_tests.scripts.synfire_run import SynfireRunner
@@ -37,8 +37,8 @@ class TestPrintSpikes(BaseTestCase):
             spikes = synfire_run.get_output_pop_spikes_neo()
 
             try:
-                with open(spike_path, "r") as spike_file:
-                    read_in_spikes = pickle.load(spike_file)
+                io = PickleIO(filename=spike_path)
+                read_in_spikes = io.read()[0]
 
                 neo_compare.compare_blocks(spikes, read_in_spikes)
             except UnicodeDecodeError:
