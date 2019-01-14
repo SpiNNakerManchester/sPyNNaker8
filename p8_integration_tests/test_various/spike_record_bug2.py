@@ -41,7 +41,7 @@ class Bug(BaseTestCase):
         nNeurons = 100  # number of neurons in each population
         neo = do_run(nNeurons)
         spike_count = neo_convertor.count_spikes(neo)
-        print(spike_count)
+        self.assertEquals(200, spike_count)
 
 
 if __name__ == '__main__':
