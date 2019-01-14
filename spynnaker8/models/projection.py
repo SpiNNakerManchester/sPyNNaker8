@@ -243,7 +243,7 @@ class Projection(PyNNProjectionCommon):
         self._get_data(
             attribute_names, format, with_address,
             notify=functools.partial(
-                self._save_callback, args=[file, format, metadata]))
+                self._save_callback, file, format, metadata))
 
     @property
     def pre(self):
