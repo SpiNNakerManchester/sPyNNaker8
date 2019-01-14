@@ -170,7 +170,7 @@ class TestVABenchmarkSpikes(BaseTestCase):
             raise SkipTest(ex)
         spike_count = neo_convertor.count_spikes(exc_spikes)
         print(spike_count)
-        #CB Jan 14 2019 Result varie between runs
+        # CB Jan 14 2019 Result varie between runs
         self.assertLessEqual(2558, spike_count)
         self.assertGreaterEqual(2559, spike_count)
         io = PickleIO(filename=neo_path)

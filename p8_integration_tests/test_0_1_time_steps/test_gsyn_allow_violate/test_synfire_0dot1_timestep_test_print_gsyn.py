@@ -41,8 +41,8 @@ class TestPrintGsyn(BaseTestCase):
             spike_checker.synfire_spike_checker(spikes, n_neurons)
             io = PickleIO(filename=gsyn_path)
             gsyn2_neo = io.read()[0]
-            gsyn2_numpy = neo_convertor.convert_data(gsyn2_neo, run=0,
-                                                         name="gsyn_exc")
+            gsyn2_numpy = neo_convertor.convert_data(
+                gsyn2_neo, run=0, name="gsyn_exc")
             self.assertTrue(numpy.allclose(g_syn, gsyn2_numpy))
             os.remove(gsyn_path)
         except SpinnmanTimeoutException as ex:
@@ -61,8 +61,8 @@ if __name__ == '__main__':
     spikes = synfire_run.get_output_pop_spikes_numpy()
     g_syn = synfire_run.get_output_pop_gsyn_exc_numpy()
     spike_checker.synfire_spike_checker(spikes, n_neurons)
-    with open(gsyn_path, "r") as gsyn_file:
-        gsyn2_neo = pickle.load(gsyn_file)
+    io = PickleIO(filename=gsyn_path)
+    gsyn2_neo = io.read()[0]
     gsyn2_numpy = neo_convertor.convert_data(gsyn2_neo, run=0, name="gsyn_exc")
     print(len(spikes))
     Figure(SpynnakerPanel(spikes, yticks=True, xticks=True, markersize=4,
