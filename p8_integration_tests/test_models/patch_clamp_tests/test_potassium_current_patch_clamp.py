@@ -35,7 +35,7 @@ def potassium_additional_input_get_input_value_as_current(D, membrane_voltage):
     NaInflux = 0.025 / (1. + np.exp(-(membrane_voltage - -10) * 0.2))
     D_infinity = neuron_params['e_to_t_on_tau_m_DK'] * NaInflux + 0.001
     D = D_infinity + (D - D_infinity) * e_to_t_on_tau
-    m_inf = 1. / (1. + (0.0078125 / (D**3)))
+    m_inf = 1. / (1. + (0.0078125 / (D**3.5)))
     I_DK = -neuron_params['g_DK'] * m_inf * (membrane_voltage -
                                              neuron_params['E_DK'])
     return D, I_DK
