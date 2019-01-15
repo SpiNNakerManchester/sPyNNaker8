@@ -189,7 +189,9 @@ class FixedNumberPostConnectorTest(BaseTestCase):
         stim_spikes, spklist_exc, spklist_inh = do_run(plot=False)
         # any checks go here
         self.assertEquals(500, len(stim_spikes))
-        self.assertEquals(481, len(spklist_exc))
+        # CB Jan 15 2019 values vary
+        self.assertGreaterEqual(len(spklist_exc), 481)
+        self.assertLessEqual(len(spklist_exc), 485)
         self.assertEquals(286, len(spklist_inh))
 
 

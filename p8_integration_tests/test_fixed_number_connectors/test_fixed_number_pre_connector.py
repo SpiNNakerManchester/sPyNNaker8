@@ -189,7 +189,8 @@ class FixedNumberPreConnectorTest(BaseTestCase):
         stim_spikes, spklist_exc, spklist_inh = do_run(plot=False)
         # any checks go here
         self.assertEquals(500, len(stim_spikes))
-        self.assertEquals(1348, len(spklist_exc))
+        # CB Jan 15 2019 Was 1348
+        self.assertEquals(1367, len(spklist_exc))
         self.assertEquals(291, len(spklist_inh))
 
 
