@@ -13,8 +13,8 @@ case_dict = {0:1, 10:2, 20: 3, 30: 4}
 
 
 # read V data
-# f = open("Current_injection-V.txt", "r")
-f = open("Current_injection-V_4.txt", "r")
+f = open("Current_injection-V.txt", "r")
+#f = open("Current_injection-V_4.txt", "r")
 
 l = f.readlines()[0].split("\r")
 l.remove(l[0])
@@ -29,8 +29,8 @@ for i in range(len(l)-1):
 
 
 # read I_DK
-# f = open("Current_injection-IKNa.txt", "r")
-f = open("Current_injection-IKNa_4.txt", "r")
+f = open("Current_injection-IKNa.txt", "r")
+#f = open("Current_injection-IKNa_4.txt", "r")
 
 l = f.readlines()[0].split("\r")
 l.remove(l[0])
@@ -45,8 +45,8 @@ for i in range(len(l)-1):
 
 
 #read I_NaP
-# f = open("Current_injection-INaP.txt", "r")
-f = open("Current_injection-INaP_4.txt", "r")
+f = open("Current_injection-INaP.txt", "r")
+#f = open("Current_injection-INaP_4.txt", "r")
 
 l = f.readlines()[0].split("\r")
 l.remove(l[0])
