@@ -15,7 +15,7 @@ synfire_run = SynfireRunner()
 
 class TestTooLow(BaseTestCase):
     """
-    tests the printing of get gsyn given a simulation
+    tests the run fails due to too small ram
     """
 
     def test_too_low(self):
