@@ -1,6 +1,8 @@
 """
 Synfirechain-like example
 """
+from testfixtures import LogCapture
+
 from p8_integration_tests.base_test_case import BaseTestCase
 from p8_integration_tests.scripts.synfire_run import SynfireRunner
 import spynnaker.plot_utils as plot_utils
@@ -18,9 +20,13 @@ class TestGsyn(BaseTestCase):
     """
 
     def test_get_gsyn(self):
-        synfire_run.do_run(n_neurons, neurons_per_core=neurons_per_core,
+        with LogCapture() as lc:
+            synfire_run.do_run(n_neurons, neurons_per_core=neurons_per_core,
                            run_times=[runtime])
-        spikes = synfire_run.get_output_pop_spikes_numpy()
+            spikes = synfire_run.get_output_pop_spikes_numpy()
+            self.assert_logs_messages(
+                lc.records, "*** Running simulation... ***", 'INFO', 2,
+                allow_more=True)
 
         self.assertEquals(158, len(spikes))
         spike_checker.synfire_spike_checker(spikes, n_neurons)
