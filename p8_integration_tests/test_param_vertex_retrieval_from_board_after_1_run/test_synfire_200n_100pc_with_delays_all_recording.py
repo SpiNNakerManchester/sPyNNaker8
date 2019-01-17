@@ -6,10 +6,10 @@ import numpy
 import os.path
 
 import spynnaker.spike_checker as spike_checker
-from spynnaker8.spynakker_plotting import SpynakkerPanel
+from spynnaker8.spynnaker_plotting import SpynnakerPanel
 from pyNN.utility.plotting import Figure
 from p8_integration_tests.base_test_case import BaseTestCase
-from p8_integration_tests.scripts.synfire_run import TestRun
+from p8_integration_tests.scripts.synfire_run import SynfireRunner
 import matplotlib.pyplot as plt
 
 n_neurons = 200  # number of neurons in each population
@@ -26,7 +26,7 @@ gysn_file = os.path.join(current_file_path, "200_17_gsyn.csv")
 
 class Synfire20n20pcDelaysDelayExtensionsAllRecording(BaseTestCase):
     def test_all_no_constarint(self):
-        synfire_run = TestRun()
+        synfire_run = SynfireRunner()
         synfire_run.do_run(n_neurons, neurons_per_core=neurons_per_core,
                            delay=delay, run_times=[runtime], record=True,
                            record_7=True, record_v=True, record_v_7=True,
@@ -49,9 +49,9 @@ class Synfire20n20pcDelaysDelayExtensionsAllRecording(BaseTestCase):
 
         self.assertEquals(n_neurons * runtime, len(v))
         read_v = numpy.loadtxt(v_file, delimiter=',')
-        self.assertTrue(numpy.allclose(read_v, v_7, rtol=1e-04),
+        self.assertTrue(numpy.allclose(read_v, v_7, rtol=1e-03),
                         "v synakker method mismatch")
-        self.assertTrue(numpy.allclose(read_v, v, rtol=1e-04),
+        self.assertTrue(numpy.allclose(read_v, v, rtol=1e-03),
                         "v neo method mismatch")
 
         self.assertEquals(expected_spikes, len(spikes))
@@ -63,7 +63,7 @@ class Synfire20n20pcDelaysDelayExtensionsAllRecording(BaseTestCase):
                         "spikes neo method mismatch")
 
     def test_all_constarint(self):
-        synfire_run = TestRun()
+        synfire_run = SynfireRunner()
         synfire_run.do_run(n_neurons, neurons_per_core=neurons_per_core,
                            delay=delay, run_times=[runtime],
                            placement_constraint=placement_constraint,
@@ -82,7 +82,7 @@ class Synfire20n20pcDelaysDelayExtensionsAllRecording(BaseTestCase):
 
         self.assertEquals(n_neurons * runtime, len(v))
         read_v = numpy.loadtxt(v_file, delimiter=',')
-        self.assertTrue(numpy.allclose(read_v, v, rtol=1e-04),
+        self.assertTrue(numpy.allclose(read_v, v, rtol=1e-03),
                         "v neo method mismatch")
 
         self.assertEquals(expected_spikes, len(spikes))
@@ -92,7 +92,7 @@ class Synfire20n20pcDelaysDelayExtensionsAllRecording(BaseTestCase):
                         "spikes neo method mismatch")
 
     def test_spikes_no_constarint(self):
-        synfire_run = TestRun()
+        synfire_run = SynfireRunner()
         synfire_run.do_run(n_neurons, neurons_per_core=neurons_per_core,
                            delay=delay, run_times=[runtime], record=True,
                            record_v=False, record_gsyn_exc_7=False,
@@ -106,7 +106,7 @@ class Synfire20n20pcDelaysDelayExtensionsAllRecording(BaseTestCase):
                         "spikes neo method mismatch")
 
     def test_v_no_constarint(self):
-        synfire_run = TestRun()
+        synfire_run = SynfireRunner()
         synfire_run.do_run(n_neurons, neurons_per_core=neurons_per_core,
                            delay=delay, run_times=[runtime], record=False,
                            record_v=True, record_gsyn_exc_7=False,
@@ -115,11 +115,11 @@ class Synfire20n20pcDelaysDelayExtensionsAllRecording(BaseTestCase):
 
         self.assertEquals(n_neurons * runtime, len(v))
         read_v = numpy.loadtxt(v_file, delimiter=',')
-        self.assertTrue(numpy.allclose(read_v, v, rtol=1e-04),
+        self.assertTrue(numpy.allclose(read_v, v, rtol=1e-03),
                         "v neo method mismatch")
 
     def test_gsyn_no_constarint(self):
-        synfire_run = TestRun()
+        synfire_run = SynfireRunner()
         synfire_run.do_run(n_neurons, neurons_per_core=neurons_per_core,
                            delay=delay, run_times=[runtime], record=False,
                            record_v=False, record_gsyn_exc_7=True,
@@ -133,7 +133,7 @@ class Synfire20n20pcDelaysDelayExtensionsAllRecording(BaseTestCase):
 
 
 if __name__ == '__main__':
-    synfire_run = TestRun()
+    synfire_run = SynfireRunner()
     synfire_run.do_run(n_neurons, neurons_per_core=neurons_per_core,
                        delay=delay, run_times=[runtime],
                        placement_constraint=placement_constraint, record=True,
@@ -152,10 +152,10 @@ if __name__ == '__main__':
     numpy.savetxt(v_file, v, delimiter=',')
     numpy.savetxt(gysn_file, gsyn_exc, delimiter=',')
 
-    Figure(SpynakkerPanel(spikes_neo, yticks=True, xticks=True, markersize=4,
+    Figure(SpynnakerPanel(spikes_neo, yticks=True, xticks=True, markersize=4,
                           xlim=(0, runtime)),
-           SpynakkerPanel(v_neo, yticks=True, xticks=True),
-           SpynakkerPanel(gsyn_exc_neo, yticks=True),
+           SpynnakerPanel(v_neo, yticks=True, xticks=True),
+           SpynnakerPanel(gsyn_exc_neo, yticks=True),
            title="Synfire with delay of {}".format(delay),
            annotations="generated by {}".format(__file__))
     plt.show()

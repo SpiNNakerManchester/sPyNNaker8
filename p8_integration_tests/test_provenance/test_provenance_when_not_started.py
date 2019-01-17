@@ -8,7 +8,7 @@ def do_run():
     # initisation
     p.setup(timestep=1.0, min_delay=1.0, max_delay=144.0)
 
-    input = p.Population(1024, p.SpikeSourcePoisson, {'rate': 10}, "input")
+    input_pop = p.Population(1024, p.SpikeSourcePoisson, {'rate': 10}, "input")
     relay_on = p.Population(1024, p.IF_curr_exp, {}, "input")
 
     t_rule_LGN = p.SpikePairRule(tau_plus=17, tau_minus=34, A_plus=0.01,
@@ -17,7 +17,7 @@ def do_run():
     stdp_model_LGN = p.STDPMechanism(timing_dependence=t_rule_LGN,
                                      weight_dependence=w_rule_LGN, weight=1)
     # TODO weights=1
-    p.Projection(input, relay_on, p.OneToOneConnector(),
+    p.Projection(input_pop, relay_on, p.OneToOneConnector(),
                  synapse_type=stdp_model_LGN, receptor_type="excitatory")
 
     p.run(1000)
@@ -26,12 +26,12 @@ def do_run():
 
 class ProvenanceWhenNotStartedTest(BaseTestCase):
     def test_error(self):
-        with LogCapture() as l:
+        with LogCapture() as lc:
             try:
                 do_run()
                 self.assertTrue(False)
-            except:
-                self.assert_logs_messages(l.records, "Out of DTCM",
+            except Exception:
+                self.assert_logs_messages(lc.records, "Out of DTCM",
                                           allow_more=True)
 
 

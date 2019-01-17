@@ -2,7 +2,7 @@
 Synfirechain-like example
 """
 from p8_integration_tests.base_test_case import BaseTestCase
-from p8_integration_tests.scripts.synfire_run import TestRun
+from p8_integration_tests.scripts.synfire_run import SynfireRunner
 import spynnaker.plot_utils as plot_utils
 import spynnaker.spike_checker as spike_checker
 import spynnaker.gsyn_tools as gsyn_tools
@@ -13,7 +13,7 @@ timestep = 1
 neurons_per_core = n_neurons/2
 delay = 1.7
 runtime = 50
-synfire_run = TestRun()
+synfire_run = SynfireRunner()
 
 
 class TestGetGsyn(BaseTestCase):

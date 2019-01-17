@@ -19,15 +19,14 @@ class TestUtilityCalls(unittest.TestCase):
         test_file = os.path.join(test_dir, "test")
         if os.path.exists(test_dir):
             shutil.rmtree(test_dir)
-            print "Directory existed. Deleting..."
+            print("Directory existed. Deleting...")
 
         utility_calls.check_directory_exists_and_create_if_not(test_file)
 
-        if os.path.exists(test_dir):
-            os.rmdir(test_dir)
-            print "Directory created successfully. Deleting..."
-        else:
+        if not os.path.exists(test_dir):
             raise AssertionError("Directory was not created")
+        print("Directory created successfully. Deleting...")
+        os.rmdir(test_dir)
 
     @unittest.skip("Not implemented")
     def test_is_conductance(self):

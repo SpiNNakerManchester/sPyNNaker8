@@ -10,4 +10,7 @@
 *dist/
 *egg-info/
 MANIFEST
-.cache
+/.cache
+.coverage
+/.pytest_cache
+__pycache__

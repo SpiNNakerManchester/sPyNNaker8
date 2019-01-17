@@ -4,7 +4,7 @@ Synfirechain-like example
 """
 
 from p8_integration_tests.base_test_case import BaseTestCase
-from p8_integration_tests.scripts.synfire_run import TestRun
+from p8_integration_tests.scripts.synfire_run import SynfireRunner
 from pacman.model.constraints.placer_constraints \
     import RadialPlacementFromChipConstraint
 
@@ -17,7 +17,7 @@ delay = 1
 neurons_per_core = 10
 record_v = False
 record_gsyn = False
-synfire_run = TestRun()
+synfire_run = SynfireRunner()
 
 
 class Synfire200n10pc2chipsWithNoDelaysSpikeRecording(BaseTestCase):
@@ -42,6 +42,6 @@ if __name__ == '__main__':
                        record_gsyn_inh=record_gsyn)
     spikes = synfire_run.get_output_pop_spikes_numpy()
 
-    print len(spikes)
+    print(len(spikes))
     plot_utils.plot_spikes(spikes)
     # v and gysn are None

@@ -5,32 +5,24 @@ import spynnaker8 as p
 from spynnaker8 import IF_curr_exp
 from spynnaker8 import SpikeSourceArray
 from spynnaker8.utilities import neo_convertor
+from pyNN.random import NumpyRNG
 
 CELL_PARAMS_LIF = {'cm': 0.25, 'i_offset': 0.0, 'tau_m': 20.0,
                    'tau_refrac': 2.0, 'tau_syn_E': 5.0, 'tau_syn_I': 5.0,
                    'v_reset': -70.0, 'v_rest': -65.0, 'v_thresh': -50.0}
 
 
-class TestRun(object):
+class SynfireRunner(object):
+    # pylint: disable=too-many-arguments, attribute-defined-outside-init
 
     def __init__(self):
-        self._recorded_v_list = None
-        self._recorded_v_7 = None
-        self._recorded_spikes_list = None
-        self._recorded_spikes_7 = None
-        self._recorded_gsyn_exc_list = None
-        self._recorded_gsyn_exc_7 = None
-        self._recorded_gsyn_inh_list = None
-        self._recorded_gsyn_inh_7 = None
-        self._input_spikes_recorded_list = None
-        self._input_spikes_recorded_7 = None
-        self._weights = None
-        self._delays = None
+        self.__init_object_state()
 
     def do_run(
             self, n_neurons, time_step=1, max_delay=144.0,
             input_class=SpikeSourceArray, spike_times=None, rate=None,
-            start_time=None, duration=None, spike_times_list=None,
+            start_time=None, duration=None, seed=None,
+            spike_times_list=None,
             placement_constraint=None, weight_to_spike=2.0, delay=17,
             neurons_per_core=10, cell_class=IF_curr_exp, constraint=None,
             cell_params=CELL_PARAMS_LIF, run_times=None, reset=False,
@@ -38,16 +30,18 @@ class TestRun(object):
             record_input_spikes=False, record_input_spikes_7=False,
             record=True, get_spikes=None, spike_path=None, record_7=False,
             record_v=True, get_v=None, v_path=None, record_v_7=False,
-            record_gsyn_exc=True, record_gsyn_inh=True, get_gsyn_exc=None,
-            get_gsyn_inh=None, gsyn_path_exc=None, gsyn_path_inh=None,
-            record_gsyn_exc_7=False, record_gsyn_inh_7=False, get_all=False,
+            v_sampling_rate=None, record_gsyn_exc=True, record_gsyn_inh=True,
+            get_gsyn_exc=None, get_gsyn_inh=None, gsyn_path_exc=None,
+            gsyn_path_inh=None, record_gsyn_exc_7=False,
+            record_gsyn_inh_7=False, gsyn_exc_sampling_rate=None,
+            gsyn_inh_sampling_rate=None, get_all=False,
             use_spike_connections=True, use_wrap_around_connections=True,
             get_weights=False, get_delays=False, end_before_print=False,
             randomise_v_init=False):
         """
 
         :param n_neurons: Number of Neurons in chain
-        :type  n_neurons: int
+        :type n_neurons: int
         :param time_step: time step value to be used in p.setup
         :type time_step: float
         :param max_delay: max_delay value to be used in p.setup
@@ -58,6 +52,8 @@ class TestRun(object):
         :type start_time: float
         :param duration: the length of time for the SSP to fire for
         :type duration: float
+        :param seed: Random seed
+        :type seed: int
         :param input_class: the class for inputs spikes (SSA or SSP)
         :type input_class: SpikeSourceArray, SpikeSourcePoisson
         :param spike_times: times the SSA sends in spikes
@@ -66,93 +62,96 @@ class TestRun(object):
             - must be the same length as  run times
             - If set the spike_time parameter is ignored
         :type spike_times: list of matrix of int times the SSA sends in spikes
-        :param weight_to_spike: weight for the OneToOne Connector
+        :param weight_to_spike: weight for the OneToOne Connector.\
             Not used by any test at the moment
         :type weight_to_spike: float
         :param delay: time delay in the single connectors in the spike chain
         :type delay: float
-        :param neurons_per_core: Number of neurons per core.
-            If set to None no  set_number_of_neurons_per_core call will be made
+        :param neurons_per_core: Number of neurons per core.\
+            If set to None, no set_number_of_neurons_per_core call will be made
         :type neurons_per_core: int or None
         :param constraint: A Constraint to be place on populations[0]
         :type constraint: AbstractConstraint
-        :param cell_class: class to be used for the main population
+        :param cell_class: class to be used for the main population.\
             Not used by any test at the moment
         :type cell_class: AbstractPopulationVertex
-        :param cell_params: values for the main population
-            Not used by any test at the moment
+        :param cell_params: values for the main population.\
+            Not used by any test at the moment.\
             Note: the values must match what is expected by the cellclass
         :type cell_params: dict
-        :param run_times: times for each run.
+        :param run_times: times for each run.\
             A zero will skip run but trigger reset and get date ext as set
         :type run_times: list of int
         :param reset: if True will call reset after each run except the last
         :type reset: bool
-        :param extract_between_runs: If True reads V, gysn and spikes
-            between each run.
+        :param extract_between_runs: \
+            If True reads V, gysn and spikes between each run.
         :type extract_between_runs: bool
-        :param set_between_runs set instuctions to be carried out between runs.
-            Should be a list of tuples.
-            First element of each tuple is 0 or 1
-                0 for main population
-                1 for input polulation
-            Second element a String for name of peroperty to change
+        :param set_between_runs: set instructions to be carried out between\
+            runs. Should be a list of tuples.
+            First element of each tuple is 0 or 1:
+              * 0 for main population
+              * 1 for input population
+            Second element a String for name of property to change.
             Third element the new value
         :type set_between_runs: List[(int, String, any)]
         :param new_pop: If True will add a new population before the second run
         :type new_pop: bool
         :param record_input_spikes: check for recording input spikes
         :type record_input_spikes: bool
-        :param record_input_spikes_7: check for recording input spikes in
-            PyNN7 format
+        :param record_input_spikes_7: \
+            Check for recording input spikes in PyNN7 format
         :type record_input_spikes_7: bool
         :param record: If True will asks for spikes to be recorded
         :type record: bool
-        :param get_spikes: If set overrides the normal behaviour
-            of getting spikes if and only if record is True.
+        :param get_spikes: If set overrides the normal behaviour\
+            of getting spikes if and only if record is True.\
             If left None the value of record is used.
         :type get_spikes: bool
         :param spike_path: The path to print(write) the last spike data too
         :type spike_path: str or None
-        :param record_7: If True will asks for spikes to be recorded
-            in PyNN7 format
+        :param record_7: \
+            If True will asks for spikes to be recorded in PyNN7 format
         :type record_7: bool
         :param record_v: If True will ask for voltage to be recorded
         :type record_v: bool
-        :param get_v: If set overrides the normal behaviour
-            of getting v if and only if record_v is True.
+        :param get_v: If set overrides the normal behaviour\
+            of getting v if and only if record_v is True.\
             If left None the value of record_v is used.
         :type get_v: bool
         :param v_path: The path to print(write) the last v data too
         :type v_path: str or None
-        :param get_v_7: If True
-        get_v_7
-        :param record_v_7: If True will ask for voltage to be recorded
+        :param get_v_7: If True ???????
+        :type get_v_7: bool
+        :param record_v_7: If True will ask for voltage to be recorded\
             in PyNN7 format
         :type record_v_7: bool
+        :param v_sampling_rate: Rate at which to sample v.
+        :type v_sampling_rate: int, float ot None
         :param record_gsyn_exc: If True will aks for gsyn exc to be recorded
+        :param record_gsyn_exc: If True will ask for gsyn exc to be recorded
         :type record_gsyn_exc: bool
-        :param record_gsyn_inh: If True will aks for gsyn inh to be recorded
+        :param record_gsyn_inh: If True will ask for gsyn inh to be recorded
         :type record_gsyn_inh: bool
-        :param gsyn_path_exc: The path to print(write) the last gsyn exc
-            data too
+        :param gsyn_path_exc: \
+            The path to print(write) the last gsyn exc data to.
         :type gsyn_path_exc: str or None
-        :param get_gsyn_exc: If set overrides the normal behaviour
-            of getting gsyn exc if and only if record_gsyn_exc is True.
+        :param get_gsyn_exc: If set overrides the normal behaviour\
+            of getting gsyn exc if and only if record_gsyn_exc is True.\
             If left None the value of record_gsyn_exc is used.
         :type get_gsyn_exc: bool
-        :param get_gsyn_inh: If set overrides the normal behaviour
-            of getting gsyn inh if and only if record_gsyn_inh is True.
+        :param get_gsyn_inh: If set overrides the normal behaviour\
+            of getting gsyn inh if and only if record_gsyn_inh is True.\
             If left None the value of record_gsyn_ihn is used.
         :type get_gsyn_inh: bool
-        :param gsyn_path_inh: The path to print(write) the last gsyn in the
-            data too
+        :param gsyn_path_inh: \
+            The path to print(write) the last gsyn in the data to.
         :type gsyn_path_inh: str or None
-        :param record_gsyn_exc_7: If True will aks for gsyn exc to be recorded
-            in PyNN 7 format
+        :param record_gsyn_exc_7: \
+            If True will ask for gsyn exc to be recorded in PyNN 7 format
         :type record_gsyn_exc_7: bool
-        :param record_gsyn_inh_7: If True will aks for gsyn inh to be recorded
-            in PyNN 7 format
+        :param record_gsyn_inh_7: \
+            If True will ask for gsyn inh to be recorded in PyNN 7 format
         :type record_gsyn_inh_7: bool
         :param get_all: if True will obtain another neo object with all the
             data set to be recorded by any other parameter
@@ -161,17 +160,17 @@ class TestRun(object):
         :type get_weights: bool
         :param get_delays: If True delays will be gotten
         :type get_delays: bool
-        :param end_before_print: If True will call end() before running the \
+        :param end_before_print: If True will call end() before running the\
             optional print commands.
-            Note: end will always be called twice even if no print path
+            Note: end will always be called twice even if no print path\
             provided
             WARNING: This is expected to cause an Exception \
                 if spike_path, v_path or gsyn_path provided
         :type end_before_print: bool
         :param randomise_v_init: randomises the v_init of the output pop.
         :type randomise_v_init: bool
-        :param use_loop_connections: True will put looping connections in.
-            falswont
+        :param use_loop_connections: \
+            True will put looping connections in. False won't.
         :type use_loop_connections: bool
         :return (v, gsyn, spikes, weights .....)
             v: Voltage after last or each run (if requested else None)
@@ -181,6 +180,79 @@ class TestRun(object):
 
             All three/four values will repeated once per run is requested
         """
+        self.__init_object_state()
+
+        # Initialise/verify various values
+        cell_params, run_times, set_between_runs, spike_times, get_spikes, \
+            get_v, get_gsyn_exc, get_gsyn_inh = self.__verify_parameters(
+                cell_params, run_times, set_between_runs, spike_times,
+                get_spikes, record, record_7, spike_path, get_v, record_v,
+                record_v_7, v_path, get_gsyn_exc, record_gsyn_exc,
+                record_gsyn_exc_7, gsyn_path_exc, get_gsyn_inh,
+                record_gsyn_inh, record_gsyn_inh_7, gsyn_path_inh)
+
+        p.setup(timestep=time_step, min_delay=1.0, max_delay=max_delay)
+        if neurons_per_core is not None:
+            p.set_number_of_neurons_per_core(p.IF_curr_exp, neurons_per_core)
+
+        populations, projections, run_count = self.__create_synfire_chain(
+            n_neurons, cell_class, cell_params, use_wrap_around_connections,
+            weight_to_spike, delay, spike_times, spike_times_list,
+            placement_constraint, randomise_v_init, seed, constraint,
+            input_class, rate, start_time, duration, use_spike_connections)
+
+        # handle recording
+        if record or record_7 or spike_path:
+            populations[0].record("spikes")
+        if record_v or record_v_7 or v_path:
+            populations[0].record(
+                variables="v", sampling_interval=v_sampling_rate)
+        if record_gsyn_exc or record_gsyn_exc_7 or gsyn_path_exc:
+            populations[0].record(
+                variables="gsyn_exc", sampling_interval=gsyn_exc_sampling_rate)
+        if record_gsyn_inh or record_gsyn_inh_7 or gsyn_path_inh:
+            populations[0].record(
+                variables="gsyn_inh", sampling_interval=gsyn_inh_sampling_rate)
+        if record_input_spikes or record_input_spikes_7:
+            populations[1].record("spikes")
+
+        results = self.__run_sim(
+            run_times, populations, projections, run_count, spike_times_list,
+            extract_between_runs, get_spikes, record_7, get_v, record_v_7,
+            get_gsyn_exc, record_gsyn_exc_7, get_gsyn_inh, record_gsyn_inh_7,
+            record_input_spikes, record_input_spikes_7, get_all, get_weights,
+            get_delays, new_pop, n_neurons, cell_class, cell_params,
+            weight_to_spike, set_between_runs, reset)
+
+        self._get_data(populations[0], populations[1], get_spikes, record_7,
+                       get_v, record_v_7, get_gsyn_exc, record_gsyn_exc_7,
+                       get_gsyn_inh, record_gsyn_inh_7, record_input_spikes,
+                       record_input_spikes_7, get_all)
+
+        self._get_weight_delay(projections[0], get_weights, get_delays)
+
+        if end_before_print:
+            if v_path is not None or spike_path is not None or \
+                    gsyn_path_exc is not None or gsyn_path_inh is not None:
+                print("NOTICE! end is being called before print.. commands "
+                      "which could cause an exception")
+            p.end()
+
+        if v_path is not None:
+            populations[0].write_data(v_path, "v")
+        if spike_path is not None:
+            populations[0].write_data(spike_path, "spikes")
+        if gsyn_path_exc is not None:
+            populations[0].write_data(gsyn_path_exc, "gsyn_exc")
+        if gsyn_path_inh is not None:
+            populations[0].write_data(gsyn_path_inh, "gsyn_inh")
+        if not end_before_print:
+            p.end()
+
+        return results
+
+    def __init_object_state(self):
+        """ Initialises the object's internal state. """
         self._recorded_v_list = []
         self._recorded_v_7 = None
         self._recorded_spikes_list = []
@@ -194,6 +266,19 @@ class TestRun(object):
         self._input_spikes_recorded_7 = []
         self._weights = []
         self._delays = []
+        self._default_report_folder = None
+
+    @staticmethod
+    def __verify_parameters(
+            cell_params, run_times, set_between_runs, spike_times,
+            get_spikes, record, record_7, spike_path,
+            get_v, record_v, record_v_7, v_path,
+            get_gsyn_exc, record_gsyn_exc, record_gsyn_exc_7, gsyn_path_exc,
+            get_gsyn_inh, record_gsyn_inh, record_gsyn_inh_7, gsyn_path_inh):
+        """ Checks that parameters to do_run are reasonable, and sets them up\
+            or raises an exception if they aren't. """
+        if cell_params is None:
+            cell_params = CELL_PARAMS_LIF
 
         if run_times is None:
             run_times = [1000]
@@ -209,57 +294,58 @@ class TestRun(object):
 
         if get_spikes is None:
             get_spikes = record
-        else:
-            if not record:
-                if record_7:
-                    msg = "record_7 will cause spike recording to be turned on"
-                    raise Exception(msg)
-                if spike_path:
-                    msg = "spike_path will cause spike recording to be " \
-                          "turned on"
-                    raise Exception(msg)
+        elif not record:
+            if record_7:
+                raise Exception(
+                    "record_7 will cause spike recording to be turned on")
+            if spike_path:
+                raise Exception("spike_path will cause spike recording to be "
+                                "turned on")
 
         if get_v is None:
             get_v = record_v
-        else:
-            if not record_v:
-                if record_v_7:
-                    msg = "record_v_7 will cause v recording to be turned on"
-                    raise Exception(msg)
-                if v_path:
-                    msg = "v_path will cause v recording to be turned on"
-                    raise Exception(msg)
+        elif not record_v:
+            if record_v_7:
+                raise Exception(
+                    "record_v_7 will cause v recording to be turned on")
+            if v_path:
+                raise Exception(
+                    "v_path will cause v recording to be turned on")
 
         if get_gsyn_exc is None:
             get_gsyn_exc = record_gsyn_exc
-        else:
-            if not record_gsyn_exc:
-                if record_gsyn_exc_7:
-                    msg = "record_gsyn_exc_7 will cause gsyn_exc recording " \
-                          "to be turned on"
-                    raise Exception(msg)
-                if gsyn_path_exc:
-                    msg = "gsyn_path_exc will cause gsyn_exc recording " \
-                          "to be turned on"
-                    raise Exception(msg)
+        elif not record_gsyn_exc:
+            if record_gsyn_exc_7:
+                raise Exception(
+                    "record_gsyn_exc_7 will cause gsyn_exc recording "
+                    "to be turned on")
+            if gsyn_path_exc:
+                raise Exception(
+                    "gsyn_path_exc will cause gsyn_exc recording "
+                    "to be turned on")
 
         if get_gsyn_inh is None:
             get_gsyn_inh = record_gsyn_inh
-        else:
-            if not record_gsyn_inh:
-                if record_gsyn_inh_7:
-                    msg = "record_gsyn_inh_7 will cause gsyn_inh recording " \
-                          "to be turned on"
-                    raise Exception(msg)
-                if gsyn_path_inh:
-                    msg = "gsyn_path_inh will cause gsyn_exc recording " \
-                          "to be turned on"
-                    raise Exception(msg)
+        elif not record_gsyn_inh:
+            if record_gsyn_inh_7:
+                raise Exception(
+                    "record_gsyn_inh_7 will cause gsyn_inh recording "
+                    "to be turned on")
+            if gsyn_path_inh:
+                raise Exception(
+                    "gsyn_path_inh will cause gsyn_exc recording "
+                    "to be turned on")
 
-        p.setup(timestep=time_step, min_delay=1.0, max_delay=max_delay)
-        if neurons_per_core is not None:
-            p.set_number_of_neurons_per_core(p.IF_curr_exp, neurons_per_core)
+        return (cell_params, run_times, set_between_runs, spike_times,
+                get_spikes, get_v, get_gsyn_exc, get_gsyn_inh)
 
+    @staticmethod
+    def __create_synfire_chain(
+            n_neurons, cell_class, cell_params, use_wrap_around_connections,
+            weight_to_spike, delay, spike_times, spike_times_list,
+            placement_constraint, randomise_v_init, seed, constraint,
+            input_class, rate, start_time, duration, use_spike_connections):
+        """ This actually builds the synfire chain. """
         populations = list()
         projections = list()
 
@@ -294,8 +380,11 @@ class TestRun(object):
                 populations[0].add_placement_constraint(x=x, y=y, p=proc)
 
         if randomise_v_init:
-            rng = p.NumpyRNG(seed=28375)
-            v_init = p.RandomDistribution('uniform', [-60, -40], rng)
+            if seed is None:
+                v_init = p.RandomDistribution('uniform', [-60, -40])
+            else:
+                v_init = p.RandomDistribution('uniform', [-60, -40],
+                                              NumpyRNG(seed=seed))
             populations[0].initialize(v=v_init)
 
         if constraint is not None:
@@ -304,11 +393,15 @@ class TestRun(object):
         if input_class == SpikeSourceArray:
             populations.append(p.Population(
                 1, input_class(**spike_array), label='inputSSA_1'))
+        elif seed is None:
+            populations.append(p.Population(
+                1, input_class(rate=rate, start=start_time, duration=duration),
+                label='inputSSP_1'))
         else:
             populations.append(p.Population(
                 1, input_class(
                     rate=rate, start=start_time, duration=duration),
-                label='inputSSP_1'))
+                label='inputSSP_1', additional_parameters={"seed": seed}))
 
         # handle projections
         if use_spike_connections:
@@ -323,18 +416,15 @@ class TestRun(object):
             p.FromListConnector(injection_connection),
             p.StaticSynapse(weight=weight_to_spike, delay=1)))
 
-        # handle recording
-        if record or record_7 or spike_path:
-            populations[0].record("spikes")
-        if record_v or record_v_7 or v_path:
-            populations[0].record("v")
-        if record_gsyn_exc or record_gsyn_exc_7 or gsyn_path_exc:
-            populations[0].record("gsyn_exc")
-        if record_gsyn_inh or record_gsyn_inh_7 or gsyn_path_inh:
-            populations[0].record("gsyn_inh")
-        if record_input_spikes or record_input_spikes_7:
-            populations[1].record("spikes")
+        return populations, projections, run_count
 
+    def __run_sim(self, run_times, populations, projections, run_count,
+                  spike_times_list, extract_between_runs, get_spikes,
+                  record_7, get_v, record_v_7, get_gsyn_exc, record_gsyn_exc_7,
+                  get_gsyn_inh, record_gsyn_inh_7, record_input_spikes,
+                  record_input_spikes_7, get_all, get_weights, get_delays,
+                  new_pop, n_neurons, cell_class, cell_params, weight_to_spike,
+                  set_between_runs, reset):
         results = ()
 
         for runtime in run_times[:-1]:
@@ -375,31 +465,13 @@ class TestRun(object):
 
         p.run(run_times[-1])
 
-        self._get_data(populations[0], populations[1], get_spikes, record_7,
-                       get_v, record_v_7, get_gsyn_exc, record_gsyn_exc_7,
-                       get_gsyn_inh, record_gsyn_inh_7, record_input_spikes,
-                       record_input_spikes_7, get_all)
-
-        self._get_weight_delay(projections[0], get_weights, get_delays)
-
-        if end_before_print:
-            if v_path is not None or spike_path is not None or \
-                    gsyn_path_exc is not None or gsyn_path_inh is not None:
-                print "NOTICE! end is being called before print.. commands " \
-                      "which could cause an exception"
-            p.end()
-
-        if v_path is not None:
-            populations[0].write_data(v_path, "v")
-        if spike_path is not None:
-            populations[0].write_data(spike_path, "spikes")
-        if gsyn_path_exc is not None:
-            populations[0].write_data(gsyn_path_exc, "gsyn_exc")
-        if gsyn_path_inh is not None:
-            populations[0].write_data(gsyn_path_inh, "gsyn_inh")
-        p.end()
+        self._default_report_folder = \
+            p.globals_variables.get_simulator()._report_default_directory
 
         return results
+
+    def get_default_report_folder(self):
+        return self._default_report_folder
 
     def get_output_pop_gsyn_exc_neo(self):
         return self._recorded_gsyn_exc_list[0]
@@ -412,8 +484,8 @@ class TestRun(object):
         return self._recorded_gsyn_exc_list
 
     def get_output_pop_gsyn_exc_list_numpy(self):
-        return map(neo_convertor.convert_gsyn_exc_list,
-                   self._recorded_gsyn_exc_list)
+        return list(map(neo_convertor.convert_gsyn_exc_list,
+                        self._recorded_gsyn_exc_list))
 
     def get_output_pop_gsyn_exc_7(self):
         return self._recorded_gsyn_exc_7
@@ -422,8 +494,8 @@ class TestRun(object):
         return self._recorded_gsyn_inh_list
 
     def get_output_pop_gsyn_inh_list_numpy(self):
-        return map(neo_convertor.convert_gsyn_inh_list,
-                   self._recorded_gsyn_inh_list)
+        return list(map(neo_convertor.convert_gsyn_inh_list,
+                        self._recorded_gsyn_inh_list))
 
     def get_output_pop_gsyn_inh_neo(self):
         return self._recorded_gsyn_inh_list[0]
@@ -439,8 +511,8 @@ class TestRun(object):
         return self._recorded_v_list
 
     def get_output_pop_voltage_list_numpy(self):
-        return map(neo_convertor.convert_v_list,
-                   self._recorded_v_list)
+        return list(map(neo_convertor.convert_v_list,
+                        self._recorded_v_list))
 
     def get_output_pop_voltage_neo(self):
         return self._recorded_v_list[0]
@@ -456,7 +528,8 @@ class TestRun(object):
         return self._recorded_spikes_list
 
     def get_output_pop_spikes_list_numpy(self):
-        return map(neo_convertor.convert_spikes, self._recorded_spikes_list)
+        return list(map(
+            neo_convertor.convert_spikes, self._recorded_spikes_list))
 
     def get_output_pop_spikes_neo(self):
         return self._recorded_spikes_list[0]
@@ -478,8 +551,8 @@ class TestRun(object):
         return self._input_spikes_recorded_list
 
     def get_spike_source_spikes_list_numpy(self):
-        return map(neo_convertor.convert_spikes,
-                   self._input_spikes_recorded_list)
+        return list(map(neo_convertor.convert_spikes,
+                        self._input_spikes_recorded_list))
 
     def get_spike_source_spikes_neo(self):
         return self._input_spikes_recorded_list[0]
@@ -493,11 +566,10 @@ class TestRun(object):
 
     def get_weights(self):
         """
-
-        ;return if not recorded returns None
-            if recorded once returns a numpy array
-            if recorded more than once returns a list of numpy arrays
-        :rtype: None, nparray or list of nparray
+        :return: if not recorded returns None.\
+            If recorded once returns a numpy array.\
+            If recorded more than once returns a list of numpy arrays.
+        :rtype: None, nparray, or list of nparray
         """
         if len(self._weights) == 0:
             return None
@@ -507,11 +579,10 @@ class TestRun(object):
 
     def get_delay(self):
         """
-
-        ;return if not recorded returns None
-            if recorded once returns a numpy array
-            if recorded more than once returns a list of numpy arrays
-        :rtype: None, nparray or list of nparray
+        :return: if not recorded returns None.\
+            f recorded once returns a numpy array.\
+            If recorded more than once returns a list of numpy arrays.
+        :rtype: None, nparray, or list of nparray
         """
         if len(self._delays) == 0:
             return None
@@ -584,10 +655,12 @@ class TestRun(object):
 
     def _get_weight_delay(self, projection, get_weights, get_delays):
         if get_weights:
-            weights = projection.get(attribute_names=["weight"], format="list")
+            weights = projection.get(
+                attribute_names=["weight"], format="list", with_address=True)
             self._weights.append(weights)
         if get_delays:
-            delays = projection.get(attribute_names=["delay"], format="list")
+            delays = projection.get(
+                attribute_names=["delay"], format="list", with_address=True)
             self._delays.append(delays)
 
 
@@ -595,5 +668,5 @@ if __name__ == "__main__":
     """
     main entrance method
     """
-    blah = TestRun()
+    blah = SynfireRunner()
     blah.do_run(20)

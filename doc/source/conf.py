@@ -37,24 +37,18 @@ extensions = [
     'sphinx.ext.intersphinx'
 ]
 
-ds_link = 'http://dataspecification.readthedocs.io/en/latest/'
-fe_link = 'http://spinnfrontendcommon.readthedocs.io/en/latest/'
-
-intersphinx_mapping = {'spinn_machine':
-                       ('http://spinnmachine.readthedocs.io/en/latest/',
-                           None),
-                       'spinn_storage_handlers':
-                           ('http://spinnmachine.readthedocs.io/en/latest/',
-                            None),
-                       'spinnman':
-                           ('http://spinnman.readthedocs.io/en/latest/',
-                            None),
-                       'pacman': ('http://pacman.readthedocs.io/en/latest/',
-                                  None),
-                       'data_specification': (ds_link, None),
-                       'spinn_front_end_common': (fe_link, None),
-                       'spynnaker': ("http://spynnaker.readthedocs.io", None)
-                       }
+INTERSPHINX_PATTERN = 'http://{}.readthedocs.io/en/latest/'
+intersphinx_mapping = {
+    'spinn_machine': (INTERSPHINX_PATTERN.format('spinnmachine'), None),
+    'spinn_storage_handlers': (
+        INTERSPHINX_PATTERN.format('spinnmachine'), None),
+    'spinnman': (INTERSPHINX_PATTERN.format('spinnman'), None),
+    'pacman': (INTERSPHINX_PATTERN.format('pacman'), None),
+    'data_specification': (
+        INTERSPHINX_PATTERN.format('dataspecification'), None),
+    'spinn_front_end_common': (
+        INTERSPHINX_PATTERN.format('spinnfrontendcommon'), None),
+    'spynnaker': (INTERSPHINX_PATTERN.format('spynnaker'), None)}
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -70,7 +64,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'sPyNNaker8'
-copyright = u'2014-2017'
+copyright = u'2014-2017'  # @ReservedAssignment
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the

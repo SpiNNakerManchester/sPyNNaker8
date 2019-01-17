@@ -29,14 +29,19 @@ Authors : Catherine Wacongne < catherine.waco@gmail.com >
 
 April 2013
 """
+from __future__ import print_function
 import spynnaker8 as sim
 import spynnaker.plot_utils as plot_utils
 from spynnaker8.utilities import neo_convertor
 from p8_integration_tests.base_test_case import BaseTestCase
+from pyNN.random import NumpyRNG
 from unittest import SkipTest
+import random
 
 
-def do_run():
+def do_run(seed=None):
+
+    random.seed(seed)
     # SpiNNaker setup
     sim.setup(timestep=1.0, min_delay=1.0, max_delay=10.0)
 
@@ -84,56 +89,45 @@ def do_run():
     # Test of the effect of activity of the pre_pop population on the post_pop
     # population prior to the "pairing" protocol : only pre_pop is stimulated
     for i in range(n_stim_test):
-        IAddPre.append(sim.Population(pop_size, sim.SpikeSourcePoisson,
-                                      {'rate': in_rate, 'start':
-                                          start_test_pre_pairing + ISI*(i),
-                                       'duration': dur_stim}))
+        IAddPre.append(sim.Population(
+            pop_size, sim.SpikeSourcePoisson(
+                rate=in_rate, start=start_test_pre_pairing + ISI*(i),
+                duration=dur_stim),
+            additional_parameters={"seed": random.randint(0, 100000000)}))
 
     # Pairing protocol : pre_pop and post_pop are stimulated with a 10 ms
     # difference
     for i in range(n_stim_pairing):
-        IAddPre.append(
-                sim.Population(pop_size,
-                               sim.SpikeSourcePoisson,
-                               {'rate': in_rate,
-                                'start': start_pairing + ISI*(i),
-                                'duration': dur_stim}
-                               )
-                )
-        IAddPost.append(
-                sim.Population(pop_size,
-                               sim.SpikeSourcePoisson,
-                               {'rate': in_rate,
-                                'start': start_pairing + ISI*(i) + 10.,
-                                'duration': dur_stim}
-                               )
-                )
+        IAddPre.append(sim.Population(
+            pop_size, sim.SpikeSourcePoisson(
+                rate=in_rate, start=start_pairing + ISI*(i),
+                duration=dur_stim),
+            additional_parameters={"seed": random.randint(0, 100000000)}))
+        IAddPost.append(sim.Population(
+            pop_size, sim.SpikeSourcePoisson(
+                rate=in_rate, start=start_pairing + ISI*(i) + 10.,
+                duration=dur_stim),
+            additional_parameters={"seed": random.randint(0, 100000000)}))
 
     # Test post pairing : only pre_pop is stimulated
     # (and should trigger activity in Post)
     for i in range(n_stim_test):
         start = start_pairing + ISI * n_stim_pairing + \
                 start_test_post_pairing + ISI * i
-        IAddPre.append(
-                sim.Population(pop_size,
-                               sim.SpikeSourcePoisson,
-                               {'rate': in_rate,
-                                'start': start,
-                                'duration': dur_stim}
-                               )
-                )
+        IAddPre.append(sim.Population(
+            pop_size, sim.SpikeSourcePoisson(
+                rate=in_rate, start=start, duration=dur_stim),
+            additional_parameters={"seed": random.randint(0, 100000000)}))
 
     # Noise inputs
-    INoisePre = sim.Population(pop_size,
-                               sim.SpikeSourcePoisson,
-                               {'rate': e_rate, 'start': 0,
-                                'duration': simtime}, label="expoisson"
-                               )
-    INoisePost = sim.Population(pop_size,
-                                sim.SpikeSourcePoisson,
-                                {'rate': e_rate, 'start': 0,
-                                 'duration': simtime}, label="expoisson"
-                                )
+    INoisePre = sim.Population(pop_size, sim.SpikeSourcePoisson(
+        rate=e_rate, start=0, duration=simtime),
+        additional_parameters={"seed": random.randint(0, 100000000)},
+        label="expoissonpre")
+    INoisePost = sim.Population(pop_size, sim.SpikeSourcePoisson(
+        rate=e_rate, start=0, duration=simtime),
+        additional_parameters={"seed": random.randint(0, 100000000)},
+        label="expoissonpost")
 
     # +-------------------------------------------------------------------+
     # | Creation of connections                                           |
@@ -171,10 +165,10 @@ def do_run():
         weight_dependence=sim.AdditiveWeightDependence(w_min=0, w_max=0.9)
     )
 
+    rng = NumpyRNG(seed=seed, parallel_safe=True)
     plastic_projection = \
-        sim.Projection(pre_pop, post_pop,
-                       sim.FixedProbabilityConnector(p_connect=0.5),
-                       synapse_type=stdp_model)
+        sim.Projection(pre_pop, post_pop, sim.FixedProbabilityConnector(
+            p_connect=0.5, rng=rng), synapse_type=stdp_model)
 
     # +-------------------------------------------------------------------+
     # | Simulation and results                                            |
@@ -204,23 +198,29 @@ class StdpExample(BaseTestCase):
     # The number of params does not equal with
     # the number of atoms in the vertex
     def test_run(self):
-        (pre_spikes, post_spikes, weights) = do_run()
-        try:
-            self.assertLess(130, len(pre_spikes))
-            self.assertGreater(220, len(pre_spikes))
-            self.assertLess(70, len(post_spikes))
-            self.assertGreater(110, len(post_spikes))
-            self.assertLess(750, len(weights))
-            self.assertGreater(900, len(weights))
-        except Exception as ex:
-            # Just in case the range failed
-            raise SkipTest(ex)
+        self._test_seed = None
+        (pre_spikes, post_spikes, weights) = do_run(seed=self._test_seed)
+        if self._test_seed == 1:
+            self.assertEquals(183, len(pre_spikes))
+            self.assertEquals(91, len(post_spikes))
+            self.assertEquals(787, len(weights))
+        else:
+            try:
+                self.assertLess(130, len(pre_spikes))
+                self.assertGreater(220, len(pre_spikes))
+                self.assertLess(70, len(post_spikes))
+                self.assertGreater(110, len(post_spikes))
+                self.assertLess(750, len(weights))
+                self.assertGreater(900, len(weights))
+            except Exception as ex:
+                # Just in case the range failed
+                raise SkipTest(ex)
 
 
 if __name__ == '__main__':
     (pre_spikes, post_spikes, weights) = do_run()
-    print len(pre_spikes)
-    print len(post_spikes)
+    print(len(pre_spikes))
+    print(len(post_spikes))
     plot_utils.plot_spikes([pre_spikes, post_spikes])
-    print len(weights)
+    print(len(weights))
     print("Weights:", weights)

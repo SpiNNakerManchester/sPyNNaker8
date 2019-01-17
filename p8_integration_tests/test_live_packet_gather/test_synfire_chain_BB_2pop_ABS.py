@@ -25,7 +25,7 @@ def do_run(plot):
 
     cell_params_lif_in = {
                           'tau_m':      32,
-                          'v_init': -80,
+                          'v': -80,
                           'v_rest': -75,
                           'v_reset': -95,
                           'v_thresh': -55,
@@ -36,7 +36,7 @@ def do_run(plot):
                           }
 
     cell_params_lif = {'tau_m':       32,
-                       'v_init': -80,
+                       'v': -80,
                        'v_rest': -75,
                        'v_reset': -95,
                        'v_thresh': -55,
@@ -96,7 +96,7 @@ def do_run(plot):
     for pop_o in populations:
         data = numpy.asarray(neo_convertor.convert_spikes(
             pop_o.get_data('spikes')))
-        print data.shape
+        print(data.shape)
         shapes.append(data.shape)
         if plot:
             p_plot.scatter(data[:, 0], data[:, 1] + id_accumulator,

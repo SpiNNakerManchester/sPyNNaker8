@@ -20,10 +20,10 @@ class Test_celltype(BaseTestCase):
     def test_before_run(self):
         nNeurons = 20  # number of neurons in each population
         celltype = before_run(nNeurons)
-        self.assertEqual(p.IF_curr_exp.build_model(), type(celltype))
+        self.assertEqual(p.IF_curr_exp, type(celltype))
 
 
 if __name__ == '__main__':
     nNeurons = 20  # number of neurons in each population
     celltype = before_run(nNeurons)
-    print celltype
+    print(celltype)

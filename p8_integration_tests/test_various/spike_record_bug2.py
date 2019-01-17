@@ -14,7 +14,7 @@ import spynnaker.plot_utils as plot_utils
 def do_run(nNeurons):
 
     spike_list = {'spike_times': [11, 22]}
-    print spike_list
+    print(spike_list)
     p.setup(timestep=1.0, min_delay=1.0, max_delay=32.0)
 
     inpop = p.Population(nNeurons, p.SpikeSourceArray, spike_list,
@@ -41,7 +41,7 @@ class Bug(BaseTestCase):
         nNeurons = 100  # number of neurons in each population
         neo = do_run(nNeurons)
         spike_count = neo_convertor.count_spikes(neo)
-        print spike_count
+        print(spike_count)
 
 
 if __name__ == '__main__':
@@ -49,4 +49,4 @@ if __name__ == '__main__':
     neo = do_run(nNeurons)
     spikes = neo_convertor.convert_spikes(neo)
     plot_utils.plot_spikes(spikes)
-    print spikes
+    print(spikes)

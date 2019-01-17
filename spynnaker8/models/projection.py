@@ -1,11 +1,14 @@
 import logging
 import numpy
+from six import string_types
 
 from pyNN import common as pynn_common, recording
 from pyNN.space import Space as PyNNSpace
 
 from spynnaker8.models.connectors import FromListConnector
 from spynnaker8.models.synapse_dynamics import SynapseDynamicsStatic
+from spynnaker8.models.populations.population import Population
+from spynnaker8.models.populations.population_view import PopulationView
 from spynnaker8._version import __version__
 
 from spynnaker.pyNN.models.pynn_projection_common import PyNNProjectionCommon
@@ -19,9 +22,9 @@ logger = logging.getLogger(__name__)
 
 
 class Projection(PyNNProjectionCommon):
-    """ spynnaker 8 projection class
-
+    """ sPyNNaker 8 projection class
     """
+    # pylint: disable=redefined-builtin
 
     _simulator = None
     _static_synapse_class = SynapseDynamicsStatic
@@ -30,11 +33,14 @@ class Projection(PyNNProjectionCommon):
             self, pre_synaptic_population, post_synaptic_population,
             connector, synapse_type=None, source=None,
             receptor_type=None, space=None, label=None):
-
+        # pylint: disable=too-many-arguments
         if source is not None:
             raise InvalidParameterType(
-                "spynnaker8 {} does not yet support multi-compartmental "
+                "sPyNNaker8 {} does not yet support multi-compartmental "
                 "cells.".format(__version__))
+
+        self._check_population_param(pre_synaptic_population)
+        self._check_population_param(post_synaptic_population)
 
         # set space object if not set
         if space is None:
@@ -66,14 +72,23 @@ class Projection(PyNNProjectionCommon):
         if hasattr(connector, "rng"):
             rng = connector.rng
 
-        PyNNProjectionCommon.__init__(
-            self, connector=connector, synapse_dynamics_stdp=synapse_type,
+        super(Projection, self).__init__(
+            connector=connector, synapse_dynamics_stdp=synapse_type,
             target=receptor_type, spinnaker_control=self._simulator,
             pre_synaptic_population=pre_synaptic_population,
             post_synaptic_population=post_synaptic_population, rng=rng,
             machine_time_step=self._simulator.machine_time_step,
             user_max_delay=self._simulator.max_delay, label=label,
             time_scale_factor=self._simulator.time_scale_factor)
+
+    def _check_population_param(self, param):
+        if isinstance(param, Population):
+            return  # Good that is what we want
+        if isinstance(param, PopulationView):
+            raise NotImplementedError(
+                "Projections over views not currently supported")
+        raise ConfigurationException("Unexpected parameter type {}. Expected "
+                                     "Population".format(type(param)))
 
     def __len__(self):
         raise NotImplementedError
@@ -83,12 +98,12 @@ class Projection(PyNNProjectionCommon):
 
     def get(self, attribute_names, format,  # @ReservedAssignment
             gather=True, with_address=True, multiple_synapses='last'):
-        """ get a parameter for pynn 0.8
+        """ Get a parameter for PyNN 0.8
 
         :param attribute_names: list of attributes to gather
-        :type attribute_names: basestring or iterable of basestring
+        :type attribute_names: str or iterable(str)
         :param format: "list" or "array"
-        :param gather: gather over all nodes (defaulted to true on spinnaker)
+        :param gather: gather over all nodes (defaulted to true on SpiNNaker)
         :param with_address: True if the source and target are to be included
         :param multiple_synapses:\
             What to do with the data if format="array" and if the multiple\
@@ -96,8 +111,9 @@ class Projection(PyNNProjectionCommon):
             "last" is supported
         :return: values selected
         """
+        # pylint: disable=too-many-arguments
         if not gather:
-            logger.warn("Spynnaker always gathers from every core.")
+            logger.warning("sPyNNaker always gathers from every core.")
 
         return self._get_data(
             attribute_names, format, with_address, multiple_synapses)
@@ -108,13 +124,13 @@ class Projection(PyNNProjectionCommon):
             notify=None):
         """ Internal data getter to add notify option
         """
-
+        # pylint: disable=too-many-arguments
         if multiple_synapses != 'last':
             raise ConfigurationException(
-                "Spynnaker only recognises multiple_synapses == last")
+                "sPyNNaker only recognises multiple_synapses == last")
 
         # fix issue with 1 versus many
-        if isinstance(attribute_names, basestring):
+        if isinstance(attribute_names, string_types):
             attribute_names = [attribute_names]
 
         data_items = list()
@@ -145,59 +161,60 @@ class Projection(PyNNProjectionCommon):
 
     def getWeights(self, format='list',  # @ReservedAssignment
                    gather=True):
-        logger.warn("getWeights is deprecated.  Use get('weight') instead")
+        logger.warning("getWeights is deprecated.  Use get('weight') instead")
         return self.get('weight', format, gather, with_address=False)
 
     def getDelays(self, format='list',  # @ReservedAssignment
                   gather=True):
-        logger.warn("getDelays is deprecated.  Use get('delay') instead")
+        logger.warning("getDelays is deprecated.  Use get('delay') instead")
         return self.get('delay', format, gather, with_address=False)
 
     def getSynapseDynamics(self, parameter_name,
                            format='list',  # @ReservedAssignment
                            gather=True):
-        logger.warn(
-            "getSynapseDynamics is deprecated.  Use get(parameter_name)"
+        logger.warning(
+            "getSynapseDynamics is deprecated. Use get(parameter_name)"
             " instead")
         return self.get(parameter_name, format, gather, with_address=False)
 
     def saveConnections(self, file,  # @ReservedAssignment
                         gather=True,
                         compatible_output=True):  # @UnusedVariable
-        logger.warn("saveConnections is deprecated.  Use save('all') instead")
+        logger.warning(
+            "saveConnections is deprecated. Use save('all') instead")
         self.save('all', file, format='list', gather=gather)
 
     def printWeights(self, file, format='list',  # @ReservedAssignment
                      gather=True):
-        logger.warn("printWeights is deprecated.  Use save('weight') instead")
+        logger.warning(
+            "printWeights is deprecated. Use save('weight') instead")
         self.save('weight', file, format, gather)
 
     def printDelays(self, file, format='list',  # @ReservedAssignment
                     gather=True):
+        """ Print synaptic weights to file. In the array format, zeros are\
+            printed for non-existent connections.
         """
-        Print synaptic weights to file. In the array format, zeros are printed
-        for non-existent connections.
-        """
-        logger.warn("printDelays is deprecated.  Use save('delay') instead")
+        logger.warning("printDelays is deprecated. Use save('delay') instead")
         self.save('delay', file, format, gather)
 
     def weightHistogram(self, min=None, max=None,  # @ReservedAssignment
                         nbins=10):
+        """ Return a histogram of synaptic weights.\
+            If min and max are not given, the minimum and maximum weights are\
+            calculated automatically.
         """
-        Return a histogram of synaptic weights.
-        If min and max are not given, the minimum and maximum weights are
-        calculated automatically.
-        """
-        logger.warn(
-            "weightHistogram is deprecated.  Use numpy.histogram function"
+        logger.warning(
+            "weightHistogram is deprecated. Use numpy.histogram function"
             " instead")
-        pynn_common.Projection.weightHistogram(min=min, max=max, nbins=nbins)
+        pynn_common.Projection.weightHistogram(
+            self, min=min, max=max, nbins=nbins)
 
     def _save_callback(
             self, save_file, format,  # @ReservedAssignment
             metadata, data):
         data_file = save_file
-        if isinstance(data_file, basestring):
+        if isinstance(data_file, string_types):
             data_file = recording.files.StandardTextFile(save_file, mode='wb')
         if format == 'array':
             data = [
@@ -209,13 +226,13 @@ class Projection(PyNNProjectionCommon):
     def save(
             self, attribute_names, file, format='list',  # @ReservedAssignment
             gather=True, with_address=True):
+        """ Print synaptic attributes (weights, delays, etc.) to file. In the\
+            array format, zeros are printed for non-existent connections.\
+            Values will be expressed in the standard PyNN units (i.e., \
+            millivolts, nanoamps, milliseconds, microsiemens, nanofarads, \
+            event per second).
         """
-        Print synaptic attributes (weights, delays, etc.) to file. In the array
-        format, zeros are printed for non-existent connections.
-        Values will be expressed in the standard PyNN units (i.e. millivolts,
-        nanoamps, milliseconds, microsiemens, nanofarads, event per second).
-        """
-
+        # pylint: disable=too-many-arguments
         if attribute_names in ('all', 'connections'):
             attribute_names = \
                 self._projection_edge.post_vertex.synapse_dynamics.\
@@ -224,9 +241,21 @@ class Projection(PyNNProjectionCommon):
         if with_address:
             metadata["columns"] = ["i", "j"] + list(metadata["columns"])
         self._get_data(
-            attribute_names, format, gather, with_address,
+            attribute_names, format, with_address,
             notify=functools.partial(
-                self._save_callback, args=[file, format, metadata]))
+                self._save_callback, file, format, metadata))
+
+    @property
+    def pre(self):
+        return self._synapse_information.connector.pre_population
+
+    @property
+    def post(self):
+        return self._synapse_information.connector.post_population
+
+    @property
+    def label(self):
+        return self._projection_edge.label
 
     def __repr__(self):
         return "projection {}".format(self._projection_edge.label)

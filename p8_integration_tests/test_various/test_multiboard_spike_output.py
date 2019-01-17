@@ -12,13 +12,14 @@ class TestMultiBoardSpikeOutput(BaseTestCase):
         TestMultiBoardSpikeOutput.counts[label] += len(neuron_ids)
 
     def test_multi_board_spike_output(self):
+        self.assert_not_spin_three()
         TestMultiBoardSpikeOutput.counts = dict()
         p.setup(1.0, n_chips_required=((48 * 2) + 1))
         machine = p.get_machine()
 
         labels = list()
         for chip in machine.ethernet_connected_chips:
-            print "Adding population on {}, {}".format(chip.x, chip.y)
+            print("Adding population on {}, {}".format(chip.x, chip.y))
             label = "{}, {}".format(chip.x, chip.y)
             labels.append(label)
             spike_cells = {"spike_times": [i for i in range(100)]}
@@ -38,8 +39,8 @@ class TestMultiBoardSpikeOutput(BaseTestCase):
         p.end()
 
         for label in labels:
-            print "Received {} of 1000 spikes from {}".format(
-                TestMultiBoardSpikeOutput.counts[label], label)
+            print("Received {} of 1000 spikes from {}".format(
+                TestMultiBoardSpikeOutput.counts[label], label))
             self.assertEqual(TestMultiBoardSpikeOutput.counts[label], 1000)
 
 

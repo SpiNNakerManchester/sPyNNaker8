@@ -2,14 +2,14 @@
 Synfirechain-like example
 """
 from p8_integration_tests.base_test_case import BaseTestCase
-from p8_integration_tests.scripts.synfire_run import TestRun
+from p8_integration_tests.scripts.synfire_run import SynfireRunner
 
 nNeurons = 200  # number of neurons in each population
 spike_times = [[0, 1050]]
 run_times = [1000, 1000]
 reset = False
 new_pop = True
-synfire_run = TestRun()
+synfire_run = SynfireRunner()
 
 
 class Synfire2RunNewPopIfCurrExpLower(BaseTestCase):
@@ -20,7 +20,7 @@ class Synfire2RunNewPopIfCurrExpLower(BaseTestCase):
                                new_pop=new_pop)
         except NotImplementedError:
             # This is the current behaviour but would not be wrong if changed.
-            print "Adding populations without reset not yet supported"
+            print("Adding populations without reset not yet supported")
 
 
 if __name__ == '__main__':
