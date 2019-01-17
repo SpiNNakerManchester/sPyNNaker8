@@ -26,7 +26,7 @@ def do_run(plot):
                             structure=grid_structure, label=label)
 
     # Parameters
-    n = 10
+    n = 5
     weight_to_spike = 5.0
     delay = 5
     runtime = 200
@@ -35,7 +35,7 @@ def do_run(plot):
     grid = create_grid(n, 'grid')
 
     # SpikeInjector
-    injectionConnection = [(0, 0)]
+    injectionConnection = [(0, n*n//2)]
     spikeArray = {'spike_times': [[0]]}
     inj_pop = p.Population(1, p.SpikeSourceArray(**spikeArray),
                            label='inputSpikes_1')
@@ -57,9 +57,11 @@ def do_run(plot):
 
     # Projections within grid
     p.Projection(grid, grid, exc_connector,
-                 p.StaticSynapse(weight=2.0, delay=5))
+                 p.StaticSynapse(weight=2.0, delay=5),
+                 receptor_type='excitatory')
     p.Projection(grid, grid, inh_connector,
-                 p.StaticSynapse(weight=1.5, delay=10))
+                 p.StaticSynapse(weight=1.5, delay=10),
+                 receptor_type='inhibitory')
 
     grid.record(['v', 'spikes'])
     p.run(runtime)
@@ -92,8 +94,9 @@ class DistanceDependentProbabilityConnectorTest(BaseTestCase):
         v, spikes = do_run(plot=False)
         # any checks go here
         spikes_test = neo_convertor.convert_spikes(spikes)
-        self.assertEquals(6101, len(spikes_test))
+        self.assertEquals(1489, len(spikes_test))
 
 
 if __name__ == '__main__':
     v, spikes = do_run(plot=True)
+    print(len(neo_convertor.convert_spikes(spikes)))

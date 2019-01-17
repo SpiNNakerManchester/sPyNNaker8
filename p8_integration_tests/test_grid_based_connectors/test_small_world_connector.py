@@ -91,3 +91,4 @@ class SmallWorldConnectorTest(BaseTestCase):
 
 if __name__ == '__main__':
     v, spikes = do_run(plot=True)
+    print(len(neo_convertor.convert_data(v, name='v')))
