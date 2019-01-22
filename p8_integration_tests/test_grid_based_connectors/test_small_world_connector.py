@@ -27,9 +27,10 @@ def do_run(plot):
 
     # Parameters
     n = 5
-    weight_to_spike = 5.0
+    weight_to_spike = 2.0
     delay = 2
     runtime = 1000
+    p.set_number_of_neurons_per_core(p.IF_curr_exp, 100)
 
     # Network population
     small_world = create_grid(n, 'small_world')
@@ -46,7 +47,7 @@ def do_run(plot):
                  p.StaticSynapse(weight=weight_to_spike, delay=delay))
 
     # Connectors
-    degree = 2
+    degree = 2.0
     rewiring = 0.4
     small_world_connector = p.SmallWorldConnector(degree, rewiring)
 
@@ -86,9 +87,13 @@ class SmallWorldConnectorTest(BaseTestCase):
         v, spikes = do_run(plot=False)
         # any checks go here
         v_test = neo_convertor.convert_data(v, name='v')
+        spikes_test = neo_convertor.convert_data(spikes, name='spikes')
         self.assertEquals(25000, len(v_test))
+        self.assertLess(8000, len(spikes_test))
+        self.assertGreater(8250, len(spikes_test))
 
 
 if __name__ == '__main__':
     v, spikes = do_run(plot=True)
     print(len(neo_convertor.convert_data(v, name='v')))
+    print(len(neo_convertor.convert_data(spikes, name='spikes')))
