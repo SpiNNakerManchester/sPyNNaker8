@@ -20,16 +20,13 @@ class TestVeryLow(BaseTestCase):
     """
 
     def test_get_multi_run(self):
-        # CB Jan 22 2019  Currrently not doing auto pause
-        #with LogCapture() as lc:
+        with LogCapture() as lc:
             # CB Jan 14 2019 Current version splits over too many chips.
-        self.assert_not_spin_three()
-        synfire_run.do_run(n_neurons, neurons_per_core=neurons_per_core,
-                           run_times=[runtime])
-        spikes = synfire_run.get_output_pop_spikes_numpy()
-            # self.assert_logs_messages(
-            #    lc.records, "*** Running simulation... ***", 'INFO', 2,
-            #    allow_more=True)
+            synfire_run.do_run(n_neurons, neurons_per_core=neurons_per_core,
+                               run_times=[runtime])
+            spikes = synfire_run.get_output_pop_spikes_numpy()
+            self.assert_logs_messages(
+                lc.records, "*** Running simulation... ***", 'INFO', 3)
 
         self.assertEquals(158, len(spikes))
         spike_checker.synfire_spike_checker(spikes, n_neurons)
