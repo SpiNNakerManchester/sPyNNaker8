@@ -47,11 +47,11 @@ def do_run(plot):
 
     # Set up fromfileconnectors by writing to file
     connection_list1 = [
-                (0, 0, 0.1, 0.1),
-                (3, 0, 0.2, 0.11),
-                (2, 3, 0.3, 0.12),
-                (5, 1, 0.4, 0.13),
-                (0, 1, 0.5, 0.14),
+                (0, 0, 0.1, 10),
+                (3, 0, 0.2, 11),
+                (2, 3, 0.3, 12),
+                (5, 1, 0.4, 13),
+                (0, 1, 0.5, 14),
                 ]
     path1 = "test1.connections"
     if os.path.exists(path1):
@@ -62,19 +62,22 @@ def do_run(plot):
     numpy.savetxt(file1, connection_list1)
     file_connector1 = p.FromFileConnector(file1)
 
+    # PyNN allows the column order (after i,j) to be different,
+    # so we can test that here
     connection_list2 = [
-                (4, 9, 0.3, 0.12),
-                (1, 5, 0.4, 0.13),
-                (7, 6, 0.1, 0.1),
-                (6, 5, 0.5, 0.14),
-                (8, 2, 0.2, 0.11),
+                (4, 9, 12, 0.3),
+                (1, 5, 13, 0.4),
+                (7, 6, 1, 0.1),
+                (6, 5, 14, 0.5),
+                (8, 2, 11, 0.2),
                 ]
     path2 = "test2.connections"
     if os.path.exists(path2):
         os.remove(path2)
 
     file2 = path2
-    numpy.savetxt(file2, connection_list2)
+    numpy.savetxt(file2, connection_list2,
+                  header='columns = ["i", "j", "delay", "weight"]')
     file_connector2 = p.FromFileConnector(file2)
 
     # Projections within populations
@@ -115,7 +118,7 @@ class FromFileConnectorTest(BaseTestCase):
         v, spikes = do_run(plot=False)
         # any checks go here
         spikes_test = neo_convertor.convert_spikes(spikes)
-        self.assertEquals(3, len(spikes_test))
+        self.assertEquals(2, len(spikes_test))
 
 
 if __name__ == '__main__':
