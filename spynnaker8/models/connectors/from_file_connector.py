@@ -1,8 +1,7 @@
-from spinn_utilities.abstract_base import AbstractBase, abstractmethod
 from .from_list_connector import FromListConnector
 import os
 import numpy
-from six import add_metaclass, string_types
+from six import string_types
 
 from pyNN.connectors import FromFileConnector as PyNNFromFileConnector
 from pyNN.recording import files
