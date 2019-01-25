@@ -16,18 +16,18 @@ synfire_run = SynfireRunner()
 
 class TestVeryLow(BaseTestCase):
     """
-    tests the run is split by auto pause resume
+    tests the run is split buy auto pause resume
     """
 
-    def test_get_multi_run(self):
+    def test_more_runs(self):
         with LogCapture() as lc:
             synfire_run.do_run(n_neurons, neurons_per_core=neurons_per_core,
                                run_times=[runtime])
             spikes = synfire_run.get_output_pop_spikes_numpy()
-            # CB Currently three but could change needs to be > 1
-            # Needs to be less than test_shorter_run_version
+            # CB Currently eight but could change
+            # Needs to be larger than 1000 timesteps version
             self.assert_logs_messages(
-                lc.records, "*** Running simulation... ***", 'INFO', 3)
+                lc.records, "*** Running simulation... ***", 'INFO', 8)
 
         self.assertEquals(158, len(spikes))
         spike_checker.synfire_spike_checker(spikes, n_neurons)
