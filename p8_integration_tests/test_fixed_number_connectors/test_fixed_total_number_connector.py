@@ -186,9 +186,11 @@ class FixedTotalNumberConnectorTest(BaseTestCase):
         stim_spikes, spklist_exc, spklist_inh = do_run(plot=False)
         # any checks go here
         self.assertEquals(500, len(stim_spikes))
-        self.assertEquals(248, len(spklist_exc))
-        self.assertEquals(257, len(spklist_inh))
-
+        # https://github.com/SpiNNakerManchester/sPyNNaker8/issues/191
+        self.assertGreater(300, len(spklist_exc))
+        self.assertGreater(300, len(spklist_inh))
+        self.assertLess(200, len(spklist_exc))
+        self.assertLess(200, len(spklist_inh))
 
 if __name__ == '__main__':
     stim_spikes, spklist_exc, spklist_inh = do_run(plot=True)

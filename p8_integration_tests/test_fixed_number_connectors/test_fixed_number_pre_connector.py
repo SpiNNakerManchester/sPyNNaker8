@@ -189,9 +189,11 @@ class FixedNumberPreConnectorTest(BaseTestCase):
         stim_spikes, spklist_exc, spklist_inh = do_run(plot=False)
         # any checks go here
         self.assertEquals(500, len(stim_spikes))
-        # CB Jan 15 2019 Was 1348
-        self.assertEquals(1367, len(spklist_exc))
-        self.assertEquals(291, len(spklist_inh))
+        # https://github.com/SpiNNakerManchester/sPyNNaker8/issues/191
+        self.assertGreater(1550, len(spklist_exc))
+        self.assertGreater(350, len(spklist_inh))
+        self.assertLess(900, len(spklist_exc))
+        self.assertLess(200, len(spklist_inh))
 
 
 if __name__ == '__main__':
