@@ -145,7 +145,8 @@ def do_run(plot):
 class CSAConnectorTest(BaseTestCase):
     def test_run(self):
         try:
-            v, v2, v3, v4, spikes, spikes2, spikes3, spikes4 = do_run(plot=False)
+            v, v2, v3, v4, spikes, spikes2, spikes3, spikes4 = do_run(
+                plot=False)
             # any checks go here
             self.assertEquals(250, len(spikes))
             self.assertEquals(2633, len(spikes2))
