@@ -199,8 +199,9 @@ class StdpExample(BaseTestCase):
     def test_run(self):
         self._test_seed = None
         (pre_spikes, post_spikes, weights) = do_run(seed=1)
-        # CB Jan 11 2019 Appears to be 183 not 182 every time
-        self.assertEquals(183, len(pre_spikes))
+        # CB Jan 11 2019 Appears to be 182 or 183
+        self.assertGreaterEqual(183, len(pre_spikes))
+        self.assertLessEqual(182, len(pre_spikes))
         # CB Jan 11 2019 Appears to be 90 or 91 not 81 every time
         self.assertGreaterEqual(91, len(post_spikes))
         self.assertLessEqual(90, len(post_spikes))
