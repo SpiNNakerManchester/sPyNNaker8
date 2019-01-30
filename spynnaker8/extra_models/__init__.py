@@ -11,6 +11,8 @@ from spynnaker.pyNN.models.neuron.builds.izk_cond_exp_base import \
     IzkCondExpBase as Izhikevich_cond
 from spynnaker.pyNN.models.neuron.builds.if_curr_exp_semd_base import \
     IFCurrExpSEMDBase as IF_curr_exp_sEMD
+from spynnaker.pyNN.models.neuron.builds.if_curr_exp_erbp import \
+    IFCurrExpERBP
 
 # plastic timing spynnaker 8
 from spynnaker8.models.synapse_dynamics.timing_dependence \
@@ -30,6 +32,8 @@ __all__ = [
     # sPyNNaker 8 models
     'IFCurDelta', 'IFCurrExpCa2Adaptive', 'IFCondExpStoc',
     'Izhikevich_cond', 'IF_curr_dual_exp', 'IF_curr_exp_sEMD',
+    'IFCurrExpERBP',
+
 
     # sPyNNaker 8 plastic stuff
     'WeightDependenceAdditiveTriplet',
