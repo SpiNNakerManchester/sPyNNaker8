@@ -13,13 +13,13 @@ class DataCache(object):
     and holds a cache for the variable specific data
     """
 
-    __slots__ = ("_cache",
-                 "_description",
-                 "_label",
-                 "_rec_datetime",
-                 "_recording_start_time",
-                 "_segment_number",
-                 "_t")
+    __slots__ = ("__cache",
+                 "__description",
+                 "__label",
+                 "__rec_datetime",
+                 "__recording_start_time",
+                 "__segment_number",
+                 "__t")
 
     def __init__(self, label, description, segment_number,
                  recording_start_time, t):
@@ -32,13 +32,13 @@ class DataCache(object):
         :param t: time
         """
         # pylint: disable=too-many-arguments
-        self._label = label
-        self._description = description
-        self._segment_number = segment_number
-        self._recording_start_time = recording_start_time
-        self._t = t
-        self._cache = dict()
-        self._rec_datetime = None
+        self.__label = label
+        self.__description = description
+        self.__segment_number = segment_number
+        self.__recording_start_time = recording_start_time
+        self.__t = t
+        self.__cache = dict()
+        self.__rec_datetime = None
 
     @property
     def variables(self):
@@ -46,31 +46,31 @@ class DataCache(object):
 
         :rtype: Iterator (str)
         """
-        return self._cache.keys()
+        return self.__cache.keys()
 
     @property
     def label(self):
-        return self._label
+        return self.__label
 
     @property
     def description(self):
-        return self._description
+        return self.__description
 
     @property
     def segment_number(self):
-        return self._segment_number
+        return self.__segment_number
 
     @property
     def recording_start_time(self):
-        return self._recording_start_time
+        return self.__recording_start_time
 
     @property
     def t(self):
-        return self._t
+        return self.__t
 
     @property
     def rec_datetime(self):
-        return self._rec_datetime
+        return self.__rec_datetime
 
     def has_data(self, variable):
         """ Checks if data for a variable has been cached
@@ -80,7 +80,7 @@ class DataCache(object):
         :return: True if there is cached data
         :rtype: bool
         """
-        return variable in self._cache
+        return variable in self.__cache
 
     def get_data(self, variable):
         """ Get the variable cache for the named variable
@@ -90,7 +90,7 @@ class DataCache(object):
         :return: The cache data, IDs, indexes and units
         :rtype: VariableCache
         """
-        return self._cache[variable]
+        return self.__cache[variable]
 
     def save_data(self, variable, data, indexes, n_neurons, units,
                   sampling_interval):
@@ -109,7 +109,7 @@ class DataCache(object):
         :type units: str
         :rtype: None
         """
-        self._rec_datetime = datetime.now()
+        self.__rec_datetime = datetime.now()
         variable_cache = VariableCache(
             data, indexes, n_neurons, units, sampling_interval)
-        self._cache[variable] = variable_cache
+        self.__cache[variable] = variable_cache

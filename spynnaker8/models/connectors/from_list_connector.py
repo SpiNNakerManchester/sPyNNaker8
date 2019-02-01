@@ -10,7 +10,7 @@ class FromListConnector(CommonFromListConnector, Connector):
     """ Make connections according to a list.
     """
     __slots__ = [
-        "_extra_conn_data"]
+        "__extra_conn_data"]
 
     def __init__(
             self, conn_list, safe=True, verbose=False, column_names=None,
@@ -48,20 +48,20 @@ class FromListConnector(CommonFromListConnector, Connector):
 
         weights = None
         delays = None
-        self._extra_conn_data = None
+        self.__extra_conn_data = None
 
         if column_names is None:
             # if no column names, but more not the expected
             if n_columns == 4:
                 column_names = ('pre_idx', 'post_idx', 'weight', 'delay')
-                conn_list, weights, delays, self._extra_conn_data = \
+                conn_list, weights, delays, self.__extra_conn_data = \
                     self._split_conn_list(conn_list, column_names)
             elif n_columns != 2:
                 raise TypeError("Argument 'column_names' is required.")
         else:
             # separate conn list to pre, source, weight, delay and the
             # other things
-            conn_list, weights, delays, self._extra_conn_data = \
+            conn_list, weights, delays, self.__extra_conn_data = \
                 self._split_conn_list(conn_list, column_names)
 
         # verify that the rest of the parameters are constant, as we don't
@@ -82,11 +82,12 @@ class FromListConnector(CommonFromListConnector, Connector):
 
         :return:
         """
-        return self._extra_conn_data
+        return self.__extra_conn_data
 
     @staticmethod
     def _split_conn_list(conn_list, column_names):
         """ Separate the connection list into the blocks needed.
+
         :param conn_list: the original connection list
         :param column_names: the column names if exist
         :return: source dest list, weights list, delays list, extra list
@@ -137,10 +138,10 @@ class FromListConnector(CommonFromListConnector, Connector):
         :return:  None
         :raises InvalidParameterType: when the parameters are not constant
         """
-        if self._extra_conn_data is not None:
-            for data_key in self._extra_conn_data.keys():
+        if self.__extra_conn_data is not None:
+            for data_key in self.__extra_conn_data.keys():
                 first_data = None
-                for (_, _, data) in self._extra_conn_data[data_key]:
+                for (_, _, data) in self.__extra_conn_data[data_key]:
                     if first_data is None:
                         first_data = data
                     elif data != first_data:
