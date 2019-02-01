@@ -1,8 +1,6 @@
 from spynnaker.pyNN.models.neuron.plasticity.stdp.timing_dependence \
     import TimingDependenceERBP as _BaseClass
 
-logger = logging.getLogger(__name__)
-
 
 class TimingDependenceERBP(_BaseClass):
     __slots__ = [
