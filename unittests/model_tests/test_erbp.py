@@ -1,11 +1,10 @@
 import spynnaker8 as p
 import numpy
-import math
 from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt
 
 timestep = 1
-p.setup(timestep) # simulation timestep (ms)
+p.setup(timestep)  # simulation timestep (ms)
 runtime = 200
 
 # Learning rule parameters
@@ -13,46 +12,43 @@ tau_err = 200.0
 gamma = 0.3
 w_err = 0.05
 w_plastic = 0.5
-dt = 16 # time difference of 15, +1 for a single timestep delay
+dt = 16  # time difference of 15, +1 for a single timestep delay
 
 
 # Hidden neuron population - i.e. postsynaptic population
 neuron_params = {
-    "v_thresh": -50.0,  # do not change - temporarily hard-coded in C
+    "v_thresh": -50.0,  # do not change - hard-coded in C for now
     "v_reset": -70.0,
     "v_rest": -65.0,
     "v": -60.0,
-    "i_offset": 0.25  # DC input - to enable interesting p_j
-                 }
-pop_hidden = p.Population(1, # number of neurons
-                       p.extra_models.IFCurrExpERBP(**neuron_params),
-                       label="ERBP Neuron"
-                       )
+    "i_offset": 0.25}  # DC input - to enable interesting p_j
+
+pop_hidden = p.Population(1,  # number of neurons
+                          p.extra_models.IFCurrExpERBP(**neuron_params),
+                          label="ERBP Neuron")
 
 # Input spike source (sends presynaptic spike)
 input_spike_times = [[50, 150]]
-input_src = p.Population(1, # number of sources
-                        p.SpikeSourceArray,
-                        {'spike_times': input_spike_times},
-                        label="input_pop"
-                        )
+input_src = p.Population(1,  # number of sources
+                         p.SpikeSourceArray,
+                         {'spike_times': input_spike_times},
+                         label="input_pop")
 
 # Error spike source (sends error spike)
-err_spike_times = [[input_spike_times[0][0] + dt - timestep ]]
+err_spike_times = [[input_spike_times[0][0] + dt - timestep]]
 err_src = p.Population(1,
-                        p.SpikeSourceArray,
-                        {'spike_times': err_spike_times},
-                        label="err_pop"
-                        )
+                       p.SpikeSourceArray,
+                       {'spike_times': err_spike_times},
+                       label="err_pop")
 
 # Define learning rule object
 learning_rule = p.STDPMechanism(
-        timing_dependence=p.TimingDependenceERBP(
-            tau_plus=tau_err, A_plus=1, A_minus=1),
-        weight_dependence=p.WeightDependenceERBP(
-            w_min=0.0, w_max=1),
-            weight=w_plastic,
-            delay=timestep)
+    timing_dependence=p.TimingDependenceERBP(
+        tau_plus=tau_err, A_plus=1, A_minus=1),
+    weight_dependence=p.WeightDependenceERBP(
+        w_min=0.0, w_max=1),
+    weight=w_plastic,
+    delay=timestep)
 
 # Create projection from input to hidden neuron using learning rule
 synapse_plastic = p.Projection(
@@ -60,8 +56,7 @@ synapse_plastic = p.Projection(
     pop_hidden,
     p.OneToOneConnector(),
     synapse_type=learning_rule,
-    receptor_type="excitatory"
-    )
+    receptor_type="excitatory")
 
 # Create static projection from error to hidden neuron
 synapse = p.Projection(
@@ -69,8 +64,7 @@ synapse = p.Projection(
     pop_hidden,
     p.AllToAllConnector(),
     p.StaticSynapse(weight=w_err, delay=timestep),
-    receptor_type="exc_err"
-    )
+    receptor_type="exc_err")
 
 # Setup recording
 input_src.record('spikes')
@@ -92,7 +86,7 @@ weight = synapse_plastic.get('weight', 'list', with_address=False)[0]
 # Hand calculate weight update to check SpiNNajer operation
 p_j = gamma * ((neuron_params["v"] - neuron_params["v_rest"]) /
                (neuron_params["v_thresh"] - neuron_params["v_rest"]))
-trace_at_err_spike = p_j * numpy.exp(-dt/tau_err)
+trace_at_err_spike = p_j * numpy.exp(-dt / tau_err)
 dw = trace_at_err_spike * w_err
 hand_calc_weight = w_plastic + dw
 
@@ -114,9 +108,7 @@ F = Figure(
           ),
     Panel(hidden_neuron_data.segments[0].filter(name='gsyn_exc')[0],
           ylabel="gsyn excitatory (mV)",
-          data_labels=[pop_hidden.label], yticks=True, xlim=(0, runtime)
-          )
-    )
+          data_labels=[pop_hidden.label], yticks=True, xlim=(0, runtime)))
 
 plt.show()
 p.end()
