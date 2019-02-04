@@ -1,4 +1,4 @@
-# Alternative implemenation for
+# Alternative implementation for
 # https://github.com/NeuralEnsemble/PyNN/blob/master/pyNN/common/populations.py
 
 
