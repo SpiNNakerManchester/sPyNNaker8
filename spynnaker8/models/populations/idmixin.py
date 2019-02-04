@@ -3,7 +3,8 @@
 
 
 class IDMixin(object):
-    __slots__ = ["__id", "__population"]
+    __slots__ = ("__id", "__population")
+    __realslots__ = tuple("_IDMixin" + item for item in __slots__)
 
     def __init__(self, population, id):  # @ReservedAssignment
         self.__id = id
@@ -32,7 +33,7 @@ class IDMixin(object):
                 raise ex
 
     def __setattr__(self, name, value):
-        if name in self.__slots__:
+        if name in self.__realslots__:
             object.__setattr__(self, name, value)
         else:
             try:
@@ -41,7 +42,7 @@ class IDMixin(object):
                 try:
                     # try initialisable variable
                     return self.__population.set_initial_value(
-                        selector=self._id, variable=name, value=value)
+                        selector=self.__id, variable=name, value=value)
                 except Exception:
                     # that failed too so raise the better original exception
                     raise ex
