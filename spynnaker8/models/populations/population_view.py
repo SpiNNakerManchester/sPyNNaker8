@@ -102,6 +102,10 @@ class PopulationView(PopulationBase):
             Population (all MPI nodes). """
         return [IDMixin(self.__population, idx) for idx in self.__indexes]
 
+    @property
+    def _indexes(self):
+        return tuple(self.__indexes)
+
     def __getitem__(self, index):
         """ Return either a single cell (ID object) from the Population,\
             if index is an integer, or a subset of the cells\

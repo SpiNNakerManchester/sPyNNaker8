@@ -87,7 +87,7 @@ class Test_IDMixin(BaseTestCase):
         view1 = PopulationView(pop_1, [1, 3, 5, 7, 9], label="Odds")
         view2 = PopulationView(view1, [1, 3], label="AlternativeOdds")
         # Not a normal way to access but good to test
-        self.assertEqual([3, 7], view2._indexes)
+        self.assertEqual((3, 7), view2._indexes)
         self.assertEqual(view2.parent, view1)
         self.assertEqual(view1.grandparent, pop_1)
         self.assertEqual(view2.grandparent, pop_1)
@@ -98,7 +98,7 @@ class Test_IDMixin(BaseTestCase):
         self.assertEqual([3, 0], view1.id_to_index([7, 1]))
         self.assertEqual(1, view2.id_to_index(7))
         view3 = view1[1:3]
-        self.assertEqual([3, 5], view3._indexes)
+        self.assertEqual((3, 5), view3._indexes)
         view4 = view1.sample(2)
         self.assertEqual(2, len(view4._indexes))
         sim.end()
