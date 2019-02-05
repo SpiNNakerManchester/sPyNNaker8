@@ -183,7 +183,8 @@ class PopulationView(PopulationBase):
         if simplify is not True:
             logger.warning("The simplify value is ignored if not set to true")
 
-        return self.__population.get_by_selector(self.__indexes, parameter_names)
+        return self.__population.get_by_selector(
+            self.__indexes, parameter_names)
 
     def get_data(self, variables='all', gather=True, clear=False):
         """ Return a Neo Block containing the data(spikes, state variables)\
@@ -270,7 +271,8 @@ class PopulationView(PopulationBase):
             p.initialize(v=lambda i: -65 + i / 10.0)
         """
         for variable, value in initial_values.items():
-            self.__population.set_initial_value(variable, value, self.__indexes)
+            self.__population.set_initial_value(
+                variable, value, self.__indexes)
 
     def record(self, variables, to_file=None, sampling_interval=None):
         """ Record the specified variable or variables for all cells in the\
