@@ -345,8 +345,6 @@ cf_pc_connections = sim.Projection(CF_population,
 
 # sim.run(1000)
 
-
-
 # sim.Projection(
 #     lif_pop, out_pop, sim.OneToOneConnector(),
 #     synapse_type=sim.StaticSynapse(weight=0.1))
@@ -361,9 +359,6 @@ cf_pc_connections = sim.Projection(CF_population,
 #
 # out_pop.record(["spikes"])
 #
-#
-#
-
 
 MF_population.record(['spikes'])
 CF_population.record(['spikes'])
@@ -384,9 +379,6 @@ PC_spikes = PC_population.get_data('spikes')
 
 mfvn_weights = mf_vn_connections.get('weight', 'list', with_address=False)
 pfpc_weights = pf_pc_connections.get('weight', 'list', with_address=False)
-
-
-
 
 # Plot
 F = Figure(
@@ -411,14 +403,15 @@ F = Figure(
     )
 plt.show(block=False)
 
-
-
 plt.figure()
 plt.plot(mfvn_weights, label='mf-vn weights (init: {})'.format(initial_weight_c))
+plt.legend()
+
+plt.figure()
 plt.plot(pfpc_weights, label='pf-pc weights (init: {})'.format(initial_weight_s))
 plt.legend()
-plt.show()
 
+plt.show()
 
 sim.end()
 print "job done"
