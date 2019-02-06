@@ -19,17 +19,17 @@ from spynnaker.pyNN.models.neuron.plasticity.stdp.common \
     import plasticity_helpers
 
 # cerebellum test bench
-runtime = 1000
+runtime = 250
 
 # Synapsis parameters
 gc_pc_weights = 0.05
 mf_vn_weights = 0.01
 pc_vn_weights = 0.0002
 cf_pc_weights = 0.0
-mf_gc_weights = 0.6
+mf_gc_weights = 0.5
 go_gc_weights = 0.002
 input_weights = 0.0025
-mf_go_weights = 0.006
+mf_go_weights = 0.1
 
 # Network parameters
 num_MF_neurons = 100
@@ -47,9 +47,6 @@ weight_distr_GO = RandomDistribution('uniform',
                                      rng=NumpyRNG(seed=24568))
 
 
-
-
-
 # Post-synapse population
 neuron_params = {
     "v_thresh": -50,
@@ -60,20 +57,20 @@ neuron_params = {
 
 # Learning parameters cos rule (MF to VN)
 min_weight_c = 0
-max_weight_c = 0.1
-pot_alpha_c = 0.01 # this is alpha in the paper
+max_weight_c = 0.005
+pot_alpha_c = 0.001 # this is alpha in the paper
 beta_c = 11
 sigma_c = 201
-initial_weight_c = 0.005
+initial_weight_c = max_weight_c #0.0005
 # initial_weight_c = 0.05
 plastic_delay_c = 4
 
 # Learning parameters sin rule (GrC to PC)
 min_weight_s = 0
-max_weight_s = 0.1
+max_weight_s = 0.001
 pot_alpha_s =0.01
 t_peak_s =100
-initial_weight_s = 0.25
+initial_weight_s = max_weight_s #0.0001
 plastic_delay_s = 4
 weight_dist_pfpc = RandomDistribution('uniform',
                                       (initial_weight_s*0.8,
@@ -404,11 +401,13 @@ F = Figure(
 plt.show(block=False)
 
 plt.figure()
-plt.plot(mfvn_weights, label='mf-vn weights (init: {})'.format(initial_weight_c))
+plt.plot(mfvn_weights,
+         label='mf-vn weights (init: {})'.format(initial_weight_c))
 plt.legend()
 
 plt.figure()
-plt.plot(pfpc_weights, label='pf-pc weights (init: {})'.format(initial_weight_s))
+plt.plot(pfpc_weights, color='orange',
+         label='pf-pc weights (init: {})'.format(initial_weight_s))
 plt.legend()
 
 plt.show()
