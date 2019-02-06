@@ -19,15 +19,17 @@ from spynnaker.pyNN.models.neuron.plasticity.stdp.common \
     import plasticity_helpers
 
 # cerebellum test bench
+runtime = 1000
+
 # Synapsis parameters
-gc_pc_weights = 0.005
-mf_vn_weights = 0.001
-pc_vn_weights = -0.00002
+gc_pc_weights = 0.05
+mf_vn_weights = 0.01
+pc_vn_weights = 0.0002
 cf_pc_weights = 0.0
-mf_gc_weights = 0.0006
-go_gc_weights = -0.0002
-input_weights = 0.00025
-mf_go_weights = 0.0006
+mf_gc_weights = 0.6
+go_gc_weights = 0.002
+input_weights = 0.0025
+mf_go_weights = 0.006
 
 # Network parameters
 num_MF_neurons = 100
@@ -40,7 +42,13 @@ num_CF_neurons = 200
 # Random distribution for synapses delays and weights (MF and GO)
 delay_distr = RandomDistribution('uniform', (1.0, 10.0), rng=NumpyRNG(seed=85524))
 weight_distr_MF = RandomDistribution('uniform', (mf_gc_weights*0.8, mf_gc_weights*1.2), rng=NumpyRNG(seed=85524))
-weight_distr_GO = RandomDistribution('uniform', (go_gc_weights*0.8, go_gc_weights*1.2), rng=NumpyRNG(seed=24568))
+weight_distr_GO = RandomDistribution('uniform',
+                                     (go_gc_weights*0.8, go_gc_weights*1.2),
+                                     rng=NumpyRNG(seed=24568))
+
+
+
+
 
 # Post-synapse population
 neuron_params = {
@@ -57,7 +65,7 @@ pot_alpha_c = 0.01 # this is alpha in the paper
 beta_c = 11
 sigma_c = 201
 initial_weight_c = 0.005
-initial_weight_c = 0.05
+# initial_weight_c = 0.05
 plastic_delay_c = 4
 
 # Learning parameters sin rule (GrC to PC)
@@ -65,8 +73,13 @@ min_weight_s = 0
 max_weight_s = 0.1
 pot_alpha_s =0.01
 t_peak_s =100
-initial_weight_s = 0.05
+initial_weight_s = 0.25
 plastic_delay_s = 4
+weight_dist_pfpc = RandomDistribution('uniform',
+                                      (initial_weight_s*0.8,
+                                       initial_weight_s*1.2),
+                                      rng=NumpyRNG(seed=24534))
+
 
 sim.setup(timestep=1.)
 
@@ -158,7 +171,9 @@ def error_activity(error_):
 
     return ea_rate
 
-####
+###############################################################
+# Create Populations
+###############################################################
 
 # Create MF population - fake input population that will be substituted by external input from robot
 
@@ -171,15 +186,6 @@ MF_population = sim.Population(num_MF_neurons, # number of sources
 
 # Create GOC population
 GOC_population = sim.Population(num_GOC_neurons, sim.IF_cond_exp() ,label='GOCLayer')
-
-# Create MF-GO connections
-mf_go_connections = sim.Projection(MF_population,
-                                   GOC_population,
-                                   sim.OneToOneConnector(),
-                                   sim.StaticSynapse(delay=1.0, weight=mf_go_weights))
-
-# Create GrC population
-GC_population = sim.Population(num_GC_neurons,sim.IF_curr_exp(),label='GCLayer')
 
 # create PC population
 PC_population = sim.Population(num_PC_neurons, # number of neurons
@@ -194,12 +200,17 @@ VN_population = sim.Population(num_VN_neurons, # number of neurons
                        )
 
 
-# generate fake error (it should be calculated from sensorial activity in error activity, but we skip it and just generate an error from -1.5 to 1.5)
 
+
+# Create GrC population
+GC_population = sim.Population(num_GC_neurons, sim.IF_curr_exp(), label='GCLayer')
+
+
+
+# generate fake error (it should be calculated from sensorial activity in error activity, but we skip it and just generate an error from -1.5 to 1.5)
 err = -0.7 # other values to test: -0.3 0 0.3 0.7
 
 # Create CF population - fake input population that will be substituted by external input from robot
-
 CF_population = sim.Population(num_CF_neurons, # number of sources
                         sim.SpikeSourcePoisson, # source type
                         #{'rate': sa_mean_freq}, # source spike times
@@ -207,8 +218,17 @@ CF_population = sim.Population(num_CF_neurons, # number of sources
                         label="CFLayer" # identifier
                         )
 
-
+###############################################################
 # Create connections
+###############################################################
+
+# Create MF-GO connections
+mf_go_connections = sim.Projection(MF_population,
+                                   GOC_population,
+                                   sim.OneToOneConnector(),
+                                   sim.StaticSynapse(delay=delay_distr, weight=mf_go_weights),
+                                   receptor_type='excitatory')
+
 
 # Create MF-GC and GO-GC connections
 float_num_MF_neurons = float (num_MF_neurons)
@@ -229,34 +249,50 @@ for i in range (num_MF_neurons):
                 GC_upper_index = num_GC_neurons
 
         for j in range (GC_medium_index - GC_lower_index):
-            list_GOC_GC.append((i, GC_lower_index + j))
+            list_GOC_GC.append(
+                (i, GC_lower_index + j,
+#                  go_gc_weights, 1)
+                weight_distr_GO.next(), delay_distr.next())
+                )
 
         for j in range(GC_medium_index + 20 - GC_medium_index):
-            list_MF_GC.append((i, GC_medium_index + j))
+            list_MF_GC.append(
+                (i, GC_medium_index + j,
+#                  mf_gc_weights, 1)
+                weight_distr_MF.next(), delay_distr.next())
+                )
 
 
         for j in range(GC_upper_index - GC_medium_index - 20):
-            list_GOC_GC_2.append((i, GC_medium_index + 20 + j))
+            list_GOC_GC_2.append(
+                (i, GC_medium_index + 20 + j,
+#                  go_gc_weights, 1)
+                weight_distr_GO.next(), delay_distr.next())
+                                 )
 
 GO_GC_con1 = sim.Projection(GOC_population,
               GC_population,
-              sim.FromListConnector(list_GOC_GC, weight_distr_GO, delay_distr))
+              sim.FromListConnector(list_GOC_GC),
+              receptor_type='inhibitory') # this should be inhibitory
 
 MF_GC_con2 = sim.Projection(MF_population,
               GC_population,
-              sim.FromListConnector(list_MF_GC, weight_distr_MF, delay_distr))
+              sim.FromListConnector(list_MF_GC),
+              receptor_type='excitatory')
 
 GO_GC_con3 = sim.Projection(GOC_population,
               GC_population,
-              sim.FromListConnector(list_GOC_GC_2, weight_distr_GO, delay_distr))
+              sim.FromListConnector(list_GOC_GC_2),
+              receptor_type='inhibitory')
 
 
 # Create PC-VN connections
 pc_vn_connections = sim.Projection(PC_population,
                                VN_population,
                                sim.OneToOneConnector(),
-                               #receptor_type='GABA',
-                               synapse_type = sim.StaticSynapse(delay=1.0, weight=pc_vn_weights))
+                               #receptor_type='GABA', # Should these be inhibitory?
+                               synapse_type = sim.StaticSynapse(delay=delay_distr, weight=pc_vn_weights),
+                               receptor_type='inhibitory')
 
 # Create MF-VN learning rule - cos
 mfvn_plas = sim.STDPMechanism(
@@ -265,17 +301,19 @@ mfvn_plas = sim.STDPMechanism(
     weight_dependence=sim.extra_models.WeightDependenceMFVN(w_min=min_weight_c,
                                                           w_max=max_weight_c,
                                                           pot_alpha=pot_alpha_c),
-    weight=initial_weight_c, delay=plastic_delay_c)
+    weight=initial_weight_c, delay=delay_distr)
 
 # Create MF to VN connections
 mf_vn_connections = sim.Projection(
-    MF_population, VN_population, sim.AllToAllConnector(),
-    synapse_type=mfvn_plas, receptor_type="excitatory")
+    MF_population, VN_population, sim.AllToAllConnector(), # Needs mapping as FromListConnector to make efficient
+    synapse_type=mfvn_plas,
+    receptor_type="excitatory")
 
 # Create projection from PC to VN -- replaces "TEACHING SIGNAL"
 pc_vn_connections = sim.Projection(
     PC_population, VN_population, sim.OneToOneConnector(),
-    sim.StaticSynapse(weight=0.0, delay=1), receptor_type="excitatory")
+    sim.StaticSynapse(weight=0.0, delay=1.0),
+    receptor_type="excitatory") # "TEACHING SIGNAL"
 
 # create PF-PC learning rule - sin
 pfpc_plas = sim.STDPMechanism(
@@ -283,25 +321,29 @@ pfpc_plas = sim.STDPMechanism(
     weight_dependence=sim.extra_models.WeightDependencePFPC(w_min=min_weight_s,
                                                           w_max=max_weight_s,
                                                           pot_alpha=pot_alpha_s),
-    weight=initial_weight_s, delay=plastic_delay_s)
+    weight=initial_weight_s,
+    delay=delay_distr
+    )
 
 # Create PF-PC connections
 pf_pc_connections = sim.Projection(
     GC_population, PC_population, sim.AllToAllConnector(),
-    synapse_type=pfpc_plas, receptor_type="excitatory")
+    synapse_type=pfpc_plas,
+    receptor_type="excitatory")
 
 # Create IO-PC connections. This synapse with "receptor_type=COMPLEX_SPIKE" propagates the learning signals that drive the plasticity mechanisms in GC-PC synapses
 cf_pc_connections = sim.Projection(CF_population,
                                PC_population,
                                sim.OneToOneConnector(),
                                #receptor_type='COMPLEX_SPIKE',
-                               synapse_type = sim.StaticSynapse(delay=1.0, weight=cf_pc_weights))
+                               synapse_type = sim.StaticSynapse(delay=1.0, weight=cf_pc_weights),
+                               receptor_type='excitatory')
 
+# lif_pop = sim.Population(1024, sim.IF_curr_exp(), label='pop_lif')
+#
+# out_pop = sim.Population(128, sim.IF_curr_exp(), label='pop_out')
 
-
-lif_pop = sim.Population(1024, sim.IF_curr_exp(), label='pop_lif')
-
-out_pop = sim.Population(128, sim.IF_curr_exp(), label='pop_out')
+# sim.run(1000)
 
 
 
@@ -314,14 +356,70 @@ out_pop = sim.Population(128, sim.IF_curr_exp(), label='pop_out')
 # sim.external_devices.activate_live_output_to(out_pop,retina_pop)
 #
 #
-# #recordings and simulations
+#recordings and simulations
 # lif_pop.record(["spikes"])
 #
 # out_pop.record(["spikes"])
 #
 #
 #
-# sim.run(10)
-#
-# sim.end()
+
+
+MF_population.record(['spikes'])
+CF_population.record(['spikes'])
+GC_population.record(['spikes'])
+GOC_population.record(['spikes'])
+VN_population.record(['spikes'])
+PC_population.record(['spikes'])
+
+sim.run(runtime)
+
+MF_spikes = MF_population.get_data('spikes')
+CF_spikes = CF_population.get_data('spikes')
+GC_spikes = GC_population.get_data('spikes')
+GOC_spikes = GOC_population.get_data('spikes')
+VN_spikes = VN_population.get_data('spikes')
+PC_spikes = PC_population.get_data('spikes')
+
+
+mfvn_weights = mf_vn_connections.get('weight', 'list', with_address=False)
+pfpc_weights = pf_pc_connections.get('weight', 'list', with_address=False)
+
+
+
+
+# Plot
+F = Figure(
+    Panel(MF_spikes.segments[0].spiketrains,
+          yticks=True, markersize=2, xlim=(0, runtime),
+          xlabel='MF_spikes'),
+    Panel(CF_spikes.segments[0].spiketrains,
+          yticks=True, markersize=2, xlim=(0, runtime),
+          xlabel='CF_spikes'),
+    Panel(GC_spikes.segments[0].spiketrains,
+          yticks=True, markersize=2, xlim=(0, runtime),
+          xlabel='GC_spikes'),
+    Panel(GOC_spikes.segments[0].spiketrains,
+          yticks=True, markersize=2, xlim=(0, runtime),
+          xlabel='GOC_spikes'),
+    Panel(PC_spikes.segments[0].spiketrains,
+          yticks=True, markersize=2, xlim=(0, runtime),
+          xlabel='PC_spikes'),
+    Panel(VN_spikes.segments[0].spiketrains,
+          yticks=True, markersize=2, xlim=(0, runtime),
+          xlabel='VN_spikes'),
+    )
+plt.show(block=False)
+
+
+
+plt.figure()
+plt.plot(mfvn_weights, label='mf-vn weights (init: {})'.format(initial_weight_c))
+plt.plot(pfpc_weights, label='pf-pc weights (init: {})'.format(initial_weight_s))
+plt.legend()
+plt.show()
+
+
+sim.end()
+print "job done"
 
