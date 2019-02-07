@@ -195,6 +195,7 @@ class FixedNumberPostConnectorTest(BaseTestCase):
         self.assertLess(350, len(spklist_exc))
         self.assertLess(200, len(spklist_inh))
 
+
 if __name__ == '__main__':
     stim_spikes, spklist_exc, spklist_inh = do_run(plot=True)
     print(len(stim_spikes), len(spklist_exc), len(spklist_inh))
