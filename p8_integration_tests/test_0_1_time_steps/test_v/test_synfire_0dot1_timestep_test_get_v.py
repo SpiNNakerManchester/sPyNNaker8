@@ -1,14 +1,11 @@
 """
 Synfirechain-like example
 """
-# spynnaker imports
+import unittest
+from unittest import SkipTest
+from spinnman.exceptions import SpinnmanTimeoutException
 from p8_integration_tests.base_test_case import BaseTestCase
 from p8_integration_tests.scripts.synfire_run import SynfireRunner
-from spinnman.exceptions import SpinnmanTimeoutException
-from unittest import SkipTest
-
-# general imports
-import unittest
 
 synfire_run = SynfireRunner()
 

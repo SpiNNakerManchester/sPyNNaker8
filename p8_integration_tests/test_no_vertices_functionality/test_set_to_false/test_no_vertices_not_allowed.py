@@ -1,6 +1,6 @@
+from spinn_front_end_common.utilities.exceptions import ConfigurationException
 import spynnaker8 as p
 from p8_integration_tests.base_test_case import BaseTestCase
-from spinn_front_end_common.utilities.exceptions import ConfigurationException
 
 
 class TestNoVerticesNotAllowed(BaseTestCase):

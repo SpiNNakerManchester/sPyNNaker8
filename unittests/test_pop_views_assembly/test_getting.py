@@ -1,14 +1,13 @@
 from __future__ import division
-import numpy
 import pickle
-import pytest
 from unittest import SkipTest
-
+import numpy
+import pytest
 from spinn_front_end_common.utilities.exceptions import ConfigurationException
-from p8_integration_tests.base_test_case import BaseTestCase
 from spinn_front_end_common.utilities.globals_variables import get_simulator
 import spynnaker8 as sim
 from spynnaker8.utilities import neo_convertor
+from p8_integration_tests.base_test_case import BaseTestCase
 
 
 def mock_spikes():

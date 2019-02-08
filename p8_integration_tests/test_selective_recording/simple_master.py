@@ -1,6 +1,5 @@
-import numpy
 import os
-
+import numpy
 import spynnaker8 as sim
 
 current_file_path = os.path.dirname(os.path.abspath(__file__))

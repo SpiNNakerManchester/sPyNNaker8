@@ -1,5 +1,5 @@
-import spynnaker8 as p
 from testfixtures import LogCapture
+import spynnaker8 as p
 from p8_integration_tests.base_test_case import BaseTestCase
 
 

@@ -1,8 +1,7 @@
-from p8_integration_tests.base_test_case import BaseTestCase
-
+import spynnaker.plot_utils as plot_utils
 import spynnaker8 as sim
 from spynnaker8.utilities import neo_convertor
-import spynnaker.plot_utils as plot_utils
+from p8_integration_tests.base_test_case import BaseTestCase
 
 
 def do_run(seed=None):

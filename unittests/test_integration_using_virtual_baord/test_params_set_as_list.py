@@ -1,7 +1,6 @@
-import spynnaker8 as p
-
-from p8_integration_tests.base_test_case import BaseTestCase
 from pyNN.random import RandomDistribution, NumpyRNG
+import spynnaker8 as p
+from p8_integration_tests.base_test_case import BaseTestCase
 
 
 def do_run(nNeurons):

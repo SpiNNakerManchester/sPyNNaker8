@@ -1,5 +1,6 @@
-from spynnaker.pyNN.models.neuron.plasticity.stdp.weight_dependence \
-    import WeightDependenceMultiplicative as _BaseClass
+from spynnaker.pyNN.models.neuron.plasticity.stdp.weight_dependence import (
+    WeightDependenceMultiplicative as
+    _BaseClass)
 
 
 class WeightDependenceMultiplicative(_BaseClass):

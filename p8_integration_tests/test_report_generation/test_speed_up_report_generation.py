@@ -2,16 +2,13 @@
 """
 Synfirechain-like example
 """
-
+import os
+from pacman.model.constraints.placer_constraints import (
+    ChipAndCoreConstraint)
+from spinn_front_end_common.utility_models import (
+    DataSpeedUpPacketGatherMachineVertex)
 from p8_integration_tests.base_test_case import BaseTestCase
 from p8_integration_tests.scripts.synfire_run import SynfireRunner
-from pacman.model.constraints.placer_constraints \
-    import ChipAndCoreConstraint
-from spinn_front_end_common.utility_models.\
-    data_speed_up_packet_gatherer_machine_vertex import\
-    DataSpeedUpPacketGatherMachineVertex
-import os
-
 
 nNeurons = 200  # number of neurons in each population
 constraint = ChipAndCoreConstraint(1, 1)

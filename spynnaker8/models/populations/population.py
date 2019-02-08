@@ -1,17 +1,16 @@
 import logging
+import inspect
 from six import iteritems, string_types
+from pyNN import descriptions
+from spinn_front_end_common.utilities import globals_variables
+from spinn_front_end_common.utilities.exceptions import ConfigurationException
 from spynnaker.pyNN.exceptions import InvalidParameterType
 from spynnaker.pyNN.models.pynn_population_common import PyNNPopulationCommon
 from spynnaker.pyNN.utilities.constants import SPIKES
-from spinn_front_end_common.utilities import globals_variables
-from spinn_front_end_common.utilities.exceptions import ConfigurationException
-
+from .idmixin import IDMixin
+from .population_base import PopulationBase
+from .population_view import PopulationView
 from spynnaker8.models.recorder import Recorder
-from spynnaker8.models.populations import IDMixin, PopulationBase
-from spynnaker8.models.populations.population_view import PopulationView
-
-from pyNN import descriptions
-import inspect
 
 logger = logging.getLogger(__name__)
 
