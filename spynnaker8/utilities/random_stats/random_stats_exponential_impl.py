@@ -1,6 +1,5 @@
-from spynnaker.pyNN.utilities.random_stats import AbstractRandomStats
-
 from scipy.stats import expon
+from spynnaker.pyNN.utilities.random_stats import AbstractRandomStats
 
 
 class RandomStatsExponentialImpl(AbstractRandomStats):

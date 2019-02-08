@@ -1,5 +1,6 @@
-from spynnaker.pyNN.models.neuron.plasticity.stdp.weight_dependence\
-    import WeightDependenceAdditiveTriplet as _BaseClass
+from spynnaker.pyNN.models.neuron.plasticity.stdp.weight_dependence import (
+    WeightDependenceAdditiveTriplet as
+    _BaseClass)
 
 
 class WeightDependenceAdditiveTriplet(_BaseClass):

@@ -1,22 +1,17 @@
 import logging
+import functools
 import numpy
 from six import string_types
-
 from pyNN import common as pynn_common, recording
 from pyNN.space import Space as PyNNSpace
-
+from spinn_front_end_common.utilities import globals_variables
+from spinn_front_end_common.utilities.exceptions import ConfigurationException
+from spynnaker.pyNN.models.pynn_projection_common import PyNNProjectionCommon
+from spynnaker.pyNN.exceptions import InvalidParameterType
 from spynnaker8.models.connectors import FromListConnector
 from spynnaker8.models.synapse_dynamics import SynapseDynamicsStatic
-from spynnaker8.models.populations.population import Population
-from spynnaker8.models.populations.population_view import PopulationView
+from spynnaker8.models.populations import Population, PopulationView
 from spynnaker8._version import __version__
-
-from spynnaker.pyNN.models.pynn_projection_common import PyNNProjectionCommon
-from spinn_front_end_common.utilities import globals_variables
-from spynnaker.pyNN.exceptions import InvalidParameterType
-
-from spinn_front_end_common.utilities.exceptions import ConfigurationException
-import functools
 
 logger = logging.getLogger(__name__)
 

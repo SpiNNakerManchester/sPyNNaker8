@@ -1,7 +1,7 @@
 from __future__ import print_function
+from six import assertCountEqual
 import spynnaker8 as p
 from p8_integration_tests.base_test_case import BaseTestCase
-from six import assertCountEqual
 
 
 def do_run():

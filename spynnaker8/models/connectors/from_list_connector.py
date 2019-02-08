@@ -1,9 +1,8 @@
-from spynnaker.pyNN.models.neural_projections.connectors \
-    import FromListConnector as CommonFromListConnector
 import numpy
-from spynnaker8.utilities.exceptions import InvalidParameterType
-
 from pyNN.connectors import Connector
+from spynnaker.pyNN.models.neural_projections.connectors import (
+    FromListConnector as CommonFromListConnector)
+from spynnaker8.utilities.exceptions import InvalidParameterType
 
 
 class FromListConnector(CommonFromListConnector, Connector):
