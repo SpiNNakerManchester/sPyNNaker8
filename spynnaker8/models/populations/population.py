@@ -362,8 +362,29 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
 
     def get(self, parameter_names, gather=False, simplify=True):
         if simplify is not True:
-            logger.warning("The simplify value is ignored if not set to true")
-        return super(Population, self).get(parameter_names, gather)
+            logger.warn("The simplify value is ignored if not set to true")
+        return PyNNPopulationCommon.get(self, parameter_names, gather)
+
+    @property
+    def positions(self):
+        """ Return the position array for structured populations.
+        """
+        if self._positions is None:
+            if self._structure is None:
+                raise ValueError("attempted to retrieve positions "
+                                 "for an unstructured population")
+            self._positions = self._structure.generate_positions(
+                self._vertex.n_atoms)
+        return self._positions.T  # change of order in pyNN 0.8
+
+    @positions.setter
+    def positions(self, positions):
+        """ Sets all the positions in the population.
+        """
+        self._positions = positions
+
+        # state that something has changed in the population,
+        self._change_requires_mapping = True
 
     @property
     def all_cells(self):
