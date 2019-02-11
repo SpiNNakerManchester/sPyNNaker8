@@ -2,11 +2,11 @@
 Synfirechain-like example
 """
 # !/usr/bin/python
+from pacman.model.constraints.placer_constraints import (
+    ChipAndCoreConstraint)
 import spynnaker.spike_checker as spike_checker
 import spynnaker8 as p
 from spynnaker8.utilities import neo_convertor
-from pacman.model.constraints.placer_constraints\
-    import ChipAndCoreConstraint as ChipAndCoreConstraint
 from p8_integration_tests.base_test_case import BaseTestCase
 
 # number of neurons in each population

@@ -1,5 +1,6 @@
-from spynnaker.pyNN.models.neuron.plasticity.stdp.timing_dependence \
-    import TimingDependenceRecurrent as _BaseClass
+from spynnaker.pyNN.models.neuron.plasticity.stdp.timing_dependence import (
+    TimingDependenceRecurrent as
+    _BaseClass)
 
 _defaults = _BaseClass.default_parameters
 

@@ -2,12 +2,10 @@
 """
 Synfirechain-like example
 """
-from p8_integration_tests.base_test_case import BaseTestCase
-
+import numpy as np
 import spynnaker8 as p
 import spynnaker.plot_utils as plot_utils
-
-import numpy as np
+from p8_integration_tests.base_test_case import BaseTestCase
 
 
 def do_run(nNeurons):
