@@ -1,16 +1,15 @@
 #!/usr/bin/python
-import spynnaker8 as p
-from p8_integration_tests.base_test_case import BaseTestCase
-
 import spynnaker.plot_utils as plot_utils
+import spynnaker8 as p
 from spynnaker8.utilities import neo_convertor
+from p8_integration_tests.base_test_case import BaseTestCase
 
 
 def do_run(nNeurons):
 
     p.setup(timestep=1.0, min_delay=1.0, max_delay=8.0)
 
-    cell_params_lif_in = {'tau_m': 333.33, 'cm': 208.33, 'v_init': 0.0,
+    cell_params_lif_in = {'tau_m': 333.33, 'cm': 208.33, 'v': 0.0,
                           'v_rest': 0.1, 'v_reset': 0.0, 'v_thresh': 1.0,
                           'tau_syn_E': 1, 'tau_syn_I': 2, 'tau_refrac': 2.5,
                           'i_offset': 3.0}

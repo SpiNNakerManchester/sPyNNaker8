@@ -18,16 +18,14 @@ $Id:VAbenchmarks.py 5 2007-04-16 15:01:24Z davison $
 """
 import os
 import pickle
-# import socket
 import unittest
 from unittest import SkipTest
-from p8_integration_tests.base_test_case import BaseTestCase
-import spynnaker8 as p
-from spynnaker8.utilities import neo_compare
-from spynnaker8.utilities import neo_convertor
 from pyNN.random import NumpyRNG, RandomDistribution
 from pyNN.utility import Timer
 from spinnman.exceptions import SpinnmanTimeoutException
+import spynnaker8 as p
+from spynnaker8.utilities import neo_compare, neo_convertor
+from p8_integration_tests.base_test_case import BaseTestCase
 
 current_file_path = os.path.dirname(os.path.abspath(__file__))
 neo_path = os.path.join(current_file_path, "spikes.pickle")

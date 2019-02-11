@@ -1,9 +1,9 @@
 import pytest
 from pyNN.random import RandomDistribution, NumpyRNG
-from p8_integration_tests.base_test_case import BaseTestCase
 from spinn_front_end_common.utilities.exceptions import ConfigurationException
 import spynnaker8 as sim
-from spynnaker8.models.populations.population_view import PopulationView
+from spynnaker8.models.populations import PopulationView
+from p8_integration_tests.base_test_case import BaseTestCase
 
 
 class Test_IDMixin(BaseTestCase):
@@ -110,7 +110,7 @@ class Test_IDMixin(BaseTestCase):
         view = PopulationView(pop, [1, 3], label="Odds")
         view2 = PopulationView(pop, [1, 2], label="OneTwo")
         view_iv = view.initial_values
-        self.assertEqual(1, len(view_iv))
+        self.assertEqual(3, len(view_iv))
         self.assertEqual([-65, -65], view_iv["v"])
         view.initialize(v=-60)
         self.assertEqual([-65, -60, -65, -60, -65], pop.get_initial_value("v"))

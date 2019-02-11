@@ -1,8 +1,8 @@
-import pytest
 from unittest import SkipTest
-
-from p8_integration_tests.base_test_case import BaseTestCase
+import pytest
+from pyNN.space import Sphere, RandomStructure
 import spynnaker8 as sim
+from p8_integration_tests.base_test_case import BaseTestCase
 
 
 class TestPopulation(BaseTestCase):
@@ -38,7 +38,8 @@ class TestPopulation(BaseTestCase):
         n_neurons = 5
         label = "pop_1"
         sim.setup(timestep=1.0)
-        pop_1 = sim.Population(n_neurons, sim.IF_curr_exp(), label=label)
+        pop_1 = sim.Population(n_neurons, sim.IF_curr_exp(), label=label,
+                               structure=RandomStructure(Sphere(5.0)))
         try:
             gen = pop_1.position_generator
             print(gen(0))
@@ -116,7 +117,7 @@ class TestPopulation(BaseTestCase):
         initial_values = pop.initial_values
         assert "v" in initial_values
         initial_values = pop.get_initial_values(selector=3)
-        assert {"v": [-65]} == initial_values
+        assert {"v": [-65], "isyn_exc": [0], "isyn_inh": [0]} == initial_values
         sim.end()
 
     def test_iter(self):

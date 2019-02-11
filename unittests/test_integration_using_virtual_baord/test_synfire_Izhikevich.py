@@ -2,8 +2,8 @@
 """
 Synfirechain-like example
 """
-from p8_integration_tests.base_test_case import BaseTestCase
 import spynnaker8 as p
+from p8_integration_tests.base_test_case import BaseTestCase
 
 
 def do_run(nNeurons):
@@ -15,8 +15,8 @@ def do_run(nNeurons):
         'b': 0.2,
         'c': -65,
         'd': 8,
-        'v_init': -75,
-        'u_init': 0,
+        'v': -75,
+        'u': 0,
         'tau_syn_E': 2,
         'tau_syn_I': 2,
         'i_offset': 0

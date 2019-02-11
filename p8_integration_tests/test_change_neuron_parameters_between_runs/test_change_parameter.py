@@ -1,7 +1,7 @@
+from unittest import SkipTest
+from pyNN.random import NumpyRNG
 import spynnaker8 as p
 from p8_integration_tests.base_test_case import BaseTestCase
-from pyNN.random import NumpyRNG
-from unittest import SkipTest
 
 
 def do_run(split, seed=None):
@@ -11,8 +11,8 @@ def do_run(split, seed=None):
         p.set_number_of_neurons_per_core(p.SpikeSourcePoisson, 27)
         p.set_number_of_neurons_per_core(p.IF_curr_exp, 22)
 
-    inp = p.Population(100, p.SpikeSourcePoisson(rate=100, seed=seed),
-                       label="input")
+    inp = p.Population(100, p.SpikeSourcePoisson(rate=100),
+                       label="input", additional_parameters={"seed": seed})
     pop = p.Population(100, p.IF_curr_exp, {}, label="pop")
 
     p.Projection(inp, pop, p.OneToOneConnector(),

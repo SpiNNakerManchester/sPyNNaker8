@@ -1,10 +1,10 @@
-import numpy
 import os
 import sys
+import numpy
 from six.moves import xrange
 import spynnaker8 as sim
-from p8_integration_tests.base_test_case import BaseTestCase
 from spynnaker8.models.populations.population_view import PopulationView
+from p8_integration_tests.base_test_case import BaseTestCase
 
 
 current_file_path = os.path.dirname(os.path.abspath(__file__))
@@ -29,7 +29,7 @@ def run_script(
     sim.Projection(input1, pop_1, sim.AllToAllConnector(),
                    synapse_type=sim.StaticSynapse(weight=5, delay=1))
     input2 = sim.Population(n_neurons, sim.SpikeSourcePoisson(
-        rate=100.0, seed=1),  label="Stim_Exc")
+        rate=100.0),  label="Stim_Exc", additional_parameters={"seed": 1})
     sim.Projection(input2, pop_1, sim.OneToOneConnector(),
                    synapse_type=sim.StaticSynapse(weight=5, delay=1))
     if record_spikes:

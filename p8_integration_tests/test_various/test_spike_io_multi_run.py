@@ -1,12 +1,10 @@
 from __future__ import print_function
 import random
-import unittest
+from threading import Condition
+import time
+from spinn_front_end_common.utilities.constants import NOTIFY_PORT
 import spynnaker8 as Frontend
 from spynnaker8.utilities import neo_convertor
-import time
-from threading import Condition
-from spinn_front_end_common.utilities.constants import NOTIFY_PORT
-
 from p8_integration_tests.base_test_case import BaseTestCase
 
 # Create a condition to avoid overlapping prints
@@ -222,8 +220,6 @@ def do_run():
 
 class SpikeIoMultiRun(BaseTestCase):
 
-    @unittest.skip("https://github.com/SpiNNakerManchester/sPyNNaker8/issues/"
-                   "83")
     def test_run(self):
         (spikes_forward, spikes_backward) = do_run()
         self.assertEqual(600, len(spikes_forward))

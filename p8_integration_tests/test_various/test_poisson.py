@@ -1,8 +1,7 @@
-from p8_integration_tests.base_test_case import BaseTestCase
-
+import spynnaker.plot_utils as plot_utils
 import spynnaker8 as sim
 from spynnaker8.utilities import neo_convertor
-import spynnaker.plot_utils as plot_utils
+from p8_integration_tests.base_test_case import BaseTestCase
 
 
 def do_run(seed=None):
@@ -17,10 +16,11 @@ def do_run(seed=None):
             rate=10.0, start=0, duration=simtime), label="pg_pop2")
     else:
         pg_pop1 = sim.Population(2, sim.SpikeSourcePoisson(
-            rate=10.0, start=0, duration=simtime, seed=seed), label="pg_pop1")
+            rate=10.0, start=0, duration=simtime),
+            additional_parameters={"seed": seed}, label="pg_pop1")
         pg_pop2 = sim.Population(2, sim.SpikeSourcePoisson(
-            rate=10.0, start=0, duration=simtime, seed=seed+1),
-                                 label="pg_pop2")
+            rate=10.0, start=0, duration=simtime),
+            additional_parameters={"seed": seed+1}, label="pg_pop2")
 
     pg_pop1.record("spikes")
     pg_pop2.record("spikes")

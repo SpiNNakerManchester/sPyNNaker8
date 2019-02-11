@@ -1,9 +1,8 @@
-from spynnaker.pyNN.models.neural_projections.connectors \
-    import FixedNumberPreConnector as CommonFixedNumberPreConnector
-from pyNN.connectors import FixedNumberPreConnector as \
-    PyNNFixedNumberPreConnector
-
 import logging
+from pyNN.connectors import (
+    FixedNumberPreConnector as PyNNFixedNumberPreConnector)
+from spynnaker.pyNN.models.neural_projections.connectors import (
+    FixedNumberPreConnector as CommonFixedNumberPreConnector)
 
 logger = logging.getLogger(__file__)
 

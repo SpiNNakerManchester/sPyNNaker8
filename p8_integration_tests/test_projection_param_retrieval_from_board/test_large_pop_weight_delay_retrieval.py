@@ -1,6 +1,6 @@
 import numpy
-from p8_integration_tests.base_test_case import BaseTestCase
 import spynnaker8 as p
+from p8_integration_tests.base_test_case import BaseTestCase
 
 sources = 1000  # number of neurons in each population
 targets = 2000
@@ -29,6 +29,8 @@ def do_run():
     synapse_type = p.StaticSynapse(weight=weight_to_spike, delay=delay)
     projections.append(p.Projection(populations[0], populations[1],
                                     connectors, synapse_type=synapse_type))
+
+    p.run(1)
 
     # before
     pre_delays_array = projections[0].get(attribute_names=["delay"],

@@ -1,9 +1,9 @@
 from __future__ import print_function
+import numpy
+import pylab
+import pyNN.random
 import spynnaker8 as p
 from p8_integration_tests.base_test_case import BaseTestCase
-import pylab
-import numpy
-import pyNN.random
 
 
 def do_run(plot):
@@ -190,7 +190,7 @@ class FixedNumberPreConnectorTest(BaseTestCase):
         self.assertEquals(500, len(stim_spikes))
         self.assertGreater(1550, len(spklist_exc))
         self.assertGreater(350, len(spklist_inh))
-        self.assertLess(1000, len(spklist_exc))
+        self.assertLess(900, len(spklist_exc))
         self.assertLess(200, len(spklist_inh))
 
 

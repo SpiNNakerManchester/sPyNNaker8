@@ -1,8 +1,8 @@
-import unittest
-from spynnaker.pyNN.utilities import utility_calls
 import os
 import shutil
+import unittest
 from pyNN.random import RandomDistribution
+from spynnaker.pyNN.utilities import utility_calls
 from spynnaker8 import setup
 
 

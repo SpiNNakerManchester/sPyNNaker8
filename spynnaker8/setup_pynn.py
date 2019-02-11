@@ -1,12 +1,12 @@
+import os
 from distutils.version import StrictVersion as Version
 import pyNN
-import os
 
 
 def version_satisfies(module, requirement):
     """ Perform a version check. This code could be smarter...
     """
-    return Version(module.__version__) > Version(requirement)
+    return Version(module.__version__) >= Version(requirement)
 
 
 def install_sPyNNaker8_into(module):

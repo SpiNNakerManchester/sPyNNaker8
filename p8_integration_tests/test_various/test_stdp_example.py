@@ -30,13 +30,13 @@ Authors : Catherine Wacongne < catherine.waco@gmail.com >
 April 2013
 """
 from __future__ import print_function
-import spynnaker8 as sim
+import random
+from unittest import SkipTest
+from pyNN.random import NumpyRNG
 import spynnaker.plot_utils as plot_utils
+import spynnaker8 as sim
 from spynnaker8.utilities import neo_convertor
 from p8_integration_tests.base_test_case import BaseTestCase
-from pyNN.random import NumpyRNG
-from unittest import SkipTest
-import random
 
 
 def do_run(seed=None):
@@ -89,36 +89,45 @@ def do_run(seed=None):
     # Test of the effect of activity of the pre_pop population on the post_pop
     # population prior to the "pairing" protocol : only pre_pop is stimulated
     for i in range(n_stim_test):
-        IAddPre.append(sim.Population(pop_size, sim.SpikeSourcePoisson(
-            rate=in_rate, start=start_test_pre_pairing + ISI*(i),
-            duration=dur_stim, seed=random.randint(0, 100000000))))
+        IAddPre.append(sim.Population(
+            pop_size, sim.SpikeSourcePoisson(
+                rate=in_rate, start=start_test_pre_pairing + ISI*(i),
+                duration=dur_stim),
+            additional_parameters={"seed": random.randint(0, 100000000)}))
 
     # Pairing protocol : pre_pop and post_pop are stimulated with a 10 ms
     # difference
     for i in range(n_stim_pairing):
-        IAddPre.append(sim.Population(pop_size, sim.SpikeSourcePoisson(
-            rate=in_rate, start=start_pairing + ISI*(i), duration=dur_stim,
-            seed=random.randint(0, 100000000))))
-        IAddPost.append(sim.Population(pop_size, sim.SpikeSourcePoisson(
-            rate=in_rate, start=start_pairing + ISI*(i) + 10.,
-            duration=dur_stim, seed=random.randint(0, 100000000))))
+        IAddPre.append(sim.Population(
+            pop_size, sim.SpikeSourcePoisson(
+                rate=in_rate, start=start_pairing + ISI*(i),
+                duration=dur_stim),
+            additional_parameters={"seed": random.randint(0, 100000000)}))
+        IAddPost.append(sim.Population(
+            pop_size, sim.SpikeSourcePoisson(
+                rate=in_rate, start=start_pairing + ISI*(i) + 10.,
+                duration=dur_stim),
+            additional_parameters={"seed": random.randint(0, 100000000)}))
 
     # Test post pairing : only pre_pop is stimulated
     # (and should trigger activity in Post)
     for i in range(n_stim_test):
         start = start_pairing + ISI * n_stim_pairing + \
                 start_test_post_pairing + ISI * i
-        IAddPre.append(sim.Population(pop_size, sim.SpikeSourcePoisson(
-            rate=in_rate, start=start, duration=dur_stim,
-            seed=random.randint(0, 100000000))))
+        IAddPre.append(sim.Population(
+            pop_size, sim.SpikeSourcePoisson(
+                rate=in_rate, start=start, duration=dur_stim),
+            additional_parameters={"seed": random.randint(0, 100000000)}))
 
     # Noise inputs
     INoisePre = sim.Population(pop_size, sim.SpikeSourcePoisson(
-        rate=e_rate, start=0, duration=simtime,
-        seed=random.randint(0, 100000000)), label="expoisson")
+        rate=e_rate, start=0, duration=simtime),
+        additional_parameters={"seed": random.randint(0, 100000000)},
+        label="expoissonpre")
     INoisePost = sim.Population(pop_size, sim.SpikeSourcePoisson(
-        rate=e_rate, start=0, duration=simtime,
-        seed=random.randint(0, 100000000)), label="expoisson")
+        rate=e_rate, start=0, duration=simtime),
+        additional_parameters={"seed": random.randint(0, 100000000)},
+        label="expoissonpost")
 
     # +-------------------------------------------------------------------+
     # | Creation of connections                                           |
@@ -189,6 +198,7 @@ class StdpExample(BaseTestCase):
     # The number of params does not equal with
     # the number of atoms in the vertex
     def test_run(self):
+        self._test_seed = None
         (pre_spikes, post_spikes, weights) = do_run(seed=self._test_seed)
         if self._test_seed == 1:
             self.assertEquals(183, len(pre_spikes))

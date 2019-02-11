@@ -1,34 +1,25 @@
-
-# spynnaker 8 extra models
-from spynnaker8.models.model_data_holders\
-    import IfCondExpStocDataHolder as IFCondExpStock
-from spynnaker8.models.model_data_holders\
-    import IfCurrDeltaDataHolder as IFCurDelta
-from spynnaker8.models.model_data_holders\
-    import IfCurrExpCa2AdaptiveDataHolder as IFCurrExpCa2Adaptive
-from spynnaker8.models.model_data_holders\
-    import IFCurrDualExpDataHolder as IF_curr_dual_exp
-from spynnaker8.models.model_data_holders.izk_cond_exp_data_holder import \
-    IzkCondExpDataHolder as Izhikevich_cond
-
-# plastic timing spynnaker 8
-from spynnaker8.models.synapse_dynamics.timing_dependence \
-    import TimingDependenceRecurrent as RecurrentRule
-from spynnaker8.models.synapse_dynamics.timing_dependence \
-    import TimingDependenceSpikeNearestPair as SpikeNearestPairRule
-from spynnaker8.models.synapse_dynamics.timing_dependence \
-    import TimingDependenceVogels2011 as Vogels2011Rule
-from spynnaker8.models.synapse_dynamics.timing_dependence \
-    import TimingDependencePfisterSpikeTriplet as PfisterSpikeTriplet
-
-# plastic weight spynnaker 8
-from spynnaker8.models.synapse_dynamics.weight_dependence \
-    import WeightDependenceAdditiveTriplet
+from spynnaker8.models.synapse_dynamics.timing_dependence import (
+    TimingDependenceRecurrent as
+    RecurrentRule,
+    TimingDependenceSpikeNearestPair as
+    SpikeNearestPairRule,
+    TimingDependenceVogels2011 as
+    Vogels2011Rule,
+    TimingDependencePfisterSpikeTriplet as
+    PfisterSpikeTriplet)
+from spynnaker8.models.synapse_dynamics.weight_dependence import (
+    WeightDependenceAdditiveTriplet)
+from spynnaker.pyNN.models.neuron.builds import (
+    IFCondExpStoc, IFCurrDelta as
+    IFCurDelta, IFCurrExpCa2Adaptive, IFCurrDualExpBase as
+    IF_curr_dual_exp, IzkCondExpBase as
+    Izhikevich_cond, IFCurrExpSEMDBase as
+    IF_curr_exp_sEMD)
 
 __all__ = [
     # sPyNNaker 8 models
-    'IFCurDelta', 'IFCurrExpCa2Adaptive', 'IFCondExpStock',
-    'Izhikevich_cond', 'IF_curr_dual_exp',
+    'IFCurDelta', 'IFCurrExpCa2Adaptive', 'IFCondExpStoc',
+    'Izhikevich_cond', 'IF_curr_dual_exp', 'IF_curr_exp_sEMD',
 
     # sPyNNaker 8 plastic stuff
     'WeightDependenceAdditiveTriplet',

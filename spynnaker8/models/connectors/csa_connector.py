@@ -1,12 +1,20 @@
-from spynnaker.pyNN.models.neural_projections.connectors \
-    import AbstractConnector
-from pyNN.connectors import CSAConnector as PyNNCSAConnector
+from spynnaker.pyNN.models.neural_projections.connectors import (
+    CSAConnector as
+    CommonCSAConnector)
 
 
-class CSAConnector(AbstractConnector, PyNNCSAConnector):
+class CSAConnector(CommonCSAConnector):
+    """
+    Create an CSA (Connection Set Algebra, Djurfeldt 2012) connector.
 
-    def __init__(self, cset, safe=True, callback=None):
-        AbstractConnector.__init__(self, safe=safe)
-        PyNNCSAConnector.__init__(
-            self, cset=cset, safe=safe, callback=callback)
-        raise NotImplementedError
+    :param cset: a connection set description
+    :type cset: string
+    """
+    __slots__ = []
+
+    def __init__(
+            self, cset, safe=True, callback=None, verbose=False):
+        # pylint: disable=too-many-arguments
+        super(CSAConnector, self).__init__(
+            cset=cset,
+            safe=safe, callback=callback, verbose=verbose)
