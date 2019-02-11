@@ -1,11 +1,9 @@
 from datetime import datetime
 import logging
-import os
 import numpy
 from six import string_types
 from six.moves import xrange
 import neo
-from neo.io import NeoHdf5IO, PickleIO, NeoMatlabIO
 import quantities
 from spinn_utilities.ordered_set import OrderedSet
 from spinn_utilities.log import FormatAdapter
@@ -13,7 +11,6 @@ from spinn_front_end_common.utilities.globals_variables import get_simulator
 from spynnaker.pyNN.models.common import (
     AbstractNeuronRecordable, AbstractSpikeRecordable)
 from spynnaker.pyNN.models.recording_common import RecordingCommon
-from spynnaker.pyNN.utilities import utility_calls
 from spynnaker.pyNN.utilities.constants import (
     SPIKES, MEMBRANE_POTENTIAL, GSYN_EXCIT, GSYN_INHIB)
 from spynnaker.pyNN.exceptions import InvalidParameterType
@@ -36,28 +33,6 @@ class Recorder(RecordingCommon):
         super(Recorder, self).__init__(population)
         self._recording_start_time = get_simulator().t
         self._data_cache = {}
-
-    @staticmethod
-    def _get_io(filename):
-        """ Return a Neo IO instance, guessing the type based on the filename\
-            suffix.
-        """
-        logger.debug("Creating Neo IO for filename {}", filename)
-        directory = os.path.dirname(filename)
-        utility_calls.check_directory_exists_and_create_if_not(directory)
-        extension = os.path.splitext(filename)[1]
-        if extension in ('.txt', '.ras', '.v', '.gsyn'):
-            raise IOError(
-                "ASCII-based formats are not currently supported for output"
-                " data. Try using the file extension '.pkl' or '.h5'")
-        elif extension in ('.h5',):
-            return NeoHdf5IO(filename=filename)
-        elif extension in ('.pkl', '.pickle'):
-            return PickleIO(filename=filename)
-        elif extension == '.mat':
-            return NeoMatlabIO(filename=filename)
-        else:  # function to be improved later
-            raise Exception("file extension %s not supported" % extension)
 
     def _extract_neo_block(self, variables, view_indexes, clear, annotations):
         """ Extracts block from the vertices and puts them into a Neo block
@@ -359,7 +334,7 @@ class Recorder(RecordingCommon):
                 t_start=recording_start_time,
                 t_stop=t_stop,
                 units='ms',
-                sampling_rate=sampling_interval,
+                sampling_interval=sampling_interval,
                 source_population=label,
                 source_id=self._population.index_to_id(index),
                 source_index=index)
