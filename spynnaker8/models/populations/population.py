@@ -1,4 +1,5 @@
 import logging
+import neo
 import inspect
 from six import iteritems, string_types
 from pyNN import descriptions
@@ -176,7 +177,7 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
                            "as if gather was set to True.")
 
         if isinstance(io, string_types):
-            io = self._get_io(io)
+            io = neo.get_io(io)
 
         data = self._extract_neo_block(variables, None, clear, annotations)
         # write the neo block to the file
