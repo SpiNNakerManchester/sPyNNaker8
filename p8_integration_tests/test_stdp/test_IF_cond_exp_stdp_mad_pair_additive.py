@@ -111,8 +111,9 @@ class TestIFCondExpSTDPPairAdditive(BaseTestCase):
         print("New weight SpiNNaker: {}".format(weights))
 
         # Feb 10. Since revert and merge this is broken???
-        # self.assertTrue(numpy.allclose(weights, new_weight_exact, rtol=0.001))
-
+        """
+        self.assertTrue(numpy.allclose(weights, new_weight_exact, rtol=0.001))
+        """
 
 if __name__ == '__main__':
     unittest.main()
