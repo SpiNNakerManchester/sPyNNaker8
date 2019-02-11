@@ -3,7 +3,6 @@ test that a single neuron of if curr exp works as expected
 """
 
 # general imports
-from unittest import SkipTest
 import spynnaker.plot_utils as plot_utils
 from spynnaker8 import SpikeSourcePoisson
 from p8_integration_tests.base_test_case import BaseTestCase
