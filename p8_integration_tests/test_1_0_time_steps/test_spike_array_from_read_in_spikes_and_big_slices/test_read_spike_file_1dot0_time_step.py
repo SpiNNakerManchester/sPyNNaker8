@@ -1,11 +1,8 @@
 """
 Synfirechain-like example
 """
-
-# spynnaker imports
+from unittest import SkipTest
 import spynnaker8 as p
-
-# general imports
 from p8_integration_tests.base_test_case import BaseTestCase
 
 

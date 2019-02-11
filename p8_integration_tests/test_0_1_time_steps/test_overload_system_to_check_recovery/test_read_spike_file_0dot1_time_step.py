@@ -1,10 +1,7 @@
-# spynnaker imports
+import os
+from spinnman.exceptions import SpinnmanTimeoutException
 import spynnaker8 as p
 from p8_integration_tests.base_test_case import BaseTestCase
-from spinnman.exceptions import SpinnmanTimeoutException
-
-# general imports
-import os
 
 
 def read_spikefile(file_name, n_neurons):
@@ -14,7 +11,7 @@ def read_spikefile(file_name, n_neurons):
     :param n_neurons:
     :return:
     """
-    spike_array = [[] for x in range(n_neurons)]
+    spike_array = [[] for _x in range(n_neurons)]
     with open(file_name) as f_spike:
         for line in f_spike:
             cut_index = line.find(';')

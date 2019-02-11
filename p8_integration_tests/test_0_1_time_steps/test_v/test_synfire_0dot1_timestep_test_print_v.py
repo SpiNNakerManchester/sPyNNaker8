@@ -6,10 +6,10 @@ import os
 from neo.io import PickleIO
 import unittest
 from unittest import SkipTest
-from p8_integration_tests.base_test_case import BaseTestCase
-from p8_integration_tests.scripts.synfire_run import SynfireRunner
 from spinnman.exceptions import SpinnmanTimeoutException
 from spynnaker8.utilities import neo_compare
+from p8_integration_tests.base_test_case import BaseTestCase
+from p8_integration_tests.scripts.synfire_run import SynfireRunner
 
 n_neurons = 200  # number of neurons in each population
 runtime = 500

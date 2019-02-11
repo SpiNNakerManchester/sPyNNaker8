@@ -2,11 +2,12 @@
 test that a single neuron of if curr exp works as expected
 """
 
-from p8_integration_tests.base_test_case import BaseTestCase
+# general imports
+from unittest import SkipTest
 import spynnaker.plot_utils as plot_utils
-
-from p8_integration_tests.scripts.synfire_run import SynfireRunner
 from spynnaker8 import SpikeSourcePoisson
+from p8_integration_tests.base_test_case import BaseTestCase
+from p8_integration_tests.scripts.synfire_run import SynfireRunner
 
 cell_params = {'cm': 0.25,
                'i_offset': 0.0,

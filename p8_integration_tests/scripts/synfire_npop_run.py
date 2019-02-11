@@ -3,7 +3,6 @@
 Synfirechain-like example
 """
 import numpy
-
 import spynnaker8 as p
 
 

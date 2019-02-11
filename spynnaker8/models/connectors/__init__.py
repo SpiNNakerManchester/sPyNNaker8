@@ -1,8 +1,8 @@
 from .all_to_all_connector import AllToAllConnector
 from .array_connector import ArrayConnector
 from .csa_connector import CSAConnector
-from .distance_dependent_probability_connector \
-    import DistanceDependentProbabilityConnector
+from .distance_dependent_probability_connector import (
+    DistanceDependentProbabilityConnector)
 from .fixed_number_post_connector import FixedNumberPostConnector
 from .fixed_number_pre_connector import FixedNumberPreConnector
 from .fixed_probability_connector import FixedProbabilityConnector

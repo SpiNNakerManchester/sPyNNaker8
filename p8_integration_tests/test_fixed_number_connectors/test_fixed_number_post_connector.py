@@ -1,9 +1,9 @@
 from __future__ import print_function
+import numpy
+import pylab
+import pyNN.random
 import spynnaker8 as p
 from p8_integration_tests.base_test_case import BaseTestCase
-import pylab
-import numpy
-import pyNN.random
 
 
 def do_run(plot):

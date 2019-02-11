@@ -1,9 +1,8 @@
-import pytest
 from unittest import SkipTest
-
-from p8_integration_tests.base_test_case import BaseTestCase
-import spynnaker8 as sim
+import pytest
 from pyNN.space import Sphere, RandomStructure
+import spynnaker8 as sim
+from p8_integration_tests.base_test_case import BaseTestCase
 
 
 class TestPopulation(BaseTestCase):

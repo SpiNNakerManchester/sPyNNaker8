@@ -1,7 +1,7 @@
-import spynnaker8 as p
-from p8_integration_tests.base_test_case import BaseTestCase
 import pylab
 import csa
+import spynnaker8 as p
+from p8_integration_tests.base_test_case import BaseTestCase
 
 
 def do_run(plot):

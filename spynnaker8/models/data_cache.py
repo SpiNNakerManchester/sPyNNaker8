@@ -1,6 +1,5 @@
 from datetime import datetime
-
-from spynnaker8.models.variable_cache import VariableCache
+from .variable_cache import VariableCache
 
 
 class DataCache(object):

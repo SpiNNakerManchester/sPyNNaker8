@@ -1,6 +1,6 @@
-import spynnaker8 as pynn
 import numpy as np
 from pyNN.random import NumpyRNG, RandomDistribution
+import spynnaker8 as pynn
 
 
 def poisson_generator(rate, rng, t_start=0.0, t_stop=1000.0, array=True,

@@ -1,7 +1,7 @@
-import unittest
-import spynnaker8 as p
-import numpy
 import random
+import unittest
+import numpy
+import spynnaker8 as p
 
 
 class MyTestCase(unittest.TestCase):
