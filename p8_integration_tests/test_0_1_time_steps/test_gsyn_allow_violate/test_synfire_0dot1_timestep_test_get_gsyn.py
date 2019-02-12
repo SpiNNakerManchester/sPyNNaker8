@@ -8,7 +8,6 @@ import spynnaker.spike_checker as spike_checker
 from spinnman.exceptions import SpinnmanTimeoutException
 from unittest import SkipTest
 
-
 n_neurons = 10  # number of neurons in each population
 runtime = 50
 synfire_run = SynfireRunner()

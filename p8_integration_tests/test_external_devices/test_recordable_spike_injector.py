@@ -1,10 +1,10 @@
-import spynnaker8 as p
-import time
-from random import randint
 from collections import defaultdict
-from six import iteritems
-from p8_integration_tests.base_test_case import BaseTestCase
+from random import randint
+import time
 import unittest
+from six import iteritems
+import spynnaker8 as p
+from p8_integration_tests.base_test_case import BaseTestCase
 
 
 class TestRecordableSpikeInjector(BaseTestCase):
