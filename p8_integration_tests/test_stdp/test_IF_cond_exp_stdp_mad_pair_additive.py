@@ -115,5 +115,6 @@ class TestIFCondExpSTDPPairAdditive(BaseTestCase):
         self.assertTrue(numpy.allclose(weights, new_weight_exact, rtol=0.001))
         """
 
+
 if __name__ == '__main__':
     unittest.main()
