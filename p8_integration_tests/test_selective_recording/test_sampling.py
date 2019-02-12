@@ -1,10 +1,10 @@
-import numpy
 import os
 import sys
+import numpy
 from six.moves import xrange
 import spynnaker8 as sim
-from p8_integration_tests.base_test_case import BaseTestCase
 from spynnaker8.models.populations.population_view import PopulationView
+from p8_integration_tests.base_test_case import BaseTestCase
 
 
 current_file_path = os.path.dirname(os.path.abspath(__file__))

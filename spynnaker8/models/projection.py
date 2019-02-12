@@ -1,22 +1,19 @@
 import logging
+import functools
 import numpy
 from six import string_types
-
 from pyNN import common as pynn_common, recording
 from pyNN.space import Space as PyNNSpace
-
+from spinn_front_end_common.utilities import globals_variables
+from spinn_front_end_common.utilities.exceptions import ConfigurationException
+from spynnaker.pyNN.exceptions import InvalidParameterType
 from spynnaker8.models.connectors import FromListConnector
 from spynnaker8.models.synapse_dynamics import SynapseDynamicsStatic
-from spynnaker8.models.populations.population import Population
-from spynnaker8.models.populations.population_view import PopulationView
-from spynnaker8._version import __version__
-
+# This line has to come in this order as it otherwise causes a circular
+# dependency
 from spynnaker.pyNN.models.pynn_projection_common import PyNNProjectionCommon
-from spinn_front_end_common.utilities import globals_variables
-from spynnaker.pyNN.exceptions import InvalidParameterType
-
-from spinn_front_end_common.utilities.exceptions import ConfigurationException
-import functools
+from spynnaker8.models.populations import Population, PopulationView
+from spynnaker8._version import __version__
 
 logger = logging.getLogger(__name__)
 
@@ -241,9 +238,9 @@ class Projection(PyNNProjectionCommon):
         if with_address:
             metadata["columns"] = ["i", "j"] + list(metadata["columns"])
         self._get_data(
-            attribute_names, format, gather, with_address,
+            attribute_names, format, with_address,
             notify=functools.partial(
-                self._save_callback, args=[file, format, metadata]))
+                self._save_callback, file, format, metadata))
 
     @property
     def pre(self):
