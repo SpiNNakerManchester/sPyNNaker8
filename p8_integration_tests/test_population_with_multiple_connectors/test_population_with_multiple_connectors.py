@@ -36,11 +36,13 @@ def do_run(plot):
     target_pop = p.Population(nNeurons, model(**cell_params_lif),
                               label='pop_1')
 
-    p.Projection(input_pop, target_pop, p.OneToOneConnector(),
-                 p.StaticSynapse(weight=weight_to_spike, delay=delay))
+    proj_1 = p.Projection(
+        input_pop, target_pop, p.OneToOneConnector(),
+        p.StaticSynapse(weight=weight_to_spike, delay=delay))
 
-    p.Projection(input_pop, target_pop, p.AllToAllConnector(),
-                 p.StaticSynapse(weight=all_weight_to_spike, delay=delay))
+    proj_2 = p.Projection(
+        input_pop, target_pop, p.AllToAllConnector(),
+        p.StaticSynapse(weight=all_weight_to_spike, delay=delay))
 
     target_pop.record(['spikes'])
 
@@ -48,6 +50,9 @@ def do_run(plot):
     spikes = target_pop.spinnaker_get_data('spikes')
 
     print(spikes)
+
+    print(proj_1.get([], format="list"))
+    print(proj_2.get([], format="list"))
 
     if plot:
         if spikes is not None:
