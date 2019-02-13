@@ -74,7 +74,7 @@ class FromListConnector(CommonFromListConnector, Connector):
         Connector.__init__(self, safe=safe, callback=callback)
 
         # set weights and / or delays if given in list,
-        # to avoid overwriting the synapse values if possible
+        # to avoid overwriting with the synapse values if possible
         if weights is not None or delays is not None:
             self.set_weights_and_delays(weights, delays)
 
