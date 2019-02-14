@@ -11,10 +11,10 @@ runtime = 200
 tau_err = 200.0
 gamma = 0.3
 w_err_exc = 1
-w_err_inh = 1
+w_err_inh = 0.75
 w_plastic = 2
-dt_exc = [16]  # time difference of 15, +1 for a single timestep delay
-dt_inh = [42]  # time difference of 8, +1 for a single timestep delay
+dt_exc = [16, 43]  # time difference of 15, +1 for a single timestep delay
+dt_inh = [18, 42, 67]  # time difference of 8, +1 for a single timestep delay
 
 # Hidden neuron population - i.e. postsynaptic population
 neuron_params = {
