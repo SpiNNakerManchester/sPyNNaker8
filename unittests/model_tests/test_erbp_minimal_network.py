@@ -167,22 +167,26 @@ def main(argv):
         Panel(hidden_neuron_data.segments[0].filter(name='v')[0],
               ylabel="Hid mem p (mV)",
               data_labels=[pop_hidden.label], yticks=True, xlim=(0, simtime)),
-        Panel(hidden_neuron_data.segments[0].filter(name='gsyn_exc')[0],
-              ylabel="Hid gsyn exc (mV)",
-              data_labels=[pop_hidden.label], yticks=True, xlim=(0, simtime)),
+#         Panel(hidden_neuron_data.segments[0].filter(name='gsyn_exc')[0],
+#               ylabel="Hid gsyn exc (mV)",
+#               data_labels=[pop_hidden.label], yticks=True, xlim=(0, simtime)),
+        Panel(hidden_neuron_data.segments[0].spiketrains,
+              yticks=True, markersize=2, xlim=(0, simtime)),
         Panel(out_neuron_data.segments[0].filter(name='v')[0],
               ylabel="Out mem p (mV)",
               data_labels=[pop_out.label], yticks=True, xlim=(0, simtime)),
-        Panel(label_spikes.segments[0].spiketrains,
+        Panel(out_neuron_data.segments[0].spiketrains,
               yticks=True, markersize=2, xlim=(0, simtime)),
         Panel(err_spikes.segments[0].filter(name='v')[0],
               ylabel="Error mem p (mV)",
               data_labels=[pop_error.label], yticks=True, xlim=(0, simtime)),
         Panel(err_spikes.segments[0].spiketrains,
-              yticks=True, markersize=2, xlim=(0, simtime)))
+              yticks=True, markersize=2, xlim=(0, simtime),
+              ylabel="Error mem p (mV)"))
 
     plt.show()
     pyNN.end()
+    print "job done"
 
 
 if __name__ == "__main__":
