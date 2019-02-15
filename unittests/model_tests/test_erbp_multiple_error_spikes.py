@@ -13,8 +13,13 @@ gamma = 0.3
 w_err_exc = 1
 w_err_inh = 0.75
 w_plastic = 2
-dt_exc = [16, 43]  # time difference of 15, +1 for a single timestep delay
-dt_inh = [18, 42, 67]  # time difference of 8, +1 for a single timestep delay
+dt_exc = [16,
+        43, 44, 45, 46
+          ]  # time difference of 15, +1 for a single timestep delay
+dt_inh = [18,
+        42,
+        67
+          ]  # time difference of 8, +1 for a single timestep delay
 
 # Hidden neuron population - i.e. postsynaptic population
 neuron_params = {
@@ -36,20 +41,18 @@ input_src = p.Population(1,  # number of sources
                          label="input_pop")
 
 # Error spike source (sends error spike)
-exc_err_spike_times = [[input_spike_times[0][0] + dt_exc[0] - timestep,
-#                         input_spike_times[0][0] + dt_exc[1] - timestep
-                        ]]
+exc_err_spike_times = [input_spike_times[0][0] + dt - timestep for dt in dt_exc]
+
 exc_err_src = p.Population(1,
                        p.SpikeSourceArray,
-                       {'spike_times': exc_err_spike_times},
+                       {'spike_times': [exc_err_spike_times]},
                        label="exc_err_pop")
 
-inh_err_spike_times = [[input_spike_times[0][0] + dt_inh[0] - timestep,
-#                         input_spike_times[0][0] + dt_inh[1] - timestep
-                        ]]
+inh_err_spike_times = [input_spike_times[0][0] + dt - timestep for dt in dt_inh]
+
 inh_err_src = p.Population(1,
                        p.SpikeSourceArray,
-                       {'spike_times': inh_err_spike_times},
+                       {'spike_times': [inh_err_spike_times]},
                        label="inh_err_pop")
 
 # Define learning rule object
@@ -110,7 +113,7 @@ for exc_err_spike in dt_exc:
                    (neuron_params["v_thresh"] - neuron_params["v_rest"]))
     trace_at_err_spike = p_j * numpy.exp(-exc_err_spike / tau_err)
     dw_exc += trace_at_err_spike * w_err_exc
-    print dw_exc
+    # print dw_exc
 
 # Hand calculate weight update to check SpiNNajer operation
 dw_inh = 0
@@ -119,7 +122,7 @@ for inh_err_spike in dt_inh:
                    (neuron_params["v_thresh"] - neuron_params["v_rest"]))
     trace_at_err_spike = p_j * numpy.exp(-inh_err_spike / tau_err)
     dw_inh += trace_at_err_spike * w_err_inh
-    print dw_inh
+    # print dw_inh
 
 
 

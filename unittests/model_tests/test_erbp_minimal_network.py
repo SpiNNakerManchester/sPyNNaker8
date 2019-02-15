@@ -79,6 +79,7 @@ def main(argv):
                                 label="err_pop")
 
     # TODO MAKE NEGATIVE ERROR POP
+    
 
     learning_rule_vis_to_hid = pyNN.STDPMechanism(
         timing_dependence=pyNN.TimingDependenceERBP(
