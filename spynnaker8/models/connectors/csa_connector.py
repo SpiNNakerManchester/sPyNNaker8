@@ -1,5 +1,6 @@
-from spynnaker.pyNN.models.neural_projections.connectors \
-    import CSAConnector as CommonCSAConnector
+from spynnaker.pyNN.models.neural_projections.connectors import (
+    CSAConnector as
+    CommonCSAConnector)
 
 
 class CSAConnector(CommonCSAConnector):

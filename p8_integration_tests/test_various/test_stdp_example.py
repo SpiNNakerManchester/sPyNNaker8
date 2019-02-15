@@ -30,13 +30,13 @@ Authors : Catherine Wacongne < catherine.waco@gmail.com >
 April 2013
 """
 from __future__ import print_function
-import spynnaker8 as sim
+import random
+from unittest import SkipTest
+from pyNN.random import NumpyRNG
 import spynnaker.plot_utils as plot_utils
+import spynnaker8 as sim
 from spynnaker8.utilities import neo_convertor
 from p8_integration_tests.base_test_case import BaseTestCase
-from pyNN.random import NumpyRNG
-from unittest import SkipTest
-import random
 
 
 def do_run(seed=None):

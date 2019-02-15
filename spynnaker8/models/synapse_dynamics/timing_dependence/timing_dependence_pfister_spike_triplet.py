@@ -1,5 +1,6 @@
-from spynnaker.pyNN.models.neuron.plasticity.stdp.timing_dependence \
-    import TimingDependencePfisterSpikeTriplet as _BaseClass
+from spynnaker.pyNN.models.neuron.plasticity.stdp.timing_dependence import (
+    TimingDependencePfisterSpikeTriplet as
+    _BaseClass)
 
 
 class TimingDependencePfisterSpikeTriplet(_BaseClass):

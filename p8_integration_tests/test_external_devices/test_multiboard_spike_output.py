@@ -1,7 +1,7 @@
+import unittest
 import spynnaker8 as p
 import spynnaker8.external_devices as e
 from p8_integration_tests.base_test_case import BaseTestCase
-import unittest
 
 
 class TestMultiBoardSpikeOutput(BaseTestCase):

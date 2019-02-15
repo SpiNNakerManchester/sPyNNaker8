@@ -1,10 +1,10 @@
 """
 Synfirechain-like example
 """
-from p8_integration_tests.base_test_case import BaseTestCase
-from p8_integration_tests.scripts.synfire_run import SynfireRunner
 import spynnaker.plot_utils as plot_utils
 import spynnaker.spike_checker as spike_checker
+from p8_integration_tests.base_test_case import BaseTestCase
+from p8_integration_tests.scripts.synfire_run import SynfireRunner
 
 n_neurons = 200  # number of neurons in each population
 runtime = 5000

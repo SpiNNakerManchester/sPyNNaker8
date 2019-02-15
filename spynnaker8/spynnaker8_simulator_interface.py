@@ -1,10 +1,8 @@
 from six import add_metaclass
-
-from spinn_utilities.abstract_base import AbstractBase
-from spinn_utilities.abstract_base import abstractproperty
-
-from spynnaker.pyNN.spynnaker_simulator_interface \
-    import SpynnakerSimulatorInterface
+from spinn_utilities.abstract_base import (
+    AbstractBase, abstractproperty)
+from spynnaker.pyNN.spynnaker_simulator_interface import (
+    SpynnakerSimulatorInterface)
 
 
 @add_metaclass(AbstractBase)

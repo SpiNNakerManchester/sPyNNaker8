@@ -1,6 +1,5 @@
-from spynnaker.pyNN.utilities.random_stats import AbstractRandomStats
-
 from scipy.stats import lognorm
+from spynnaker.pyNN.utilities.random_stats import AbstractRandomStats
 
 
 class RandomStatsLogNormalImpl(AbstractRandomStats):

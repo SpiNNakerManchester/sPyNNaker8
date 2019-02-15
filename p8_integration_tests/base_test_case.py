@@ -3,8 +3,8 @@ import random
 import sys
 import unittest
 from unittest import SkipTest
-from spinn_front_end_common.utilities import globals_variables
 import spinn_utilities.conf_loader as conf_loader
+from spinn_front_end_common.utilities import globals_variables
 
 p8_integration_factor = float(os.environ.get('P8_INTEGRATION_FACTOR', "1"))
 random.seed(os.environ.get('P8_INTEGRATION_SEED', None))
