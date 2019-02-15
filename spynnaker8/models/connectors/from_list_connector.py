@@ -56,8 +56,23 @@ class FromListConnector(CommonFromListConnector, Connector):
                 column_names = ('pre_idx', 'post_idx', 'weight', 'delay')
                 conn_list, weights, delays, self._extra_conn_data = \
                     self._split_conn_list(conn_list, column_names)
-            elif n_columns != 2:
-                raise TypeError("Argument 'column_names' is required.")
+            elif n_columns == 2:
+                # assume this list is source and target
+                column_names = ('pre_idx', 'post_idx')
+                conn_list, weights, delays, self._extra_conn_data = \
+                    self._split_conn_list(conn_list, column_names)
+                temp_conn_list = numpy.dstack(
+                    (conn_list[:, 0], conn_list[:, 1]))[0]
+                conn_list = list()
+                for element in temp_conn_list:
+                    conn_list.append((element[0], element[1]))
+                conn_list = numpy.asarray(
+                    conn_list, dtype=numpy.dtype([
+                        ("source", numpy.uint32), ("target", numpy.uint32)]))
+            else:
+                raise TypeError(
+                    "Argument 'column_names' is required for n_columns=",
+                    n_columns)
         else:
             # separate conn list to pre, source, weight, delay and the
             # other things
