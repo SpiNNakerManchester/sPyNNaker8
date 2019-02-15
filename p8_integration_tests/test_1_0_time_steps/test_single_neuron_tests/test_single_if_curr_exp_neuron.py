@@ -48,12 +48,12 @@ class TestIfCurrExpSingleNeuron(BaseTestCase):
     def test_single_neuron(self):
         results = do_run(seed=1)
         (noise_spike_times, s_pop_spikes, _) = results
-        self.assertEquals(797, len(noise_spike_times))
-        self.assertEquals(16, len(s_pop_spikes))
+        self.assertEquals(758, len(noise_spike_times))
+        self.assertEquals(15, len(s_pop_spikes))
 
 
 if __name__ == '__main__':
-    results = do_run()
+    results = do_run(seed=1)
     (noise_spike_times, s_pop_spikes, s_pop_voltages) = results
     print(noise_spike_times)
     print(len(noise_spike_times))
