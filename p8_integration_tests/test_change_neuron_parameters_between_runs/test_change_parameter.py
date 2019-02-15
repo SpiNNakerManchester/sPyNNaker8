@@ -66,17 +66,20 @@ class TestChangeParameter(BaseTestCase):
     def test_no_split(self):
         results = do_run(split=False, seed=self._test_seed)
         (pop_spikes1, inp_spikes1, pop_spikes2, inp_spikes2) = results
-        self.assertEqual(911, len(pop_spikes1))
-        self.assertEqual(1172, len(inp_spikes1))
-        self.assertEqual(323, len(pop_spikes2))
+        self.assertEqual(865, len(pop_spikes1))
+        self.assertEqual(1020, len(inp_spikes1))
+        self.assertEqual(322, len(pop_spikes2))
         self.assertEqual(0, len(inp_spikes2))
 
     def test_split(self):
         results = do_run(split=True, seed=self._test_seed)
         (pop_spikes1, inp_spikes1, pop_spikes2, inp_spikes2) = results
-        self.assertEqual(879, len(pop_spikes1))
-        self.assertEqual(1168, len(inp_spikes1))
-        self.assertEqual(304, len(pop_spikes2))
+        # Range here as the order of the data generated in the cores could
+        # change the output
+        self.assertLessEqual(840, len(pop_spikes1))
+        self.assertGreaterEqual(890, len(pop_spikes1))
+        self.assertEqual(1012, len(inp_spikes1))
+        self.assertEqual(305, len(pop_spikes2))
         self.assertEqual(0, len(inp_spikes2))
 
 
