@@ -14,7 +14,7 @@ def do_run():
         None,
         p.external_devices.ArbitraryFPGADevice(
             2000, fpga_link_id=12, fpga_id=1,
-            board_address="127.0.0.1",
+            board_address="127.0.0.0",
             label="bacon")
         )
 
@@ -22,7 +22,7 @@ def do_run():
         None,
         p.external_devices.ArbitraryFPGADevice(
             2000, fpga_link_id=11, fpga_id=1,
-            board_address="127.0.0.2",
+            board_address="127.0.4.8",
             label="bacon")
         )
 
