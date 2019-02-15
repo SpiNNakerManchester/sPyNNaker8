@@ -79,7 +79,8 @@ class TestChangeParameter(BaseTestCase):
         self.assertLessEqual(840, len(pop_spikes1))
         self.assertGreaterEqual(890, len(pop_spikes1))
         self.assertEqual(1012, len(inp_spikes1))
-        self.assertEqual(305, len(pop_spikes2))
+        self.assertLessEqual(300, len(pop_spikes2))
+        self.assertGreaterEqual(310, len(pop_spikes2))
         self.assertEqual(0, len(inp_spikes2))
 
 
