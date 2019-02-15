@@ -62,7 +62,7 @@ def do_run(plot):
     file_connector1 = p.FromFileConnector(file1)
 
     # PyNN allows the column order (after i,j) to be different,
-    # so we can test that here
+    # so we can test that here; the user needs to specify the order
     connection_list2 = [
                 (4, 9, 12, 0.3),
                 (1, 5, 13, 0.4),
@@ -79,11 +79,32 @@ def do_run(plot):
                   header='columns = ["i", "j", "delay", "weight"]')
     file_connector2 = p.FromFileConnector(file2)
 
-    # Projections within populations
+    # PyNN also allows the user to set the number of columns as
+    # long as they also specify what the column headers are;
+    # in this instance the user just specifies the delays
+    connection_list3 = [
+                (2, 7, 3.0),
+                (3, 8, 4.0),
+                (7, 6, 5.0),
+                (5, 4, 6.0),
+                (1, 2, 7.0),
+                ]
+    path3 = "test3.connections"
+    if os.path.exists(path3):
+        os.remove(path3)
+
+    file3 = path3
+    numpy.savetxt(file3, connection_list3,
+                  header='columns = ["i", "j", "delay"]')
+    file_connector3 = p.FromFileConnector(file3)
+
+    # Projections between populations
     p.Projection(exc_pop, inh_pop, file_connector1,
                  p.StaticSynapse(weight=2.0, delay=5))
     p.Projection(inh_pop, exc_pop, file_connector2,
                  p.StaticSynapse(weight=1.5, delay=10))
+    p.Projection(inh_pop, exc_pop, file_connector3,
+                 p.StaticSynapse(weight=1.0, delay=1))
 
     exc_pop.record(['v', 'spikes'])
     inh_pop.record(['v', 'spikes'])
