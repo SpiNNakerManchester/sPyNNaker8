@@ -40,11 +40,6 @@ class FixedProbabilityConnector(
             self, p_connect=p_connect, callback=callback,
             allow_self_connections=allow_self_connections, rng=rng, safe=safe)
 
-    def set_weights_and_delays(self, weights, delays):
-        self._weights = weights
-        self._delays = delays
-        self._check_parameters(weights, delays, allow_lists=False)
-
     @property
     def p_connect(self):
         return self._p_connect
