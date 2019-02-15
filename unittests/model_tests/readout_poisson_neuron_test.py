@@ -6,7 +6,7 @@ from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt
 
 p.setup(1) # simulation timestep (ms)
-runtime = 4000
+runtime = 1000
 
 # # Post-synapse population
 neuron_params = {
@@ -14,10 +14,10 @@ neuron_params = {
 #     "v_reset": -70,
 #     "v_rest": -65,
     "i_offset": 0.5, # DC input
-    "v": 10
+    "v": 0
                  }
 
-pop_exc = p.Population(1, # number of neurons
+pop_exc = p.Population(3, # HARDCODE TO 3: One readout; one exc err, one inh err
                        p.extra_models.ReadoutPoissonNeuron(
                             **neuron_params
                            ),  # Neuron model
@@ -26,7 +26,7 @@ pop_exc = p.Population(1, # number of neurons
 
 
 # Spike source to send spike via synapse
-spike_times = [[10, 15, 25], [1, 3]]
+spike_times = [[60, 70, 80, 90, 120, 125, 152], []]
 pop_src1 = p.Population(2, # number of sources
                         p.SpikeSourceArray, # source type
                         {'spike_times': spike_times}, # source spike times
@@ -34,36 +34,36 @@ pop_src1 = p.Population(2, # number of sources
                         )
 
 # Spike source to send spike via synapse
-spike_times_2 = [[100, 105, 110], [101, 130]]
+spike_times_2 = [[20, 40, 50, 80, 100, 105, 110, 120, 140, 150], []]
 pop_src2 = p.Population(2, # number of sources
                         p.SpikeSourceArray, # source type
                         {'spike_times': spike_times_2}, # source spike times
                         label="src2" # identifier
                         )
 
-# # Create projection from source to LIF neuron
-# synapse = p.Projection(
-#     pop_src2, pop_exc, p.OneToOneConnector(),
-#     p.StaticSynapse(weight=2, delay=1), receptor_type="excitatory")
-#
-#
-# # Create projection from source to LIF neuron
-# synapse = p.Projection(
-#     pop_src1, pop_exc, p.AllToAllConnector(),
-#     p.StaticSynapse(weight=2, delay=1), receptor_type="excitatory")
+# Create projection from source to LIF neuron
+synapse = p.Projection(
+    pop_src2, pop_exc, p.OneToOneConnector(),
+    p.StaticSynapse(weight=5.5, delay=1), receptor_type="excitatory")
+
+
+# Create projection from source to LIF neuron
+synapse = p.Projection(
+    pop_src1, pop_exc, p.OneToOneConnector(),
+    p.StaticSynapse(weight=5.5, delay=1), receptor_type="excitatory")
 
 pop_src1.record('spikes')
 pop_exc.record("all")
 
 # pop_exc.set(i_offset= 0)
-p.run(runtime/4)
-pop_exc.set(i_offset= 2)
-p.run(runtime/4)
-pop_exc.set(i_offset= 5)
-p.run(runtime/4)
-pop_exc.set(i_offset= 0.25)
-p.run(runtime/4)
-# p.run(runtime)
+# p.run(runtime/4)
+# pop_exc.set(i_offset= 2)
+# p.run(runtime/4)
+# pop_exc.set(i_offset= 5)
+# p.run(runtime/4)
+# pop_exc.set(i_offset= 0.25)
+# p.run(runtime/4)
+p.run(runtime)
 
 pre_spikes = pop_src1.get_data('spikes')
 test = pop_exc.spinnaker_get_data('spikes')
