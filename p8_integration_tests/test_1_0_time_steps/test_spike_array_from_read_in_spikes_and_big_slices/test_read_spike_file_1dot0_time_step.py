@@ -101,7 +101,8 @@ class TestReadingSpikeArrayDataAndBigSlices(BaseTestCase):
         """
         self.assert_not_spin_three()
         spikes = do_run()
-        self.assertEqual(8587, len(spikes))
+        self.assertLessEqual(8570, len(spikes))
+        self.assertGreaterEqual(8600, len(spikes))
 
 
 if __name__ == '__main__':
