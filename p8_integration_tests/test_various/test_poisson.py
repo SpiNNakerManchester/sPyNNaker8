@@ -41,12 +41,12 @@ class TestPoisson(BaseTestCase):
 
     def test_run(self):
         (spikes1, spikes2) = do_run(self._test_seed)
-        self.assertEquals(19, len(spikes1))
-        self.assertEquals(24, len(spikes2))
+        self.assertEquals(31, len(spikes1))
+        self.assertEquals(15, len(spikes2))
 
 
 if __name__ == '__main__':
-    (spikes1, spikes2) = do_run()
+    (spikes1, spikes2) = do_run(1)
     print(len(spikes1))
     print(spikes1)
     print(len(spikes2))

@@ -1,8 +1,8 @@
-from unittest import SkipTest
-from spynnaker8.utilities import neo_convertor
 import p8_integration_tests.scripts.pynnBrunnelPlot as pblt
+
 from p8_integration_tests.base_test_case import BaseTestCase
 import p8_integration_tests.scripts.pynnBrunnelBrianNestSpinnaker as script
+from spynnaker8.utilities import neo_convertor
 
 Neurons = 3000  # number of neurons in each population
 sim_time = 1000
@@ -30,22 +30,19 @@ class PynnBrunnelBrianNestSpinnaker(BaseTestCase):
     def test_run(self):
         self.assert_not_spin_three()
         (esp, s, N_E) = script.do_run(
-            Neurons, sim_time, record=True, seed=self._test_seed)
+            Neurons, sim_time, record=True, seed=1)
         esp_numpy = neo_convertor.convert_spikes(esp)
         s_numpy = neo_convertor.convert_spikes(s)
         self.assertEquals(2400, N_E)
-        try:
-            self.assertLess(200, len(esp_numpy))
-            self.assertGreater(300, len(esp_numpy))
-            self.assertLess(22000, len(s_numpy))
-            self.assertGreater(26000, len(s_numpy))
-        except Exception as ex:
-            # Just in case the range failed
-            raise SkipTest(ex)
+        # Range required, because random delays are used, and although these
+        # are seeded, the order of generation is not consistent
+        self.assertLessEqual(210, len(esp_numpy))
+        self.assertGreaterEqual(230, len(esp_numpy))
+        self.assertEquals(23888, len(s_numpy))
 
 
 if __name__ == '__main__':
-    (esp, s, N_E) = script.do_run(Neurons, sim_time, record=True)
+    (esp, s, N_E) = script.do_run(Neurons, sim_time, record=True, seed=1)
     esp_numpy = neo_convertor.convert_spikes(esp)
     s_numpy = neo_convertor.convert_spikes(s)
     plot(esp_numpy, sim_time, N_E)

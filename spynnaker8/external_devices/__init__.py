@@ -219,19 +219,10 @@ def EthernetSensorPopulation(
 
 
 def SpikeInjector(
-        label=None, port=None, notify=True, virtual_key=None,
-        database_notify_host=None, database_notify_port_num=None,
+        notify=True, database_notify_host=None, database_notify_port_num=None,
         database_ack_port_num=None):
     """ Supports adding a spike injector to the application graph.
 
-    :param n_neurons: the number of neurons the spike injector will emulate
-    :type n_neurons: int
-    :param label: the label given to the population
-    :type label: str
-    :param port: the port number used to listen for injections of spikes
-    :type port: int
-    :param virtual_key: the virtual key used in the routing system
-    :type virtual_key: int
     :param database_notify_host: the hostname for the device which is\
         listening to the database notification.
     :type database_notify_host: str

@@ -14,7 +14,7 @@ def do_run():
     retina_device = p.external_devices.ExternalFPGARetinaDevice
 
     p.Population(
-        2000, retina_device,
+        None, retina_device,
         {'spinnaker_link_id': 0, 'retina_key': 0x5,
          'mode': retina_device.MODE_128,
          'polarity': retina_device.DOWN_POLARITY},
