@@ -47,7 +47,6 @@ pipeline {
                 sh 'pip install pytest-instafail'
                 sh 'python ./setup.py install'
                 sh 'python -m spynnaker8.setup_pynn'
-                sh 'python ./p8_integration_scripts/setup.py install'
             }
         }
         stage('Before Script') {
@@ -60,7 +59,7 @@ pipeline {
         stage('Test') {
             steps {
                 sh 'echo "<testsuite tests="0"></testsuite>" > results.xml'
-                sh 'py.test p8_jenkins_quick --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 1200'
+                sh 'py.test p8_integration_tests/p8_jenkins_quick --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 1200'
             }
         }
         stage('Coverage') {
