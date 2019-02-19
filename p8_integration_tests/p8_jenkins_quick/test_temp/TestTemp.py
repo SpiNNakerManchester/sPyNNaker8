@@ -13,3 +13,4 @@ class TestTemp(BaseTestCase):
     print(report_directory)
     print(home)
     sim.end()
+    pop = 1/0
