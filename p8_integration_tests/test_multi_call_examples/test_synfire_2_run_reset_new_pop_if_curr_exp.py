@@ -3,7 +3,7 @@ Synfirechain-like example
 """
 import spynnaker.plot_utils as plot_utils
 import spynnaker.spike_checker as spike_checker
-from spynnaker8.utilities import neo_convertor, neo_compare
+from spynnaker8.utilities import neo_convertor
 from spynnaker8.utilities.version_util import pynn8_syntax
 from p8_integration_tests.base_test_case import BaseTestCase
 from p8_integration_tests.scripts.synfire_run import SynfireRunner
@@ -40,7 +40,8 @@ class Synfire2RunResetFileWriteIssue(BaseTestCase):
         else:
             self.assertEquals(3, len(neos[0].segments[0].analogsignals))
             self.assertEquals(3, len(neos[0].segments[0].analogsignals))
-        neo_compare.compare_segments(neos[0].segments[0], neos[0].segments[1])
+        # neo_compare.compare_segments(
+        #     neos[0].segments[0], neos[0].segments[1])
         #   neo compare does all the compares so just some safety come once
         v_0_0 = neo_convertor.convert_data(neos[0], "v", 0)
         v_1_1 = neo_convertor.convert_data(neos[0], "v", 1)
