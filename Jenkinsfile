@@ -59,7 +59,7 @@ pipeline {
         stage('Test') {
             steps {
                 sh 'echo "<testsuite tests="0"></testsuite>" > results.xml'
-                sh 'py.test p8_integration_tests --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 1200'
+                sh 'py.test p8_jenkins_quick --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 1200'
             }
         }
         stage('Coverage') {
