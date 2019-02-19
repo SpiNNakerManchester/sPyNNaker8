@@ -47,6 +47,7 @@ pipeline {
                 sh 'pip install pytest-instafail'
                 sh 'python ./setup.py install'
                 sh 'python -m spynnaker8.setup_pynn'
+                sh 'python ./p8_integration_scripts/setup.py install'
             }
         }
         stage('Before Script') {
