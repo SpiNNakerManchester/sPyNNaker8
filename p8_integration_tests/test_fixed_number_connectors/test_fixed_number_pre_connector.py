@@ -74,7 +74,7 @@ def do_run(plot):
     print("Create Stimulus Population")
     # We create a Population of SpikeSourceArrays of the same dimension
     # as excitatory neurons in a synfire group
-    pop_stim = p.Population(n_exc, p.SpikeSourceArray({}), label="pop_stim")
+    pop_stim = p.Population(n_exc, p.SpikeSourceArray(), label="pop_stim")
 
     # We create a normal distribution around pp_start with sigma = pp_sigma
     rd = pyNN.random.RandomDistribution(
