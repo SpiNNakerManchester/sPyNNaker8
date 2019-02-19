@@ -2,13 +2,13 @@
 Synfirechain-like example
 """
 import os
-import pickle
+from neo.io import PickleIO
 import unittest
-from unittest import SkipTest
-from spinn_front_end_common.utilities.exceptions import ConfigurationException
-from spynnaker8.utilities import neo_compare
+
 from p8_integration_tests.base_test_case import BaseTestCase
 from p8_integration_tests.scripts.synfire_run import SynfireRunner
+from spynnaker8.utilities import neo_compare
+from spinn_front_end_common.utilities.exceptions import ConfigurationException
 
 synfire_run = SynfireRunner()
 
@@ -49,20 +49,16 @@ class TestMallocKeyAllocatorWithSynfire(BaseTestCase):
         v_read = synfire_run.get_output_pop_voltage_neo()
         gsyn_read = synfire_run.get_output_pop_gsyn_exc_neo()
 
-        try:
-            with open(current_spike_file_path, "r") as spike_file:
-                spikes_saved = pickle.load(spike_file)
-            with open(current_v_file_path, "r") as v_file:
-                v_saved = pickle.load(v_file)
-            with open(current_gsyn_file_path, "r") as gsyn_file:
-                gsyn_saved = pickle.load(gsyn_file)
+        io = PickleIO(filename=current_spike_file_path)
+        spikes_saved = io.read()[0]
+        io = PickleIO(filename=current_v_file_path)
+        v_saved = io.read()[0]
+        io = PickleIO(filename=current_gsyn_file_path)
+        gsyn_saved = io.read()[0]
 
-            neo_compare.compare_blocks(spikes_read, spikes_saved)
-            neo_compare.compare_blocks(v_read, v_saved)
-            neo_compare.compare_blocks(gsyn_read, gsyn_saved)
-        except UnicodeDecodeError:
-            raise SkipTest(
-                "https://github.com/NeuralEnsemble/python-neo/issues/529")
+        neo_compare.compare_blocks(spikes_read, spikes_saved)
+        neo_compare.compare_blocks(v_read, v_saved)
+        neo_compare.compare_blocks(gsyn_read, gsyn_saved)
 
 
 if __name__ == '__main__':

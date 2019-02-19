@@ -20,11 +20,11 @@ import os
 import pickle
 import unittest
 from unittest import SkipTest
+from p8_integration_tests.base_test_case import BaseTestCase
+import spynnaker8 as p
+from spynnaker8.utilities import neo_compare
 from pyNN.random import NumpyRNG, RandomDistribution
 from pyNN.utility import Timer
-import spynnaker8 as p
-from spynnaker8.utilities import neo_compare, neo_convertor
-from p8_integration_tests.base_test_case import BaseTestCase
 
 current_file_path = os.path.dirname(os.path.abspath(__file__))
 neo_path = os.path.join(current_file_path, "spikes.pickle")
@@ -158,14 +158,6 @@ class TestVABenchmarkSpikes(BaseTestCase):
     def test_va_benchmark(self):
 
         exc_spikes = do_run(seed=self._test_seed)
-        spike_count = neo_convertor.count_spikes(exc_spikes)
-        try:
-            self.assertLess(1900, spike_count)
-            self.assertGreater(2700, spike_count)
-        except Exception as ex:
-            # Just in case the range failed
-            raise SkipTest(ex)
-
         try:
             with open(neo_path, "r") as neo_file:
                 recorded_spikes = pickle.load(neo_file)

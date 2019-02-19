@@ -121,12 +121,13 @@ def do_run():
     # Create injection populations
     injector_forward = Frontend.Population(
         n_neurons,
-        Frontend.external_devices.SpikeInjector(
-            **cell_params_spike_injector_with_key),
+        Frontend.external_devices.SpikeInjector(),
+        additional_parameters=cell_params_spike_injector_with_key,
         label='spike_injector_forward')
     injector_backward = Frontend.Population(
-        n_neurons, Frontend.external_devices.SpikeInjector(
-            **cell_params_spike_injector), label='spike_injector_backward')
+        n_neurons, Frontend.external_devices.SpikeInjector(),
+        additional_parameters=cell_params_spike_injector,
+        label='spike_injector_backward')
 
     # Create a connection from the injector into the populations
     Frontend.Projection(injector_forward, pop_forward,

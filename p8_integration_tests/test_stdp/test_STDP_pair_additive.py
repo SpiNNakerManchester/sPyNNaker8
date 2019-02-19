@@ -1,8 +1,7 @@
-import math
-import unittest
-import numpy
 import spynnaker8 as p
 from p8_integration_tests.base_test_case import BaseTestCase
+import numpy
+import unittest
 
 
 class TestSTDPPairAdditive(BaseTestCase):
@@ -22,97 +21,96 @@ class TestSTDPPairAdditive(BaseTestCase):
         max_weight = 5
         min_weight = 0
 
-        spike_times = [10, 50]
-        spike_times2 = [30]
+        pre_spikes = [10, 50]
+        extra_spikes = [30]
 
-        for i in range(len(spike_times)):
-            spike_times[i] += initial_run
+        for i in range(len(pre_spikes)):
+            pre_spikes[i] += initial_run
 
-        for i in range(len(spike_times2)):
-            spike_times2[i] += initial_run
+        for i in range(len(extra_spikes)):
+            extra_spikes[i] += initial_run
 
         # Spike source to send spike via plastic synapse
-        pop_src1 = p.Population(1, p.SpikeSourceArray,
-                                {'spike_times': spike_times}, label="src1")
+        pre_pop = p.Population(1, p.SpikeSourceArray,
+                               {'spike_times': pre_spikes}, label="pre")
 
         # Spike source to send spike via static synapse to make
         # post-plastic-synapse neuron fire
-        pop_src2 = p.Population(1, p.SpikeSourceArray,
-                                {'spike_times': spike_times2}, label="src2")
+        extra_pop = p.Population(1, p.SpikeSourceArray,
+                                 {'spike_times': extra_spikes}, label="extra")
 
         # Post-plastic-synapse population
-        pop_exc = p.Population(1, p.IF_curr_exp(),  label="test")
+        post_pop = p.Population(1, p.IF_curr_exp(),  label="post")
 
         # Create projections
         p.Projection(
-            pop_src1, pop_exc, p.OneToOneConnector(),
+            pre_pop, post_pop, p.OneToOneConnector(),
             p.StaticSynapse(weight=5.0, delay=1), receptor_type="excitatory")
 
         p.Projection(
-            pop_src2, pop_exc, p.OneToOneConnector(),
+            extra_pop, post_pop, p.OneToOneConnector(),
             p.StaticSynapse(weight=5.0, delay=1), receptor_type="excitatory")
 
         syn_plas = p.STDPMechanism(
-            timing_dependence=p.SpikePairRule(),
+            timing_dependence=p.SpikePairRule(tau_plus=tau_plus,
+                                              tau_minus=tau_minus,
+                                              A_plus=a_plus, A_minus=a_minus),
             weight_dependence=p.AdditiveWeightDependence(w_min=min_weight,
                                                          w_max=max_weight),
             weight=initial_weight, delay=plastic_delay)
 
-        plastic_synapse = p.Projection(pop_src1, pop_exc,
+        plastic_synapse = p.Projection(pre_pop, post_pop,
                                        p.OneToOneConnector(),
-                                       synapse_type=syn_plas)
+                                       synapse_type=syn_plas,
+                                       receptor_type='excitatory')
 
-        pop_src1.record('all')
-        pop_exc.record("all")
+        # Record the spikes
+        post_pop.record("spikes")
+
+        # Run
         p.run(initial_run + runtime)
-        weights = []
 
-        weights.append(plastic_synapse.get('weight', 'list',
-                                           with_address=False)[0])
+        # Get the weights
+        weights = plastic_synapse.get('weight', 'list',
+                                      with_address=False)
 
-        # pre_spikes = pop_src1.get_data('spikes')
-        # v = pop_exc.get_data('v')
-        spikes = pop_exc.get_data('spikes')
+        # Get the spikes
+        post_spikes = numpy.array(
+            post_pop.get_data('spikes').segments[0].spiketrains[0].magnitude)
 
-        potentiation_time_1 = (spikes.segments[0].spiketrains[0].magnitude[0] +
-                               plastic_delay) - spike_times[0]
-        potentiation_time_2 = (spikes.segments[0].spiketrains[0].magnitude[1] +
-                               plastic_delay) - spike_times[0]
-
-        depression_time_1 = spike_times[1] - (
-            spikes.segments[0].spiketrains[0].magnitude[0] + plastic_delay)
-        depression_time_2 = spike_times[1] - (
-            spikes.segments[0].spiketrains[0].magnitude[1] + plastic_delay)
-
-        potentiation_1 = max_weight * a_plus * \
-            math.exp(-potentiation_time_1/tau_plus)
-        potentiation_2 = max_weight * a_plus * \
-            math.exp(-potentiation_time_2/tau_plus)
-
-        depression_1 = max_weight * a_minus * \
-            math.exp(-depression_time_1/tau_minus)
-        depression_2 = max_weight * a_minus * \
-            math.exp(-depression_time_2/tau_minus)
-
-        new_weight_exact = (initial_weight + potentiation_1 + potentiation_2
-                            - depression_1 - depression_2)
-
-        print("Pre neuron spikes at: {}".format(spike_times))
-        print("Post-neuron spikes at: {}".format(
-            spikes.segments[0].spiketrains[0].magnitude))
-        print("Potentiation time differences: {}, {},\
-             \nDepression time difference: {}, {}".format(
-                 potentiation_time_1, potentiation_time_2,
-                 depression_time_1, depression_time_2))
-        print("Ammounts to potentiate: {}, {},\
-            \nAmount to depress: {}, {},".format(
-                potentiation_1, potentiation_2, depression_1, depression_2))
-        print("New weight exact: {}".format(new_weight_exact))
-        print("New weight SpiNNaker: {}".format(weights[0]))
-
-        self.assertTrue(numpy.allclose(weights[0],
-                                       new_weight_exact, atol=0.001))
+        # End the simulation as all information gathered
         p.end()
+
+        # Get the spikes and time differences that will be considered by
+        # the simulation (as the last pre-spike will be considered differently)
+        last_pre_spike = pre_spikes[-1]
+        considered_post_spikes = post_spikes[post_spikes < last_pre_spike]
+        potentiation_time_diff = numpy.ravel(numpy.subtract.outer(
+            considered_post_spikes + plastic_delay, pre_spikes[:-1]))
+        potentiation_times = (
+            potentiation_time_diff[potentiation_time_diff > 0] * -1)
+        depression_time_diff = numpy.ravel(numpy.subtract.outer(
+            considered_post_spikes + plastic_delay, pre_spikes))
+        depression_times = depression_time_diff[depression_time_diff < 0]
+
+        # Work out the weight according to the rules
+        potentiations = max_weight * a_plus * numpy.exp(
+            (potentiation_times / tau_plus))
+        depressions = max_weight * a_minus * numpy.exp(
+            (depression_times / tau_minus))
+        new_weight_exact = \
+            initial_weight + numpy.sum(potentiations) - numpy.sum(depressions)
+
+        print("Pre neuron spikes at: {}".format(pre_spikes))
+        print("Post-neuron spikes at: {}".format(post_spikes))
+        print("Potentiation time differences: {}".format(potentiation_times))
+        print("Depression time differences: {}".format(depression_times))
+        print("Potentiation: {}".format(potentiations))
+        print("Depressions: {}".format(depressions))
+        print("New weight exact: {}".format(new_weight_exact))
+        print("New weight SpiNNaker: {}".format(weights))
+
+        self.assertTrue(numpy.allclose(weights, new_weight_exact, rtol=0.001))
 
 
 if __name__ == '__main__':
