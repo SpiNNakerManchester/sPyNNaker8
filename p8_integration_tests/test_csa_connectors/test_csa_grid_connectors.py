@@ -103,8 +103,8 @@ class CSAGridConnectorTest(BaseTestCase):
     def test_run(self):
         v, spikes = do_run(plot=False)
         # any checks go here
-        self.assertLessEquals(7220, len(spikes))
-        self.assertGreaterEquals(7270, len(spikes))
+        self.assertLessEqual(7220, len(spikes))
+        self.assertGreaterEqual(7270, len(spikes))
         self.assertEquals(33800, len(v))
 
 
