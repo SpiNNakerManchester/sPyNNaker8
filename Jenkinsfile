@@ -8,7 +8,7 @@ pipeline {
                 TRAVIS_BRANCH = "${env.BRANCH_NAME}"
             }
             steps {
-                sh 'rm -rf support'
+                cleanWs()
                 sh 'git clone https://github.com/SpiNNakerManchester/SupportScripts.git support'
                 // Bring pip up to date
                 sh 'pip install --upgrade pip setuptools wheel'
@@ -61,11 +61,17 @@ pipeline {
             steps {
                 sh 'echo "<testsuite tests="0"></testsuite>" > results.xml'
                 sh 'py.test p8_integration_tests/p8_jenkins_quick --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 1200'
+                sh 'find reports/* -print -exec cat {}  \;'
             }
         }
         stage('Coverage') {
             steps {
                 sh 'COVERALLS_REPO_TOKEN=l0cQjQq6Sm5MGb67RiWkY2WE4r74YFAfk COVERALLS_PARALLEL=true coveralls'
+            }
+        }
+        stage('Reports') {
+            steps {
+                sh 'find reports/* -print -exec cat {}  \;'
             }
         }
     }
