@@ -60,7 +60,12 @@ pipeline {
         stage('Test') {
             steps {
                 sh 'echo "<testsuite tests="0"></testsuite>" > results.xml'
-                sh 'py.test p8_integration_tests/p8_jenkins_quick --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 1200'
+                sh 'py.test p8_integration_tests/quick_test --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 1200'
+            }
+        }
+        stage('Longer Test') {
+            steps {
+                sh 'py.test p8_integration_tests/long_test --forked junit_duration_report duration.txt --instafail --timeout 1200'
             }
         }
         stage('Coverage') {
@@ -70,7 +75,8 @@ pipeline {
         }
         stage('Reports') {
             steps {
-                sh 'find reports/* -print -exec cat {}  \\;'
+                sh 'find reports/* -type f -print -exec cat {}  \\;'
+                sh 'cat duration.txt'
             }
         }
     }

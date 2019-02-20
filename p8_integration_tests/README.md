@@ -1,11 +1,11 @@
 These are all the integration tests.
 
-The p8_jenkins_quick directory are those that Jenkins can run with a shorter timeout.
+The quick_test directory are those that can be run relatively quickly.
 
-The p8_jenkins_long directory are those that Jenkins can run with a longer timeout.
-These should be both intergation tests and speed tests.
+The long_test directory are longer/larger versions of the quick tests.
+These are used to test scale and will normally be run every time after the quick ones.
 
-The p8_manual directory are useful tests but are often larger version of the ones above and do not need to be run each time by Jenkins.
+The manual_test directory are useful tests but are often larger version of the ones above and do not need to be run each time.
 
 Allother directories are being reviewed
 If they are not moved they are not run and risk being removed forever.

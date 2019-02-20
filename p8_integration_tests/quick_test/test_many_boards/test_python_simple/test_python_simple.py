@@ -9,5 +9,6 @@ class TestPythonSimple(BaseTestCase):
         me = ManyBoards()
         sim = me.do_run(n_boards=2, n_neurons=255, simtime=300)
         results = self.get_run_time_of_BufferExtractor()
-        self.report(results, "python_simple")
+        self.report(
+            results, "python_simple_n_boards=2_n_neurons=255_simtime=300")
         sim.end()
