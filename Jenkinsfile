@@ -65,7 +65,7 @@ pipeline {
         }
         stage('Longer Test') {
             steps {
-                sh 'py.test p8_integration_tests/long_test --forked --junit_duration_report duration.txt --instafail --timeout 1200'
+                sh 'py.test p8_integration_tests/long_test --forked --instafail --timeout 1200'
             }
         }
         stage('Coverage') {
@@ -76,7 +76,6 @@ pipeline {
         stage('Reports') {
             steps {
                 sh 'find reports/* -type f -print -exec cat {}  \\;'
-                sh 'cat duration.txt'
             }
         }
     }
