@@ -7,8 +7,7 @@ class TestPythonAdvanced(BaseTestCase):
 
     def test_run(self):
         me = ManyBoards()
-        sim = me.do_run(n_boards=1, n_neurons=255, simtime=30)
+        sim = me.do_run(n_boards=2, n_neurons=255, simtime=300)
         results = self.get_run_time_of_BufferExtractor()
         self.report(results, "python_advanced")
         sim.end()
-        pop = 1/0
