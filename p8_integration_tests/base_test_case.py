@@ -105,7 +105,7 @@ class BaseTestCase(unittest.TestCase):
                         results.append(": ")
                         results.append(sub_element.text)
                         results.append("\n")
-        print("".join(results))
+        return "".join(results)
 
     def get_run_time_of_BufferExtractor(self):
         return self.get_provenance("Execution", "BufferExtractor")
