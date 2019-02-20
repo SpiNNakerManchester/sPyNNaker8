@@ -1,3 +1,4 @@
+from lxml import etree
 import os
 import random
 import sys
@@ -81,7 +82,6 @@ class BaseTestCase(unittest.TestCase):
             report_file.write(message)
 
     def report(self, message, file_name):
-        message = message + "\n"
         p8_integration_tests_directory = os.path.dirname(__file__)
         test_dir = os.path.dirname(p8_integration_tests_directory)
         report_dir = os.path.join(test_dir, "reports")
@@ -90,3 +90,22 @@ class BaseTestCase(unittest.TestCase):
         report_path = os.path.join(report_dir, file_name)
         with open(report_path, "a") as report_file:
             report_file.write(message)
+
+    def get_provenance(self, main_name, detail_name):
+        provenance_file_path = globals_variables.get_simulator() \
+            ._provenance_file_path
+        xml_path = os.path.join(provenance_file_path, "pacman.xml")
+        xml_root = etree.parse(xml_path)
+        results = []
+        for element in xml_root.findall("provenance_data_items"):
+            if main_name in element.get('name'):
+                for sub_element in element.findall("provenance_data_item"):
+                    if detail_name in sub_element.get('name'):
+                        results.append(sub_element.get('name'))
+                        results.append(": ")
+                        results.append(sub_element.text)
+                        results.append("\n")
+        print("".join(results))
+
+    def get_run_time_of_BufferExtractor(self):
+        return self.get_provenance("Execution", "BufferExtractor")
