@@ -6,7 +6,7 @@ from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt
 
 p.setup(1) # simulation timestep (ms)
-runtime = 1000
+runtime = 1024
 
 # # Post-synapse population
 neuron_params = {
