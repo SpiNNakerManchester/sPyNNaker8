@@ -1,7 +1,7 @@
 from os.path import expanduser
 from spinn_front_end_common.utilities import globals_variables
 import spynnaker8 as sim
-from p8_integration_scripts.base_test_case import BaseTestCase
+from p8_integration_tests.base_test_case import BaseTestCase
 
 
 class TestTemp(BaseTestCase):
