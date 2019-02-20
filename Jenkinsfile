@@ -8,7 +8,7 @@ pipeline {
                 TRAVIS_BRANCH = "${env.BRANCH_NAME}"
             }
             steps {
-                cleanWs()
+                sh 'rm -rf support'
                 sh 'git clone https://github.com/SpiNNakerManchester/SupportScripts.git support'
                 // Bring pip up to date
                 sh 'pip install --upgrade pip setuptools wheel'
