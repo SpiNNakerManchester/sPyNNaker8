@@ -7,7 +7,7 @@ from p8_integration_tests.base_test_case import BaseTestCase
 class TestTemp(BaseTestCase):
 
     def test_pop(self):
-        sim.setup(timestep=1.0)
+        sim.setup(timestep=1.0, n_chips_required=5)
         sim.run(1)
         report_directory = globals_variables.get_simulator() \
             ._report_default_directory
