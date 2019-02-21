@@ -64,11 +64,11 @@ pipeline {
             }
         }
         // Timeout too short or test too long maybe a nightly crome
-        //stage('Longer Test') {
-        //    steps {
-        //        sh 'py.test p8_integration_tests/long_test --forked --instafail --timeout 1200'
-        //    }
-        //}
+        stage('Longer Test') {
+            steps {
+                sh 'py.test p8_integration_tests/long_test --forked --instafail --timeout 12000'
+            }
+        }
         stage('Coverage') {
             steps {
                 sh 'COVERALLS_REPO_TOKEN=l0cQjQq6Sm5MGb67RiWkY2WE4r74YFAfk COVERALLS_PARALLEL=true coveralls'
