@@ -63,24 +63,6 @@ class BaseTestCase(unittest.TestCase):
                     "This test will not run on a spin {} board".format(
                         version))
 
-    def reportx(self, message):
-        message = message + "\n"
-        report_directory = globals_variables.get_simulator() \
-            ._report_default_directory
-        print(os.path.abspath(report_directory))
-        report_parent = os.path.dirname(report_directory)
-        report_name = os.path.basename(report_parent)
-        print(report_name)
-        p8_integration_tests_directory = os.path.dirname(__file__)
-        test_dir = os.path.dirname(p8_integration_tests_directory)
-        report_dir = os.path.join(test_dir, "reports")
-        if not os.path.exists(report_dir):
-            os.makedirs(report_dir)
-        report_path = os.path.join(report_dir, report_name + ".txt")
-        print(os.path.abspath(report_path))
-        with open(report_path, "a") as report_file:
-            report_file.write(message)
-
     def report(self, message, file_name):
         p8_integration_tests_directory = os.path.dirname(__file__)
         test_dir = os.path.dirname(p8_integration_tests_directory)
