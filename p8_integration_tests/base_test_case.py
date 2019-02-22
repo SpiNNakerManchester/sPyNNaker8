@@ -64,6 +64,8 @@ class BaseTestCase(unittest.TestCase):
                         version))
 
     def report(self, message, file_name):
+        if not message.endswith("\n"):
+            message += "\n"
         p8_integration_tests_directory = os.path.dirname(__file__)
         test_dir = os.path.dirname(p8_integration_tests_directory)
         report_dir = os.path.join(test_dir, "reports")
