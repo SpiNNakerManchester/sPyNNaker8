@@ -371,9 +371,9 @@ class Recorder(RecordingCommon):
         if view_indexes is None:
             if not numpy.array_equal(data_indexes, self._all_ids):
                 msg = "Warning getting data on a whole population when " \
-                      "selective recording is active will result in only the " \
-                      "requested neurons being returned in numerical order and " \
-                      "without repeats."
+                      "selective recording is active will result in only " \
+                      "the requested neurons being returned in numerical " \
+                      "order and without repeats."
                 logger_utils.warn_once(logger, msg)
             indexes = numpy.array(data_indexes)
         elif view_indexes == data_indexes:
