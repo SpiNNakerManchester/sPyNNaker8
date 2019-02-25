@@ -7,5 +7,7 @@ These are used to test scale and will normally be run every time after the quick
 
 The manual_test directory are useful tests but are often larger version of the ones above and do not need to be run each time.
 
-Allother directories are being reviewed
+The x_test directory is tests which are marked to be removed.
+
+All other directories are being reviewed
 If they are not moved they are not run and risk being removed forever.
