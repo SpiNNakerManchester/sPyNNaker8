@@ -1,6 +1,3 @@
-"""
-Synfirechain-like example
-"""
 import os
 from neo.io import PickleIO
 import unittest
@@ -21,7 +18,7 @@ current_gsyn_file_path = os.path.join(current_file_path, "gsyn.pickle")
 
 class TestMallocKeyAllocatorWithSynfire(BaseTestCase):
     """
-    tests the printing of print v given a simulation
+    Should be testing an algorithm defined in the cfg file but broken!
     """
 
     def test_end_before_print(self):
