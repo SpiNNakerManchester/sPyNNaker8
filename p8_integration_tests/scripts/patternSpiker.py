@@ -1,3 +1,4 @@
+from __future__ import division
 import numpy
 import math
 from spynnaker8.models.populations.population_view import PopulationView
@@ -20,7 +21,7 @@ class PatternSpiker(object):
                           spike_rate=None, spike_rec_indexes=None,
                           v_rate=None, v_rec_indexes=None):
 
-        v_start = self.V_PATTERN * math.ceil(n_neurons/self.V_COUNT)
+        v_start = self.V_PATTERN * int(math.ceil(n_neurons/self.V_COUNT))
         v_start = v_start[:n_neurons]
         pop = sim.Population(n_neurons,
                              sim.IF_curr_exp(i_offset=1, tau_refrac=0),
