@@ -4,14 +4,14 @@ Synfirechain-like example
 
 # spynnaker imports
 import os
-import pickle
-from unittest import SkipTest
+from neo.io import PickleIO
+from p8_integration_tests.base_test_case import BaseTestCase
+from p8_integration_tests.scripts.synfire_run import SynfireRunner
 import spynnaker.plot_utils as plot_utils
 import spynnaker.spike_checker as spike_checker
 import spynnaker.gsyn_tools as gsyn_tools
 from spynnaker8.utilities import neo_compare
-from p8_integration_tests.base_test_case import BaseTestCase
-from p8_integration_tests.scripts.synfire_run import SynfireRunner
+
 
 n_neurons = 10  # number of neurons in each population
 max_delay = 14.4
@@ -38,15 +38,10 @@ class TestPrintGsyn(BaseTestCase):
 
         self.assertEquals(12, len(spikes))
         spike_checker.synfire_spike_checker(spikes, n_neurons)
-        try:
-            with open(gsyn_path, "r") as gsyn_file:
-                gsyn_saved = pickle.load(gsyn_file)
-            neo_compare.compare_blocks(gsyn, gsyn_saved)
-        except UnicodeDecodeError:
-            raise SkipTest(
-                "https://github.com/NeuralEnsemble/python-neo/issues/529")
-        finally:
-            os.remove(gsyn_path)
+        io = PickleIO(filename=gsyn_path)
+        gsyn_saved = io.read()[0]
+        neo_compare.compare_blocks(gsyn, gsyn_saved)
+        os.remove(gsyn_path)
 
 
 if __name__ == '__main__':

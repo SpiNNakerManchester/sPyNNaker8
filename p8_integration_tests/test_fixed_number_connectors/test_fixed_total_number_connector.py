@@ -10,6 +10,7 @@ def do_run(plot):
 
     p.setup(timestep=1.0, min_delay=1.0, max_delay=144.0)
     p.set_number_of_neurons_per_core(p.IF_cond_exp, 100)
+    rng = pyNN.random.NumpyRNG(seed=124578)
 
     # Experiment Parameters
     n_groups = 6  # Number of Synfire Groups
@@ -75,7 +76,8 @@ def do_run(plot):
     pop_stim = p.Population(n_exc, p.SpikeSourceArray({}), label="pop_stim")
 
     # We create a normal distribution around pp_start with sigma = pp_sigma
-    rd = pyNN.random.RandomDistribution('normal', [pp_start, pp_sigma])
+    rd = pyNN.random.RandomDistribution(
+        'normal', [pp_start, pp_sigma], rng=rng)
     all_spiketimes = []
     # for each cell in the population, we take pp_a values from the
     # random distribution
@@ -97,13 +99,13 @@ def do_run(plot):
     for group_index in range(n_groups-1):
         p.Projection(exc_pops[group_index % n_groups],
                      exc_pops[(group_index+1) % n_groups],
-                     p.FixedTotalNumberConnector(160),
+                     p.FixedTotalNumberConnector(160, rng=rng),
                      synapse_type=p.StaticSynapse(weight=weight_exc,
                                                   delay=10.),
                      receptor_type='excitatory')
         p.Projection(exc_pops[group_index % n_groups],
                      inh_pops[(group_index+1) % n_groups],
-                     p.FixedTotalNumberConnector(160),
+                     p.FixedTotalNumberConnector(160, rng=rng),
                      synapse_type=p.StaticSynapse(weight=weight_exc,
                                                   delay=10.),
                      receptor_type='excitatory')
@@ -111,7 +113,8 @@ def do_run(plot):
     # Make another projection for testing that connects to itself
     p.Projection(exc_pops[1], exc_pops[1],
                  p.FixedTotalNumberConnector(50, with_replacement=False,
-                                             allow_self_connections=False),
+                                             allow_self_connections=False,
+                                             rng=rng),
                  synapse_type=p.StaticSynapse(weight=weight_exc,
                                               delay=10.),
                  receptor_type='excitatory')
@@ -119,11 +122,11 @@ def do_run(plot):
     # Connect the Stimulus to the first group
     print("Connecting Stimulus to first group")
     p.Projection(pop_stim, inh_pops[0],
-                 p.FixedTotalNumberConnector(60),
+                 p.FixedTotalNumberConnector(60, rng=rng),
                  synapse_type=p.StaticSynapse(weight=weight_exc, delay=20.),
                  receptor_type='excitatory')
     p.Projection(pop_stim, exc_pops[0],
-                 p.FixedTotalNumberConnector(60),
+                 p.FixedTotalNumberConnector(60, rng=rng),
                  synapse_type=p.StaticSynapse(weight=weight_exc, delay=20.),
                  receptor_type='excitatory')
 
@@ -183,6 +186,7 @@ class FixedTotalNumberConnectorTest(BaseTestCase):
         stim_spikes, spklist_exc, spklist_inh = do_run(plot=False)
         # any checks go here
         self.assertEquals(500, len(stim_spikes))
+        # https://github.com/SpiNNakerManchester/sPyNNaker8/issues/191
         self.assertGreater(300, len(spklist_exc))
         self.assertGreater(300, len(spklist_inh))
         self.assertLess(200, len(spklist_exc))
@@ -191,3 +195,4 @@ class FixedTotalNumberConnectorTest(BaseTestCase):
 
 if __name__ == '__main__':
     stim_spikes, spklist_exc, spklist_inh = do_run(plot=True)
+    print(len(stim_spikes), len(spklist_exc), len(spklist_inh))

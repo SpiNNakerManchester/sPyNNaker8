@@ -72,7 +72,7 @@ def do_run():
                                     p.StaticSynapse(weight=weight_to_spike,
                                                     delay=1)))
 
-    p.external_devices.activate_live_output_for(populations[0])
+    p.external_devices.activate_live_output_for(populations[0], notify=False)
     populations[0].set_constraint(ChipAndCoreConstraint(0, 0, 4))
     populations[1].set_constraint(ChipAndCoreConstraint(0, 0, 5))
 

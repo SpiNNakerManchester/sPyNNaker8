@@ -61,7 +61,8 @@ def do_run(plot):
     p.external_devices.activate_live_output_for(populations[0])
 
     pop_external = p.Population(
-        nNeurons, p.external_devices.SpikeInjector(**cell_params_ext_dev),
+        nNeurons, p.external_devices.SpikeInjector(),
+        additional_parameters=cell_params_ext_dev,
         label='Babel_Dummy')
 
     populations.append(

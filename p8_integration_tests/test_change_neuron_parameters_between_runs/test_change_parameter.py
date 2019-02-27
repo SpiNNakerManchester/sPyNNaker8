@@ -1,4 +1,3 @@
-from unittest import SkipTest
 from pyNN.random import NumpyRNG
 import spynnaker8 as p
 from p8_integration_tests.base_test_case import BaseTestCase
@@ -67,33 +66,34 @@ class TestChangeParameter(BaseTestCase):
     def test_no_split(self):
         results = do_run(split=False, seed=self._test_seed)
         (pop_spikes1, inp_spikes1, pop_spikes2, inp_spikes2) = results
-        try:
-            self.assertLess(1100, len(pop_spikes1))
-            self.assertGreater(1300, len(pop_spikes1))
-            self.assertLess(1100, len(inp_spikes1))
-            self.assertGreater(1300, len(inp_spikes1))
-        except Exception as ex:
-            # Just in case the range failed
-            raise SkipTest(ex)
-        self.assertEqual(300, len(pop_spikes2))
+        self.assertEqual(865, len(pop_spikes1))
+        self.assertEqual(1020, len(inp_spikes1))
+        self.assertEqual(322, len(pop_spikes2))
         self.assertEqual(0, len(inp_spikes2))
 
     def test_split(self):
         results = do_run(split=True, seed=self._test_seed)
         (pop_spikes1, inp_spikes1, pop_spikes2, inp_spikes2) = results
-        try:
-            self.assertLess(1100, len(pop_spikes1))
-            self.assertGreater(1300, len(pop_spikes1))
-            self.assertLess(1100, len(inp_spikes1))
-            self.assertGreater(1300, len(inp_spikes1))
-        except Exception as ex:
-            # Just in case the range failed
-            raise SkipTest(ex)
-        self.assertEqual(300, len(pop_spikes2))
+        # Range here as the order of the data generated in the cores could
+        # change the output
+        self.assertLessEqual(840, len(pop_spikes1))
+        self.assertGreaterEqual(890, len(pop_spikes1))
+        self.assertEqual(1012, len(inp_spikes1))
+        self.assertLessEqual(300, len(pop_spikes2))
+        self.assertGreaterEqual(310, len(pop_spikes2))
         self.assertEqual(0, len(inp_spikes2))
 
 
 if __name__ == '__main__':
-    (pop_spikes1, inp_spikes1, pop_spikes2, inp_spikes2) = do_run(split=True)
+    (pop_spikes1, inp_spikes1, pop_spikes2, inp_spikes2) = do_run(
+        split=False, seed=1)
+    print(len(pop_spikes1), len(inp_spikes1), len(pop_spikes2),
+          len(inp_spikes2))
+    plot_spikes(pop_spikes1, inp_spikes1)
+    plot_spikes(pop_spikes2, inp_spikes2)
+    (pop_spikes1, inp_spikes1, pop_spikes2, inp_spikes2) = do_run(
+        split=True, seed=1)
+    print(len(pop_spikes1), len(inp_spikes1), len(pop_spikes2),
+          len(inp_spikes2))
     plot_spikes(pop_spikes1, inp_spikes1)
     plot_spikes(pop_spikes2, inp_spikes2)

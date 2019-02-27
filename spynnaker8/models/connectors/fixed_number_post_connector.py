@@ -46,7 +46,5 @@ class FixedNumberPostConnector(CommonFixedNumberPostConnector,
         # pylint: disable=too-many-arguments
         super(FixedNumberPostConnector, self).__init__(
             n=n, allow_self_connections=allow_self_connections,
-            with_replacement=with_replacement, safe=safe, verbose=verbose)
-
-    def get_rng_parameters(self, n_post_neurons):
-        return {"low": 0, "high": n_post_neurons}
+            with_replacement=with_replacement, safe=safe, verbose=verbose,
+            rng=rng)
