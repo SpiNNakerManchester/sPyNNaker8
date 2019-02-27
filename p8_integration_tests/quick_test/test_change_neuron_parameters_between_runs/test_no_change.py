@@ -4,12 +4,19 @@ from p8_integration_tests.base_test_case import BaseTestCase
 
 class TestNoChange(BaseTestCase):
 
-    def check_v(self, v):
-        assert v[0][2] == -65.
-        assert v[1][2] == -64.024658203125
-        assert v[2][2] == -63.09686279296875
-        assert v[3][2] == -62.214324951171875
-        assert v[4][2] == -61.37481689453125
+    def check_from_65(self, v):
+        assert -65. == v[0][2]
+        assert -64.024658203125 == v[1][2]
+        assert -63.09686279296875 == v[2][2]
+        assert -62.214324951171875 == v[3][2]
+        assert -61.37481689453125 == v[4][2]
+
+    def check_from_60(self, v):
+        assert -60. == v[0][2]
+        assert -59.26849365234375 == v[1][2]
+        assert -58.5726318359375 == v[2][2]
+        assert -57.91070556640625 == v[3][2]
+        assert -57.28106689453125 == v[4][2]
 
     def test_change_nothing(self):
         sim.setup(1.0)
@@ -19,11 +26,11 @@ class TestNoChange(BaseTestCase):
         pop.record(["v"])
         sim.run(5)
         v1 = pop.spinnaker_get_data('v')
-        self.check_v(v1)
+        self.check_from_65(v1)
         sim.reset()
         sim.run(5)
         v2 = pop.spinnaker_get_data('v')
-        self.check_v(v2)
+        self.check_from_65(v2)
         sim.end()
 
     def test_change_pre_reset(self):
@@ -34,16 +41,16 @@ class TestNoChange(BaseTestCase):
         pop.record(["v"])
         sim.run(5)
         v1 = pop.spinnaker_get_data('v')
-        self.check_v(v1)
+        self.check_from_65(v1)
         pop.set(tau_syn_E=1)
         sim.reset()
         sim.run(5)
         v2 = pop.spinnaker_get_data('v')
         try:
-            self.check_v(v2)
+            self.check_from_65(v2)
         except AssertionError:
             self.known_issue(
-                "https://github.com/SpiNNakerManchester/sPyNNaker")
+                "https://github.com/SpiNNakerManchester/sPyNNaker/issues/599")
         sim.end()
 
     def test_run_set_run_reset(self):
@@ -56,12 +63,12 @@ class TestNoChange(BaseTestCase):
         pop.set(tau_syn_E=1)
         sim.run(3)
         v1 = pop.spinnaker_get_data('v')
-        self.check_v(v1)
+        self.check_from_65(v1)
         sim.reset()
 
         sim.run(5)
         v2 = pop.spinnaker_get_data('v')
-        self.check_v(v2)
+        self.check_from_65(v2)
         sim.end()
         print(v1)
         print(v2)
@@ -76,17 +83,17 @@ class TestNoChange(BaseTestCase):
         pop.set(tau_syn_E=1)
         sim.run(3)
         v1 = pop.spinnaker_get_data('v')
-        self.check_v(v1)
+        self.check_from_65(v1)
 
         sim.reset()
         pop.set(tau_syn_E=1)
         sim.run(5)
         v2 = pop.spinnaker_get_data('v')
         try:
-            self.check_v(v2)
+            self.check_from_65(v2)
         except AssertionError:
             self.known_issue(
-                "https://github.com/SpiNNakerManchester/sPyNNaker")
+                "https://github.com/SpiNNakerManchester/sPyNNaker/issues/599")
         sim.end()
 
     def test_change_post_set(self):
@@ -97,12 +104,12 @@ class TestNoChange(BaseTestCase):
         pop.record(["v"])
         sim.run(5)
         v1 = pop.spinnaker_get_data('v')
-        self.check_v(v1)
+        self.check_from_65(v1)
         sim.reset()
         pop.set(tau_syn_E=1)
         sim.run(5)
         v2 = pop.spinnaker_get_data('v')
-        self.check_v(v2)
+        self.check_from_65(v2)
         sim.end()
 
     def test_no_change_v(self):
@@ -121,7 +128,7 @@ class TestNoChange(BaseTestCase):
         inp.set(spike_times=[100])
         sim.run(5)
         v2 = pop.spinnaker_get_data('v')
-        self.check_v(v2)
+        self.check_from_65(v2)
         sim.end()
 
     def test_change_v_before(self):
@@ -141,7 +148,7 @@ class TestNoChange(BaseTestCase):
         inp.set(spike_times=[100])
         sim.run(5)
         v2 = pop.spinnaker_get_data('v')
-        self.check_v(v2)
+        self.check_from_65(v2)
         sim.end()
 
     def test_change_v_after(self):
@@ -161,5 +168,60 @@ class TestNoChange(BaseTestCase):
         inp.set(spike_times=[100])
         sim.run(5)
         v2 = pop.spinnaker_get_data('v')
-        self.check_v(v2)
+        self.check_from_65(v2)
+        sim.end()
+
+    def test_no_change_with_v_set(self):
+        sim.setup(1.0)
+        pop = sim.Population(1, sim.IF_curr_exp, {}, label="pop")
+        inp = sim.Population(1, sim.SpikeSourceArray(
+            spike_times=[0]), label="input")
+        sim.Projection(inp, pop, sim.OneToOneConnector(),
+                     synapse_type=sim.StaticSynapse(weight=5))
+        pop.set(i_offset=1.0)
+        pop.set(tau_syn_E=1)
+        pop.initialize(v=-60)
+        pop.record(["v"])
+        sim.run(5)
+        v1 = pop.spinnaker_get_data('v')
+        try:
+            self.check_from_60(v1)
+            raise AssertionError("Unexpected after 60 voltage")
+        except AssertionError:
+            pass  # That should have failed
+        sim.reset()
+        inp.set(spike_times=[100])
+        sim.run(5)
+        v2 = pop.spinnaker_get_data('v')
+        self.check_from_60(v2)
+        sim.end()
+
+    def test_reset_set_with_v_set(self):
+        sim.setup(1.0)
+        pop = sim.Population(1, sim.IF_curr_exp, {}, label="pop")
+        inp = sim.Population(1, sim.SpikeSourceArray(
+            spike_times=[0]), label="input")
+        sim.Projection(inp, pop, sim.OneToOneConnector(),
+                     synapse_type=sim.StaticSynapse(weight=5))
+        pop.set(i_offset=1.0)
+        pop.set(tau_syn_E=1)
+        pop.initialize(v=-60)
+        pop.record(["v"])
+        sim.run(5)
+        v1 = pop.spinnaker_get_data('v')
+        try:
+            self.check_from_60(v1)
+            raise AssertionError("Unexpected after 60 voltage")
+        except AssertionError:
+            pass  # That should have failed
+        pop.set(tau_syn_E=1)
+        sim.reset()
+        inp.set(spike_times=[100])
+        sim.run(5)
+        v2 = pop.spinnaker_get_data('v')
+        try:
+            self.check_from_65(v2)
+        except AssertionError:
+            self.known_issue(
+                "https://github.com/SpiNNakerManchester/sPyNNaker/issues/599")
         sim.end()
