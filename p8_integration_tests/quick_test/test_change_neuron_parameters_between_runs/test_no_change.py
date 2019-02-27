@@ -1,5 +1,4 @@
 import spynnaker8 as sim
-from unittest import SkipTest
 from p8_integration_tests.base_test_case import BaseTestCase
 
 
@@ -43,10 +42,51 @@ class TestNoChange(BaseTestCase):
         try:
             self.check_v(v2)
         except AssertionError:
-            self.report("https://github.com/SpiNNakerManchester/sPyNNaker"
-                        "/issues/599\n", "Skipped_due_to_issue")
-            raise SkipTest("https://github.com/SpiNNakerManchester/sPyNNaker"
-                        "/issues/599")
+            self.known_issue(
+                "https://github.com/SpiNNakerManchester/sPyNNaker")
+        sim.end()
+
+    def test_run_set_run_reset(self):
+        sim.setup(1.0)
+        pop = sim.Population(1, sim.IF_curr_exp, {}, label="pop")
+        pop.set(i_offset=1.0)
+        pop.set(tau_syn_E=1)
+        pop.record(["v"])
+        sim.run(2)
+        pop.set(tau_syn_E=1)
+        sim.run(3)
+        v1 = pop.spinnaker_get_data('v')
+        self.check_v(v1)
+        sim.reset()
+
+        sim.run(5)
+        v2 = pop.spinnaker_get_data('v')
+        self.check_v(v2)
+        sim.end()
+        print(v1)
+        print(v2)
+
+    def test_run_set_run_reset_set(self):
+        sim.setup(1.0)
+        pop = sim.Population(1, sim.IF_curr_exp, {}, label="pop")
+        pop.set(i_offset=1.0)
+        pop.set(tau_syn_E=1)
+        pop.record(["v"])
+        sim.run(2)
+        pop.set(tau_syn_E=1)
+        sim.run(3)
+        v1 = pop.spinnaker_get_data('v')
+        self.check_v(v1)
+
+        sim.reset()
+        pop.set(tau_syn_E=1)
+        sim.run(5)
+        v2 = pop.spinnaker_get_data('v')
+        try:
+            self.check_v(v2)
+        except AssertionError:
+            self.known_issue(
+                "https://github.com/SpiNNakerManchester/sPyNNaker")
         sim.end()
 
     def test_change_post_set(self):
@@ -60,6 +100,65 @@ class TestNoChange(BaseTestCase):
         self.check_v(v1)
         sim.reset()
         pop.set(tau_syn_E=1)
+        sim.run(5)
+        v2 = pop.spinnaker_get_data('v')
+        self.check_v(v2)
+        sim.end()
+
+    def test_no_change_v(self):
+        sim.setup(1.0)
+        pop = sim.Population(1, sim.IF_curr_exp, {}, label="pop")
+        inp = sim.Population(1, sim.SpikeSourceArray(
+            spike_times=[0]), label="input")
+        sim.Projection(inp, pop, sim.OneToOneConnector(),
+                     synapse_type=sim.StaticSynapse(weight=5))
+        pop.set(i_offset=1.0)
+        pop.set(tau_syn_E=1)
+        pop.record(["v"])
+        sim.run(5)
+        v1 = pop.spinnaker_get_data('v')
+        sim.reset()
+        inp.set(spike_times=[100])
+        sim.run(5)
+        v2 = pop.spinnaker_get_data('v')
+        self.check_v(v2)
+        sim.end()
+
+    def test_change_v_before(self):
+        sim.setup(1.0)
+        pop = sim.Population(1, sim.IF_curr_exp, {}, label="pop")
+        inp = sim.Population(1, sim.SpikeSourceArray(
+            spike_times=[0]), label="input")
+        sim.Projection(inp, pop, sim.OneToOneConnector(),
+                     synapse_type=sim.StaticSynapse(weight=5))
+        pop.set(i_offset=1.0)
+        pop.set(tau_syn_E=1)
+        pop.record(["v"])
+        sim.run(5)
+        v1 = pop.spinnaker_get_data('v')
+        pop.initialize(v=-65)
+        sim.reset()
+        inp.set(spike_times=[100])
+        sim.run(5)
+        v2 = pop.spinnaker_get_data('v')
+        self.check_v(v2)
+        sim.end()
+
+    def test_change_v_after(self):
+        sim.setup(1.0)
+        pop = sim.Population(1, sim.IF_curr_exp, {}, label="pop")
+        inp = sim.Population(1, sim.SpikeSourceArray(
+            spike_times=[0]), label="input")
+        sim.Projection(inp, pop, sim.OneToOneConnector(),
+                     synapse_type=sim.StaticSynapse(weight=5))
+        pop.set(i_offset=1.0)
+        pop.set(tau_syn_E=1)
+        pop.record(["v"])
+        sim.run(5)
+        v1 = pop.spinnaker_get_data('v')
+        sim.reset()
+        pop.initialize(v=-65)
+        inp.set(spike_times=[100])
         sim.run(5)
         v2 = pop.spinnaker_get_data('v')
         self.check_v(v2)

@@ -93,3 +93,7 @@ class BaseTestCase(unittest.TestCase):
 
     def get_run_time_of_BufferExtractor(self):
         return self.get_provenance("Execution", "BufferExtractor")
+
+    def known_issue(self, issue):
+        self.report(issue, "Skipped_due_to_issue")
+        raise SkipTest(issue)
