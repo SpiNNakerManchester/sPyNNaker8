@@ -5,11 +5,12 @@ from p8_integration_tests.base_test_case import BaseTestCase
 class TestNoChange(BaseTestCase):
 
     def check_from_65(self, v):
-        assert -65. == v[0][2]
-        assert -64.024658203125 == v[1][2]
-        assert -63.09686279296875 == v[2][2]
-        assert -62.214324951171875 == v[3][2]
-        assert -61.37481689453125 == v[4][2]
+        for i in range(0, len(v), 5):
+            assert -65. == v[i*5+0][2]
+            assert -64.024658203125 == v[i*5+1][2]
+            assert -63.09686279296875 == v[i*5+2][2]
+            assert -62.214324951171875 == v[i*5+3][2]
+            assert -61.37481689453125 == v[i*5+4][2]
 
     def check_from_60(self, v):
         assert -60. == v[0][2]
@@ -224,4 +225,22 @@ class TestNoChange(BaseTestCase):
         except AssertionError:
             self.known_issue(
                 "https://github.com/SpiNNakerManchester/sPyNNaker/issues/599")
+        sim.end()
+
+    def test_multi_core(self):
+        sim.setup(1.0)
+        sim.set_number_of_neurons_per_core(sim.IF_curr_exp, 2)
+        pop = sim.Population(6, sim.IF_curr_exp(i_offset=1, tau_syn_E=1), {},
+                             label="pop")
+        pop.record("v")
+        sim.run(3)
+        pop.set(tau_syn_E=1)
+        sim.run(2)
+        neo = pop.get_data("v")
+        v1 = pop.spinnaker_get_data('v')
+        try:
+            self.check_from_65(v1)
+        except AssertionError:
+            self.known_issue(
+                "https://github.com/SpiNNakerManchester/sPyNNaker/issues/603")
         sim.end()

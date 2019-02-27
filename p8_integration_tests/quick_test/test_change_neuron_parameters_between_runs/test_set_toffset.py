@@ -1,13 +1,11 @@
-"""
-Synfirechain-like example
-"""
+import numpy
 import spynnaker.plot_utils as plot_utils
 import spynnaker8 as p
 from spynnaker8.utilities import neo_convertor
 from p8_integration_tests.base_test_case import BaseTestCase
 
 
-def do_run(n_neurons, n_cores, new_i_offset):
+def do_run(n_neurons, n_cores, i_offset2, i_offset3):
     p.setup(timestep=1.0, min_delay=1.0, max_delay=144.0)
     p.set_number_of_neurons_per_core(p.IF_curr_exp, n_neurons / n_cores)
 
@@ -27,13 +25,17 @@ def do_run(n_neurons, n_cores, new_i_offset):
     populations.append(p.Population(n_neurons, p.IF_curr_exp, cell_params_lif,
                                     label='pop_1'))
 
-    populations[0].record("all")
+    populations[0].record("spikes")
 
-    p.run(2000)
+    p.run(100)
 
-    populations[0].set(i_offset=new_i_offset)
+    populations[0].set(i_offset=i_offset2)
 
-    p.run(2000)
+    p.run(100)
+
+    populations[0].set(i_offset=i_offset3)
+
+    p.run(100)
 
     neo = populations[0].get_data()
 
@@ -43,28 +45,36 @@ def do_run(n_neurons, n_cores, new_i_offset):
 
 
 class TestSetTOffset(BaseTestCase):
+    expected = [104., 112., 120., 128., 136., 144., 152., 160., 168., 176.,
+                184., 192., 200., 205., 210., 215., 220., 225., 230., 235.,
+                240., 245., 250., 255., 260., 265., 270., 275., 280., 285.,
+                290., 295.]
 
     def test_one_core(self):
-        n_neurons = 40
+        n_neurons = 6
         n_cores = 1
-        neo = do_run(n_neurons, n_cores, 0.1875)
+        neo = do_run(n_neurons, n_cores, 1, 2)
         spiketrains = neo.segments[0].spiketrains
         for spiketrain in spiketrains:
-            self.assertEquals(9,  len(spiketrain))
+            assert numpy.array_equal(spiketrain.magnitude, self.expected)
 
     def test_three_cores(self):
-        n_neurons = 40
+        n_neurons = 6
         n_cores = 3
-        neo = do_run(n_neurons, n_cores, 0.1875)
+        neo = do_run(n_neurons, n_cores, 1, 2)
         spiketrains = neo.segments[0].spiketrains
-        for spiketrain in spiketrains:
-            self.assertEquals(9,  len(spiketrain))
+        try:
+            for spiketrain in spiketrains:
+                assert numpy.array_equal(spiketrain.magnitude, self.expected)
+        except AssertionError:
+            self.known_issue(
+                "https://github.com/SpiNNakerManchester/sPyNNaker/issues/603")
 
 
 if __name__ == '__main__':
     n_neurons = 40
     n_cores = 3
-    neo = do_run(n_neurons, n_cores, 0.1875)
+    neo = do_run(n_neurons, n_cores, 1, 2)
     spikes = neo_convertor.convert_spikes(neo)
     v = neo_convertor.convert_data(neo, "v")
     gsyn = neo_convertor.convert_data(neo, "gsyn_exc")
