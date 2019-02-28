@@ -39,13 +39,16 @@ class PatternSpiker(object):
             view.record(['v'], sampling_interval=v_rate)
         return pop
 
-    def check_v(self, v, label, v_rate, v_rec_indexes, is_view):
+    def check_v(self, v, label, v_rate, v_rec_indexes, is_view, missing):
         if v_rate is None:
             v_rate = 1
         if v_rec_indexes is None:
             v_rec_indexes = range(len(v[0]))
         else:
             actual_indexes = list(v.channel_index.index)
+            if missing:
+                v_rec_indexes = [index for index in v_rec_indexes
+                                 if index in actual_indexes]
             if actual_indexes != v_rec_indexes:
                 if is_view:
                     raise AssertionError(
@@ -96,7 +99,7 @@ class PatternSpiker(object):
                             neuron, label, spikes[neuron], adjusted_spikes, ))
 
     def check(self, pop, simtime, spike_rate=None, spike_rec_indexes=None,
-                          v_rate=None, v_rec_indexes=None, is_view=False):
+              v_rate=None, v_rec_indexes=None, is_view=False, missing=False):
         if is_view:
             neo = pop.get_data("spikes")
             spikes = neo.segments[0].spiketrains
@@ -108,7 +111,7 @@ class PatternSpiker(object):
             v = neo.segments[0].filter(name="v")[0]
         self.check_spikes(
             spikes, simtime, pop.label, spike_rate, spike_rec_indexes)
-        self.check_v(v, pop.label, v_rate, v_rec_indexes, is_view)
+        self.check_v(v, pop.label, v_rate, v_rec_indexes, is_view, missing)
 
 
 if __name__ == '__main__':
