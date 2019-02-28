@@ -62,7 +62,8 @@ class TestDebug(BaseTestCase):
             # write_board_chip_report
             BoardChipReport.AREA_CODE_REPORT_NAME,
             # write_data_speed_up_report
-            DataSpeedUpPacketGatherMachineVertex.REPORT_NAME
+            # Appears to only work if you call get_data ???
+            # DataSpeedUpPacketGatherMachineVertex.REPORT_NAME
             ]
         sim.setup(1.0)
         pop = sim.Population(1, sim.IF_curr_exp, {}, label="pop")
