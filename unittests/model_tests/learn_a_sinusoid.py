@@ -5,7 +5,7 @@ import unittest
 from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt
 
-num_repeats = 50
+num_repeats = 20
 cycle_time = 1023
 timestep = 1
 p.setup(timestep) # simulation timestep (ms)
@@ -13,7 +13,7 @@ runtime = num_repeats * cycle_time
 
 # # Post-synapse population
 erbp_neuron_params = {
-    "v_thresh": 100,
+    "v_thresh": 30,
     "v_reset": 0,
     "v_rest": 0,
     "i_offset": 0.5, # DC input
@@ -25,19 +25,19 @@ readout_neuron_params = {
     "v": 0
     }
 
-w_in_rec_exc = 1.5
+w_in_rec_exc = 0.75
 w_in_rec_exc_dist = p.RandomDistribution(
         distribution='normal_clipped', mu=w_in_rec_exc, sigma=w_in_rec_exc,
         low=0.0, high=2*w_in_rec_exc)
 
 
-w_in_rec_inh = 0.25*w_in_rec_exc
+w_in_rec_inh = 0.5*w_in_rec_exc
 w_in_rec_inh_dist = p.RandomDistribution(
         distribution='normal_clipped', mu=w_in_rec_inh, sigma=w_in_rec_inh,
         low=0.0, high=2*w_in_rec_inh)
 
 
-w_rec_rec = 0.75
+w_rec_rec = 0.25
 w_rec_rec_dist = p.RandomDistribution(
         distribution='normal_clipped', mu=w_rec_rec, sigma=w_rec_rec,
         low=0.0, high=2*w_rec_rec)
@@ -260,7 +260,7 @@ learning_rule = p.STDPMechanism(
 rec_rec_exc = p.Projection(
     pop_rec,
     pop_rec,
-    p.AllToAllConnector(),
+    p.FixedProbabilityConnector(0.4),
     synapse_type=learning_rule,
     receptor_type="excitatory")
 
@@ -278,7 +278,7 @@ learning_rule = p.STDPMechanism(
 rec_rec_inh = p.Projection(
     pop_rec,
     pop_rec,
-    p.AllToAllConnector(),
+    p.FixedProbabilityConnector(0.4),
     synapse_type=learning_rule,
     receptor_type="inhibitory")
 
