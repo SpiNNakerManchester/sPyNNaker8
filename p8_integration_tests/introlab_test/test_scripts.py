@@ -1,6 +1,11 @@
 import os
 import unittest
+import matplotlib.pyplot as plt
 from p8_integration_tests.base_test_case import BaseTestCase
+
+
+def mockshow():
+    print("HERE")
 
 
 class TestScripts(BaseTestCase):
@@ -17,6 +22,7 @@ class TestScripts(BaseTestCase):
     test the introlabs
     """
     def test_simple(self):
+        plt.show = mockshow
         simple = os.path.join(self._introlab_dir, "learning", "simple.py")
         from runpy import run_path
         run_path(simple)
