@@ -26,7 +26,7 @@ pipeline {
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/spinn_common.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/SpiNNFrontEndCommon.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/sPyNNaker.git'
-                // scriptss
+                // scripts
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/IntroLab.git'
             }
         }
@@ -59,12 +59,12 @@ pipeline {
                 sh 'echo "spalloc_user = Jenkins" >> ~/.spynnaker.cfg'
             }
         }
-        // stage('Test') {
-        //    steps {
-        //        sh 'echo "<testsuite tests="0"></testsuite>" > results.xml'
-        //        sh 'py.test p8_integration_tests/quick_test --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 1200'
-        //    }
-        //}
+         stage('Test') {
+            steps {
+                sh 'echo "<testsuite tests="0"></testsuite>" > results.xml'
+                sh 'py.test p8_integration_tests/quick_test --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 1200'
+            }
+        }
         stage('IntroLab') {
             steps {
                 sh 'echo "<testsuite tests="0"></testsuite>" > results.xml'
