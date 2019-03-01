@@ -1,4 +1,6 @@
 from __future__ import division
+from unittest import SkipTest
+from spynnaker.pyNN.exceptions import ConfigurationException
 import spynnaker8 as sim
 from p8_integration_tests.scripts.checker import check_data
 
@@ -19,7 +21,13 @@ class ManyBoards(object):
     def setup(self, n_boards, n_neurons, simtime):
         n_chips_required = n_boards * CHIPS_PER_BOARD_EXCLUDING_SAFETY
         sim.setup(timestep=1.0, n_chips_required=n_chips_required)
-        machine = sim.get_machine()
+        try:
+            machine = sim.get_machine()
+        except ConfigurationException as oops:
+            if "Failure to detect machine of " in str(oops):
+                raise SkipTest("You Need at least {} boards to run this test"
+                               .format(n_boards))
+
         input_spikes = list(range(0, simtime - 100, 10))
         self._expected_spikes = len(input_spikes)
         input = sim.Population(1, sim.SpikeSourceArray(spike_times=input_spikes),
