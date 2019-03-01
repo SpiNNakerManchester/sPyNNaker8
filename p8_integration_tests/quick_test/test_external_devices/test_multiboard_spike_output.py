@@ -40,9 +40,9 @@ class TestMultiBoardSpikeOutput(BaseTestCase):
             live_output.add_receive_callback(
                 label, TestMultiBoardSpikeOutput.spike_receiver)
 
-        p.run(1000)
-        p.end()
+        p.run(250)
         live_output.close()
+        p.end()
 
         for label in labels:
             print("Received {} of 1000 spikes from {}".format(

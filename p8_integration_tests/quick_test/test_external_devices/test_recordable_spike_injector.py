@@ -33,7 +33,6 @@ class TestRecordableSpikeInjector(BaseTestCase):
 
         p.run(10000)
         spikes = pop.get_data("spikes").segments[0].spiketrains
-
         p.end()
 
         spike_trains = dict()
