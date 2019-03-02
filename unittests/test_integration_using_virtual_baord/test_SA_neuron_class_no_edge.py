@@ -4,6 +4,9 @@ from p8_integration_tests.base_test_case import BaseTestCase
 
 class SSANeuronClassNoEdgeTest(BaseTestCase):
 
+    def __init__(self):
+        BaseTestCase.__init__(self, methodName="test_run")
+
     def test_run(self):
         sim.setup()
 
