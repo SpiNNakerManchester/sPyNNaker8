@@ -34,6 +34,23 @@ class TestScripts(BaseTestCase):
         run_path(simple)
         assert self._show
 
+    def test_random_dist(self):
+        self._show = False
+        plt.show = self.mockshow
+        random_dist = os.path.join(
+            self._introlab_dir, "learning", "random_dist.py")
+        from runpy import run_path
+        run_path(random_dist)
+        assert self._show
+
+    def test_stdp(self):
+        self._show = False
+        plt.show = self.mockshow
+        stdp = os.path.join(self._introlab_dir, "learning", "stdp.py")
+        from runpy import run_path
+        run_path(stdp)
+        assert self._show
+
 
 if __name__ == '__main__':
     unittest.main()
