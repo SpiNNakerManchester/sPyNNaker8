@@ -10,10 +10,15 @@ class TestScripts(BaseTestCase):
     def setUp(self):
         super(TestScripts, self).setUp()
         introllab_tests_dir = os.path.dirname(__file__)
+        print(introllab_tests_dir)
         quick_tests_dir = os.path.dirname(introllab_tests_dir)
+        print(quick_tests_dir)
         p8_integration_tests_dir = os.path.dirname(quick_tests_dir)
+        print(p8_integration_tests_dir)
         spynnaker8_dir = os.path.dirname(p8_integration_tests_dir)
+        print(spynnaker8_dir)
         parent_dir = os.path.dirname(spynnaker8_dir)
+        print(parent_dir)
         self._introlab_dir = os.path.join(parent_dir, "IntroLab")
 
     def mockshow(self):
