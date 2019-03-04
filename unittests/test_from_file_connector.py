@@ -3,7 +3,6 @@ import pytest
 from pacman.model.graphs.common.slice import Slice
 from unittests.mocks import MockSimulator
 from spynnaker8.models.connectors import FromFileConnector
-import os
 import tempfile
 
 
