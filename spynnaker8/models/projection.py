@@ -57,9 +57,10 @@ class Projection(PyNNProjectionCommon):
         if isinstance(connector, FromListConnector):
             synapse_plastic_parameters = connector.get_extra_parameters()
             if synapse_plastic_parameters is not None:
-                for parameter in synapse_plastic_parameters.dtype.names:
+                for i, parameter in enumerate(
+                        connector.get_extra_parameter_names()):
                     synapse_type.set_value(
-                        parameter, synapse_plastic_parameters[:, parameter])
+                        parameter, synapse_plastic_parameters[:, i])
 
         # set rng if needed
         rng = None
