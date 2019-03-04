@@ -136,13 +136,18 @@ class Projection(PyNNProjectionCommon):
         if with_address:
             data_items.append("source")
             data_items.append("target")
+            if "source" in attribute_names:
+                logger.warning(
+                    "Ignoring request to get source as with_address=True. ")
+                attribute_names.remove("source")
+            if "target" in attribute_names:
+                logger.warning(
+                    "Ignoring request to get target as with_address=True. ")
+                attribute_names.remove("target")
 
         # Split out attributes in to standard versus synapse dynamics data
         fixed_values = list()
         for attribute in attribute_names:
-            # if with address set to true, we have decided the end user is
-            # being stupid if they request source and/or target then they get
-            # it twice
             data_items.append(attribute)
             if attribute not in {"source", "target", "weight", "delay"}:
                 value = self._synapse_information.synapse_dynamics.get_value(
