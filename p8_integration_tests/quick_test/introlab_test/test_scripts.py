@@ -17,9 +17,12 @@ class TestScripts(BaseTestCase):
         print(p8_integration_tests_dir)
         spynnaker8_dir = os.path.dirname(p8_integration_tests_dir)
         print(spynnaker8_dir)
-        parent_dir = os.path.dirname(spynnaker8_dir)
-        print(parent_dir)
-        self._introlab_dir = os.path.join(parent_dir, "IntroLab")
+        # Jenkins appears to place Intorlabs here
+        self._introlab_dir = os.path.join(spynnaker8_dir, "IntroLab")
+        if not os.path.exists(self._introlab_dir):
+            parent_dir = os.path.dirname(spynnaker8_dir)
+            print(parent_dir)
+            self._introlab_dir = os.path.join(parent_dir, "IntroLab")
 
     def mockshow(self):
         self._show = True
