@@ -28,6 +28,7 @@ pipeline {
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/sPyNNaker.git'
                 // scripts
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/IntroLab.git'
+                sh 'pwd'
             }
         }
         stage('Install') {
