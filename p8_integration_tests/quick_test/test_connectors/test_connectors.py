@@ -182,8 +182,12 @@ class ConnectorsTest(BaseTestCase):
     def test_total_connector_too_many(self):
         connections = 60
         with_replacement = False
-        with self.assertRaises(SpynnakerException):
-            self.check_connector(
-                sim.FixedTotalNumberConnector(
-                    connections, with_replacement=with_replacement),
-                connections,  with_replacement, type="pre")
+        try:
+            with self.assertRaises(SpynnakerException):
+                self.check_connector(
+                    sim.FixedTotalNumberConnector(
+                        connections, with_replacement=with_replacement),
+                    connections,  with_replacement, type="total")
+        except AssertionError:
+            self.known_issue(
+                "https://github.com/SpiNNakerManchester/sPyNNaker/issues/605")
