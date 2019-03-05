@@ -40,7 +40,9 @@ def test_connector(
     with temp as f:
         header = ''
         if column_names is not None:
-            header = 'columns = {}'.format(column_names)
+            columns = ["i", "j"]
+            columns.extend(column_names)
+            header = 'columns = {}'.format(columns)
         if clist is not None and len(clist):
             numpy.savetxt(f, clist, header=header)
         elif len(header):

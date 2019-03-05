@@ -26,6 +26,9 @@ class FromFileConnector(FromListConnector, PyNNFromFileConnector):
 
         column_names = self.get_reader(self._file).get_metadata().get(
             'columns')
+        if column_names is not None:
+            column_names = [column for column in column_names
+                            if column not in ("i", "j")]
 
         # pylint: disable=too-many-arguments
         FromListConnector.__init__(
