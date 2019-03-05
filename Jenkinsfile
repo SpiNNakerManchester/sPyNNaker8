@@ -66,12 +66,12 @@ pipeline {
                 sh 'py.test p8_integration_tests/quick_test --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 1200'
             }
         }
-        stage('IntroLab') {
-            steps {
-                sh 'echo "<testsuite tests="0"></testsuite>" > results.xml'
-                sh 'py.test p8_integration_tests/introlab_test --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 1200'
-            }
-        }
+        //stage('IntroLab') {
+        //    steps {
+        //        sh 'echo "<testsuite tests="0"></testsuite>" > results.xml'
+        //        sh 'py.test p8_integration_tests/introlab_test --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 1200'
+        //    }
+        //}
         // Timeout too short or test too long maybe a nightly crome
         //stage('Longer Test') {
         //    steps {
