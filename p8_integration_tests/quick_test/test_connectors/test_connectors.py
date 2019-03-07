@@ -39,7 +39,6 @@ class ConnectorsTest(BaseTestCase):
         return counts
 
     def check_counts(self, counts, connections, repeats):
-        print(counts)
         for count in counts:
             if not repeats:
                 self.assertEqual(1, max(count))
@@ -47,38 +46,58 @@ class ConnectorsTest(BaseTestCase):
             self.assertEqual(connections, sum(count))
 
     def check_connection(self, projection, destination, connections, repeats,
-                         type):
+                         type, n_destinations=DESTINATIONS):
         neo = destination.get_data(["v"])
         v = neo.segments[0].filter(name="v")[0]
         weights = projection.get(["weight"], "list")
         counts = self.calc_spikes_received(v)
+
+        expected = numpy.zeros([SOURCES, n_destinations])
+        for (src, dest, _) in weights:
+            expected[src][dest] += 1
+        the_max = max(map(max, counts))
+        if not numpy.array_equal(expected, counts):
+            if the_max < OVERFLOW:
+                print(counts)
+                print(expected)
+                raise AssertionError("Weights and v differ")
+
+        for (source, destination, _) in weights:
+            self.assertLess(source, SOURCES)
+            self.assertLess(destination, n_destinations)
         if type == "post":
             self.assertEqual(connections * SOURCES, len(weights))
             self.check_counts(counts, connections, repeats)
         elif type == "pre":
-            self.assertEqual(connections * DESTINATIONS, len(weights))
+            self.assertEqual(connections * n_destinations, len(weights))
             self.check_counts(numpy.transpose(counts), connections, repeats)
+        elif type == "one":
+            self.assertEqual(connections, len(weights))
+            last_source = -1
+            for (source, destination, _) in weights:
+                self.assertNotEqual(source, last_source)
+                last_source = source
+                self.assertEqual(source, destination)
+            while len(counts) > n_destinations:
+                no_connections = counts.pop()
+                self.assertEqual(0, sum(no_connections))
+            self.check_counts(counts, 1, repeats)
         else:
             self.assertEqual(connections, len(weights))
-            the_max = max(map(max ,counts))
             if not repeats:
                 self.assertEqual(1, the_max)
             if the_max < OVERFLOW:
                 self.assertEqual(connections, sum(map(sum, counts)))
-        expected = numpy.zeros([SOURCES, DESTINATIONS])
-        for (src, dest, _) in weights:
-            expected[src][dest] += 1
-        print(expected)
-        assert numpy.array_equal(expected, counts)
 
-    def check_connector(self, connector, connections, repeats, type="post"):
+    def check_connector(self, connector, connections, repeats, type="post",
+                        n_destinations=DESTINATIONS):
         sim.setup(1.0)
         # sim.set_number_of_neurons_per_core(sim.IF_curr_exp, 2)
 
         input = sim.Population(SOURCES, sim.SpikeSourceArray(
             spike_times=[[0], [20], [40], [60], [80]]), label="input")
         destination = sim.Population(
-            DESTINATIONS, sim.IF_curr_exp(tau_syn_E=1, tau_refrac=0,  tau_m=1),
+            n_destinations, sim.IF_curr_exp(tau_syn_E=1, tau_refrac=0,  tau_m=1),
             {}, label="destination")
         synapse_type = sim.StaticSynapse(weight=5, delay=1)
         projection = sim.Projection(
@@ -86,76 +105,26 @@ class ConnectorsTest(BaseTestCase):
         destination.record("v")
         sim.run(100)
         self.check_connection(
-            projection, destination, connections, repeats, type)
+            projection, destination, connections, repeats, type,
+            n_destinations)
         sim.end()
 
-    def test_fix_number_post_connector_with_replacement(self):
-        connections = 7
-        with_replacement = True
-        self.check_connector(
-            sim.FixedNumberPostConnector(
-                connections, with_replacement=with_replacement),
-            connections,  with_replacement)
-
-    def test_fix_number_post_connector_no_replacement(self):
-        connections = 7
+    def test_one_to_one(self):
+        connections = min(SOURCES, DESTINATIONS)
         with_replacement = False
         self.check_connector(
-            sim.FixedNumberPostConnector(
-                connections, with_replacement=with_replacement),
-            connections, with_replacement)
+            sim.OneToOneConnector(), connections,  with_replacement,
+            type="one")
 
-    def test_fix_number_post_connector_many_connection_with_replacement(self):
-        connections = 12
-        with_replacement = True
-        self.check_connector(
-            sim.FixedNumberPostConnector(
-                connections, with_replacement=with_replacement),
-            connections,  with_replacement)
-
-    def test_fix_number_post_connector_too_many_no_replacement(self):
-        connections = 12
-        with_replacement = False
-        with self.assertRaises(SpynnakerException):
-            self.check_connector(
-                sim.FixedNumberPostConnector(
-                    connections, with_replacement=with_replacement),
-                connections, with_replacement)
-
-    def test_fix_number_pre_connector_with_replacement(self):
-        connections = 3
-        with_replacement = True
-        self.check_connector(
-            sim.FixedNumberPreConnector(
-                connections, with_replacement=with_replacement),
-            connections,  with_replacement, type="pre")
-
-    def test_fix_number_pre_connector_no_replacement(self):
-        connections = 3
+    def test_one_to_one_short_destination(self):
+        n_destinations = SOURCES-1
+        connections = min(SOURCES, n_destinations)
         with_replacement = False
         self.check_connector(
-            sim.FixedNumberPreConnector(
-                connections, with_replacement=with_replacement),
-            connections,  with_replacement, type="pre")
+            sim.OneToOneConnector(), connections, with_replacement,
+            type="one", n_destinations=4)
 
-    def test_fix_number_pre_connector_with_replacement_many(self):
-        connections = 6
-        with_replacement = True
-        self.check_connector(
-            sim.FixedNumberPreConnector(
-                connections, with_replacement=with_replacement),
-            connections,  with_replacement, type="pre")
-
-    def test_fix_number_pre_connector_too_many(self):
-        connections = 6
-        with_replacement = False
-        with self.assertRaises(SpynnakerException):
-            self.check_connector(
-                sim.FixedNumberPreConnector(
-                    connections, with_replacement=with_replacement),
-                connections,  with_replacement, type="pre")
-
-    def test_totoal_connector_with_replacement(self):
+    def test_total_connector_with_replacement(self):
         connections = 20
         with_replacement = True
         self.check_connector(

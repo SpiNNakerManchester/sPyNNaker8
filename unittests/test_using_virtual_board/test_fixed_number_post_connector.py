@@ -2,10 +2,11 @@ import spynnaker8 as sim
 from spynnaker.pyNN.exceptions import SpynnakerException
 from p8_integration_tests.base_test_case import BaseTestCase
 
+SOURCES = 5
 DESTINATIONS = 10
 
 
-class TestSelfConnection(BaseTestCase):
+class TestFixedNumberPostConnector(BaseTestCase):
 
     def check_weights(self, projection, connections, with_replacement,
                       allow_self_connections):
@@ -28,7 +29,7 @@ class TestSelfConnection(BaseTestCase):
 
         self.assertEqual(connections, count)
 
-    def check_pre(self, connections, with_replacement, allow_self_connections):
+    def check_self_connect(self, connections, with_replacement, allow_self_connections):
         sim.setup(1.0)
         pop = sim.Population(DESTINATIONS, sim.IF_curr_exp(), label="pop")
         synapse_type = sim.StaticSynapse(weight=5, delay=1)
@@ -42,39 +43,71 @@ class TestSelfConnection(BaseTestCase):
                            allow_self_connections)
         sim.end()
 
+    def check_other_connect(self, connections, with_replacement):
+        sim.setup(1.0)
+        pop1 = sim.Population(SOURCES, sim.IF_curr_exp(), label="pop1")
+        pop2 = sim.Population(DESTINATIONS, sim.IF_curr_exp(), label="pop2")
+        synapse_type = sim.StaticSynapse(weight=5, delay=1)
+        projection = sim.Projection(
+            pop1, pop2, sim.FixedNumberPostConnector(
+                connections, with_replacement=with_replacement),
+             synapse_type=synapse_type)
+        sim.run(0)
+        self.check_weights(projection, connections, with_replacement,
+                           allow_self_connections=True)
+        sim.end()
+
     def test_replace_self(self):
         with_replacement = True
         allow_self_connections = True
-        self.check_pre(7, with_replacement, allow_self_connections )
+        self.check_self_connect(DESTINATIONS-3, with_replacement, allow_self_connections)
 
     def test_replace_no_self(self):
         with_replacement = True
         allow_self_connections = False
-        self.check_pre(7,  with_replacement, allow_self_connections)
+        self.check_self_connect(DESTINATIONS-3, with_replacement, allow_self_connections)
 
     def test_no_replace_self(self):
         with_replacement = True
         allow_self_connections = True
-        self.check_pre(7, with_replacement, allow_self_connections )
+        self.check_self_connect(DESTINATIONS-3, with_replacement, allow_self_connections)
 
     def test_no_replace_no_self(self):
         with_replacement = True
         allow_self_connections = False
-        self.check_pre(7,  with_replacement, allow_self_connections)
-
-    def test_with_many_replace_self(self):
-        with_replacement = True
-        allow_self_connections = True
-        self.check_pre(15,  with_replacement, allow_self_connections)
+        self.check_self_connect(DESTINATIONS-3, with_replacement, allow_self_connections)
 
     def test_all_no_replace_self(self):
         with_replacement = False
         allow_self_connections = True
-        self.check_pre(DESTINATIONS,  with_replacement, allow_self_connections)
+        self.check_self_connect(DESTINATIONS, with_replacement,
+                                allow_self_connections)
 
     def test_all_no_replace_no_self(self):
         with_replacement = False
         allow_self_connections = False
         with self.assertRaises(SpynnakerException):
-            self.check_pre(DESTINATIONS,  with_replacement,
-                           allow_self_connections)
+            self.check_self_connect(DESTINATIONS, with_replacement,
+                                    allow_self_connections)
+
+    def test_with_many_replace_self(self):
+        with_replacement = True
+        allow_self_connections = True
+        self.check_self_connect(DESTINATIONS+5, with_replacement, allow_self_connections)
+
+    def test_replace_other(self):
+        with_replacement = True
+        self.check_other_connect(DESTINATIONS-3, with_replacement)
+
+    def test_no_replace_other(self):
+        with_replacement = False
+        self.check_other_connect(DESTINATIONS-3, with_replacement)
+
+    def test_replace_other_many(self):
+        with_replacement = True
+        self.check_other_connect(DESTINATIONS+3, with_replacement)
+
+    def test_no_replace_other_too_many(self):
+        with_replacement = False
+        with self.assertRaises(SpynnakerException):
+            self.check_other_connect(DESTINATIONS+3, with_replacement)
