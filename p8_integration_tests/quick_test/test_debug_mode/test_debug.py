@@ -70,9 +70,10 @@ class TestDebug(BaseTestCase):
         inp = sim.Population(1, sim.SpikeSourceArray(
             spike_times=[0]), label="input")
         sim.Projection(inp, pop, sim.OneToOneConnector(),
-                     synapse_type=sim.StaticSynapse(weight=5))
+                       synapse_type=sim.StaticSynapse(weight=5))
         sim.run(10)
-        report_directory = globals_variables.get_simulator()._report_default_directory
+        report_directory = globals_variables.get_simulator().\
+            _report_default_directory
         sim.end()
 
         found = os.listdir(report_directory)

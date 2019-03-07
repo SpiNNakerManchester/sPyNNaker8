@@ -29,7 +29,8 @@ class TestFixedNumberPostConnector(BaseTestCase):
 
         self.assertEqual(connections, count)
 
-    def check_self_connect(self, connections, with_replacement, allow_self_connections):
+    def check_self_connect(
+            self, connections, with_replacement, allow_self_connections):
         sim.setup(1.0)
         pop = sim.Population(DESTINATIONS, sim.IF_curr_exp(), label="pop")
         synapse_type = sim.StaticSynapse(weight=5, delay=1)
@@ -37,7 +38,7 @@ class TestFixedNumberPostConnector(BaseTestCase):
             pop, pop, sim.FixedNumberPostConnector(
                 connections, with_replacement=with_replacement,
                 allow_self_connections=allow_self_connections),
-             synapse_type=synapse_type)
+            synapse_type=synapse_type)
         sim.run(0)
         self.check_weights(projection, connections, with_replacement,
                            allow_self_connections)
@@ -51,7 +52,7 @@ class TestFixedNumberPostConnector(BaseTestCase):
         projection = sim.Projection(
             pop1, pop2, sim.FixedNumberPostConnector(
                 connections, with_replacement=with_replacement),
-             synapse_type=synapse_type)
+            synapse_type=synapse_type)
         sim.run(0)
         self.check_weights(projection, connections, with_replacement,
                            allow_self_connections=True)
@@ -60,22 +61,26 @@ class TestFixedNumberPostConnector(BaseTestCase):
     def test_replace_self(self):
         with_replacement = True
         allow_self_connections = True
-        self.check_self_connect(DESTINATIONS-3, with_replacement, allow_self_connections)
+        self.check_self_connect(
+            DESTINATIONS-3, with_replacement, allow_self_connections)
 
     def test_replace_no_self(self):
         with_replacement = True
         allow_self_connections = False
-        self.check_self_connect(DESTINATIONS-3, with_replacement, allow_self_connections)
+        self.check_self_connect(
+            DESTINATIONS-3, with_replacement, allow_self_connections)
 
     def test_no_replace_self(self):
         with_replacement = True
         allow_self_connections = True
-        self.check_self_connect(DESTINATIONS-3, with_replacement, allow_self_connections)
+        self.check_self_connect(
+            DESTINATIONS-3, with_replacement, allow_self_connections)
 
     def test_no_replace_no_self(self):
         with_replacement = True
         allow_self_connections = False
-        self.check_self_connect(DESTINATIONS-3, with_replacement, allow_self_connections)
+        self.check_self_connect(
+            DESTINATIONS-3, with_replacement, allow_self_connections)
 
     def test_all_no_replace_self(self):
         with_replacement = False
@@ -93,7 +98,8 @@ class TestFixedNumberPostConnector(BaseTestCase):
     def test_with_many_replace_self(self):
         with_replacement = True
         allow_self_connections = True
-        self.check_self_connect(DESTINATIONS+5, with_replacement, allow_self_connections)
+        self.check_self_connect(
+            DESTINATIONS+5, with_replacement, allow_self_connections)
 
     def test_replace_other(self):
         with_replacement = True

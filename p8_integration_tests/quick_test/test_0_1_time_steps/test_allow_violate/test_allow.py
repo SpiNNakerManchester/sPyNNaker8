@@ -31,4 +31,3 @@ class TestAllow(BaseTestCase):
         # System intentional overload so may error
         except SpinnmanTimeoutException as ex:
             raise SkipTest(ex)
-

@@ -30,8 +30,8 @@ class ManyBoards(object):
 
         input_spikes = list(range(0, simtime - 100, 10))
         self._expected_spikes = len(input_spikes)
-        input = sim.Population(1, sim.SpikeSourceArray(spike_times=input_spikes),
-                               label="input")
+        input = sim.Population(1, sim.SpikeSourceArray(
+            spike_times=input_spikes), label="input")
         self._pops = []
         for i, chip in enumerate(machine.ethernet_connected_chips):
             if i >= n_boards:
@@ -56,6 +56,6 @@ if __name__ == '__main__':
     main entrance method
     """
     me = ManyBoards()
-    sim = me.do_run(n_boards=5, n_neurons=255, simtime=300)
+    run = me.do_run(n_boards=5, n_neurons=255, simtime=300)
     me.check_all_data()
-    sim.end()
+    run.end()

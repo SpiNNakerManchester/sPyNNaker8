@@ -3,11 +3,11 @@ def check_neuron_data(spikes, v, exc, expected_spikes, simtime, label, index):
     if len(spikes) < expected_spikes - 2:
         raise AssertionError(
             "Too few spikes for neuron {} in {}. Expected {} found {}".
-                format(index, label, expected_spikes, len(spikes)))
+            format(index, label, expected_spikes, len(spikes)))
     if len(spikes) > expected_spikes:
         raise AssertionError(
             "Too many spikes for neuron {} in {}. Expected {} found {}".
-                format(index, label, expected_spikes, len(spikes)))
+            format(index, label, expected_spikes, len(spikes)))
     iter_spikes = iter(spikes)
     next_spike = int(next(iter_spikes).magnitude)
     last_spike = -1
@@ -49,4 +49,4 @@ def check_data(pop, expected_spikes, simtime):
     gsyn_exc = neo.segments[0].filter(name="gsyn_exc")[0]
     for i in range(len(spikes)):
         check_neuron_data(spikes[i], v[:, i], gsyn_exc[:, i], expected_spikes,
-            simtime, pop.label, i)
+                          simtime, pop.label, i)

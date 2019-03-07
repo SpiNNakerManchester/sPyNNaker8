@@ -33,7 +33,7 @@ class TestFixedNumberPreConnector(BaseTestCase):
             pop, pop, sim.FixedNumberPreConnector(
                 connections, with_replacement=with_replacement,
                 allow_self_connections=allow_self_connections),
-             synapse_type=synapse_type)
+            synapse_type=synapse_type)
         sim.run(0)
         self.check_weights(projection, connections, with_replacement,
                            allow_self_connections)
@@ -47,7 +47,7 @@ class TestFixedNumberPreConnector(BaseTestCase):
         projection = sim.Projection(
             pop1, pop2, sim.FixedNumberPreConnector(
                 connections, with_replacement=with_replacement),
-             synapse_type=synapse_type)
+            synapse_type=synapse_type)
         sim.run(0)
         self.check_weights(projection, connections, with_replacement,
                            allow_self_connections=True)

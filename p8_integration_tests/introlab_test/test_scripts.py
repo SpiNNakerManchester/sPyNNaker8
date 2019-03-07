@@ -1,9 +1,9 @@
 import os
 import unittest
+from p8_integration_tests.base_test_case import BaseTestCase
 import matplotlib
 matplotlib.use('Agg')
-import matplotlib.pyplot as plt
-from p8_integration_tests.base_test_case import BaseTestCase
+import matplotlib.pyplot as plt  # noqa: E401
 
 
 class TestScripts(BaseTestCase):

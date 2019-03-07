@@ -97,7 +97,8 @@ class ConnectorsTest(BaseTestCase):
         input = sim.Population(SOURCES, sim.SpikeSourceArray(
             spike_times=[[0], [20], [40], [60], [80]]), label="input")
         destination = sim.Population(
-            n_destinations, sim.IF_curr_exp(tau_syn_E=1, tau_refrac=0,  tau_m=1),
+            n_destinations, sim.IF_curr_exp(
+                tau_syn_E=1, tau_refrac=0,  tau_m=1),
             {}, label="destination")
         synapse_type = sim.StaticSynapse(weight=5, delay=1)
         projection = sim.Projection(

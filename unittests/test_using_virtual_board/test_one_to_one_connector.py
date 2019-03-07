@@ -1,10 +1,8 @@
 import spynnaker8 as sim
-from spynnaker.pyNN.exceptions import SpynnakerException
 from p8_integration_tests.base_test_case import BaseTestCase
 
 
-
-class TestFixedNumberPostConnector(BaseTestCase):
+class TestOneToOneConnector(BaseTestCase):
 
     def check_weights(self, projection, sources, destinations):
         weights = projection.get(["weight"], "list")
@@ -41,4 +39,3 @@ class TestFixedNumberPostConnector(BaseTestCase):
 
     def test_many(self):
         self.check_other_connect(500, 500)
-

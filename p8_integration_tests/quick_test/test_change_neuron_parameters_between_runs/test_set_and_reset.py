@@ -119,12 +119,11 @@ class TestNoChange(BaseTestCase):
         inp = sim.Population(1, sim.SpikeSourceArray(
             spike_times=[0]), label="input")
         sim.Projection(inp, pop, sim.OneToOneConnector(),
-                     synapse_type=sim.StaticSynapse(weight=5))
+                       synapse_type=sim.StaticSynapse(weight=5))
         pop.set(i_offset=1.0)
         pop.set(tau_syn_E=1)
         pop.record(["v"])
         sim.run(5)
-        v1 = pop.spinnaker_get_data('v')
         sim.reset()
         inp.set(spike_times=[100])
         sim.run(5)
@@ -138,12 +137,11 @@ class TestNoChange(BaseTestCase):
         inp = sim.Population(1, sim.SpikeSourceArray(
             spike_times=[0]), label="input")
         sim.Projection(inp, pop, sim.OneToOneConnector(),
-                     synapse_type=sim.StaticSynapse(weight=5))
+                       synapse_type=sim.StaticSynapse(weight=5))
         pop.set(i_offset=1.0)
         pop.set(tau_syn_E=1)
         pop.record(["v"])
         sim.run(5)
-        v1 = pop.spinnaker_get_data('v')
         pop.initialize(v=-65)
         sim.reset()
         inp.set(spike_times=[100])
@@ -158,12 +156,11 @@ class TestNoChange(BaseTestCase):
         inp = sim.Population(1, sim.SpikeSourceArray(
             spike_times=[0]), label="input")
         sim.Projection(inp, pop, sim.OneToOneConnector(),
-                     synapse_type=sim.StaticSynapse(weight=5))
+                       synapse_type=sim.StaticSynapse(weight=5))
         pop.set(i_offset=1.0)
         pop.set(tau_syn_E=1)
         pop.record(["v"])
         sim.run(5)
-        v1 = pop.spinnaker_get_data('v')
         sim.reset()
         pop.initialize(v=-65)
         inp.set(spike_times=[100])
@@ -178,7 +175,7 @@ class TestNoChange(BaseTestCase):
         inp = sim.Population(1, sim.SpikeSourceArray(
             spike_times=[0]), label="input")
         sim.Projection(inp, pop, sim.OneToOneConnector(),
-                     synapse_type=sim.StaticSynapse(weight=5))
+                       synapse_type=sim.StaticSynapse(weight=5))
         pop.set(i_offset=1.0)
         pop.set(tau_syn_E=1)
         pop.initialize(v=-60)
@@ -203,7 +200,7 @@ class TestNoChange(BaseTestCase):
         inp = sim.Population(1, sim.SpikeSourceArray(
             spike_times=[0]), label="input")
         sim.Projection(inp, pop, sim.OneToOneConnector(),
-                     synapse_type=sim.StaticSynapse(weight=5))
+                       synapse_type=sim.StaticSynapse(weight=5))
         pop.set(i_offset=1.0)
         pop.set(tau_syn_E=1)
         pop.initialize(v=-60)
@@ -236,7 +233,6 @@ class TestNoChange(BaseTestCase):
         sim.run(3)
         pop.set(tau_syn_E=1)
         sim.run(2)
-        neo = pop.get_data("v")
         v1 = pop.spinnaker_get_data('v')
         try:
             self.check_from_65(v1)

@@ -12,13 +12,13 @@ class TestSampling(BaseTestCase):
         spike_rate = 5
         n_neurons = 3200
         spike_rec_indexes = list(range(0, 1000, 2))\
-                            + list(range(1000, 2000, 3)) \
-                            + list(range(2000, 3000, 1)) \
-                            + list(range(3000, 3200, 4))
+            + list(range(1000, 2000, 3)) \
+            + list(range(2000, 3000, 1)) \
+            + list(range(3000, 3200, 4))
         v_rec_indexes = list(range(0, 1000, 1))\
-                            + list(range(1000, 2000, 3)) \
-                            + list(range(2000, 3000, 4)) \
-                            + list(range(3000, 3200, 2))
+            + list(range(1000, 2000, 3)) \
+            + list(range(2000, 3000, 4)) \
+            + list(range(3000, 3200, 2))
         v_rate = 3
         pop = ps.create_population(sim, n_neurons=n_neurons, label="test",
                                    spike_rate=spike_rate,
