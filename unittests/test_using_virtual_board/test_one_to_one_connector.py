@@ -39,3 +39,16 @@ class TestOneToOneConnector(BaseTestCase):
 
     def test_many(self):
         self.check_other_connect(500, 500)
+
+    def test_get_before_run(self):
+        sim.setup(1.0)
+        pop1 = sim.Population(3, sim.IF_curr_exp(), label="pop1")
+        pop2 = sim.Population(3, sim.IF_curr_exp(), label="pop2")
+        synapse_type = sim.StaticSynapse(weight=5, delay=1)
+        projection = sim.Projection(
+            pop1, pop2, sim.OneToOneConnector(),
+            synapse_type=synapse_type)
+        weights = projection.get(["weight"], "list")
+        sim.run(0)
+        self.assertEqual(3, len(weights))
+        sim.end()
