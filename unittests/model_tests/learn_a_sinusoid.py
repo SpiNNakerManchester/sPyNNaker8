@@ -5,7 +5,7 @@ import unittest
 from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt
 
-num_repeats = 2
+num_repeats = 1
 cycle_time = 1023
 timestep = 1
 p.setup(timestep) # simulation timestep (ms)
@@ -186,7 +186,8 @@ def build_input_spike_train(num_repeats, cycle_time):
 
 pop_in = p.Population(100,
                       p.SpikeSourceArray,
-                      {'spike_times': build_input_spike_train(num_repeats, cycle_time)},
+                      {'spike_times': build_input_spike_train(
+                          num_repeats, cycle_time)},
                       label='pop_in')
 
 pop_rec = p.Population(100,  # number of neurons
@@ -194,7 +195,7 @@ pop_rec = p.Population(100,  # number of neurons
                        label="pop_rec")
 
 # Output population
-pop_out = p.Population(3, # HARDCODE TO 3: One readout; one exc err, one inh err
+pop_out = p.Population(3, # HARDCODED 3: One readout; one exc err, one inh err
                        p.extra_models.ReadoutPoissonNeuron(
                             **readout_neuron_params
                            ),  # Neuron model
@@ -277,7 +278,8 @@ learning_rule = p.STDPMechanism(
     weight=w_rec_rec_dist,
     delay=timestep)
 
-# Create inhibitory recurrent projection from input to hidden neuron using learning rule
+# Create inhibitory recurrent projection from input to hidden neuron using
+# learning rule
 rec_rec_inh = p.Projection(
     pop_rec,
     pop_rec,
@@ -323,7 +325,8 @@ learning_rule = p.STDPMechanism(
     weight=w_rec_out_dist,
     delay=timestep)
 
-# Create inhibitory recurrent projection from recurrent to hidden neuron using learning rule
+# Create inhibitory recurrent projection from recurrent to hidden neuron using
+# learning rule
 rec_out_inh = p.Projection(
     pop_rec,
     pop_out,
