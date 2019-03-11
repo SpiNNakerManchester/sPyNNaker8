@@ -1,3 +1,4 @@
+from __future__ import division
 import spynnaker8 as p
 from p8_integration_tests.base_test_case import BaseTestCase
 from pyNN.utility.plotting import Figure, Panel
@@ -106,13 +107,27 @@ def do_run(plot):
 
 
 class DistanceDependentProbabilityConnectorTest(BaseTestCase):
+
+    def distance(self, i, j):
+        # As just testing 1 and 2 simple square distance is fine
+        return abs((i % 10) - (j % 10)) + abs((i // 10) - (j // 10))
+
+    def check_weights(self, weights, allowed_distance):
+        pairs = [(s, d) for (s, d, _) in weights]
+        for i in range(100):
+            for j in range(100):
+                print(i, j, self.distance(i, j))
+                if self.distance(i, j) < allowed_distance:
+                    self.assertIn((i, j), pairs)
+                else:
+                    self.assertNotIn((i, j), pairs)
+
     def test_run(self):
         v, spikes, pre_weights, post_weights = do_run(plot=False)
-        # any checks go here
         spikes_test = neo_convertor.convert_spikes(spikes)
         self.assertEquals(4970, len(spikes_test))
-        self.assertEquals(5.0, pre_weights[1][0][2])
-        self.assertEquals(2.0, post_weights[-1][0][2])
+        self.check_weights(pre_weights[1], 2.1)
+        self.check_weights(pre_weights[2], 1.1)
 
 
 if __name__ == '__main__':

@@ -52,8 +52,8 @@ def do_run(plot):
     small_world_connector = p.SmallWorldConnector(degree, rewiring)
 
     # Projection for small world grid
-    p.Projection(small_world, small_world, small_world_connector,
-                 p.StaticSynapse(weight=2.0, delay=5))
+    sw_pro = p.Projection(small_world, small_world, small_world_connector,
+                          p.StaticSynapse(weight=2.0, delay=5))
 
     small_world.record(['v', 'spikes'])
 
@@ -61,7 +61,7 @@ def do_run(plot):
 
     v = small_world.get_data('v')
     spikes = small_world.get_data('spikes')
-
+    weights = sw_pro.get('weight', 'list')
     if plot:
         Figure(
             # raster plot of the presynaptic neuron spike times
@@ -79,18 +79,56 @@ def do_run(plot):
 
     p.end()
 
-    return v, spikes
+    return v, spikes, weights
 
 
 class SmallWorldConnectorTest(BaseTestCase):
+    S_COUNTS = [(0, 4), (1, 6), (2, 6), (3, 6), (4, 4),
+                (5, 6), (6, 9), (7, 9), (8, 9), (9, 6),
+                (10, 6), (11, 9), (12, 9), (13, 9), (14, 6),
+                (15, 6), (16, 9), (17, 9), (18, 9), (19, 6),
+                (20, 4), (21, 6), (22, 6), (23, 6), (24, 4)]
+
+    def directly_connected(self, weights):
+        from collections import defaultdict
+        singles = defaultdict(set)
+        for (s, d, _) in weights:
+            singles[s].add(d)
+            singles[d].add(s)
+        return singles
+
+    def next_connected(self, previous, single):
+        current = dict()
+        for i in range(25):
+            current[i] = set(previous[i])
+            for j in previous[i]:
+                current[i].update(single[j])
+        return current
+
+    def check_weights(self, weights):
+        s_list = [s for (s, _, _) in weights]
+        s_counts = [(i, s_list.count(i)) for i in range(25)]
+        self.assertEqual(self.S_COUNTS, s_counts)
+        single_connected = self.directly_connected(weights)
+        two_step_connected = self.next_connected(
+            single_connected, single_connected)
+        three_step_connected = self.next_connected(
+            two_step_connected, single_connected)
+
+        # There is a minor chance this fails so if it ever does add a skip
+        for i in range(25):
+            self.assertEqual(25, len(three_step_connected[i]))
+
     def test_run(self):
-        v, spikes = do_run(plot=False)
+        v, spikes, weights = do_run(plot=False)
         # any checks go here
         v_test = neo_convertor.convert_data(v, name='v')
         spikes_test = neo_convertor.convert_data(spikes, name='spikes')
         self.assertEquals(25000, len(v_test))
+        # Not sure checking spike len is telling us much
         self.assertLess(7750, len(spikes_test))
         self.assertGreater(8250, len(spikes_test))
+        self.check_weights(weights)
 
 
 if __name__ == '__main__':
