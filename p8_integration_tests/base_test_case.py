@@ -91,6 +91,11 @@ class BaseTestCase(unittest.TestCase):
                         results.append("\n")
         return "".join(results)
 
+    def get_provenance_files(self):
+        provenance_file_path = globals_variables.get_simulator() \
+            ._provenance_file_path
+        return os.listdir(provenance_file_path)
+
     def get_run_time_of_BufferExtractor(self):
         return self.get_provenance("Execution", "BufferExtractor")
 

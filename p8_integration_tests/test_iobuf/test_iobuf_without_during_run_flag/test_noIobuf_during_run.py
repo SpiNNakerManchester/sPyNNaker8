@@ -3,32 +3,33 @@ Synfirechain-like example
 """
 import os
 from spinn_front_end_common.utilities import globals_variables
-import spynnaker8 as p
+import spynnaker8 as sim
 from p8_integration_tests.base_test_case import BaseTestCase
 
 
-class SynfireIfCurrExp(BaseTestCase):
+class TestNoIobufDuringRun(BaseTestCase):
 
-    def test_run(self):
-        p.setup(timestep=1.0, min_delay=1.0, max_delay=144.0)
-        p.Population(10, p.IF_curr_exp(), label='pop_1')
-        p.run(500)
-
+    def check_for_oibufs(self):
         prov_path = globals_variables.get_simulator()._provenance_file_path
-        p.end()
 
         files = os.listdir(prov_path)
-        found_iobuf = False
 
         for protential_iobuf_file in files:
             if ("iobuf" in protential_iobuf_file and
                     ".txt" in protential_iobuf_file):
-                found_iobuf = True
+                return True
+        return False
 
-        if not found_iobuf:
-            raise Exception("failed to write iobuf")
+    def test_run(self):
+        sim.setup(timestep=1.0, min_delay=1.0, max_delay=144.0)
+        sim.Population(10, sim.IF_curr_exp(), label='pop_1')
+        sim.run(500)
+
+        self.assertFalse(self.check_for_oibufs())
+        sim.end()
+        self.assertFalse(self.check_for_oibufs())
 
 
 if __name__ == '__main__':
-    x = SynfireIfCurrExp()
+    x = TestNoIobufDuringRun()
     x.test_run()
