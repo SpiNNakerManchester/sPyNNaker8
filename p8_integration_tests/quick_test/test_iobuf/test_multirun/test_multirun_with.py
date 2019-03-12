@@ -15,24 +15,40 @@ class TestIobuffMultirun(BaseTestCase):
         sim.setup(timestep=1.0, min_delay=1.0, max_delay=144.0)
         prov_path = globals_variables.get_simulator()._provenance_file_path
         sim.Population(10, sim.IF_curr_exp(), label='pop_1')
-        sim.run(500)
+        sim.run(50)
         size1 = self.check_size(prov_path)
-        sim.run(500)
+        sim.run(50)
         size2 = self.check_size(prov_path)
-        sim.run(500)
+        self.assertGreater(size2, size1)
+        sim.run(50)
         size3 = self.check_size(prov_path)
+        self.assertGreater(size3, size2)
+
+        # Soft reset so same provenance
         sim.reset()
-        sim.run(500)
+        sim.run(50)
         size4 = self.check_size(prov_path)
-        sim.run(500)
+        self.assertGreater(size4, size3)
+        sim.run(50)
         size5 = self.check_size(prov_path)
+        self.assertGreater(size5, size4)
+
+        # hard reset so new provenance
         sim.reset()
         sim.Population(10, sim.IF_curr_exp(), label='pop_1')
-        sim.run(500)
+        sim.run(50)
         prov_patha = globals_variables.get_simulator()._provenance_file_path
+        self.assertNotEqual(prov_path, prov_patha)
         size6 = self.check_size(prov_patha)
+        # Should write the same thing again
+        self.assertEquals(size1, size6)
         sim.end()
-        size7 = self.check_size(prov_patha)
+
+        #Should not add anything on end.
+        size7 = self.check_size(prov_path)
+        self.assertEqual(size5, size7)
         size8 = self.check_size(prov_patha)
+        self.assertEqual(size8, size6)
+
 
         print(size1, size2, size3, size4, size5, size6, size7, size8)
