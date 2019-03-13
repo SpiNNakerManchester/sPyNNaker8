@@ -21,9 +21,3 @@ class TestOne(BaseTestCase):
         if count1 == 0:
             count1 = 1
             raise JobDestroyedError("Destroyed")
-
-    def test_fail_once(self):
-        global count2
-        if count2 == 0:
-            count2 = 1
-            self.assertEquals(count2, 3)
