@@ -1,17 +1,29 @@
 from flaky import flaky
+from spalloc.job import JobDestroyedError
 from p8_integration_tests.base_test_case import BaseTestCase
 
+count1 = 0
+count2 = 0
 
-@flaky(max_runs=4, min_passes=2)
+
+def is_job_destroyed(err, *args):
+    return issubclass(err[0], JobDestroyedError)
+
+
+@flaky(max_runs=3, rerun_filter=is_job_destroyed)
 class TestOne(BaseTestCase):
-
-    count1 = 0
 
     def test_always_pass(self):
         return
 
-    def fail_once(self):
+    def test_destory_once(self):
         global count1
         if count1 == 0:
             count1 = 1
-            raise Exception("Pop One")
+            raise JobDestroyedError("Destroyed")
+
+    def test_fail_once(self):
+        global count2
+        if count2 == 0:
+            count2 = 1
+            self.assertEquals(count2, 3)
