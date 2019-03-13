@@ -10,14 +10,22 @@ def is_job_destroyed(err, *args):
     return issubclass(err[0], JobDestroyedError)
 
 
-@flaky(max_runs=3)
 class TestOne(BaseTestCase):
 
+    @flaky(max_runs=3, rerun_filter=is_job_destroyed)
     def test_always_pass(self):
         return
 
+    @flaky(max_runs=3, rerun_filter=is_job_destroyed)
     def test_destory_once(self):
         global count1
         if count1 == 0:
             count1 = 1
             raise JobDestroyedError("Destroyed")
+
+    @flaky(max_runs=3, rerun_filter=is_job_destroyed)
+    def test_fail_once(self):
+        global count2
+        if count2 == 0:
+            count2 = 1
+            self.assertEquals(count2, 3)
