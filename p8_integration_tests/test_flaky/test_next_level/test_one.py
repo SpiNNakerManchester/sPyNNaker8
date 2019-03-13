@@ -10,7 +10,7 @@ def is_job_destroyed(err, *args):
     return issubclass(err[0], JobDestroyedError)
 
 
-@flaky(max_runs=3, rerun_filter=is_job_destroyed)
+@flaky(max_runs=3)
 class TestOne(BaseTestCase):
 
     def test_always_pass(self):
