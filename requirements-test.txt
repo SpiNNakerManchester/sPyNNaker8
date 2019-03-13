@@ -1,5 +1,6 @@
 -r requirements.txt
 flake8
+flaky
 # pytest will be brought in by pytest-cov
 pytest-cov
 pytest-timeout
