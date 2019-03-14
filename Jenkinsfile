@@ -90,7 +90,7 @@ pipeline {
         }
         stage('No Destroyed') {
             steps {
-                sh 'py.test p8_integration_tests/test_destroyed_checker --forked --instafail --timeout 120'
+                sh 'py.test p8_integration_tests/destroyed_checker_test --forked --instafail --timeout 120'
             }
         }
     }
