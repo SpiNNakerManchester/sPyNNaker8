@@ -6,6 +6,8 @@ from p8_integration_tests.base_test_case import BaseTestCase
 class Synfire2RunExtractionIfCurrExp(BaseTestCase):
 
     def do_run(self):
+        self.known_issue(
+            "https://github.com/SpiNNakerManchester/SpiNNMan/issues/155")
         with LogCapture() as lc:
             sim.setup(1.0)
             pop = sim.Population(1, sim.IF_curr_exp, {}, label="pop")
