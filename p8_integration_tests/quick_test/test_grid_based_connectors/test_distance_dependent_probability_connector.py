@@ -122,12 +122,15 @@ class DistanceDependentProbabilityConnectorTest(BaseTestCase):
                 else:
                     self.assertNotIn((i, j), pairs)
 
-    def test_run(self):
+    def do_run(self):
         v, spikes, pre_weights, post_weights = do_run(plot=False)
         spikes_test = neo_convertor.convert_spikes(spikes)
         self.assertEquals(4970, len(spikes_test))
         self.check_weights(pre_weights[1], 2.1)
         self.check_weights(pre_weights[2], 1.1)
+
+    def test_do_run(self):
+        self.runsafe(self.do_run)
 
 
 if __name__ == '__main__':

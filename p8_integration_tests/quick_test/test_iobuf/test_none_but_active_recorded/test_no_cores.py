@@ -18,7 +18,7 @@ class TestNoIobufDuringRun(BaseTestCase):
                 return True
         return False
 
-    def test_run(self):
+    def do_run(self):
         sim.setup(timestep=1.0, min_delay=1.0, max_delay=144.0)
         sim.Population(10, sim.IF_curr_exp(), label='pop_1')
         sim.run(500)
@@ -27,6 +27,9 @@ class TestNoIobufDuringRun(BaseTestCase):
         self.assertFalse(self.check_for_oibufs(prov_path))
         sim.end()
         self.assertFalse(self.check_for_oibufs(prov_path))
+
+    def test_do_run(self):
+        self.runsafe(self.do_run)
 
 
 if __name__ == '__main__':

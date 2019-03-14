@@ -20,7 +20,7 @@ class TestDebug(BaseTestCase):
     """
     that it does not crash in debug mode. All reports on.
     """
-    def test_debug(self):
+    def debug(self):
         reports = [
             # write_energy_report
             "Detailed_energy_report.rpt",
@@ -80,6 +80,9 @@ class TestDebug(BaseTestCase):
         print(found)
         for report in reports:
             self.assertIn(report, found)
+
+    def test_debug(self):
+        self.runsafe(self.debug)
 
 
 if __name__ == '__main__':

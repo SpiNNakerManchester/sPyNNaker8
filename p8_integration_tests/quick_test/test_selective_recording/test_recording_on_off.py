@@ -11,7 +11,7 @@ pickle_path = os.path.join(current_file_path, "data.pickle")
 
 class TestRecordingOnOff(BaseTestCase):
 
-    def test_record_all(self):
+    def record_all(self):
         sim.setup(timestep=1)
         simtime = 100
         input = sim.Population(1, sim.SpikeSourceArray(spike_times=[0, 30]),
@@ -58,7 +58,10 @@ class TestRecordingOnOff(BaseTestCase):
         assert len(spikes_neo.segments[0].filter(name="v")) == 0
         assert len(gsyn_neo.segments[0].filter(name="gsyn_exc")) > 0
 
-    def test_record_v(self):
+    def test_record_all(self):
+        self.runsafe(self.record_all)
+
+    def record_v(self):
         sim.setup(timestep=1)
         simtime = 100
         input = sim.Population(1, sim.SpikeSourceArray(spike_times=[0, 30]),
@@ -93,3 +96,6 @@ class TestRecordingOnOff(BaseTestCase):
             pop.write_data(pickle_path, "spikes")
         with self.assertRaises(ConfigurationException):
             pop.write_data(pickle_path, "gsyn_exc")
+
+    def test_record_v(self):
+        self.runsafe(self.record_v)

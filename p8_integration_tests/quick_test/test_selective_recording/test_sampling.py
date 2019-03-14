@@ -5,7 +5,7 @@ from p8_integration_tests.scripts.patternSpiker import PatternSpiker
 
 class TestSampling(BaseTestCase):
 
-    def test_small(self):
+    def small(self):
         ps = PatternSpiker()
         sim.setup(timestep=1)
         simtime = 100
@@ -24,7 +24,10 @@ class TestSampling(BaseTestCase):
             v_rate=v_rate, v_rec_indexes=v_rec_indexes, is_view=False)
         sim.end()
 
-    def test_multirun(self):
+    def test_small(self):
+        self.runsafe(self.small)
+
+    def multirun(self):
         ps = PatternSpiker()
         sim.setup(timestep=1)
         simtime = 32
@@ -47,7 +50,10 @@ class TestSampling(BaseTestCase):
                  v_rate=v_rate, v_rec_indexes=v_rec_indexes, is_view=True)
         sim.end()
 
-    def test_different_views(self):
+    def test_multirun(self):
+        self.runsafe(self.multirun)
+
+    def different_views(self):
         ps = PatternSpiker()
         sim.setup(timestep=1)
         simtime = 100
@@ -58,7 +64,10 @@ class TestSampling(BaseTestCase):
                  missing=True)
         sim.end()
 
-    def test_standard(self):
+    def test_different_views(self):
+        self.runsafe(self.different_views)
+
+    def standard(self):
         ps = PatternSpiker()
         sim.setup(timestep=1)
         simtime = 100
@@ -66,3 +75,6 @@ class TestSampling(BaseTestCase):
         sim.run(simtime)
         ps.check(pop, simtime)
         sim.end()
+
+    def test_standard(self):
+        self.runsafe(self.standard)

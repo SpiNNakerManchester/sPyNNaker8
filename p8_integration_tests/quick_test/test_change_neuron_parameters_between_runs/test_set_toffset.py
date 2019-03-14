@@ -50,7 +50,7 @@ class TestSetTOffset(BaseTestCase):
                 240., 245., 250., 255., 260., 265., 270., 275., 280., 285.,
                 290., 295.]
 
-    def test_one_core(self):
+    def one_core(self):
         n_neurons = 6
         n_cores = 1
         neo = do_run(n_neurons, n_cores, 1, 2)
@@ -58,7 +58,10 @@ class TestSetTOffset(BaseTestCase):
         for spiketrain in spiketrains:
             assert numpy.array_equal(spiketrain.magnitude, self.expected)
 
-    def test_three_cores(self):
+    def test_one_core(self):
+        self.runsafe(self.one_core)
+
+    def three_cores(self):
         n_neurons = 6
         n_cores = 3
         neo = do_run(n_neurons, n_cores, 1, 2)
@@ -69,6 +72,9 @@ class TestSetTOffset(BaseTestCase):
         except AssertionError:
             self.known_issue(
                 "https://github.com/SpiNNakerManchester/sPyNNaker/issues/603")
+
+    def test_three_cores(self):
+        self.runsafe(self.three_cores)
 
 
 if __name__ == '__main__':

@@ -5,7 +5,7 @@ from p8_integration_tests.scripts.patternSpiker import PatternSpiker
 
 class TestSampling(BaseTestCase):
 
-    def test_big(self):
+    def big(self):
         ps = PatternSpiker()
         sim.setup(timestep=1)
         simtime = 10000
@@ -28,3 +28,6 @@ class TestSampling(BaseTestCase):
         ps.check(pop, simtime,
                  spike_rate=spike_rate, spike_rec_indexes=spike_rec_indexes,
                  v_rate=v_rate, v_rec_indexes=v_rec_indexes, is_view=False)
+
+    def test_big(self):
+        self.runsafe(self.big)

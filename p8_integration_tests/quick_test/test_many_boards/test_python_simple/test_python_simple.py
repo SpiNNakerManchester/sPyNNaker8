@@ -5,7 +5,7 @@ from p8_integration_tests.scripts.manyBoards import ManyBoards
 
 class TestPythonSimple(BaseTestCase):
 
-    def test_run(self):
+    def do_run(self):
         me = ManyBoards()
         t_before = time.time()
         sim = me.do_run(n_boards=2, n_neurons=255, simtime=300)
@@ -23,3 +23,6 @@ class TestPythonSimple(BaseTestCase):
             "total run time was: {} seconds\n".format(t_after_check-t_before),
             "python_simple_n_boards=2_n_neurons=255_simtime=300")
         sim.end()
+
+    def test_do_run(self):
+        self.runsafe(self.do_run)

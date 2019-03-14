@@ -11,7 +11,7 @@ class TestIobuffMultirun(BaseTestCase):
             prov_path, "iobuf_for_chip_0_0_processor_id_3.txt")
         return os.path.getsize(iofile)
 
-    def test_run(self):
+    def do_run(self):
         sim.setup(timestep=1.0, min_delay=1.0, max_delay=144.0)
         prov_path = globals_variables.get_simulator()._provenance_file_path
         sim.Population(10, sim.IF_curr_exp(), label='pop_1')
@@ -44,11 +44,13 @@ class TestIobuffMultirun(BaseTestCase):
         self.assertEquals(size1, size6)
         sim.end()
 
-        #Should not add anything on end.
+        # Should not add anything on end.
         size7 = self.check_size(prov_path)
         self.assertEqual(size5, size7)
         size8 = self.check_size(prov_patha)
         self.assertEqual(size8, size6)
 
-
         print(size1, size2, size3, size4, size5, size6, size7, size8)
+
+    def test_do_run(self):
+        self.runsafe(self.do_run)

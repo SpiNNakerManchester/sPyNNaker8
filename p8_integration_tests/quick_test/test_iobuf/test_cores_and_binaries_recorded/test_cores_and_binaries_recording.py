@@ -1,6 +1,3 @@
-"""
-Synfirechain-like example
-"""
 from unittest import SkipTest
 import spynnaker8 as sim
 from p8_integration_tests.base_test_case import BaseTestCase
@@ -12,7 +9,7 @@ neurons_per_core = n_neurons / 2
 
 class TestCoresAndBinariesRecording(BaseTestCase):
 
-    def test_run(self):
+    def do_run(self):
         sim.setup(timestep=1.0)
         sim.set_number_of_neurons_per_core(sim.IF_curr_exp, 100)
 
@@ -32,7 +29,8 @@ class TestCoresAndBinariesRecording(BaseTestCase):
         # assuming placements as expected
         # Not delayed
         xmls = {"0_0_3_input_delayed_0_0.xml",
-                # extract_iobuf_from_binary_types = reverse_iptag_multicast_source.aplx
+                # extract_iobuf_from_binary_types =
+                # reverse_iptag_multicast_source.aplx
                 "0_0_4_input_0_0.xml",
                 # extract_iobuf_from_binary_types = IF_curr_exp.aplx
                 "0_0_5_pop_1_0_99.xml", "0_0_6_pop_1_100_199.xml",
@@ -48,3 +46,6 @@ class TestCoresAndBinariesRecording(BaseTestCase):
                 "iobuf_for_chip_0_0_processor_id_6.txt", provenance_files)
         else:
             raise SkipTest("Unexpected placements {}".format(provenance_files))
+
+    def test_do_run(self):
+        self.runsafe(self.do_run)

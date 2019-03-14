@@ -21,7 +21,7 @@ class TestRecordableSpikeInjector(BaseTestCase):
             time.sleep(0.001)
         print("Finished")
 
-    def test_recordable_spike_injector(self):
+    def recordable_spike_injector(self):
         p.setup(1.0)
         pop = p.Population(
             self._n_neurons, p.external_devices.SpikeInjector(), label="input")
@@ -54,6 +54,9 @@ class TestRecordableSpikeInjector(BaseTestCase):
                           .format(index, count))
             else:
                 assert index in spike_trains
+
+    def test_recordable_spike_injector(self):
+        self.runsafe(self.recordable_spike_injector)
 
 
 if __name__ == "__main__":

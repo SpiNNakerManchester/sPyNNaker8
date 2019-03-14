@@ -44,14 +44,23 @@ class TestScripts(BaseTestCase):
                     print("Error on {}".format(script))
                     raise ex
 
-    def test_learning(self):
+    def learning(self):
         self.check_directory("learning")
 
-    def test_balanced_random(self):
+    def test_learning(self):
+        self.runsafe(self.learning)
+
+    def balanced_random(self):
         self.check_directory("balanced_random")
 
-    def test_synfire(self):
+    def test_balanced_random(self):
+        self.runsafe(self.balanced_random)
+
+    def synfire(self):
         self.check_directory("synfire")
+
+    def test_synfire(self):
+        self.runsafe(self.synfire)
 
 
 if __name__ == '__main__':

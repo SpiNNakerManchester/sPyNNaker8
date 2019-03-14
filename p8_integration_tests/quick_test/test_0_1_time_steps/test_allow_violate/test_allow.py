@@ -18,7 +18,7 @@ class TestAllow(BaseTestCase):
         2. Synfire like spike pattern
     """
 
-    def test_allow(self):
+    def allow(self):
         try:
             synfire_run.do_run(
                 n_neurons, max_delay=14.4, time_step=0.1,
@@ -31,3 +31,6 @@ class TestAllow(BaseTestCase):
         # System intentional overload so may error
         except SpinnmanTimeoutException as ex:
             raise SkipTest(ex)
+
+    def test_allow(self):
+        self.runsafe(self.allow)

@@ -110,14 +110,17 @@ class ConnectorsTest(BaseTestCase):
             n_destinations)
         sim.end()
 
-    def test_one_to_one(self):
+    def one_to_one(self):
         connections = min(SOURCES, DESTINATIONS)
         with_replacement = False
         self.check_connector(
             sim.OneToOneConnector(), connections,  with_replacement,
             type="one")
 
-    def test_one_to_one_short_destination(self):
+    def test_one_to_one(self):
+        self.runsafe(self.one_to_one)
+
+    def one_to_one_short_destination(self):
         n_destinations = SOURCES-1
         connections = min(SOURCES, n_destinations)
         with_replacement = False
@@ -125,7 +128,10 @@ class ConnectorsTest(BaseTestCase):
             sim.OneToOneConnector(), connections, with_replacement,
             type="one", n_destinations=4)
 
-    def test_total_connector_with_replacement(self):
+    def test_one_to_one_short_destination(self):
+        self.runsafe(self.one_to_one_short_destination)
+
+    def total_connector_with_replacement(self):
         connections = 20
         with_replacement = True
         self.check_connector(
@@ -133,7 +139,10 @@ class ConnectorsTest(BaseTestCase):
                 connections, with_replacement=with_replacement),
             connections,  with_replacement, type="total")
 
-    def test_total_connector_no_replacement(self):
+    def test_total_connector_with_replacement(self):
+        self.runsafe(self.total_connector_with_replacement)
+
+    def total_connector_no_replacement(self):
         connections = 20
         with_replacement = False
         self.check_connector(
@@ -141,7 +150,10 @@ class ConnectorsTest(BaseTestCase):
                 connections, with_replacement=with_replacement),
             connections,  with_replacement, type="total")
 
-    def test_total_connector_with_replacement_many(self):
+    def test_total_connector_no_replacement(self):
+        self.runsafe(self.total_connector_no_replacement)
+
+    def total_connector_with_replacement_many(self):
         connections = 60
         with_replacement = True
         self.check_connector(
@@ -149,7 +161,10 @@ class ConnectorsTest(BaseTestCase):
                 connections, with_replacement=with_replacement),
             connections,  with_replacement, type="total")
 
-    def test_total_connector_too_many(self):
+    def test_total_connector_with_replacement_many(self):
+        self.runsafe(self.total_connector_with_replacement_many)
+
+    def total_connector_too_many(self):
         connections = 60
         with_replacement = False
         with self.assertRaises(SpynnakerException):
@@ -157,3 +172,6 @@ class ConnectorsTest(BaseTestCase):
                 sim.FixedTotalNumberConnector(
                     connections, with_replacement=with_replacement),
                 connections,  with_replacement, type="total")
+
+    def test_total_connector_too_many(self):
+        self.runsafe(self.total_connector_too_many)

@@ -4,7 +4,7 @@ from p8_integration_tests.base_test_case import BaseTestCase
 
 class TestChangeSpikeSourcePoisson(BaseTestCase):
 
-    def test_with_reset(self):
+    def with_reset(self):
         p.setup(1.0)
 
         inp = p.Population(
@@ -19,7 +19,10 @@ class TestChangeSpikeSourcePoisson(BaseTestCase):
         p.end()
         assert len(spikes1) > len(spikes2) * 5
 
-    def test_no_reset(self):
+    def test_with_reset(self):
+        self.runsafe(self.with_reset)
+
+    def no_reset(self):
         p.setup(1.0)
 
         inp = p.Population(
@@ -32,3 +35,6 @@ class TestChangeSpikeSourcePoisson(BaseTestCase):
         spikes2 = inp.spinnaker_get_data('spikes')
         assert len(spikes1) > (len(spikes2)-len(spikes1)) * 5
         p.end()
+
+    def test_no_reset(self):
+        self.runsafe(self.no_reset)

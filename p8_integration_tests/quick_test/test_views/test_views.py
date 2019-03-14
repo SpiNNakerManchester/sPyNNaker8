@@ -5,7 +5,7 @@ from p8_integration_tests.base_test_case import BaseTestCase
 
 class TestViews(BaseTestCase):
 
-    def test_set_with_views(self):
+    def set_with_views(self):
         sim.setup(1.0)
         pop = sim.Population(5, sim.IF_curr_exp, {}, label="pop")
         pop.set(i_offset=1.0)
@@ -23,3 +23,6 @@ class TestViews(BaseTestCase):
             -60., -58.29315186, -56.66952515, -55.12509155, -53.65597534,
             -65., -64.02465820, -63.09686279, -62.21432495, -61.37481689]
         numpy.allclose(v1[:, 2], expected)
+
+    def test_set_with_views(self):
+        self.runsafe(self.set_with_views)

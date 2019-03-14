@@ -8,7 +8,7 @@ from p8_integration_tests.base_test_case import BaseTestCase
 
 class TestCoresAndBinariesRecording(BaseTestCase):
 
-    def test_run(self):
+    def do_run(self):
         sim.setup(timestep=1.0)
         sim.set_number_of_neurons_per_core(sim.IF_curr_exp, 100)
 
@@ -40,3 +40,6 @@ class TestCoresAndBinariesRecording(BaseTestCase):
                 "iobuf_for_chip_0_0_processor_id_6.txt", provenance_files)
         else:
             raise SkipTest("Unexpected placements {}".format(provenance_files))
+
+    def test_do_run(self):
+        self.runsafe(self.do_run)

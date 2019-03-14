@@ -24,7 +24,7 @@ synfire_run = SynfireRunner()
 
 class TestSynfirePoissonIfCurrExpParameter(BaseTestCase):
 
-    def test_synfire_poisson_if_curr_exp_parameter(self):
+    def synfire_poisson_if_curr_exp_parameter(self):
         synfire_run.do_run(n_neurons, neurons_per_core=neurons_per_core,
                            run_times=run_times, input_class=input_class,
                            start_time=start_time, duration=duration, rate=rate,
@@ -35,6 +35,9 @@ class TestSynfirePoissonIfCurrExpParameter(BaseTestCase):
         # Check spikes increase in second half by at least a factor of ten
         hist = numpy.histogram(spikes[:, 1], bins=[0, 5000, 10000])
         self.assertLess(hist[0][0] * 10, hist[0][1])
+
+    def test_synfire_poisson_if_curr_exp_parameter(self):
+        self.runsafe(self.synfire_poisson_if_curr_exp_parameter)
 
 
 if __name__ == '__main__':

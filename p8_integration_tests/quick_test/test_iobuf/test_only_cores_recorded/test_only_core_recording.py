@@ -1,14 +1,10 @@
-"""
-Synfirechain-like example
-"""
-from unittest import SkipTest
 import spynnaker8 as sim
 from p8_integration_tests.base_test_case import BaseTestCase
 
 
 class TestOnlyCoresRecording(BaseTestCase):
 
-    def test_run(self):
+    def do_run(self):
         sim.setup(timestep=1.0)
         sim.set_number_of_neurons_per_core(sim.IF_curr_exp, 100)
 
@@ -37,3 +33,6 @@ class TestOnlyCoresRecording(BaseTestCase):
             "iobuf_for_chip_0_0_processor_id_6.txt", provenance_files)
         self.assertIn(
             "iobuf_for_chip_1_1_processor_id_1.txt", provenance_files)
+
+    def test_do_run(self):
+        self.runsafe(self.do_run)

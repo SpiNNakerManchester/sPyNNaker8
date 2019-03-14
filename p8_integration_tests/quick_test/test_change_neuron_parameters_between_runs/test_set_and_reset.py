@@ -19,7 +19,7 @@ class TestNoChange(BaseTestCase):
         assert -57.91070556640625 == v[3][2]
         assert -57.28106689453125 == v[4][2]
 
-    def test_change_nothing(self):
+    def change_nothing(self):
         sim.setup(1.0)
         pop = sim.Population(1, sim.IF_curr_exp, {}, label="pop")
         pop.set(i_offset=1.0)
@@ -34,7 +34,10 @@ class TestNoChange(BaseTestCase):
         self.check_from_65(v2)
         sim.end()
 
-    def test_change_pre_reset(self):
+    def test_change_nothing(self):
+        self.runsafe(self.change_nothing)
+
+    def change_pre_reset(self):
         sim.setup(1.0)
         pop = sim.Population(1, sim.IF_curr_exp, {}, label="pop")
         pop.set(i_offset=1.0)
@@ -54,7 +57,10 @@ class TestNoChange(BaseTestCase):
                 "https://github.com/SpiNNakerManchester/sPyNNaker/issues/599")
         sim.end()
 
-    def test_run_set_run_reset(self):
+    def test_change_pre_reset(self):
+        self.runsafe(self.change_pre_reset)
+
+    def run_set_run_reset(self):
         sim.setup(1.0)
         pop = sim.Population(1, sim.IF_curr_exp, {}, label="pop")
         pop.set(i_offset=1.0)
@@ -74,7 +80,10 @@ class TestNoChange(BaseTestCase):
         print(v1)
         print(v2)
 
-    def test_run_set_run_reset_set(self):
+    def test_run_set_run_reset(self):
+        self.runsafe(self.run_set_run_reset)
+
+    def run_set_run_reset_set(self):
         sim.setup(1.0)
         pop = sim.Population(1, sim.IF_curr_exp, {}, label="pop")
         pop.set(i_offset=1.0)
@@ -97,7 +106,10 @@ class TestNoChange(BaseTestCase):
                 "https://github.com/SpiNNakerManchester/sPyNNaker/issues/599")
         sim.end()
 
-    def test_change_post_set(self):
+    def test_run_set_run_reset_set(self):
+        self.runsafe(self.run_set_run_reset_set)
+
+    def change_post_set(self):
         sim.setup(1.0)
         pop = sim.Population(1, sim.IF_curr_exp, {}, label="pop")
         pop.set(i_offset=1.0)
@@ -113,7 +125,10 @@ class TestNoChange(BaseTestCase):
         self.check_from_65(v2)
         sim.end()
 
-    def test_no_change_v(self):
+    def test_change_post_set(self):
+        self.runsafe(self.change_post_set)
+
+    def no_change_v(self):
         sim.setup(1.0)
         pop = sim.Population(1, sim.IF_curr_exp, {}, label="pop")
         inp = sim.Population(1, sim.SpikeSourceArray(
@@ -124,6 +139,28 @@ class TestNoChange(BaseTestCase):
         pop.set(tau_syn_E=1)
         pop.record(["v"])
         sim.run(5)
+        sim.reset()
+        inp.set(spike_times=[100])
+        sim.run(5)
+        v2 = pop.spinnaker_get_data('v')
+        self.check_from_65(v2)
+        sim.end()
+
+    def test_no_change_v(self):
+        self.runsafe(self.no_change_v)
+
+    def change_v_before(self):
+        sim.setup(1.0)
+        pop = sim.Population(1, sim.IF_curr_exp, {}, label="pop")
+        inp = sim.Population(1, sim.SpikeSourceArray(
+            spike_times=[0]), label="input")
+        sim.Projection(inp, pop, sim.OneToOneConnector(),
+                       synapse_type=sim.StaticSynapse(weight=5))
+        pop.set(i_offset=1.0)
+        pop.set(tau_syn_E=1)
+        pop.record(["v"])
+        sim.run(5)
+        pop.initialize(v=-65)
         sim.reset()
         inp.set(spike_times=[100])
         sim.run(5)
@@ -132,6 +169,9 @@ class TestNoChange(BaseTestCase):
         sim.end()
 
     def test_change_v_before(self):
+        self.runsafe(self.change_v_before)
+
+    def change_v_after(self):
         sim.setup(1.0)
         pop = sim.Population(1, sim.IF_curr_exp, {}, label="pop")
         inp = sim.Population(1, sim.SpikeSourceArray(
@@ -142,8 +182,8 @@ class TestNoChange(BaseTestCase):
         pop.set(tau_syn_E=1)
         pop.record(["v"])
         sim.run(5)
-        pop.initialize(v=-65)
         sim.reset()
+        pop.initialize(v=-65)
         inp.set(spike_times=[100])
         sim.run(5)
         v2 = pop.spinnaker_get_data('v')
@@ -151,25 +191,9 @@ class TestNoChange(BaseTestCase):
         sim.end()
 
     def test_change_v_after(self):
-        sim.setup(1.0)
-        pop = sim.Population(1, sim.IF_curr_exp, {}, label="pop")
-        inp = sim.Population(1, sim.SpikeSourceArray(
-            spike_times=[0]), label="input")
-        sim.Projection(inp, pop, sim.OneToOneConnector(),
-                       synapse_type=sim.StaticSynapse(weight=5))
-        pop.set(i_offset=1.0)
-        pop.set(tau_syn_E=1)
-        pop.record(["v"])
-        sim.run(5)
-        sim.reset()
-        pop.initialize(v=-65)
-        inp.set(spike_times=[100])
-        sim.run(5)
-        v2 = pop.spinnaker_get_data('v')
-        self.check_from_65(v2)
-        sim.end()
+        self.runsafe(self.change_v_after)
 
-    def test_no_change_with_v_set(self):
+    def no_change_with_v_set(self):
         sim.setup(1.0)
         pop = sim.Population(1, sim.IF_curr_exp, {}, label="pop")
         inp = sim.Population(1, sim.SpikeSourceArray(
@@ -194,7 +218,10 @@ class TestNoChange(BaseTestCase):
         self.check_from_60(v2)
         sim.end()
 
-    def test_reset_set_with_v_set(self):
+    def test_no_change_with_v_set(self):
+        self.runsafe(self.no_change_with_v_set)
+
+    def reset_set_with_v_set(self):
         sim.setup(1.0)
         pop = sim.Population(1, sim.IF_curr_exp, {}, label="pop")
         inp = sim.Population(1, sim.SpikeSourceArray(
@@ -224,7 +251,10 @@ class TestNoChange(BaseTestCase):
                 "https://github.com/SpiNNakerManchester/sPyNNaker/issues/599")
         sim.end()
 
-    def test_multi_core(self):
+    def test_reset_set_with_v_set(self):
+        self.runsafe(self.reset_set_with_v_set)
+
+    def multi_core(self):
         sim.setup(1.0)
         sim.set_number_of_neurons_per_core(sim.IF_curr_exp, 2)
         pop = sim.Population(6, sim.IF_curr_exp(i_offset=1, tau_syn_E=1), {},
@@ -240,3 +270,6 @@ class TestNoChange(BaseTestCase):
             self.known_issue(
                 "https://github.com/SpiNNakerManchester/sPyNNaker/issues/603")
         sim.end()
+
+    def test_multi_core(self):
+        self.runsafe(self.multi_core)

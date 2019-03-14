@@ -106,13 +106,17 @@ def do_run(plot):
 
 
 class ArrayConnectorTest(BaseTestCase):
-    def test_run(self):
+
+    def a_run(self):
         v, spikes, v2, spikes2 = do_run(plot=False)
         # any checks go here
         spikes_test = neo_convertor.convert_spikes(spikes)
         spikes_test2 = neo_convertor.convert_spikes(spikes2)
         self.assertEquals(263, len(spikes_test))
         self.assertEquals(263, len(spikes_test2))
+
+    def test_a_run(self):
+        self.runsafe(self.a_run)
 
 
 if __name__ == '__main__':
