@@ -17,11 +17,11 @@ dt = 16  # time difference of 15, +1 for a single timestep delay
 
 # Hidden neuron population - i.e. postsynaptic population
 neuron_params = {
-    "v_thresh": -50.0,  # do not change - hard-coded in C for now
-    "v_reset": -70.0,
-    "v_rest": -65.0,
-    "v": -60.0,
-    "i_offset": 0.25}  # DC input - to enable interesting p_j
+    "v_thresh": 30.0,  # do not change - hard-coded in C for now
+    "v_reset": 0.0,
+    "v_rest": 0.0,
+    "v": 20,
+    "i_offset": 1}  # DC input - to enable interesting p_j
 
 pop_hidden = p.Population(1,  # number of neurons
                           p.extra_models.IFCurrExpERBP(**neuron_params),
@@ -56,7 +56,7 @@ synapse_plastic = p.Projection(
     pop_hidden,
     p.OneToOneConnector(),
     synapse_type=learning_rule,
-    receptor_type="excitatory")
+    receptor_type="inhibitory")
 
 # Create static projection from error to hidden neuron
 synapse = p.Projection(
@@ -64,7 +64,7 @@ synapse = p.Projection(
     pop_hidden,
     p.AllToAllConnector(),
     p.StaticSynapse(weight=w_err, delay=timestep),
-    receptor_type="inh_err")
+    receptor_type="exc_err")
 
 # Setup recording
 input_src.record('spikes')

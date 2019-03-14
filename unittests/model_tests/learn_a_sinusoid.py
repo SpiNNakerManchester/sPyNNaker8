@@ -5,7 +5,7 @@ import unittest
 from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt
 
-num_repeats = 1
+num_repeats = 30
 cycle_time = 1023
 timestep = 1
 p.setup(timestep) # simulation timestep (ms)
@@ -23,10 +23,10 @@ erbp_neuron_params = {
 
 readout_neuron_params = {
     "v": 0,
-    "v_thresh": 100, # controls firing rate of error neurons
+    "v_thresh": 30, # controls firing rate of error neurons
     }
 tau_err = 20
-
+p.set_number_of_neurons_per_core(p.extra_models.IFCurrExpERBP, 128)
 
 w_in_rec_exc = 0.1
 w_in_rec_exc_dist = p.RandomDistribution(
@@ -215,7 +215,7 @@ learning_rule = p.STDPMechanism(
     timing_dependence=p.TimingDependenceERBP(
         tau_plus=tau_err, A_plus=1, A_minus=1),
     weight_dependence=p.WeightDependenceERBP(
-        w_min=0.0, w_max=2),
+        w_min=0.0, w_max=1),
     weight=w_in_rec_exc_dist,
     delay=timestep)
 
@@ -234,7 +234,7 @@ learning_rule = p.STDPMechanism(
     timing_dependence=p.TimingDependenceERBP(
         tau_plus=tau_err, A_plus=1, A_minus=1),
     weight_dependence=p.WeightDependenceERBP(
-        w_min=0.0, w_max=2),
+        w_min=0.0, w_max=1),
     weight=w_in_rec_inh_dist,
     delay=timestep)
 
@@ -256,7 +256,7 @@ learning_rule = p.STDPMechanism(
     timing_dependence=p.TimingDependenceERBP(
         tau_plus=tau_err, A_plus=1, A_minus=1),
     weight_dependence=p.WeightDependenceERBP(
-        w_min=0.0, w_max=2),
+        w_min=0.0, w_max=1),
     weight=w_rec_rec_dist,
     delay=timestep)
 
@@ -274,7 +274,7 @@ learning_rule = p.STDPMechanism(
     timing_dependence=p.TimingDependenceERBP(
         tau_plus=tau_err, A_plus=1, A_minus=1),
     weight_dependence=p.WeightDependenceERBP(
-        w_min=0.0, w_max=2),
+        w_min=0.0, w_max=1),
     weight=w_rec_rec_dist,
     delay=timestep)
 
@@ -302,7 +302,7 @@ learning_rule = p.STDPMechanism(
     timing_dependence=p.TimingDependenceERBP(
         tau_plus=tau_err, A_plus=1, A_minus=1),
     weight_dependence=p.WeightDependenceERBP(
-        w_min=0.0, w_max=2),
+        w_min=0.0, w_max=1),
     weight=w_rec_out_dist,
     delay=timestep)
 
@@ -321,7 +321,7 @@ learning_rule = p.STDPMechanism(
     timing_dependence=p.TimingDependenceERBP(
         tau_plus=tau_err, A_plus=1, A_minus=1),
     weight_dependence=p.WeightDependenceERBP(
-        w_min=0.0, w_max=2),
+        w_min=0.0, w_max=1),
     weight=w_rec_out_dist,
     delay=timestep)
 
@@ -358,8 +358,8 @@ fb_out_rec_inh = p.Projection(
 # Now to output layer to gate plasticity on output weights
 # rand_out_w.next()
 # rand_out_w.next()
-exc_fb_out_conn_list  = [1, 0, w_out_out_dist.next(), 1]
-inh_fb_out_conn_list  = [2, 0, w_out_out_dist.next(), 1]
+exc_fb_out_conn_list  = [1, 0, 5*w_out_out_dist.next(), 1]
+inh_fb_out_conn_list  = [2, 0, 5*w_out_out_dist.next(), 1]
 
 fb_out_out_exc = p.Projection(
     pop_out, pop_out, p.FromListConnector([exc_fb_out_conn_list]),
@@ -398,6 +398,10 @@ F = Figure(
           ),
     Panel(pop_out_data.segments[0].filter(name='gsyn_exc')[0],
           ylabel="gsyn excitatory (mV)",
+          data_labels=[pop_out.label], yticks=True, xlim=(0, runtime)
+          ),
+    Panel(pop_out_data.segments[0].filter(name='gsyn_inh')[0],
+          ylabel="gsyn inhibitory (mV)",
           data_labels=[pop_out.label], yticks=True, xlim=(0, runtime)
           ),
     Panel(pop_out_data.segments[0].spiketrains,
