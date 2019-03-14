@@ -85,6 +85,7 @@ pipeline {
         }
         stage('Reports') {
             steps {
+                sh "mkdir -p reports"
                 sh 'find reports/* -type f -print -exec cat {}  \\;'
             }
         }
