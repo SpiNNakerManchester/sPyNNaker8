@@ -8,7 +8,7 @@ count1 = 0
 class TestJobDestory(BaseTestCase):
 
     def test_script_ok(self):
-        print("ok")
+        self.report("ok", "dummy")
 
     def destory_once(self):
         global count1
