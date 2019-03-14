@@ -1,3 +1,4 @@
+import unittest
 import spynnaker8 as sim
 from p8_integration_tests.base_test_case import BaseTestCase
 
@@ -128,4 +129,54 @@ class TestOneToOneConnector(BaseTestCase):
         weights = projection.get(["weight"], "list")
         sim.run(0)
         self.assertEqual(1, len(weights))
+        sim.end()
+
+    def test_using_static_synapse_singles(self):
+        sim.setup(timestep=1.0)
+        input = sim.Population(2, sim.SpikeSourceArray([0]), label="input")
+        pop = sim.Population(2, sim.IF_curr_exp(), label="pop")
+        as_list = [(0, 0), (1, 1)]
+        conn = sim.Projection(input, pop, sim.FromListConnector(as_list),
+                              sim.StaticSynapse(weight=0.7, delay=3))
+        sim.run(1)
+        weights = conn.get(['weight', 'delay'], 'list')
+        sim.end()
+        target = [(0, 0, 0.7, 3), (1, 1, 0.7, 3)]
+        for i in range(2):
+            for j in range(2):
+                self.assertAlmostEqual(weights[i][j], target[i][j], places=3)
+
+    def test_using_half_static_synapse_singles(self):
+        sim.setup(timestep=1.0)
+        input = sim.Population(2, sim.SpikeSourceArray([0]), label="input")
+        pop = sim.Population(2, sim.IF_curr_exp(), label="pop")
+        as_list = [(0, 0, 0.7), (1, 1, 0.3)]
+        conn = sim.Projection(input, pop, sim.FromListConnector(
+            as_list, column_names=["weight"]),
+                              sim.StaticSynapse(weight=0.6, delay=3))
+        sim.run(1)
+        weights = conn.get(['weight', 'delay'], 'list')
+        sim.end()
+        target = [(0, 0, 0.7, 3), (1, 1, 0.3, 3)]
+        for i in range(2):
+            for j in range(2):
+                self.assertAlmostEqual(weights[i][j], target[i][j], places=3)
+
+    @unittest.skip(
+        "https://github.com/SpiNNakerManchester/sPyNNaker/issues/617")
+    def test_using_static_synapse_doubles(self):
+        sim.setup(timestep=1.0)
+        input = sim.Population(2, sim.SpikeSourceArray([0]), label="input")
+        pop = sim.Population(2, sim.IF_curr_exp(), label="pop")
+        as_list = [(0, 0), (1, 1)]
+        conn = sim.Projection(input, pop, sim.FromListConnector(as_list),
+                              sim.StaticSynapse(weight=[0.7, 0.3],
+                                                delay=[3, 33]))
+        sim.run(1)
+        weights = conn.get(['weight', 'delay'], 'list')
+        target = [(0, 0, 0.7, 3), (1, 1, 0.3, 33)]
+        for i in range(2):
+            for j in range(2):
+                self.assertAlmostEqual(weights[i][j], target[i][j], places=3)
+
         sim.end()
