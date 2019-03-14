@@ -28,7 +28,6 @@ pipeline {
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/sPyNNaker.git'
                 // scripts
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/IntroLab.git'
-                sh 'pwd'
             }
         }
         stage('Install') {
@@ -63,7 +62,8 @@ pipeline {
         stage('Test') {
             steps {
                 sh 'echo "<testsuite tests="0"></testsuite>" > results.xml'
-                sh 'py.test p8_integration_tests/quick_test --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 1200'
+                //sh 'py.test p8_integration_tests/quick_test --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 1200'
+                sh 'py.test p8_integration_tests/bmp_test --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 1200'
             }
         }
         //stage('IntroLab') {
@@ -73,11 +73,11 @@ pipeline {
         //    }
         //}
         // Timeout too short or test too long maybe a nightly crome
-        stage('Longer Test') {
-            steps {
-                sh 'py.test p8_integration_tests/long_test --forked --instafail --timeout 12000'
-            }
-        }
+        //stage('Longer Test') {
+        //    steps {
+        //        sh 'py.test p8_integration_tests/long_test --forked --instafail --timeout 12000'
+        //    }
+        //}
         stage('Coverage') {
             steps {
                 sh 'COVERALLS_REPO_TOKEN=l0cQjQq6Sm5MGb67RiWkY2WE4r74YFAfk COVERALLS_PARALLEL=true coveralls'
@@ -86,6 +86,11 @@ pipeline {
         stage('Reports') {
             steps {
                 sh 'find reports/* -type f -print -exec cat {}  \\;'
+            }
+        }
+        stage('No Destroyed') {
+            steps {
+                sh 'py.test p8_integration_tests/test_destroyed_checker --forked --instafail --timeout 120'
             }
         }
     }

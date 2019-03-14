@@ -5,6 +5,7 @@ import sys
 import unittest
 from unittest import SkipTest
 import spinn_utilities.conf_loader as conf_loader
+from spalloc.job import JobDestroyedError
 from spinn_front_end_common.utilities import globals_variables
 
 p8_integration_factor = float(os.environ.get('P8_INTEGRATION_FACTOR', "1"))
@@ -102,3 +103,26 @@ class BaseTestCase(unittest.TestCase):
     def known_issue(self, issue):
         self.report(issue, "Skipped_due_to_issue")
         raise SkipTest(issue)
+
+    def destory_path(self):
+        p8_integration_tests_directory = os.path.dirname(__file__)
+        test_dir = os.path.dirname(p8_integration_tests_directory)
+        return os.path.join(test_dir, "JobDestroyedError.txt")
+
+    def runsafe(self, method):
+        retries = 0
+        lastError = None
+        while retries < 3:
+            try:
+                method()
+                return
+            except JobDestroyedError as ex:
+                class_file = sys.modules[self.__module__].__file__
+                with open(self.destory_path(), "a") as destroyed_file:
+                    destroyed_file.write(class_file)
+                    destroyed_file.write("\n")
+                    destroyed_file.write(str(ex))
+                    destroyed_file.write("\n")
+                lastError = ex
+                retries += 1
+        raise lastError
