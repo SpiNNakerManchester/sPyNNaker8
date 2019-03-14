@@ -1,4 +1,3 @@
-import spynnaker8 as sim
 from spalloc.job import JobDestroyedError
 from p8_integration_tests.base_test_case import BaseTestCase
 
@@ -14,7 +13,9 @@ class TestJobDestory(BaseTestCase):
         global count1
         if count1 < 1:
             count1 = 1
-            raise JobDestroyedError("Machine configuration failed. Error: Requests failed on BMP 10.11.213.0")
+            raise JobDestroyedError(
+                "Machine configuration failed. "
+                "Error: Requests failed on BMP 10.11.213.0")
 
     def test_destory_once(self):
         self.runsafe(self.destory_once)
