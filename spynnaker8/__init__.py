@@ -92,6 +92,9 @@ from spynnaker.pyNN.models.spike_source.spike_source_array \
 from spynnaker.pyNN.models.spike_source.spike_source_poisson \
     import SpikeSourcePoisson
 
+# noinspection PyUnresolvedReferences
+from spynnaker.pyNN.models.bptt_sgd import BpttSgd
+
 # pops
 # noinspection PyUnresolvedReferences
 from spynnaker8.models.populations.assembly import Assembly
