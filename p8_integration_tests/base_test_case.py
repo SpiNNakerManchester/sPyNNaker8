@@ -125,4 +125,5 @@ class BaseTestCase(unittest.TestCase):
                     destroyed_file.write("\n")
                 lastError = ex
                 retries += 1
+                globals_variables.unset_simulator()
         raise lastError
