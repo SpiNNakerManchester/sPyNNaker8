@@ -111,7 +111,7 @@ class BaseTestCase(unittest.TestCase):
 
     def runsafe(self, method):
         retries = 0
-        lastError = None
+        last_error = None
         while retries < 3:
             try:
                 method()
@@ -123,7 +123,7 @@ class BaseTestCase(unittest.TestCase):
                     destroyed_file.write("\n")
                     destroyed_file.write(str(ex))
                     destroyed_file.write("\n")
-                lastError = ex
+                last_error = ex
                 retries += 1
                 globals_variables.unset_simulator()
-        raise lastError
+        raise last_error
