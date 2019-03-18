@@ -86,7 +86,6 @@ pipeline {
         stage('TO DO Tests') {
             steps {
                 sh 'py.test p8_integration_tests/test_auto_pause_and_resume_tests --forked --instafail spynnaker8 --timeout 1200'
-                sh 'py.test p8_integration_tests/test_multi_call_examples --forked --instafail spynnaker8 --timeout 1200'
                 sh 'py.test p8_integration_tests/test_no_edge --forked --instafail spynnaker8 --timeout 1200'
                 sh 'py.test p8_integration_tests/test_no_vertices_functionality --forked --instafail spynnaker8 --timeout 1200'
                 sh 'py.test p8_integration_tests/test_numpy --forked --instafail spynnaker8 --timeout 1200'
