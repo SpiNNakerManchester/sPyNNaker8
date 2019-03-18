@@ -8,7 +8,7 @@ class TestPythonAdvanced(BaseTestCase):
     def do_run(self):
         me = ManyBoards()
         t_before = time.time()
-        sim = me.do_run(n_boards=2, n_neurons=255, simtime=300)
+        sim = me.do_run(n_boards=2, n_neurons=500, simtime=300)
         t_after_machine = time.time()
         me.check_all_data()
         t_after_check = time.time()
