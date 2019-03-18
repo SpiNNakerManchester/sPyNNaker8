@@ -1,16 +1,15 @@
 def check_neuron_data(spikes, v, exc, expected_spikes, simtime, label, index):
-    # Small tolerance as max not spike on first inputs
-    if len(spikes) < expected_spikes - 2:
+
+    if len(spikes) != expected_spikes:
         raise AssertionError(
-            "Too few spikes for neuron {} in {}. Expected {} found {}".
+            "Incorrect number of spikes for neuron {} in {}. "
+            "Expected {} found {}".
             format(index, label, expected_spikes, len(spikes)))
-    if len(spikes) > expected_spikes:
-        raise AssertionError(
-            "Too many spikes for neuron {} in {}. Expected {} found {}".
-            format(index, label, expected_spikes, len(spikes)))
+
+    # Add a tolerance for when offset goes too early or a bit late
+    last_spike = spikes[0].magnitude - 8
     iter_spikes = iter(spikes)
     next_spike = int(next(iter_spikes).magnitude)
-    last_spike = -1
     for t in range(simtime):
         if t > next_spike:
             last_spike = next_spike
