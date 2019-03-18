@@ -8,7 +8,20 @@ pipeline {
                 TRAVIS_BRANCH = "${env.BRANCH_NAME}"
             }
             steps {
+                // remove all directories left if Jenkins ended badly
                 sh 'rm -rf support'
+                sh 'rm -rf SpiNNUtils'
+                sh 'rm -rf SpiNNMachine'
+                sh 'rm -rf SpiNNStorageHandlers'
+                sh 'rm -rf SpiNNMan'
+                sh 'rm -rf PACMAN'
+                sh 'rm -rf DataSpecification'
+                sh 'rm -rf spalloc'
+                sh 'rm -rf spinnaker_tools'
+                sh 'rm -rf spinn_common'
+                sh 'rm -rf SpiNNFrontEndCommon'
+                sh 'rm -rf sPyNNaker'
+                sh 'rm -rf IntroLab'
                 sh 'git clone https://github.com/SpiNNakerManchester/SupportScripts.git support'
                 // Bring pip up to date
                 sh 'pip install --upgrade pip setuptools wheel'
