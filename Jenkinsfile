@@ -70,8 +70,8 @@ pipeline {
         //        sh 'echo "<testsuite tests="0"></testsuite>" > results.xml'
         //        sh 'py.test p8_integration_tests/introlab_test --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 1200'
         //    }
-        // }
-        /stage('TO DO Tests') {
+        //}
+        //stage('TO DO Tests') {
         //    steps {
         //        sh 'py.test p8_integration_tests/test_auto_pause_and_resume_tests --forked --instafail spynnaker8 --timeout 1200'
         //        sh 'py.test p8_integration_tests/test_multi_call_examples --forked --instafail spynnaker8 --timeout 1200'
@@ -95,7 +95,7 @@ pipeline {
         //        sh 'py.test p8_integration_tests/test_various --forked --instafail spynnaker8 --timeout 1200'
         //        sh 'py.test p8_integration_tests/test_visualiser --forked --instafail spynnaker8 --timeout 1200'
         //        sh 'py.test p8_integration_tests/test_weights --forked --instafail spynnaker8 --timeout 1200'
-        //   }
+        //    }
         //}
         //stage('What do they do Tests') {
         //    steps {
@@ -103,7 +103,7 @@ pipeline {
         //        sh 'py.test p8_integration_tests/test_current_calculation --forked --instafail spynnaker8 --timeout 1200'
         //        sh 'py.test p8_integration_tests/test_if_curr_exp_live_buffers --forked --instafail spynnaker8 --timeout 1200'
         //        sh 'py.test p8_integration_tests/test_live_packet_gather --forked --instafail spynnaker8 --timeout 1200'
-        //    }
+        //   }
         //}
         // Timeout too short or test too long maybe a nightly crome
         stage('Longer Test') {
