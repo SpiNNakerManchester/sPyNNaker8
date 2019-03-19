@@ -73,23 +73,23 @@ pipeline {
                 sh 'echo "<testsuite tests="0"></testsuite>" > results.xml'
             }
         }
-        stage('Test') {
-            steps {
-                sh 'py.test p8_integration_tests/quick_test --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 1200'
-            }
-        }
-        stage('IntroLab') {
-            steps {
-                sh 'py.test p8_integration_tests/introlab_test --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 1200'
-            }
-        }
+        //stage('Test') {
+        //    steps {
+        //        sh 'py.test p8_integration_tests/quick_test --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 1200'
+        //    }
+        //}
+        //stage('IntroLab') {
+        //    steps {
+        //        sh 'py.test p8_integration_tests/introlab_test --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 1200'
+        //    }
+        //}
         stage('TO DO Tests') {
             steps {
-                sh 'py.test p8_integration_tests/test_auto_pause_and_resume_tests --forked --instafail spynnaker8 --timeout 1200'
-                sh 'py.test p8_integration_tests/test_no_edge --forked --instafail spynnaker8 --timeout 1200'
-                sh 'py.test p8_integration_tests/test_no_vertices_functionality --forked --instafail spynnaker8 --timeout 1200'
-                sh 'py.test p8_integration_tests/test_numpy --forked --instafail spynnaker8 --timeout 1200'
-                sh 'py.test p8_integration_tests/test_param_vertex_retrieval_from_board_after_1_run --forked --instafail spynnaker8 --timeout 1200'
+          //      sh 'py.test p8_integration_tests/test_auto_pause_and_resume_tests --forked --instafail spynnaker8 --timeout 1200'
+          //      sh 'py.test p8_integration_tests/test_no_edge --forked --instafail spynnaker8 --timeout 1200'
+          //      sh 'py.test p8_integration_tests/test_no_vertices_functionality --forked --instafail spynnaker8 --timeout 1200'
+          //      sh 'py.test p8_integration_tests/test_numpy --forked --instafail spynnaker8 --timeout 1200'
+          //      sh 'py.test p8_integration_tests/test_param_vertex_retrieval_from_board_after_1_run --forked --instafail spynnaker8 --timeout 1200'
                 sh 'py.test p8_integration_tests/test_population_with_multiple_connectors --forked --instafail spynnaker8 --timeout 1200'
                 sh 'py.test p8_integration_tests/test_projection_param_retrieval_from_board --forked --instafail spynnaker8 --timeout 1200'
                 sh 'py.test p8_integration_tests/test_projection_properties --forked --instafail spynnaker8 --timeout 1200'
