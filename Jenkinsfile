@@ -83,31 +83,31 @@ pipeline {
         //        sh 'py.test p8_integration_tests/introlab_test --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 1200'
         //    }
         //}
-        stage('TO DO Tests') {
-            steps {
+        //stage('TO DO Tests') {
+        //    steps {
           //      sh 'py.test p8_integration_tests/test_auto_pause_and_resume_tests --forked --instafail spynnaker8 --timeout 1200'
           //      sh 'py.test p8_integration_tests/test_no_edge --forked --instafail spynnaker8 --timeout 1200'
           //      sh 'py.test p8_integration_tests/test_no_vertices_functionality --forked --instafail spynnaker8 --timeout 1200'
           //      sh 'py.test p8_integration_tests/test_numpy --forked --instafail spynnaker8 --timeout 1200'
           //      sh 'py.test p8_integration_tests/test_param_vertex_retrieval_from_board_after_1_run --forked --instafail spynnaker8 --timeout 1200'
-                sh 'py.test p8_integration_tests/test_population_with_multiple_connectors --forked --instafail spynnaker8 --timeout 1200'
-                sh 'py.test p8_integration_tests/test_projection_param_retrieval_from_board --forked --instafail spynnaker8 --timeout 1200'
-                sh 'py.test p8_integration_tests/test_projection_properties --forked --instafail spynnaker8 --timeout 1200'
-                sh 'py.test p8_integration_tests/test_radial_placement_from_chip_constraint --forked --instafail spynnaker8 --timeout 1200'
-                sh 'py.test p8_integration_tests/test_report_generation --forked --instafail spynnaker8 --timeout 1200'
-                sh 'py.test p8_integration_tests/test_reuse_connector --forked --instafail spynnaker8 --timeout 1200'
-                sh 'py.test p8_integration_tests/test_running_on_multiple_chips --forked --instafail spynnaker8 --timeout 1200'
-                sh 'py.test p8_integration_tests/test_running_on_multiple_cores --forked --instafail spynnaker8 --timeout 1200'
-                sh 'py.test p8_integration_tests/test_sata_connectors --forked --instafail spynnaker8 --timeout 1200'
-                sh 'py.test p8_integration_tests/test_spike_source --forked --instafail spynnaker8 --timeout 1200'
-                sh 'py.test p8_integration_tests/test_spinnaker_link_connectors --forked --instafail spynnaker8 --timeout 1200'
-                sh 'py.test p8_integration_tests/test_stdp --forked --instafail spynnaker8 --timeout 1200'
-                sh 'py.test p8_integration_tests/test_synapses --forked --instafail spynnaker8 --timeout 1200'
-                sh 'py.test p8_integration_tests/test_various --forked --instafail spynnaker8 --timeout 1200'
-                sh 'py.test p8_integration_tests/test_visualiser --forked --instafail spynnaker8 --timeout 1200'
-                sh 'py.test p8_integration_tests/test_weights --forked --instafail spynnaker8 --timeout 1200'
-            }
-        }
+          //      sh 'py.test p8_integration_tests/test_population_with_multiple_connectors --forked --instafail spynnaker8 --timeout 1200'
+          //      sh 'py.test p8_integration_tests/test_projection_param_retrieval_from_board --forked --instafail spynnaker8 --timeout 1200'
+          //      sh 'py.test p8_integration_tests/test_projection_properties --forked --instafail spynnaker8 --timeout 1200'
+          //      sh 'py.test p8_integration_tests/test_radial_placement_from_chip_constraint --forked --instafail spynnaker8 --timeout 1200'
+          //      sh 'py.test p8_integration_tests/test_report_generation --forked --instafail spynnaker8 --timeout 1200'
+          //      sh 'py.test p8_integration_tests/test_reuse_connector --forked --instafail spynnaker8 --timeout 1200'
+          //      sh 'py.test p8_integration_tests/test_running_on_multiple_chips --forked --instafail spynnaker8 --timeout 1200'
+          //      sh 'py.test p8_integration_tests/test_running_on_multiple_cores --forked --instafail spynnaker8 --timeout 1200'
+          //      sh 'py.test p8_integration_tests/test_sata_connectors --forked --instafail spynnaker8 --timeout 1200'
+          //      sh 'py.test p8_integration_tests/test_spike_source --forked --instafail spynnaker8 --timeout 1200'
+          //      sh 'py.test p8_integration_tests/test_spinnaker_link_connectors --forked --instafail spynnaker8 --timeout 1200'
+          //      sh 'py.test p8_integration_tests/test_stdp --forked --instafail spynnaker8 --timeout 1200'
+          //      sh 'py.test p8_integration_tests/test_synapses --forked --instafail spynnaker8 --timeout 1200'
+          //      sh 'py.test p8_integration_tests/test_various --forked --instafail spynnaker8 --timeout 1200'
+          //      sh 'py.test p8_integration_tests/test_visualiser --forked --instafail spynnaker8 --timeout 1200'
+          //      sh 'py.test p8_integration_tests/test_weights --forked --instafail spynnaker8 --timeout 1200'
+           // }
+        //}
         stage('What do they do Tests') {
             steps {
                 sh 'py.test p8_integration_tests/test_csa_connectors --forked --instafail spynnaker8 --timeout 1200'
