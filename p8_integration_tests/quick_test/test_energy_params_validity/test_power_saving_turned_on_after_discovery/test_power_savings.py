@@ -1,5 +1,5 @@
-from testfixtures import LogCapture
-import spynnaker8 as sim
+# from testfixtures import LogCapture
+# import spynnaker8 as sim
 from p8_integration_tests.base_test_case import BaseTestCase
 
 
@@ -7,7 +7,7 @@ class Synfire2RunExtractionIfCurrExp(BaseTestCase):
 
     def do_run(self):
         pass
-        #with LogCapture() as lc:
+        # with LogCapture() as lc:
         #    sim.setup(1.0)
         #    pop = sim.Population(1, sim.IF_curr_exp, {}, label="pop")
         #    inp = sim.Population(1, sim.SpikeSourceArray(

@@ -14,6 +14,6 @@ class TestResetAdd(BaseTestCase):
         sim.Projection(input, pop_1, sim.AllToAllConnector(),
                        synapse_type=sim.StaticSynapse(weight=5, delay=1))
         sim.run(10)
-        pop_2 = sim.Population(2, sim.IF_curr_exp(), label="pop_2")
+        sim.Population(2, sim.IF_curr_exp(), label="pop_2")
         with self.assertRaises(NotImplementedError):
             sim.run(10)

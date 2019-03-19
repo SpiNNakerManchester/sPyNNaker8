@@ -47,11 +47,11 @@ class TestAllToAllConnector(BaseTestCase):
         sim.run(0)
         try:
             length = len(weights)
+            self.assertEqual(3, length)
         except Exception:
             sim.end()
             self.known_issue(
                 "https://github.com/SpiNNakerManchester/sPyNNaker/issues/613")
-        self.assertEqual(3, length)
         sim.end()
 
     def test_using_static_synapse_singles(self):
@@ -60,12 +60,10 @@ class TestAllToAllConnector(BaseTestCase):
         pop = sim.Population(2, sim.IF_curr_exp(), label="pop")
         conn = sim.Projection(input, pop, sim.AllToAllConnector(),
                               sim.StaticSynapse(weight=0.7, delay=3))
-#                              sim.StaticSynapse(weight=[0.7, 0.3, 0.4, 0.5],
-#                                                delay=[3, 33, 12, 21]))
         sim.run(1)
         weights = conn.get(['weight', 'delay'], 'list')
         sim.end()
-        target = [(0, 0, 0.7, 3),(0, 1, 3, 33), (1, 0, 0.4, 12),
+        target = [(0, 0, 0.7, 3), (0, 1, 3, 33), (1, 0, 0.4, 12),
                   (1, 1, 0.5, 21)]
         for i in range(2):
             for j in range(2):
