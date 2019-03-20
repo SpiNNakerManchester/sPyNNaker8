@@ -1,8 +1,7 @@
-from p8_integration_tests.base_test_case import BaseTestCase
-
+import spynnaker.plot_utils as plot_utils
 import spynnaker8 as sim
 from spynnaker8.utilities import neo_convertor
-import spynnaker.plot_utils as plot_utils
+from p8_integration_tests.base_test_case import BaseTestCase
 
 
 def do_run(seed=None):
@@ -42,12 +41,12 @@ class TestPoisson(BaseTestCase):
 
     def test_run(self):
         (spikes1, spikes2) = do_run(self._test_seed)
-        self.assertEquals(19, len(spikes1))
-        self.assertEquals(24, len(spikes2))
+        self.assertEquals(31, len(spikes1))
+        self.assertEquals(15, len(spikes2))
 
 
 if __name__ == '__main__':
-    (spikes1, spikes2) = do_run()
+    (spikes1, spikes2) = do_run(1)
     print(len(spikes1))
     print(spikes1)
     print(len(spikes2))

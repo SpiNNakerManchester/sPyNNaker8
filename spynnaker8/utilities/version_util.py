@@ -1,7 +1,7 @@
-from pyNN import __version__ as pynn_version
-from neo import __version__ as neo_version
 from distutils.version import StrictVersion
 from six import raise_from
+from pyNN import __version__ as pynn_version
+from neo import __version__ as neo_version
 
 
 _SUPPORTED_MSG = (

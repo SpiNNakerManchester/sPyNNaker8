@@ -1,7 +1,7 @@
-import unittest
-import spynnaker8 as p
-import numpy
 import random
+import unittest
+import numpy
+import spynnaker8 as p
 
 
 class MyTestCase(unittest.TestCase):
@@ -51,6 +51,7 @@ class MyTestCase(unittest.TestCase):
         p.setup(timestep=1.0, min_delay=1.0, max_delay=144.0)
         n_neurons = 20  # number of neurons in each population
         p.set_number_of_neurons_per_core(p.IF_curr_exp, n_neurons / 2)
+        random.seed(12480235)
 
         cell_params_lif = {'cm': 0.25,
                            'i_offset': 0.0,

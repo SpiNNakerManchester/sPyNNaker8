@@ -1,13 +1,8 @@
 """
 Synfirechain-like example
 """
-
-# spynnaker imports
 import spynnaker8 as p
-
-# general imports
 from p8_integration_tests.base_test_case import BaseTestCase
-from unittest import SkipTest
 
 
 def read_spikefile(file_name, n_neurons):
@@ -17,7 +12,7 @@ def read_spikefile(file_name, n_neurons):
     :param n_neurons:
     :return:
     """
-    spike_array = [[] for x in range(n_neurons)]
+    spike_array = [[] for _ in range(n_neurons)]
     with open(file_name) as f_spike:
         for line in f_spike:
             cut_index = line.find(';')
@@ -106,12 +101,8 @@ class TestReadingSpikeArrayDataAndBigSlices(BaseTestCase):
         """
         self.assert_not_spin_three()
         spikes = do_run()
-        try:
-            self.assertLess(8400, len(spikes))
-            self.assertGreater(8800, len(spikes))
-        except Exception as ex:
-            # Just in case the range failed
-            raise SkipTest(ex)
+        self.assertLessEqual(8570, len(spikes))
+        self.assertGreaterEqual(8600, len(spikes))
 
 
 if __name__ == '__main__':

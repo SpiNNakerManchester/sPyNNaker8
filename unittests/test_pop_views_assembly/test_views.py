@@ -1,9 +1,9 @@
 import pytest
 from pyNN.random import RandomDistribution, NumpyRNG
-from p8_integration_tests.base_test_case import BaseTestCase
 from spinn_front_end_common.utilities.exceptions import ConfigurationException
 import spynnaker8 as sim
-from spynnaker8.models.populations.population_view import PopulationView
+from spynnaker8.models.populations import PopulationView
+from p8_integration_tests.base_test_case import BaseTestCase
 
 
 class Test_IDMixin(BaseTestCase):

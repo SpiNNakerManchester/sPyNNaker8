@@ -1,9 +1,8 @@
 import logging
-
-from spynnaker.pyNN.models.neural_projections.connectors \
-    import FixedNumberPostConnector as CommonFixedNumberPostConnector
-from pyNN.connectors import FixedNumberPostConnector as \
-    PyNNFixedNumberPostConnector
+from pyNN.connectors import (
+    FixedNumberPostConnector as PyNNFixedNumberPostConnector)
+from spynnaker.pyNN.models.neural_projections.connectors import (
+    FixedNumberPostConnector as CommonFixedNumberPostConnector)
 
 logger = logging.getLogger(__file__)
 
@@ -47,7 +46,5 @@ class FixedNumberPostConnector(CommonFixedNumberPostConnector,
         # pylint: disable=too-many-arguments
         super(FixedNumberPostConnector, self).__init__(
             n=n, allow_self_connections=allow_self_connections,
-            with_replacement=with_replacement, safe=safe, verbose=verbose)
-
-    def get_rng_parameters(self, n_post_neurons):
-        return {"low": 0, "high": n_post_neurons}
+            with_replacement=with_replacement, safe=safe, verbose=verbose,
+            rng=rng)

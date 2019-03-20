@@ -1,9 +1,8 @@
-from spynnaker.pyNN.models.neural_projections.connectors \
-    import FixedNumberPreConnector as CommonFixedNumberPreConnector
-from pyNN.connectors import FixedNumberPreConnector as \
-    PyNNFixedNumberPreConnector
-
 import logging
+from pyNN.connectors import (
+    FixedNumberPreConnector as PyNNFixedNumberPreConnector)
+from spynnaker.pyNN.models.neural_projections.connectors import (
+    FixedNumberPreConnector as CommonFixedNumberPreConnector)
 
 logger = logging.getLogger(__file__)
 
@@ -46,7 +45,8 @@ class FixedNumberPreConnector(CommonFixedNumberPreConnector,
         # pylint: disable=too-many-arguments
         super(FixedNumberPreConnector, self).__init__(
             n=n, allow_self_connections=allow_self_connections,
-            with_replacement=with_replacement, safe=safe, verbose=verbose)
+            with_replacement=with_replacement, safe=safe, verbose=verbose,
+            rng=rng)
 
     @property
     def n(self):

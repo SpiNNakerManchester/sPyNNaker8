@@ -1,6 +1,6 @@
 import numpy
-from p8_integration_tests.base_test_case import BaseTestCase
 import spynnaker8 as p
+from p8_integration_tests.base_test_case import BaseTestCase
 
 sources = 1000  # number of neurons in each population
 targets = 2000

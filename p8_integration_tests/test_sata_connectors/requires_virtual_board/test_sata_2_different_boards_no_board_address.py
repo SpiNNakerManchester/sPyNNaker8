@@ -10,13 +10,14 @@ def do_run():
     # Setup
     p.setup(timestep=1.0)
 
-    p.Population(2000, p.external_devices.ArbitraryFPGADevice,
-                 {'fpga_link_id': 12, 'fpga_id': 1, 'label': "bacon"},
-                 label='External sata thing')
+    p.Population(
+        None,
+        p.external_devices.ArbitraryFPGADevice(
+            2000, fpga_link_id=12, fpga_id=1, label="bacon"))
 
-    p.Population(2000, p.external_devices.ArbitraryFPGADevice,
-                 {'fpga_link_id': 11, 'fpga_id': 1, 'label': "bacon"},
-                 label='External sata thing')
+    p.Population(
+        None, p.external_devices.ArbitraryFPGADevice(
+            2000, fpga_link_id=11, fpga_id=1, label="bacon"))
 
     p.run(1000)
     p.end()

@@ -4,7 +4,8 @@ Synfirechain-like example
 # general imports
 import numpy
 import os
-import pickle
+from neo.io import PickleIO
+
 from p8_integration_tests.base_test_case import BaseTestCase
 from p8_integration_tests.scripts.synfire_run import SynfireRunner
 import spynnaker.spike_checker as spike_checker
@@ -38,17 +39,12 @@ class TestPrintGsyn(BaseTestCase):
             spikes = synfire_run.get_output_pop_spikes_numpy()
             g_syn = synfire_run.get_output_pop_gsyn_exc_numpy()
             spike_checker.synfire_spike_checker(spikes, n_neurons)
-            try:
-                with open(gsyn_path, "r") as gsyn_file:
-                    gsyn2_neo = pickle.load(gsyn_file)
-                gsyn2_numpy = neo_convertor.convert_data(gsyn2_neo, run=0,
-                                                         name="gsyn_exc")
-                self.assertTrue(numpy.allclose(g_syn, gsyn2_numpy))
-            except UnicodeDecodeError:
-                raise SkipTest(
-                    "https://github.com/NeuralEnsemble/python-neo/issues/529")
-            finally:
-                os.remove(gsyn_path)
+            io = PickleIO(filename=gsyn_path)
+            gsyn2_neo = io.read()[0]
+            gsyn2_numpy = neo_convertor.convert_data(
+                gsyn2_neo, run=0, name="gsyn_exc")
+            self.assertTrue(numpy.allclose(g_syn, gsyn2_numpy))
+            os.remove(gsyn_path)
         except SpinnmanTimeoutException as ex:
             # System intentional overload so may error
             raise SkipTest(ex)
@@ -65,8 +61,8 @@ if __name__ == '__main__':
     spikes = synfire_run.get_output_pop_spikes_numpy()
     g_syn = synfire_run.get_output_pop_gsyn_exc_numpy()
     spike_checker.synfire_spike_checker(spikes, n_neurons)
-    with open(gsyn_path, "r") as gsyn_file:
-        gsyn2_neo = pickle.load(gsyn_file)
+    io = PickleIO(filename=gsyn_path)
+    gsyn2_neo = io.read()[0]
     gsyn2_numpy = neo_convertor.convert_data(gsyn2_neo, run=0, name="gsyn_exc")
     print(len(spikes))
     Figure(SpynnakerPanel(spikes, yticks=True, xticks=True, markersize=4,
