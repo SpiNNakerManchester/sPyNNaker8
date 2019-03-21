@@ -91,6 +91,7 @@ class SynapseDynamicsStructuralSTDP(STDPStructuralBaseClass):
                 'lateral_inhibition'],
             random_partner=StructuralBaseClass.default_parameters[
                 'random_partner'],
+            is_distance_dependent=StructuralBaseClass.default_parameters['is_distance_dependent'],
             seed=None):
         super(SynapseDynamicsStructuralSTDP, self).__init__(
             stdp_model=stdp_model, f_rew=f_rew, weight=weight, delay=delay,
@@ -99,7 +100,9 @@ class SynapseDynamicsStructuralSTDP(STDPStructuralBaseClass):
             p_form_forward=p_form_forward, p_form_lateral=p_form_lateral,
             p_elim_dep=p_elim_dep, p_elim_pot=p_elim_pot,
             grid=grid, lateral_inhibition=lateral_inhibition,
-            random_partner=random_partner, seed=seed
+            random_partner=random_partner,
+            is_distance_dependent=is_distance_dependent,
+            seed=seed
         )
 
         self._weight = stdp_model._weight
