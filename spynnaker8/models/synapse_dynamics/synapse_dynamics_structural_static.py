@@ -92,7 +92,8 @@ class SynapseDynamicsStructuralStatic(StaticStructuralBaseClass):
                 'lateral_inhibition'],
             random_partner=StructuralBaseClass.default_parameters[
                 'random_partner'],
-            is_distance_dependent=StructuralBaseClass.default_parameters['is_distance_dependent'],
+            is_distance_dependent=StructuralBaseClass.default_parameters[
+                'is_distance_dependent'],
             seed=None):
 
         if not stdp_model:
