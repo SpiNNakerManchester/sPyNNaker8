@@ -5,7 +5,7 @@ import unittest
 from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt
 
-num_repeats = 30
+num_repeats = 40
 cycle_time = 1023
 timestep = 1
 p.setup(timestep) # simulation timestep (ms)
@@ -18,13 +18,15 @@ erbp_neuron_params = {
     "v_rest": 0,
     "i_offset": 0, # DC input
     "v": 0,
-    "tau_err": 20
+    "tau_err": 20,
+#     "tau_refrac": 50
     }
 
 readout_neuron_params = {
     "v": 0,
     "v_thresh": 30, # controls firing rate of error neurons
     }
+
 tau_err = 20
 p.set_number_of_neurons_per_core(p.extra_models.IFCurrExpERBP, 128)
 
@@ -45,7 +47,7 @@ w_rec_rec_dist = p.RandomDistribution(
         distribution='normal_clipped', mu=w_rec_rec, sigma=w_rec_rec,
         low=0.0, high=2*w_rec_rec)
 
-w_rec_out = 0.1
+w_rec_out = 0.2
 w_rec_out_dist = p.RandomDistribution(
         distribution='normal_clipped', mu=w_rec_out, sigma=w_rec_out,
         low=0.0, high=2*w_rec_out)
@@ -296,6 +298,10 @@ rec_rec_inh = p.Projection(
 conn_list_exc = [[x, 0, w_rec_out_dist.next(), 1] for x in range(100)]
 conn_list_inh = [[x, 0, w_rec_out_dist.next(), 1] for x in range(100)]
 
+for i in range(0,100,2):
+    conn_list_exc[i][2] = 0
+    conn_list_inh[i+1][2] = 0
+
 
 # Define learning rule object
 learning_rule = p.STDPMechanism(
@@ -341,10 +347,10 @@ rec_out_inh = p.Projection(
 
 # Connect excitatory fb neuron (1) to all recurrent neurons
 # rand_out_w.next()
-exc_fb_rec_conn_list = [[1, x, w_rec_out_dist.next(), 1] for x in range(100)]
+exc_fb_rec_conn_list = [[1, x, 10*w_rec_out_dist.next(), 1] for x in range(100)]
 # Connect inhibitory fb neuron (2) to all recurrent neurons
 # rand_out_w.next()
-inh_fb_rec_conn_list = [[2, x, w_rec_out_dist.next(), 1] for x in range(100)]
+inh_fb_rec_conn_list = [[2, x, 10*w_rec_out_dist.next(), 1] for x in range(100)]
 
 fb_out_rec_exc = p.Projection(
     pop_out, pop_rec, p.FromListConnector(exc_fb_rec_conn_list),
@@ -377,7 +383,16 @@ pop_in.record('spikes')
 pop_rec.record("spikes")
 pop_out.record("all")
 
+
 p.run(runtime)
+
+# p.run(runtime/4)
+# p.run(runtime/4)
+#
+# p.run(runtime/4)
+# p.run(runtime/4)
+# p.run(runtime/4)
+# p.run(runtime/4)
 
 in_spikes = pop_in.get_data('spikes')
 pop_rec_data = pop_rec.get_data('spikes')
