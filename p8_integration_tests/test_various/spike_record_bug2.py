@@ -2,10 +2,10 @@
 Synfirechain-like example
 """
 # !/usr/bin/python
+import spynnaker.plot_utils as plot_utils
 import spynnaker8 as p
 from spynnaker8.utilities import neo_convertor
 from p8_integration_tests.base_test_case import BaseTestCase
-import spynnaker.plot_utils as plot_utils
 
 # Shows https://github.com/SpiNNakerManchester/sPyNNaker/issues/335
 # Does not happen on other neurons
@@ -41,7 +41,7 @@ class Bug(BaseTestCase):
         nNeurons = 100  # number of neurons in each population
         neo = do_run(nNeurons)
         spike_count = neo_convertor.count_spikes(neo)
-        print(spike_count)
+        self.assertEquals(200, spike_count)
 
 
 if __name__ == '__main__':

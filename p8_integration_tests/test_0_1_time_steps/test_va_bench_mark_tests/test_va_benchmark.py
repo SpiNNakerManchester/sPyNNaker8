@@ -17,7 +17,7 @@ Adapted to PyNN8 by Christian Brenninkmeijer
 $Id:VAbenchmarks.py 5 2007-04-16 15:01:24Z davison $
 """
 import os
-import pickle
+from neo.io import PickleIO
 # import socket
 import unittest
 from unittest import SkipTest
@@ -96,9 +96,9 @@ def do_run():
 
     if simulator_name == 'spiNNaker':
         # this will set 100 neurons per core
-        p.set_number_of_neurons_per_core(p.IF_curr_exp, 100)
+        p.set_number_of_neurons_per_core(p.IF_curr_exp, 10)
         # this will set 50 neurons per core
-        p.set_number_of_neurons_per_core(p.IF_cond_exp, 50)
+        p.set_number_of_neurons_per_core(p.IF_cond_exp, 10)
 
     # node_id = 1
     # np = 1
@@ -169,15 +169,13 @@ class TestVABenchmarkSpikes(BaseTestCase):
         except SpinnmanTimeoutException as ex:
             raise SkipTest(ex)
         spike_count = neo_convertor.count_spikes(exc_spikes)
-        self.assertLess(1900, spike_count)
-        self.assertGreater(2700, spike_count)
-        try:
-            with open(neo_path, "r") as neo_file:
-                recorded_spikes = pickle.load(neo_file)
-            neo_compare.compare_blocks(exc_spikes, recorded_spikes)
-        except UnicodeDecodeError:
-            raise SkipTest(
-                "https://github.com/NeuralEnsemble/python-neo/issues/529")
+        print(spike_count)
+        # CB Jan 14 2019 Result varie between runs
+        self.assertLessEqual(2558, spike_count)
+        self.assertGreaterEqual(2559, spike_count)
+        io = PickleIO(filename=neo_path)
+        recorded_spikes = io.read()[0]
+        neo_compare.compare_blocks(exc_spikes, recorded_spikes)
 
 
 if __name__ == '__main__':

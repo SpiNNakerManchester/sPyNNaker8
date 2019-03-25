@@ -2,11 +2,11 @@
 Synfirechain-like example
 """
 # !/usr/bin/python
+from pacman.model.constraints.placer_constraints import (
+    ChipAndCoreConstraint)
 import spynnaker.spike_checker as spike_checker
 import spynnaker8 as p
 from spynnaker8.utilities import neo_convertor
-from pacman.model.constraints.placer_constraints\
-    import ChipAndCoreConstraint as ChipAndCoreConstraint
 from p8_integration_tests.base_test_case import BaseTestCase
 
 # number of neurons in each population
@@ -72,7 +72,7 @@ def do_run():
                                     p.StaticSynapse(weight=weight_to_spike,
                                                     delay=1)))
 
-    p.external_devices.activate_live_output_for(populations[0])
+    p.external_devices.activate_live_output_for(populations[0], notify=False)
     populations[0].set_constraint(ChipAndCoreConstraint(0, 0, 4))
     populations[1].set_constraint(ChipAndCoreConstraint(0, 0, 5))
 

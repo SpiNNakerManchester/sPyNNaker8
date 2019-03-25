@@ -1,8 +1,7 @@
 import pytest
-
 from spinn_front_end_common.utilities.exceptions import ConfigurationException
-from p8_integration_tests.base_test_case import BaseTestCase
 import spynnaker8 as sim
+from p8_integration_tests.base_test_case import BaseTestCase
 
 
 class TestPopulation(BaseTestCase):

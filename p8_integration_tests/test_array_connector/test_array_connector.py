@@ -1,10 +1,9 @@
-import spynnaker8 as p
-from p8_integration_tests.base_test_case import BaseTestCase
-from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt
-from spynnaker8.utilities import neo_convertor
-
 import numpy
+from pyNN.utility.plotting import Figure, Panel
+import spynnaker8 as p
+from spynnaker8.utilities import neo_convertor
+from p8_integration_tests.base_test_case import BaseTestCase
 
 
 def do_run(plot):

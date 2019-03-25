@@ -11,8 +11,8 @@ def do_run():
     p.setup(timestep=1.0)
 
     # FPGA Retina - Down Polarity
-    p.Population(2000, p.external_devices.ArbitraryFPGADevice,
-                 {'fpga_link_id': 12, 'fpga_id': 1, 'label': "bacon"},
+    p.Population(2000, p.external_devices.ArbitraryFPGADevice(
+        n_neurons=2000, fpga_link_id=12, fpga_id=1, label="bacon"),
                  label='External sata thing')
 
     p.run(1000)

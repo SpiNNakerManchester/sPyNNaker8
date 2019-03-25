@@ -1,6 +1,6 @@
+import os
 from distutils.version import StrictVersion as Version
 import pyNN
-import os
 
 
 def version_satisfies(module, requirement):
