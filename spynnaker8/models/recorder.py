@@ -3,6 +3,7 @@ import neo
 import os
 import numpy
 import quantities
+from collections import Iterable
 from datetime import datetime
 from six import string_types
 from six.moves import xrange
@@ -178,9 +179,14 @@ class Recorder(RecordingCommon):
         # sort out variables for using
         variables = self._clean_variables(variables)
 
+        if isinstance(self._population._vertex, Iterable):
+            vertex = self._population._vertex[0]
+        else:
+            vertex = self._population._vertex
+
         for variable in variables:
             if variable == SPIKES:
-                sampling_interval = self._population._vertex. \
+                sampling_interval = vertex. \
                     get_spikes_sampling_interval()
                 self.read_in_spikes(
                     segment=segment,
