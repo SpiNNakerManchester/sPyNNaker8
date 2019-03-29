@@ -527,11 +527,11 @@ def get_max_delay():
 def get_time_step():
     """ The integration time step
 
-    :return: get the time step of the simulation
+    :return: get the time step of the simulation (in ms)
     """
     if not globals_variables.has_simulator():
         raise ConfigurationException(FAILED_STATE_MSG)
-    return __pynn["get_time_step"]()
+    return float(__pynn["get_time_step"]()) / 1000.0
 
 
 def initialize(cells, **initial_values):
