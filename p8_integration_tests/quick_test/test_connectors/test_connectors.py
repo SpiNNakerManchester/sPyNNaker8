@@ -179,6 +179,7 @@ class ConnectorsTest(BaseTestCase):
     def multiple_connectors(self):
         n_destinations = 5
         sim.setup(1.0)
+        sim.set_number_of_neurons_per_core(sim.IF_curr_exp, 2)
         input = sim.Population(SOURCES, sim.SpikeSourceArray(
             spike_times=[[0], [20], [40], [60], [80]]), label="input")
         destination = sim.Population(
