@@ -21,21 +21,31 @@ class TestAllToAllConnector(BaseTestCase):
         self.check_weights(projection, sources, destinations)
         sim.end()
 
-    def test_same(self):
+    def same(self):
         self.check_other_connect(5, 5)
 
-    # Does not work on VM
-    # def test_less_sources(self):
-    #    self.check_other_connect(5, 10)
+    def test_same(self):
+        self.runsafe(self.same)
 
-    # Does not work on VM
-    # def test_less_destinations(self):
-    #    self.check_other_connect(10, 5)
+    def less_sources(self):
+        self.check_other_connect(5, 10)
 
-    def test_many(self):
+    def test_less_sources(self):
+        self.runsafe(self.less_sources)
+
+    def less_destinations(self):
+        self.check_other_connect(10, 5)
+
+    def test_less_destinations(self):
+        self.runsafe(self.less_destinations)
+
+    def many(self):
         self.check_other_connect(500, 500)
 
-    def test_get_before_run(self):
+    def test_many(self):
+        self.runsafe(self.many)
+
+    def get_before_run(self):
         sim.setup(1.0)
         pop1 = sim.Population(3, sim.IF_curr_exp(), label="pop1")
         pop2 = sim.Population(3, sim.IF_curr_exp(), label="pop2")
@@ -54,7 +64,10 @@ class TestAllToAllConnector(BaseTestCase):
                 "https://github.com/SpiNNakerManchester/sPyNNaker/issues/613")
         sim.end()
 
-    def test_using_static_synapse_singles(self):
+    def test_get_before_run(self):
+        self.runsafe(self.get_before_run)
+
+    def using_static_synapse_singles(self):
         sim.setup(timestep=1.0)
         input = sim.Population(2, sim.SpikeSourceArray([0]), label="input")
         pop = sim.Population(2, sim.IF_curr_exp(), label="pop")
@@ -68,3 +81,6 @@ class TestAllToAllConnector(BaseTestCase):
         for i in range(2):
             for j in range(2):
                 self.assertAlmostEqual(weights[i][j], target[i][j], places=3)
+
+    def test_using_static_synapse_singles(self):
+        self.runsafe(self.using_static_synapse_singles)
