@@ -175,3 +175,35 @@ class ConnectorsTest(BaseTestCase):
 
     def test_total_connector_too_many(self):
         self.runsafe(self.total_connector_too_many)
+
+    def multiple_connectors(self):
+        n_destinations = 5
+        sim.setup(1.0)
+        input = sim.Population(SOURCES, sim.SpikeSourceArray(
+            spike_times=[[0], [20], [40], [60], [80]]), label="input")
+        destination = sim.Population(
+            n_destinations, sim.IF_curr_exp(
+                tau_syn_E=1, tau_refrac=0,  tau_m=1),
+            {}, label="destination")
+        synapse_type = sim.StaticSynapse(weight=5, delay=1)
+        sim.Projection(
+            input, destination, sim.OneToOneConnector(),
+            synapse_type=synapse_type)
+        sim.Projection(
+            input, destination, sim.AllToAllConnector(),
+            synapse_type=synapse_type)
+        destination.record("v")
+        sim.run(100)
+        neo = destination.get_data(["v"])
+        v = neo.segments[0].filter(name="v")[0]
+        counts = self.calc_spikes_received(v)
+        for i, count in enumerate(counts):
+            for j in range(n_destinations):
+                if i == j:
+                    self.assertEqual(count[j], 2)
+                else:
+                    self.assertEqual(count[j], 1)
+        sim.end()
+
+    def test_multiple_connectors(self):
+        self.runsafe(self.multiple_connectors)
