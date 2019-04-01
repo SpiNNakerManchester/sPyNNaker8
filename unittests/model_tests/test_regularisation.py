@@ -5,13 +5,11 @@ import unittest
 from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt
 
-batches = 40
-num_repeats = 5  # in a batch
+num_repeats = 20
 cycle_time = 1023
 timestep = 1
 p.setup(timestep) # simulation timestep (ms)
-runtime = num_repeats * cycle_time * batches
-
+runtime = num_repeats * cycle_time
 
 # # Post-synapse population
 erbp_neuron_params = {
@@ -20,7 +18,7 @@ erbp_neuron_params = {
     "v_rest": 0,
     "i_offset": 0, # DC input
     "v": 0,
-    "tau_err": 1000
+    "tau_err": 1000,
 #     "tau_refrac": 50
     }
 
@@ -30,10 +28,9 @@ readout_neuron_params = {
     }
 
 tau_err = 20
-p.set_number_of_neurons_per_core(p.extra_models.IFCurrExpERBP, 32)
-p.set_number_of_neurons_per_core(p.SpikeSourceArray, 32)
+p.set_number_of_neurons_per_core(p.extra_models.IFCurrExpERBP, 128)
 
-w_in_rec_exc = 0.1
+w_in_rec_exc = 0.2
 w_in_rec_exc_dist = p.RandomDistribution(
         distribution='normal_clipped', mu=w_in_rec_exc, sigma=w_in_rec_exc,
         low=0.0, high=2*w_in_rec_exc)
@@ -43,22 +40,6 @@ w_in_rec_inh = 0.5*w_in_rec_exc
 w_in_rec_inh_dist = p.RandomDistribution(
         distribution='normal_clipped', mu=w_in_rec_inh, sigma=w_in_rec_inh,
         low=0.0, high=2*w_in_rec_inh)
-
-
-w_rec_rec = 0.0001
-w_rec_rec_dist = p.RandomDistribution(
-        distribution='normal_clipped', mu=w_rec_rec, sigma=w_rec_rec,
-        low=0.0, high=2*w_rec_rec)
-
-w_rec_out = 0.2
-w_rec_out_dist = p.RandomDistribution(
-        distribution='normal_clipped', mu=w_rec_out, sigma=w_rec_out,
-        low=0.0, high=2*w_rec_out)
-
-w_out_out = 0.1
-w_out_out_dist = p.RandomDistribution(
-        distribution='normal_clipped', mu=w_out_out, sigma=w_out_out,
-        low=0.0, high=2*w_out_out)
 
 
 
@@ -192,20 +173,20 @@ def build_input_spike_train(num_repeats, cycle_time):
 pop_in = p.Population(100,
                       p.SpikeSourceArray,
                       {'spike_times': build_input_spike_train(
-                          num_repeats*batches, cycle_time)},
+                          num_repeats, cycle_time)},
                       label='pop_in')
 
-pop_rec = p.Population(100,  # number of neurons
+pop_rec = p.Population(1,  # number of neurons
                        p.extra_models.IFCurrExpERBP(**erbp_neuron_params),
                        label="pop_rec")
 
-# Output population
-pop_out = p.Population(3, # HARDCODED 3: One readout; one exc err, one inh err
-                       p.extra_models.ReadoutPoissonNeuron(
-                            **readout_neuron_params
-                           ),  # Neuron model
-                       label="pop_out" # identifier
-                       )
+# # Output population
+# pop_out = p.Population(3, # HARDCODED 3: One readout; one exc err, one inh err
+#                        p.extra_models.ReadoutPoissonNeuron(
+#                             **readout_neuron_params
+#                            ),  # Neuron model
+#                        label="pop_out" # identifier
+#                        )
 
 ###############################################################################
 # Build Projections
@@ -253,142 +234,16 @@ inp_rec_inh = p.Projection(
     receptor_type="inhibitory")
 
 
-#######################################
-# recurrent to recurrent
-#######################################
-# Define learning rule object
-learning_rule = p.STDPMechanism(
-    timing_dependence=p.TimingDependenceERBP(
-        tau_plus=tau_err, A_plus=1, A_minus=1),
-    weight_dependence=p.WeightDependenceERBP(
-        w_min=0.0, w_max=1),
-    weight=w_rec_rec_dist,
-    delay=timestep)
 
-# Create excitatory recurrent projection
-rec_rec_exc = p.Projection(
-    pop_rec,
-    pop_rec,
-    p.FixedProbabilityConnector(0.4),
-    synapse_type=learning_rule,
-    receptor_type="excitatory")
-
-# input to recurrent inhibitory
-# Define learning rule object
-learning_rule = p.STDPMechanism(
-    timing_dependence=p.TimingDependenceERBP(
-        tau_plus=tau_err, A_plus=1, A_minus=1),
-    weight_dependence=p.WeightDependenceERBP(
-        w_min=0.0, w_max=1),
-    weight=w_rec_rec_dist,
-    delay=timestep)
-
-# Create inhibitory recurrent projection from input to hidden neuron using
-# learning rule
-rec_rec_inh = p.Projection(
-    pop_rec,
-    pop_rec,
-    p.FixedProbabilityConnector(0.4),
-    synapse_type=learning_rule,
-    receptor_type="inhibitory")
-
-#######################################
-# recurrent to output
-#######################################
-
-# Only connect to neuron '0' of readout population
-# rand_out_w.next(),
-conn_list_exc = [[x, 0, w_rec_out_dist.next(), 1] for x in range(100)]
-conn_list_inh = [[x, 0, w_rec_out_dist.next(), 1] for x in range(100)]
-
-for i in range(0,100,2):
-    conn_list_exc[i][2] = 0
-    conn_list_inh[i+1][2] = 0
-
-
-# Define learning rule object
-learning_rule = p.STDPMechanism(
-    timing_dependence=p.TimingDependenceERBP(
-        tau_plus=tau_err, A_plus=1, A_minus=1),
-    weight_dependence=p.WeightDependenceERBP(
-        w_min=0.0, w_max=1),
-    weight=w_rec_out_dist,
-    delay=timestep)
-
-# Create excitatory recurrent to out projection
-rec_out_exc = p.Projection(
-    pop_rec,
-    pop_out,
-    p.FromListConnector(conn_list_exc),
-#     synapse_type=p.StaticSynapse(weight=0.1, delay=1),
-    synapse_type=learning_rule,
-    receptor_type="excitatory")
-
-# recurrent to out inhibitory
-# Define learning rule object
-learning_rule = p.STDPMechanism(
-    timing_dependence=p.TimingDependenceERBP(
-        tau_plus=tau_err, A_plus=1, A_minus=1),
-    weight_dependence=p.WeightDependenceERBP(
-        w_min=0.0, w_max=1),
-    weight=w_rec_out_dist,
-    delay=timestep)
-
-# Create inhibitory recurrent projection from recurrent to hidden neuron using
-# learning rule
-rec_out_inh = p.Projection(
-    pop_rec,
-    pop_out,
-    p.FromListConnector(conn_list_inh),
-#     p.StaticSynapse(weight=0.1, delay=1),
-    synapse_type=learning_rule,
-    receptor_type="inhibitory")
-
-#######################################
-# Feedback connections
-#######################################
-
-# Connect excitatory fb neuron (1) to all recurrent neurons
-# rand_out_w.next()
-exc_fb_rec_conn_list = [[1, x, 0.01*w_rec_out_dist.next(), 1] for x in range(100)]
-# Connect inhibitory fb neuron (2) to all recurrent neurons
-# rand_out_w.next()
-inh_fb_rec_conn_list = [[2, x, 0.01*w_rec_out_dist.next(), 1] for x in range(100)]
-
-fb_out_rec_exc = p.Projection(
-    pop_out, pop_rec, p.FromListConnector(exc_fb_rec_conn_list),
-    p.StaticSynapse(weight=10, delay=1), receptor_type="exc_err")
-
-fb_out_rec_inh = p.Projection(
-    pop_out, pop_rec, p.FromListConnector(inh_fb_rec_conn_list),
-    p.StaticSynapse(weight=10, delay=1), receptor_type="inh_err")
-
-
-# Now to output layer to gate plasticity on output weights
-# rand_out_w.next()
-# rand_out_w.next()
-exc_fb_out_conn_list  = [1, 0, 0.01*w_out_out_dist.next(), 1]
-inh_fb_out_conn_list  = [2, 0, 0.01*w_out_out_dist.next(), 1]
-
-fb_out_out_exc = p.Projection(
-    pop_out, pop_out, p.FromListConnector([exc_fb_out_conn_list]),
-    p.StaticSynapse(weight=0.0, delay=1), receptor_type="exc_err")
-
-fb_out_out_inh = p.Projection(
-    pop_out, pop_out, p.FromListConnector([inh_fb_out_conn_list]),
-    p.StaticSynapse(weight=0.0, delay=1), receptor_type="inh_err")
 
 ###############################################################################
 # Run Simulation
 ###############################################################################
 
 pop_in.record('spikes')
-pop_rec.record("spikes")
-pop_out.record("all")
+pop_rec.record("all")
 
-
-# p.run(runtime)
-
+p.run(runtime)
 # p.run(runtime/8)
 # p.run(runtime/8)
 # p.run(runtime/8)
@@ -397,61 +252,31 @@ pop_out.record("all")
 # p.run(runtime/8)
 # p.run(runtime/8)
 
-# p.run(runtime/4)
-# p.run(runtime/4)
-#
-# p.run(runtime/4)
-# p.run(runtime/4)
-# p.run(runtime/4)
-# p.run(runtime/4)
-
-plot_start = 0
-window =  num_repeats * cycle_time
-plot_end = plot_start + window
+in_spikes = pop_in.get_data('spikes')
+pop_rec_data = pop_rec.get_data()
 
 
-
-
-
-for i in range(batches):
-
-    print "run: {}".format(i)
-    p.run(runtime/batches)
-
-    in_spikes = pop_in.get_data('spikes')
-    pop_rec_data = pop_rec.get_data('spikes')
-    pop_out_data = pop_out.get_data()
-
-    # Plot
-    F = Figure(
-        # plot data for postsynaptic neuron
-        Panel(in_spikes.segments[0].spiketrains,
-              yticks=True, markersize=2, xlim=(plot_start, plot_end)),
-        Panel(pop_rec_data.segments[0].spiketrains,
-              yticks=True, markersize=2, xlim=(plot_start, plot_end)
-              ),
-        Panel(pop_out_data.segments[0].filter(name='v')[0],
-              ylabel="Membrane potential (mV)",
-              data_labels=[pop_out.label], yticks=True, xlim=(plot_start, plot_end)
-              ),
-        Panel(pop_out_data.segments[0].filter(name='gsyn_exc')[0],
-              ylabel="gsyn excitatory (mV)",
-              data_labels=[pop_out.label], yticks=True, xlim=(plot_start, plot_end)
-              ),
-        Panel(pop_out_data.segments[0].filter(name='gsyn_inh')[0],
-              ylabel="gsyn inhibitory (mV)",
-              data_labels=[pop_out.label], yticks=True, xlim=(plot_start, plot_end)
-              ),
-        Panel(pop_out_data.segments[0].spiketrains,
-              yticks=True, markersize=2, xlim=(plot_start, plot_end)),
-        annotations="Batch: {}".format(i)
-        )
-
-    plt.pause(0.05)
-#     plt.draw()
-
-    plot_start = plot_end
-    plot_end += window
+# Plot
+F = Figure(
+    # plot data for postsynaptic neuron
+    Panel(in_spikes.segments[0].spiketrains,
+          yticks=True, markersize=2, xlim=(0, runtime)),
+    Panel(pop_rec_data.segments[0].spiketrains,
+          yticks=True, markersize=2, xlim=(0, runtime)
+          ),
+    Panel(pop_rec_data.segments[0].filter(name='v')[0],
+          ylabel="Membrane potential (mV)",
+          data_labels=[pop_rec.label], yticks=True, xlim=(0, runtime)
+          ),
+    Panel(pop_rec_data.segments[0].filter(name='gsyn_exc')[0],
+          ylabel="gsyn excitatory (mV)",
+          data_labels=[pop_rec.label], yticks=True, xlim=(0, runtime)
+          ),
+    Panel(pop_rec_data.segments[0].filter(name='gsyn_inh')[0],
+          ylabel="gsyn inhibitory (mV)",
+          data_labels=[pop_rec.label], yticks=True, xlim=(0, runtime)
+          )
+    )
 
 plt.show()
 p.end()
