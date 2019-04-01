@@ -101,9 +101,8 @@ class Synfire20n20pcDelaysDelayExtensionsAllRecording(BaseTestCase):
         self.assertTrue(numpy.allclose(read_spikes, spikes),
                         "spikes neo method mismatch")
 
-
-def test_all_constraint(self):
-    self.runsafe(self.do_all_constraint)
+    def test_all_constraint(self):
+        self.runsafe(self.do_all_constraint)
 
 
 if __name__ == '__main__':
