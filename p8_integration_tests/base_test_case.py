@@ -127,3 +127,23 @@ class BaseTestCase(unittest.TestCase):
                 retries += 1
                 globals_variables.unset_simulator()
         raise last_error
+
+    def get_placements(self, label):
+        report_default_directory = globals_variables.get_simulator() \
+            ._report_default_directory
+        placement_path = os.path.join(
+            report_default_directory, "placement_by_vertex_using_graph.rpt")
+        placements = []
+        in_core = False
+        with open(placement_path, "r") as placement_file:
+            for line in placement_file:
+                if in_core:
+                    if "**** Vertex: '" in line:
+                        in_core = False
+                    elif "on core (" in line:
+                        all = line[line.rfind("(")+1: line.rfind(")")]
+                        [x, y, p] = all.split(",")
+                        placements.append([x.strip(), y.strip(), p.strip()])
+                if line == "**** Vertex: '" + label + "'\n":
+                    in_core = True
+        return placements
