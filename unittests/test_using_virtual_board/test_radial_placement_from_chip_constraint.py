@@ -7,7 +7,7 @@ from p8_integration_tests.base_test_case import BaseTestCase
 
 class TestRadialConstraint(BaseTestCase):
 
-    def working(self):
+    def test_working(self):
         """
         test the get_placements call.
 
@@ -32,10 +32,7 @@ class TestRadialConstraint(BaseTestCase):
             self.assertEqual("1", x)
             self.assertEqual("1", y)
 
-    def test_working(self):
-        self.runsafe(self.working)
-
-    def some(self):
+    def test_some(self):
         sim.setup(timestep=1.0)
         sim.set_number_of_neurons_per_core(sim.IF_curr_exp, 50)
 
@@ -60,10 +57,7 @@ class TestRadialConstraint(BaseTestCase):
             self.assertEqual("1", x)
             self.assertEqual("1", y)
 
-    def test_some(self):
-        self.runsafe(self.some)
-
-    def many(self):
+    def test_many(self):
         sim.setup(timestep=1.0)
         sim.set_number_of_neurons_per_core(sim.IF_curr_exp, 10)
 
@@ -86,6 +80,3 @@ class TestRadialConstraint(BaseTestCase):
             raise SkipTest("https://github.com/SpiNNakerManchester/"
                            "sPyNNaker/issues/628")
         self.assertGreater(count, 10)
-
-    def test_many(self):
-        self.runsafe(self.many)
