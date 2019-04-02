@@ -8,6 +8,7 @@ pipeline {
                 TRAVIS_BRANCH = "${env.BRANCH_NAME}"
             }
             steps {
+                sh 'export LANG=en_GB.utf8'
                 // remove all directories left if Jenkins ended badly
                 sh 'rm -rf support'
                 sh 'rm -rf SpiNNUtils'
