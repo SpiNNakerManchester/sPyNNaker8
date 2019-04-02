@@ -24,7 +24,6 @@ pipeline {
                 sh 'rm -rf IntroLab'
                 sh 'git clone https://github.com/SpiNNakerManchester/SupportScripts.git support'
                 sh 'pip3 install --upgrade setuptools wheel'
-                sh 'alias pip=pip3'
                 sh 'alias python=python3'
                 sh 'pip install --only-binary=numpy,scipy,matplotlib numpy scipy matplotlib'
                 // SpiNNakerManchester internal dependencies; development mode
