@@ -9,9 +9,9 @@ from spinn_front_end_common.utilities.report_functions.\
     routing_tables_from_machine_report
 from spinn_front_end_common.utilities.report_functions.board_chip_report \
     import BoardChipReport
-# from spinn_front_end_common.utility_models.\
-#     data_speed_up_packet_gatherer_machine_vertex import \
-#     DataSpeedUpPacketGatherMachineVertex
+from spinn_front_end_common.utility_models.\
+     data_speed_up_packet_gatherer_machine_vertex import \
+     DataSpeedUpPacketGatherMachineVertex
 from p8_integration_tests.base_test_case import BaseTestCase
 import spynnaker8 as sim
 
@@ -62,16 +62,17 @@ class TestDebug(BaseTestCase):
             # write_board_chip_report
             BoardChipReport.AREA_CODE_REPORT_NAME,
             # write_data_speed_up_report
-            # Appears to only work if you call get_data ???
-            # DataSpeedUpPacketGatherMachineVertex.REPORT_NAME
+            DataSpeedUpPacketGatherMachineVertex.REPORT_NAME
             ]
         sim.setup(1.0)
-        pop = sim.Population(1, sim.IF_curr_exp, {}, label="pop")
+        pop = sim.Population(100, sim.IF_curr_exp, {}, label="pop")
+        pop.record("v")
         inp = sim.Population(1, sim.SpikeSourceArray(
             spike_times=[0]), label="input")
-        sim.Projection(inp, pop, sim.OneToOneConnector(),
+        sim.Projection(inp, pop, sim.AllToAllConnector(),
                        synapse_type=sim.StaticSynapse(weight=5))
-        sim.run(10)
+        sim.run(1000)
+        pop.get_data("v")
         report_directory = globals_variables.get_simulator().\
             _report_default_directory
         sim.end()
