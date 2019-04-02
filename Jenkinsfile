@@ -8,24 +8,10 @@ pipeline {
                 TRAVIS_BRANCH = "${env.BRANCH_NAME}"
             }
             steps {
-                sh 'set'
                 // remove all directories left if Jenkins ended badly
-                sh 'rm -rf support'
-                sh 'rm -rf SpiNNUtils'
-                sh 'rm -rf SpiNNMachine'
-                sh 'rm -rf SpiNNStorageHandlers'
-                sh 'rm -rf SpiNNMan'
-                sh 'rm -rf PACMAN'
-                sh 'rm -rf DataSpecification'
-                sh 'rm -rf spalloc'
-                sh 'rm -rf spinnaker_tools'
-                sh 'rm -rf spinn_common'
-                sh 'rm -rf SpiNNFrontEndCommon'
-                sh 'rm -rf sPyNNaker'
-                sh 'rm -rf IntroLab'
+                sh 'rm -rf support SpiNNUtils SpiNNMachine SpiNNStorageHandlers SpiNNMan PACMAN DataSpecification spalloc spinnaker_tools spinn_common SpiNNFrontEndCommon sPyNNaker IntroLab'
                 sh 'git clone https://github.com/SpiNNakerManchester/SupportScripts.git support'
                 sh 'pip3 install --upgrade setuptools wheel'
-                sh 'alias python=python3'
                 sh 'pip install --only-binary=numpy,scipy,matplotlib numpy scipy matplotlib'
                 // SpiNNakerManchester internal dependencies; development mode
                 sh 'support/pipinstall.sh git://github.com/SpiNNakerManchester/SpiNNUtils.git'
@@ -50,7 +36,6 @@ pipeline {
                 NEURAL_MODELLING_DIRS = "${workspace}/sPyNNaker/neural_modelling"
             }
             steps {
-                sh 'alias python=python3'
                 // C Build
                 sh 'make -C $SPINN_DIRS'
                 sh 'make -C spinn_common install'
