@@ -7,7 +7,7 @@ import spynnaker8 as p
 class MyTestCase(unittest.TestCase):
     __name__ = "bOB"
 
-    def test_recording_1_element(self):
+    def recording_1_element(self):
         p.setup(timestep=1.0, min_delay=1.0, max_delay=144.0)
         n_neurons = 200  # number of neurons in each population
         p.set_number_of_neurons_per_core(p.IF_curr_exp, n_neurons / 2)
@@ -47,7 +47,10 @@ class MyTestCase(unittest.TestCase):
 
         p.end()
 
-    def test_recording_numerious_element(self):
+    def test_recording_1_element(self):
+        self.runsafe(self.recording_1_element)
+
+    def recording_numerious_element(self):
         p.setup(timestep=1.0, min_delay=1.0, max_delay=144.0)
         n_neurons = 20  # number of neurons in each population
         p.set_number_of_neurons_per_core(p.IF_curr_exp, n_neurons / 2)
@@ -96,6 +99,9 @@ class MyTestCase(unittest.TestCase):
                                                  boxed_array[:, 0]))]
         numpy.testing.assert_array_equal(spike_array_spikes, boxed_array)
         p.end()
+
+    def test_recording_numerious_element(self):
+        self.runsafe(self.recording_numerious_element)
 
 
 if __name__ == '__main__':
