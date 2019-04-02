@@ -6,9 +6,9 @@ pipeline {
         stage('Before Install') {
             environment {
                 TRAVIS_BRANCH = "${env.BRANCH_NAME}"
+                PYTHONIOENCODING = "utf-8"
             }
             steps {
-                sh 'export PYTHONIOENCODING=utf-8'
                 sh 'set'
                 // remove all directories left if Jenkins ended badly
                 sh 'rm -rf support'
