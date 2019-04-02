@@ -34,6 +34,8 @@ class ReuseConnectorTest(BaseTestCase):
         test_1_list.append((0, 0, 2.0, 2.0))
         test_2_list = []
         test_2_list.append((0, 0, 1.0, 1.0))
+        self.assertEqual(len(proj_1_list), 1)
+        self.assertEqual(len(proj_2_list), 1)
         for i in range(4):
             self.assertEquals(test_1_list[0][i], proj_1_list[0][i])
             self.assertEquals(test_2_list[0][i], proj_2_list[0][i])
