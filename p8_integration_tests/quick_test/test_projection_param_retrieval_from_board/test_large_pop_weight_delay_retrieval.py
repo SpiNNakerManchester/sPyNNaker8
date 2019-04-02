@@ -62,7 +62,8 @@ def do_run():
 
 
 class LargePopWeightDelayRetrival(BaseTestCase):
-    def test_compare_before_and_after(self):
+
+    def compare_before_and_after(self):
         (pre_delays_array, pre_delays_list, pre_weights_array,
             pre_weights_list, post_delays_array, post_delays_list,
             post_weights_array, post_weights_list) = do_run()
@@ -86,6 +87,9 @@ class LargePopWeightDelayRetrival(BaseTestCase):
                 [post_weights_list[i][0]][post_weights_list[i][1]])
             self.assertEqual(post_delays_list[i][2], post_delays_array
                              [post_delays_list[i][0]][post_delays_list[i][1]])
+
+    def test_compare_before_and_after(self):
+        self.runsafe(self.compare_before_and_after)
 
 
 if __name__ == '__main__':
