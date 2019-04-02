@@ -1,6 +1,6 @@
 pipeline {
     agent {
-        docker { image 'python' }
+        docker { image 'python3.6' }
     }
     stages {
         stage('Before Install') {
@@ -70,6 +70,9 @@ pipeline {
                 sh 'echo "[Machine]" > ~/.spynnaker.cfg'
                 sh 'echo "spalloc_server = 10.11.192.11" >> ~/.spynnaker.cfg'
                 sh 'echo "spalloc_user = Jenkins" >> ~/.spynnaker.cfg'
+                sh 'echo "enable_advanced_monitor_support = True" >> ~/.spynnaker.cfg'
+                sh 'echo "[Java]" >> ~/.spynnaker.cfg'
+                sh 'echo "use_java = True" >> ~/.spynnaker.cfg'
                 sh 'echo "<testsuite tests="0"></testsuite>" > results.xml'
             }
         }
@@ -78,19 +81,14 @@ pipeline {
                 sh 'py.test p8_integration_tests/quick_test --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 1200'
             }
         }
-        //stage('IntroLab') {
-        //    steps {
-        //        sh 'py.test p8_integration_tests/introlab_test --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 1200'
-        //    }
-        //}
+        stage('IntroLab') {
+            steps {
+                sh 'py.test p8_integration_tests/introlab_test --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 1200'
+            }
+        }
         //stage('TO DO Tests') {
         //    steps {
         //        sh 'py.test p8_integration_tests/test_auto_pause_and_resume_tests --forked --instafail spynnaker8 --timeout 1200'
-        //        sh 'py.test p8_integration_tests/test_population_with_multiple_connectors --forked --instafail spynnaker8 --timeout 1200'
-        //        sh 'py.test p8_integration_tests/test_projection_param_retrieval_from_board --forked --instafail spynnaker8 --timeout 1200'
-        //        sh 'py.test p8_integration_tests/test_projection_properties --forked --instafail spynnaker8 --timeout 1200'
-        //        sh 'py.test p8_integration_tests/test_radial_placement_from_chip_constraint --forked --instafail spynnaker8 --timeout 1200'
-        //        sh 'py.test p8_integration_tests/test_report_generation --forked --instafail spynnaker8 --timeout 1200'
         //        sh 'py.test p8_integration_tests/test_reuse_connector --forked --instafail spynnaker8 --timeout 1200'
         //        sh 'py.test p8_integration_tests/test_running_on_multiple_chips --forked --instafail spynnaker8 --timeout 1200'
         //        sh 'py.test p8_integration_tests/test_running_on_multiple_cores --forked --instafail spynnaker8 --timeout 1200'
