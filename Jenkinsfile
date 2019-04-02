@@ -25,7 +25,7 @@ pipeline {
                 sh 'git clone https://github.com/SpiNNakerManchester/SupportScripts.git support'
                 // Bring pip up to date
                 sh 'pip3 install --upgrade pip setuptools wheel'
-                sh 'pip3 install --only-binary=numpy,scipy,matplotlib numpy scipy matplotlib'
+                sh 'pip install --only-binary=numpy,scipy,matplotlib numpy scipy matplotlib'
                 // SpiNNakerManchester internal dependencies; development mode
                 sh 'support/pipinstall.sh git://github.com/SpiNNakerManchester/SpiNNUtils.git'
                 sh 'support/pipinstall.sh git://github.com/SpiNNakerManchester/SpiNNMachine.git'
@@ -58,9 +58,9 @@ pipeline {
                 // Python install
                 sh 'cd SpiNNFrontEndCommon && python setup.py install'
                 sh 'cd sPyNNaker && python setup.py install'
-                sh 'pip3 install -r requirements-test.txt'
-                sh 'pip3 install python-coveralls "coverage>=4.4"'
-                sh 'pip3 install pytest-instafail'
+                sh 'pip install -r requirements-test.txt'
+                sh 'pip install python-coveralls "coverage>=4.4"'
+                sh 'pip install pytest-instafail'
                 sh 'python ./setup.py install'
                 sh 'python -m spynnaker8.setup_pynn'
             }
