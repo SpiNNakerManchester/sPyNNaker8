@@ -103,6 +103,8 @@ class TestIFCondExpSTDPPairAdditive(BaseTestCase):
 
         print("Pre neuron spikes at: {}".format(pre_spikes))
         print("Post-neuron spikes at: {}".format(post_spikes))
+        target_spikes = [1013, 1032, 1051, 1056]
+        self.assertListEqual(list(post_spikes), target_spikes)
         print("Potentiation time differences: {}".format(potentiation_times))
         print("Depression time differences: {}".format(depression_times))
         print("Potentiation: {}".format(potentiations))
@@ -110,10 +112,7 @@ class TestIFCondExpSTDPPairAdditive(BaseTestCase):
         print("New weight exact: {}".format(new_weight_exact))
         print("New weight SpiNNaker: {}".format(weights))
 
-        # Feb 10. Since revert and merge this is broken???
-        """
         self.assertTrue(numpy.allclose(weights, new_weight_exact, rtol=0.001))
-        """
 
 
 if __name__ == '__main__':

@@ -103,6 +103,8 @@ class TestSTDPPairAdditive(BaseTestCase):
 
         print("Pre neuron spikes at: {}".format(pre_spikes))
         print("Post-neuron spikes at: {}".format(post_spikes))
+        target_spikes = [1014,  1032, 1053]
+        self.assertListEqual(list(post_spikes), target_spikes)
         print("Potentiation time differences: {}".format(potentiation_times))
         print("Depression time differences: {}".format(depression_times))
         print("Potentiation: {}".format(potentiations))
