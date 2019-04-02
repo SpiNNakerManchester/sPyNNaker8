@@ -5,9 +5,9 @@ from pacman.model.constraints.placer_constraints import (
 from p8_integration_tests.base_test_case import BaseTestCase
 
 
-class TestRadialConstraint(BaseTestCase):
+class TestConstraint(BaseTestCase):
 
-    def test_working(self):
+    def test_placement_constraint(self):
         """
         test the get_placements call.
 
@@ -32,7 +32,7 @@ class TestRadialConstraint(BaseTestCase):
             self.assertEqual("1", x)
             self.assertEqual("1", y)
 
-    def test_some(self):
+    def test_radial_some(self):
         sim.setup(timestep=1.0)
         sim.set_number_of_neurons_per_core(sim.IF_curr_exp, 50)
 
@@ -57,7 +57,7 @@ class TestRadialConstraint(BaseTestCase):
             self.assertEqual("1", x)
             self.assertEqual("1", y)
 
-    def test_many(self):
+    def test_radial_many(self):
         sim.setup(timestep=1.0)
         sim.set_number_of_neurons_per_core(sim.IF_curr_exp, 10)
 
