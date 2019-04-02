@@ -6,7 +6,7 @@ pipeline {
         stage('Before Install') {
             environment {
                 TRAVIS_BRANCH = "${env.BRANCH_NAME}"
-                PYTHONIOENCODING = "utf-8"
+                PYTHONIOENCODING = "utf8"
             }
             steps {
                 sh 'set'
