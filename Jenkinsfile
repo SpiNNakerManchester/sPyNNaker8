@@ -50,6 +50,7 @@ pipeline {
                 NEURAL_MODELLING_DIRS = "${workspace}/sPyNNaker/neural_modelling"
             }
             steps {
+                sh 'alias python=python3'
                 // C Build
                 sh 'make -C $SPINN_DIRS'
                 sh 'make -C spinn_common install'
