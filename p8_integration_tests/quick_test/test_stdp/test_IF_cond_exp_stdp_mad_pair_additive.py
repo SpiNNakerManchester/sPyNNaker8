@@ -6,7 +6,7 @@ import unittest
 
 class TestIFCondExpSTDPPairAdditive(BaseTestCase):
 
-    def test_potentiation_and_depression(self):
+    def potentiation_and_depression(self):
         p.setup(1)
         runtime = 100
         initial_run = 1000  # to negate any initial conditions
@@ -113,6 +113,9 @@ class TestIFCondExpSTDPPairAdditive(BaseTestCase):
         print("New weight SpiNNaker: {}".format(weights))
 
         self.assertTrue(numpy.allclose(weights, new_weight_exact, rtol=0.001))
+
+    def test_potentiation_and_depression(self):
+        self.runsafe(self.potentiation_and_depression)
 
 
 if __name__ == '__main__':

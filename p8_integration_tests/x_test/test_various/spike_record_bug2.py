@@ -1,6 +1,3 @@
-"""
-Synfirechain-like example
-"""
 # !/usr/bin/python
 import spynnaker.plot_utils as plot_utils
 import spynnaker8 as p
@@ -13,7 +10,7 @@ from p8_integration_tests.base_test_case import BaseTestCase
 
 def do_run(nNeurons):
 
-    spike_list = {'spike_times': [11, 22]}
+    spike_list = {'spike_times': [float(x) for x in range(0, 599, 50)]}
     print(spike_list)
     p.setup(timestep=1.0, min_delay=1.0, max_delay=32.0)
 
@@ -26,7 +23,7 @@ def do_run(nNeurons):
 
     pop.record("spikes")
 
-    p.run(200)
+    p.run(1000)
 
     neo = pop.get_data("spikes")
 
@@ -38,10 +35,10 @@ def do_run(nNeurons):
 class Bug(BaseTestCase):
 
     def test_run_(self):
-        nNeurons = 100  # number of neurons in each population
+        nNeurons = 700  # number of neurons in each population
         neo = do_run(nNeurons)
         spike_count = neo_convertor.count_spikes(neo)
-        self.assertEquals(200, spike_count)
+        self.assertEquals(7200, spike_count)
 
 
 if __name__ == '__main__':

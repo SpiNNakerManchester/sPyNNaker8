@@ -114,6 +114,9 @@ class TestSTDPPairAdditive(BaseTestCase):
 
         self.assertTrue(numpy.allclose(weights, new_weight_exact, rtol=0.001))
 
+    def test_potentiation_and_depression(self):
+        self.runsafe(self.potentiation_and_depression)
+
 
 if __name__ == '__main__':
     unittest.main()

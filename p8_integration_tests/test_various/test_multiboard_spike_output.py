@@ -11,7 +11,7 @@ class TestMultiBoardSpikeOutput(BaseTestCase):
     def spike_receiver(label, time, neuron_ids):
         TestMultiBoardSpikeOutput.counts[label] += len(neuron_ids)
 
-    def test_multi_board_spike_output(self):
+    def multi_board_spike_output(self):
         self.assert_not_spin_three()
         TestMultiBoardSpikeOutput.counts = dict()
         p.setup(1.0, n_chips_required=((48 * 2) + 1))
@@ -42,6 +42,9 @@ class TestMultiBoardSpikeOutput(BaseTestCase):
             print("Received {} of 1000 spikes from {}".format(
                 TestMultiBoardSpikeOutput.counts[label], label))
             self.assertEqual(TestMultiBoardSpikeOutput.counts[label], 1000)
+
+    def test_multi_board_spike_output(self):
+        self.runsafe(self.multi_board_spike_output)
 
 
 if __name__ == '__main__':

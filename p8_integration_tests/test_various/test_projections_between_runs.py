@@ -31,13 +31,11 @@ def do_run():
 
 
 class TestProjectionBetweenRun(BaseTestCase):
-    def test_run(self):
+    def do_run(self):
         first_spikes, second_spikes = do_run()
         assert len(first_spikes) == 0
         assert len(second_spikes[0]) == 2
 
+    def test_run(self):
+        self.runsafe(self.do_run)
 
-if __name__ == '__main__':
-    first_spikes, second_spikes = do_run()
-    print(first_spikes)
-    print(second_spikes)

@@ -66,11 +66,15 @@ def do_run(nNeurons):
 
 
 class SynfireIzhikevich(BaseTestCase):
-    def test_run(self):
+
+    def check_run(self):
         nNeurons = 200  # number of neurons in each population
         (v, gsyn, spikes) = do_run(nNeurons)
         spike_checker.synfire_spike_checker(spikes, nNeurons)
         self.assertEquals(215, len(spikes))
+
+    def test_run(self):
+        self.runsafe(self.check_run)
 
 
 if __name__ == '__main__':

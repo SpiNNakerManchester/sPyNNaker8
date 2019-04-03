@@ -54,11 +54,14 @@ def do_run(nNeurons):
 
 class SynfireIfCurrx6(BaseTestCase):
 
-    def test_run(self):
+    def check_run(self):
         nNeurons = 200  # number of neurons in each population
         spikes = do_run(nNeurons)
         for x in range(0, 12, 2):
             self.assertEqual(999, len(spikes[x // 2]))
+
+    def test_run(self):
+        self.runsafe(self.check_run)
 
 
 if __name__ == '__main__':

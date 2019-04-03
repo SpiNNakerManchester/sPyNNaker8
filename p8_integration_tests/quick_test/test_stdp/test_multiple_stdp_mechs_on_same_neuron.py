@@ -1,8 +1,4 @@
 #!/usr/bin/python
-"""
-Synfirechain-like example
-"""
-import unittest
 from spynnaker.pyNN.exceptions import SynapticConfigurationException
 import spynnaker8 as p
 from p8_integration_tests.base_test_case import BaseTestCase
@@ -112,10 +108,6 @@ class TestMultipleStdpMechsOnSameNeuron(BaseTestCase):
                            synapse_type=stdp_model3)
         projections.append(pop)
 
-    def test_test_multiple_stdp_mechs_on_same_neuron(self):
+    def test_multiple_stdp_mechs_on_same_neuron(self):
         with self.assertRaises(SynapticConfigurationException):
-            self.run_multiple_stdp_mechs_on_same_neuron()
-
-
-if __name__ == '__main__':
-    unittest.main()
+            self.runsafe(self.run_multiple_stdp_mechs_on_same_neuron())
