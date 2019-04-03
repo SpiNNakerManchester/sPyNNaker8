@@ -9,7 +9,7 @@ pipeline {
             }
             steps {
                 // remove all directories left if Jenkins ended badly
-                sh 'rm -rf support SpiNNUtils SpiNNMachine SpiNNStorageHandlers SpiNNMan PACMAN DataSpecification spalloc spinnaker_tools spinn_common SpiNNFrontEndCommon sPyNNaker IntroLab'
+                sh 'rm -rf support SpiNNUtils SpiNNMachine SpiNNStorageHandlers SpiNNMan PACMAN DataSpecification spalloc spinnaker_tools spinn_common SpiNNFrontEndCommon sPyNNaker IntroLab PyNN8Examples'
                 sh 'git clone https://github.com/SpiNNakerManchester/SupportScripts.git support'
                 sh 'pip3 install --upgrade setuptools wheel'
                 sh 'pip install --only-binary=numpy,scipy,matplotlib numpy scipy matplotlib'
@@ -28,6 +28,7 @@ pipeline {
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/sPyNNaker.git'
                 // scripts
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/IntroLab.git'
+                sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/PyNN8Examples.git'
             }
         }
         stage('Install') {
@@ -63,30 +64,19 @@ pipeline {
                 sh 'echo "<testsuite tests="0"></testsuite>" > results.xml'
             }
         }
+        stage('PyNN8Examples') {
+            steps {
+                sh 'py.test p8_integration_tests/pynexamples_test --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 1200'
+            }
+        }
         stage('Test') {
             steps {
                 sh 'py.test p8_integration_tests/quick_test --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 1200'
             }
         }
-        stage('IntroLab') {
-            steps {
-                sh 'py.test p8_integration_tests/introlab_test --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 1200'
-            }
-        }
-        //stage('TO DO Tests') {
+        //stage('IntroLab') {
         //    steps {
-        //        sh 'py.test p8_integration_tests/test_auto_pause_and_resume_tests --forked --instafail spynnaker8 --timeout 1200'
-        //        sh 'py.test p8_integration_tests/test_reuse_connector --forked --instafail spynnaker8 --timeout 1200'
-        //        sh 'py.test p8_integration_tests/test_running_on_multiple_chips --forked --instafail spynnaker8 --timeout 1200'
-        //        sh 'py.test p8_integration_tests/test_running_on_multiple_cores --forked --instafail spynnaker8 --timeout 1200'
-        //        sh 'py.test p8_integration_tests/test_sata_connectors --forked --instafail spynnaker8 --timeout 1200'
-        //        sh 'py.test p8_integration_tests/test_spike_source --forked --instafail spynnaker8 --timeout 1200'
-        //        sh 'py.test p8_integration_tests/test_spinnaker_link_connectors --forked --instafail spynnaker8 --timeout 1200'
-        //        sh 'py.test p8_integration_tests/test_stdp --forked --instafail spynnaker8 --timeout 1200'
-        //        sh 'py.test p8_integration_tests/test_synapses --forked --instafail spynnaker8 --timeout 1200'
-        //        sh 'py.test p8_integration_tests/test_various --forked --instafail spynnaker8 --timeout 1200'
-        //        sh 'py.test p8_integration_tests/test_visualiser --forked --instafail spynnaker8 --timeout 1200'
-        //        sh 'py.test p8_integration_tests/test_weights --forked --instafail spynnaker8 --timeout 1200'
+        //        sh 'py.test p8_integration_tests/introlab_test --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 1200'
         //    }
         //}
         //stage('What do they do Tests') {
