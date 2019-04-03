@@ -257,8 +257,8 @@ class TestNoChange(BaseTestCase):
     def multi_core(self):
         sim.setup(1.0)
         sim.set_number_of_neurons_per_core(sim.IF_curr_exp, 2)
-        pop = sim.Population(6, sim.IF_curr_exp(i_offset=1, tau_syn_E=1), {},
-                             label="pop")
+        pop = sim.Population(
+            6, sim.IF_curr_exp(i_offset=1, tau_syn_E=1), label="pop")
         pop.record("v")
         sim.run(3)
         pop.set(tau_syn_E=1)

@@ -98,8 +98,7 @@ class ConnectorsTest(BaseTestCase):
             spike_times=[[0], [20], [40], [60], [80]]), label="input")
         destination = sim.Population(
             n_destinations, sim.IF_curr_exp(
-                tau_syn_E=1, tau_refrac=0,  tau_m=1),
-            {}, label="destination")
+                tau_syn_E=1, tau_refrac=0,  tau_m=1), label="destination")
         synapse_type = sim.StaticSynapse(weight=5, delay=1)
         projection = sim.Projection(
             input, destination, connector, synapse_type=synapse_type)
@@ -184,8 +183,7 @@ class ConnectorsTest(BaseTestCase):
             spike_times=[[0], [20], [40], [60], [80]]), label="input")
         destination = sim.Population(
             n_destinations, sim.IF_curr_exp(
-                tau_syn_E=1, tau_refrac=0,  tau_m=1),
-            {}, label="destination")
+                tau_syn_E=1, tau_refrac=0,  tau_m=1), label="destination")
         synapse_type = sim.StaticSynapse(weight=5, delay=1)
         sim.Projection(
             input, destination, sim.OneToOneConnector(),
