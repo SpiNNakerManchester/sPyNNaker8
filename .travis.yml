@@ -27,6 +27,7 @@ before_install:
   - support/pipinstall.sh git://github.com/SpiNNakerManchester/spalloc.git
   - support/pipinstall.sh git://github.com/SpiNNakerManchester/SpiNNFrontEndCommon.git
   - support/pipinstall.sh git://github.com/SpiNNakerManchester/sPyNNaker.git
+  - support/pipinstall.sh git://github.com/SpiNNakerManchester/IntroLab.git
 
 install:
   - pip install -r requirements-test.txt
