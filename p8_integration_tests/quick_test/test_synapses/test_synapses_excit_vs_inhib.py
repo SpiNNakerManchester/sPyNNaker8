@@ -22,8 +22,8 @@ class TestSynapsesExcitVsInhib(BaseTestCase):
         inh_pop = p.Population(1, p.SpikeSourceArray,
                                {'spike_times': [120., 140., 160.]})
         # setup excitatory and inhibitory connections
-        listcon = p.FromListConnector([(0, 0, 0.01, 1.0)])
-        p.Projection(inh_pop, if_pop, listcon, receptor_type='excitatory')
+        listcon = p.FromListConnector([(0, 0, 0.05, 1.0)])
+        p.Projection(exc_pop, if_pop, listcon, receptor_type='excitatory')
         p.Projection(inh_pop, if_pop, listcon, receptor_type='inhibitory')
         # setup recorder
         if_pop.record(["spikes", "v"])
@@ -34,17 +34,16 @@ class TestSynapsesExcitVsInhib(BaseTestCase):
         neo = if_pop.get_data("all")
         spikes = neo_convertor.convert_data(neo, "spikes")
         v = neo_convertor.convert_data(neo, "v")
+        print(spikes)
+        print(v)
         p.end()
 
-        delta22 = v[22][2] - v[21][2]
-        delta42 = v[42][2] - v[41][2]
-        delta62 = v[62][2] - v[61][2]
-        delta122 = v[122][2] - v[121][2]
-        delta142 = v[142][2] - v[141][2]
-        delta162 = v[162][2] - v[161][2]
-        self.assertLess(delta22, delta122)
-        self.assertLess(delta42, delta142)
-        self.assertLess(delta62, delta162)
+        self.assertGreater(v[22][2], v[21][2])
+        self.assertGreater(v[42][2], v[41][2])
+        self.assertGreater(v[62][2], v[61][2])
+        self.assertLess(v[122][2], v[121][2])
+        self.assertLess(v[142][2], v[141][2])
+        self.assertLess(v[162][2], v[161][2])
 
     def test_run(self):
         self.runsafe(self.do_run)
