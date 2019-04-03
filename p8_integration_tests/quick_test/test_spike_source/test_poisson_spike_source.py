@@ -1,9 +1,9 @@
 from __future__ import division
-import unittest
+from p8_integration_tests.base_test_case import BaseTestCase
 import spynnaker8 as p
 
 
-class MyTestCase(unittest.TestCase):
+class MyTestCase(BaseTestCase):
 
     def check_spikes(self, input, expected):
         neo = input.get_data("spikes")
@@ -111,7 +111,3 @@ class MyTestCase(unittest.TestCase):
 
     def test_recording_poisson_spikes_rate_0(self):
         self.runsafe(self.recording_poisson_spikes_rate_0)
-
-
-if __name__ == '__main__':
-    unittest.main()

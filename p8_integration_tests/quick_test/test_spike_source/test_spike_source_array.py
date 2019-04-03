@@ -1,10 +1,10 @@
 import random
-import unittest
+from p8_integration_tests.base_test_case import BaseTestCase
 import numpy
 import spynnaker8 as p
 
 
-class MyTestCase(unittest.TestCase):
+class MyTestCase(BaseTestCase):
     __name__ = "bOB"
 
     def recording_1_element(self):
@@ -102,7 +102,3 @@ class MyTestCase(unittest.TestCase):
 
     def test_recording_numerious_element(self):
         self.runsafe(self.recording_numerious_element)
-
-
-if __name__ == '__main__':
-    unittest.main()
