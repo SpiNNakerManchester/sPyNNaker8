@@ -38,4 +38,3 @@ class TestProjectionBetweenRun(BaseTestCase):
 
     def test_run(self):
         self.runsafe(self.do_run)
-

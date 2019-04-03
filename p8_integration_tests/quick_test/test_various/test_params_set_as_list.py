@@ -1,5 +1,4 @@
 from pyNN.random import RandomDistribution, NumpyRNG
-import spynnaker.plot_utils as plot_utils
 import spynnaker8 as p
 from p8_integration_tests.base_test_case import BaseTestCase
 

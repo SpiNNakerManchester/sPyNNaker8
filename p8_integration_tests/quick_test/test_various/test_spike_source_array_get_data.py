@@ -13,7 +13,7 @@ class TestSpikeSourceArrayGetData(BaseTestCase):
         population.record("all")
 
         p.run(30)
-        neo = population.get_data("all")
+        population.get_data("all")
         p.end()
 
     def test_run(self):
