@@ -57,7 +57,8 @@ class TestScripts(BaseTestCase):
                         raise ex
 
     def examples(self):
-        self.check_directory("examples", ["synfire_if_curr_exp_large_array.py"])
+        self.check_directory(
+            "examples", ["synfire_if_curr_exp_large_array.py"])
 
     def test_examples(self):
         self.runsafe(self.examples)
