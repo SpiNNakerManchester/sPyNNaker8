@@ -53,6 +53,8 @@ class TestScripts(BaseTestCase):
                 except Exception as ex:
                     if "virtual machine" in str(ex):
                         self.report(script, "scripts_fails_because_on_vm")
+                    elif "'ConnectionHolder'" in str(ex):
+                        self.report(script, "scripts_fails_because_on_vm")
                     elif a_script in broken:
                         self.report(
                             script, "scripts_skipped_with_unkown_issues")
