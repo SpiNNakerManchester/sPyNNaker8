@@ -1,9 +1,7 @@
 import os
 import unittest
 from p8_integration_tests.base_test_case import BaseTestCase
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt  # noqa: E401
+import matplotlib.pyplot as plt
 
 
 class TestScripts(BaseTestCase):
@@ -13,14 +11,14 @@ class TestScripts(BaseTestCase):
     def setUp(self):
         super(TestScripts, self).setUp()
         introllab_tests_dir = os.path.dirname(__file__)
-        p8_integration_tests_dir = os.path.dirname(introllab_tests_dir)
-        spynnaker8_dir = os.path.dirname(p8_integration_tests_dir)
+        unittest_dir = os.path.dirname(introllab_tests_dir)
+        spynnaker8_dir = os.path.dirname(unittest_dir)
         self._introlab_dir = os.path.join(spynnaker8_dir, "IntroLab")
         # Jenkins appears to place Introlabs here
-        if not os.path.exists(self._introlab_dir):
-            parent_dir = os.path.dirname(spynnaker8_dir)
-            print(parent_dir)
-            self._introlab_dir = os.path.join(parent_dir, "IntroLab")
+        # if not os.path.exists(self._introlab_dir):
+        #    parent_dir = os.path.dirname(spynnaker8_dir)
+        #    print(parent_dir)
+        #    self._introlab_dir = os.path.join(parent_dir, "IntroLab")
 
     def mockshow(self):
         self._show = True
