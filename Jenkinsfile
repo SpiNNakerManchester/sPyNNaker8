@@ -64,21 +64,17 @@ pipeline {
                 sh 'echo "<testsuite tests="0"></testsuite>" > results.xml'
             }
         }
-        stage('PyNN8Examples') {
-            steps {
-                sh 'py.test p8_integration_tests/pynexamples_test --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 1200'
-            }
-        }
         stage('Test') {
             steps {
                 sh 'py.test p8_integration_tests/quick_test --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 1200'
             }
         }
-        //stage('IntroLab') {
-        //    steps {
-        //        sh 'py.test p8_integration_tests/introlab_test --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 1200'
-        //    }
-        //}
+        stage('Run Scripts') {
+            steps {
+                sh 'py.test p8_integration_tests/introlab_test --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 1200'
+                sh 'py.test p8_integration_tests/pynexamples_test --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 1200'
+            }
+        }
         //stage('What do they do Tests') {
         //    steps {
         //        sh 'py.test p8_integration_tests/test_csa_connectors --forked --instafail spynnaker8 --timeout 1200'
