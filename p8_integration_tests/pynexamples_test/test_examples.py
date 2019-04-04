@@ -1,5 +1,6 @@
 import os
 import unittest
+from spinn_front_end_common.utilities import globals_variables
 from p8_integration_tests.base_test_case import BaseTestCase
 import matplotlib
 matplotlib.use('Agg')
@@ -42,6 +43,7 @@ class TestScripts(BaseTestCase):
             if a_script.endswith(".py"):
                 if a_script in skips:
                     continue
+                globals_variables.unset_simulator()
                 script = os.path.join(directory, a_script)
                 try:
                     plotting = "import matplotlib.pyplot" in open(

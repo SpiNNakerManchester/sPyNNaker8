@@ -1,7 +1,8 @@
 import os
 import unittest
-from p8_integration_tests.base_test_case import BaseTestCase
 import matplotlib.pyplot as plt
+from spinn_front_end_common.utilities import globals_variables
+from p8_integration_tests.base_test_case import BaseTestCase
 
 
 class TestScripts(BaseTestCase):
@@ -35,6 +36,7 @@ class TestScripts(BaseTestCase):
         directory = os.path.join(self._introlab_dir, path)
         for a_script in os.listdir(directory):
             if a_script.endswith(".py"):
+                globals_variables.unset_simulator()
                 script = os.path.join(directory, a_script)
                 try:
                     self.check_script(script)

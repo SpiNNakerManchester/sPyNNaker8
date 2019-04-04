@@ -1,7 +1,8 @@
 import os
 import unittest
-from p8_integration_tests.base_test_case import BaseTestCase
 import matplotlib.pyplot as plt
+from spinn_front_end_common.utilities import globals_variables
+from p8_integration_tests.base_test_case import BaseTestCase
 
 
 class TestScripts(BaseTestCase):
@@ -42,6 +43,7 @@ class TestScripts(BaseTestCase):
                     continue
                 script = os.path.join(directory, a_script)
                 try:
+                    globals_variables.unset_simulator()
                     plotting = "import matplotlib.pyplot" in open(
                         script).read()
                     if plotting:
