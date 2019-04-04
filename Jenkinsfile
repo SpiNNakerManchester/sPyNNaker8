@@ -69,9 +69,13 @@ pipeline {
                 sh 'py.test p8_integration_tests/quick_test --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 1200'
             }
         }
-        stage('Run Scripts') {
+        stage('Run IntroLab') {
             steps {
                 sh 'py.test p8_integration_tests/introlab_test --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 1200'
+            }
+        }
+        stage('Run PyNN8Examples') {
+            steps {
                 sh 'py.test p8_integration_tests/pynexamples_test --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 1200'
             }
         }
