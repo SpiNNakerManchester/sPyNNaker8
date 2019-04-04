@@ -14,11 +14,11 @@ class TestScripts(BaseTestCase):
         unittest_dir = os.path.dirname(introllab_tests_dir)
         spynnaker8_dir = os.path.dirname(unittest_dir)
         self._introlab_dir = os.path.join(spynnaker8_dir, "IntroLab")
-        # Jenkins appears to place Introlabs here
-        # if not os.path.exists(self._introlab_dir):
-        #    parent_dir = os.path.dirname(spynnaker8_dir)
-        #    print(parent_dir)
-        #    self._introlab_dir = os.path.join(parent_dir, "IntroLab")
+        # Jenkins appears to place Introlabs here otherwise keep looking
+        if not os.path.exists(self._introlab_dir):
+            parent_dir = os.path.dirname(spynnaker8_dir)
+            print(parent_dir)
+            self._introlab_dir = os.path.join(parent_dir, "IntroLab")
 
     def mockshow(self):
         self._show = True

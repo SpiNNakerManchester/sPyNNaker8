@@ -14,7 +14,7 @@ class TestScripts(BaseTestCase):
         unittest_dir = os.path.dirname(examples_tests_dir)
         spynnaker8_dir = os.path.dirname(unittest_dir)
         self._introlab_dir = os.path.join(spynnaker8_dir, "PyNN8Examples")
-        # Jenkins appears to place "PyNN8Examples" here
+        # Jenkins appears to place "PyNN8Examples" here otherwise keep looking
         if not os.path.exists(self._introlab_dir):
             parent_dir = os.path.dirname(spynnaker8_dir)
             print(parent_dir)
