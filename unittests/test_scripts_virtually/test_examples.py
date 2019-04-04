@@ -15,10 +15,10 @@ class TestScripts(BaseTestCase):
         spynnaker8_dir = os.path.dirname(unittest_dir)
         self._introlab_dir = os.path.join(spynnaker8_dir, "PyNN8Examples")
         # Jenkins appears to place "PyNN8Examples" here
-        # if not os.path.exists(self._introlab_dir):
-        #    parent_dir = os.path.dirname(spynnaker8_dir)
-        #    print(parent_dir)
-        #    self._introlab_dir = os.path.join(parent_dir, "PyNN8Examples")
+        if not os.path.exists(self._introlab_dir):
+            parent_dir = os.path.dirname(spynnaker8_dir)
+            print(parent_dir)
+            self._introlab_dir = os.path.join(parent_dir, "PyNN8Examples")
 
     def mockshow(self):
         self._show = True
@@ -34,10 +34,12 @@ class TestScripts(BaseTestCase):
         self.check_script(script)
         assert self._show
 
-    def check_directory(self, path, skips=[]):
+    def check_directory(self, path, skips=[], broken=[]):
         directory = os.path.join(self._introlab_dir, path)
         for a_script in os.listdir(directory):
             if a_script.endswith(".py"):
+                if a_script in skips:
+                    continue
                 script = os.path.join(directory, a_script)
                 try:
                     plotting = "import matplotlib.pyplot" in open(
@@ -47,7 +49,9 @@ class TestScripts(BaseTestCase):
                     else:
                         self.check_script(script)
                 except Exception as ex:
-                    if a_script in skips:
+                    if "virtual machine" in str(ex):
+                        self.report(script, "scripts_fails_because_on_vm")
+                    elif a_script in broken:
                         self.report(
                             script, "scripts_skipped_with_unkown_issues")
                     else:
@@ -56,10 +60,18 @@ class TestScripts(BaseTestCase):
 
     def examples(self):
         self.check_directory(
-            "examples", ["synfire_if_curr_exp_large_array.py"])
+            "examples", broken=["synfire_if_curr_exp_large_array.py"])
 
     def test_examples(self):
         self.runsafe(self.examples)
+
+    def test_extra_models_examples(self):
+        self.check_directory("examples/extra_models_examples")
+
+    def test_external_devices_examples(self):
+        self.check_directory(
+            "examples/external_devices_examples",
+            skips=["pushbot_ethernet_example.py"])
 
 
 if __name__ == '__main__':

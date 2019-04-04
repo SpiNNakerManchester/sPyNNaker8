@@ -36,10 +36,12 @@ class TestScripts(BaseTestCase):
         self.check_script(script)
         assert self._show
 
-    def check_directory(self, path, skips=[]):
+    def check_directory(self, path, broken=[], skips=[]):
         directory = os.path.join(self._introlab_dir, path)
         for a_script in os.listdir(directory):
             if a_script.endswith(".py"):
+                if a_script in skips:
+                    continue
                 script = os.path.join(directory, a_script)
                 try:
                     plotting = "import matplotlib.pyplot" in open(
@@ -49,7 +51,7 @@ class TestScripts(BaseTestCase):
                     else:
                         self.check_script(script)
                 except Exception as ex:
-                    if a_script in skips:
+                    if a_script in broken:
                         self.report(
                             script, "scripts_skipped_with_unkown_issues")
                     else:
@@ -58,10 +60,24 @@ class TestScripts(BaseTestCase):
 
     def examples(self):
         self.check_directory(
-            "examples", ["synfire_if_curr_exp_large_array.py"])
+            "examples", broken=["synfire_if_curr_exp_large_array.py"])
 
     def test_examples(self):
         self.runsafe(self.examples)
+
+    def extra_models_examples(self):
+        self.check_directory("examples/extra_models_examples")
+
+    def test_extra_models_examples(self):
+        self.runsafe(self.extra_models_examples)
+
+    def external_devices_examples(self):
+        self.check_directory(
+            "examples/external_devices_examples",
+            skips=["pushbot_ethernet_example.py"])
+
+    def test_external_devices_examples(self):
+        self.runsafe(self.external_devices_examples)
 
 
 if __name__ == '__main__':
