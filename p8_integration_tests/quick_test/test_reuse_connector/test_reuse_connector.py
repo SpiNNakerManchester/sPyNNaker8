@@ -19,8 +19,6 @@ def do_run():
 
     proj_1_list = proj_1.get(("weight", "delay"), "list")
     proj_2_list = proj_2.get(("weight", "delay"), "list")
-    print(proj_1_list)
-    print(proj_2_list)
     p.end()
 
     return proj_1_list, proj_2_list

@@ -78,7 +78,6 @@ class TestDebug(BaseTestCase):
         sim.end()
 
         found = os.listdir(report_directory)
-        print(found)
         for report in reports:
             self.assertIn(report, found)
 

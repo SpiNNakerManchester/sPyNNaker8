@@ -26,16 +26,13 @@ class TestSynapsesExcitVsInhib(BaseTestCase):
         p.Projection(exc_pop, if_pop, listcon, receptor_type='excitatory')
         p.Projection(inh_pop, if_pop, listcon, receptor_type='inhibitory')
         # setup recorder
-        if_pop.record(["spikes", "v"])
+        if_pop.record(["v"])
         p.run(100)
         if_pop.initialize(v=-65)
         p.run(100)
         # read out voltage and plot
         neo = if_pop.get_data("all")
-        spikes = neo_convertor.convert_data(neo, "spikes")
         v = neo_convertor.convert_data(neo, "v")
-        print(spikes)
-        print(v)
         p.end()
 
         self.assertGreater(v[22][2], v[21][2])

@@ -50,7 +50,6 @@ class TestIobuffMultirun(BaseTestCase):
         size8 = self.check_size(prov_patha)
         self.assertEqual(size8, size6)
 
-        print(size1, size2, size3, size4, size5, size6, size7, size8)
 
     def test_do_run(self):
         self.runsafe(self.do_run)

@@ -22,7 +22,6 @@ class TestRecordableSpikeInjector(BaseTestCase):
             self._n_spikes[neuron_id] += 1
             connection.send_spike(label, neuron_id)
             time.sleep(0.001)
-        print("Finished")
 
     def recordable_spike_injector(self):
         p.setup(1.0)

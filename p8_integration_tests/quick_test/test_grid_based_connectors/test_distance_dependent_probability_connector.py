@@ -116,7 +116,6 @@ class DistanceDependentProbabilityConnectorTest(BaseTestCase):
         pairs = [(s, d) for (s, d, _) in weights]
         for i in range(100):
             for j in range(100):
-                print(i, j, self.distance(i, j))
                 if self.distance(i, j) < allowed_distance:
                     self.assertIn((i, j), pairs)
                 else:

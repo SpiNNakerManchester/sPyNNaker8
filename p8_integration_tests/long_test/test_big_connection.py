@@ -15,7 +15,6 @@ class TestBigConnection(BaseTestCase):
                 aslist.append(
                     (s, d, 5 + random.random(), random.randint(1, 5)))
             spiketimes.append([s * 20])
-        print(spiketimes)
 
         sim.setup(1.0)
         pop1 = sim.Population(

@@ -77,8 +77,6 @@ class TestNoChange(BaseTestCase):
         v2 = pop.spinnaker_get_data('v')
         self.check_from_65(v2)
         sim.end()
-        print(v1)
-        print(v2)
 
     def test_run_set_run_reset(self):
         self.runsafe(self.run_set_run_reset)

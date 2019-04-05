@@ -25,7 +25,7 @@ class TestMultiBoardSpikeOutput(BaseTestCase):
 
         labels = list()
         for chip in machine.ethernet_connected_chips:
-            print("Adding population on {}, {}".format(chip.x, chip.y))
+            # print("Adding population on {}, {}".format(chip.x, chip.y))
             label = "{}, {}".format(chip.x, chip.y)
             labels.append(label)
             pop = p.Population(
@@ -45,8 +45,8 @@ class TestMultiBoardSpikeOutput(BaseTestCase):
         p.end()
 
         for label in labels:
-            print("Received {} of 1000 spikes from {}".format(
-                TestMultiBoardSpikeOutput.counts[label], label))
+            # print("Received {} of 1000 spikes from {}".format(
+            #    TestMultiBoardSpikeOutput.counts[label], label))
             self.assertEqual(TestMultiBoardSpikeOutput.counts[label], 1000)
 
     def test_multi_board_spike_output(self):

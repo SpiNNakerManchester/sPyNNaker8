@@ -42,7 +42,6 @@ class TestSetTOffset(BaseTestCase):
         n_cores = 1
         neo = do_run(n_neurons, n_cores, 2, 4)
         spiketrains = neo.segments[0].spiketrains
-        print(spiketrains)
         for spiketrain in spiketrains:
             assert numpy.array_equal(spiketrain.magnitude, self.expected)
 
