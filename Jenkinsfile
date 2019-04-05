@@ -63,7 +63,7 @@ pipeline {
                 sh 'echo "use_java = True" >> ~/.spynnaker.cfg'
                 sh 'echo "java_call=/usr/bin/java" >> ~/.spynnaker.cfg'
                 sh 'echo "<testsuite tests="0"></testsuite>" > results.xml'
-                sh ''/usr/bin/java -version'
+                sh '/usr/bin/java -version'
             }
         }
         stage('Test test_many_boards') {
