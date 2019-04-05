@@ -34,10 +34,10 @@ pipeline {
         }
         stage('Build'){
             steps {
-                sh '/usr/bin/java -version'
-                sh '/usr/bin/javac -version'
-                sh '/usr/bin/mvn -version'
-                // sh 'mvn -f JavaSpiNNaker package'
+                //sh '/usr/bin/java -version'
+                //sh '/usr/bin/javac -version'
+                //sh '/usr/bin/mvn -version'
+                //sh 'mvn -f JavaSpiNNaker package'
                 sh 'pwd'
                 }
             }
@@ -72,6 +72,9 @@ pipeline {
                 sh 'echo "[Java]" >> ~/.spynnaker.cfg'
                 sh 'echo "use_java = True" >> ~/.spynnaker.cfg'
                 sh 'echo "java_call=/usr/bin/java" >> ~/.spynnaker.cfg'
+                sh 'printf "java_spinnaker_path=" >> ~/.spynnaker.cfg'
+                sh 'printf pwd >> ~/.spynnaker.cfg'
+                sh 'echo "/JavaSpiNNaker" >> ~/.spynnaker.cfg'
                 sh 'echo "<testsuite tests="0"></testsuite>" > results.xml'
             }
         }
