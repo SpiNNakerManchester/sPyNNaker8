@@ -34,11 +34,7 @@ pipeline {
         }
         stage('Build'){
             steps {
-                //sh '/usr/bin/java -version'
-                //sh '/usr/bin/javac -version'
-                //sh '/usr/bin/mvn -version'
-                //sh 'mvn -f JavaSpiNNaker package'
-                sh 'pwd'
+                sh 'mvn -f JavaSpiNNaker package'
                 }
             }
         stage('Install') {
@@ -82,16 +78,21 @@ pipeline {
                 sh 'py.test p8_integration_tests/quick_test/test_many_boards --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 1200'
             }
         }
-        //stage('Run IntroLab') {
-        //    steps {
-        //        sh 'py.test p8_integration_tests/introlab_test --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 1200'
-        //    }
-        //}
-        //stage('Run PyNN8Examples') {
-        //    steps {
-        //        sh 'py.test p8_integration_tests/pynexamples_test --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 12000'
-        //    }
-        //}
+        stage('Test') {
+            steps {
+                sh 'py.test p8_integration_tests/quick_test/ --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 1200'
+            }
+        }
+        stage('Run IntroLab') {
+            steps {
+                sh 'py.test p8_integration_tests/introlab_test --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 1200'
+            }
+        }
+        stage('Run PyNN8Examples') {
+            steps {
+                sh 'py.test p8_integration_tests/pynexamples_test --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 12000'
+            }
+        }
         //stage('What do they do Tests') {
         //    steps {
         //        sh 'py.test p8_integration_tests/test_csa_connectors --forked --instafail spynnaker8 --timeout 1200'
@@ -101,11 +102,11 @@ pipeline {
         //   }
         //}
         // Timeout too short or test too long maybe a nightly crome
-        //stage('Longer Test') {
-        //    steps {
-        //        sh 'py.test p8_integration_tests/long_test --forked --instafail --timeout 12000'
-        //    }
-        //}
+        stage('Longer Test') {
+            steps {
+                sh 'py.test p8_integration_tests/long_test --forked --instafail --timeout 12000'
+            }
+        }
         stage('Coverage') {
             steps {
                 sh 'COVERALLS_REPO_TOKEN=l0cQjQq6Sm5MGb67RiWkY2WE4r74YFAfk COVERALLS_PARALLEL=true coveralls'
