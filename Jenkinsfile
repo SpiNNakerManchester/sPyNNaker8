@@ -74,11 +74,11 @@ pipeline {
                 sh 'echo "<testsuite tests="0"></testsuite>" > results.xml'
             }
         }
-        //stage('Test test_many_boards') {
-        //    steps {
-        //        sh 'py.test p8_integration_tests/quick_test/test_many_boards --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 1200'
-        //    }
-        //}
+        stage('Test test_many_boards') {
+            steps {
+                sh 'py.test p8_integration_tests/quick_test/test_many_boards --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 1200'
+            }
+        }
         //stage('Run IntroLab') {
         //    steps {
         //        sh 'py.test p8_integration_tests/introlab_test --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 1200'
