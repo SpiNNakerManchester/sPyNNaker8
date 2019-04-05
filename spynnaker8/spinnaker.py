@@ -364,6 +364,5 @@ class Spynnaker8FailedState(SpynnakerFailedState,
         raise ConfigurationException(FAILED_STATE_MSG)
 
 
-
 # At import time change the default FailedState
 globals_variables.set_failed_state(Spynnaker8FailedState())
