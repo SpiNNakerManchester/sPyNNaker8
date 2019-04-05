@@ -33,10 +33,12 @@ pipeline {
             }
         }
         stage('Build'){
+            steps {
                 sh '/usr/bin/java -version'
                 sh '/usr/bin/javac -version'
                 sh '/usr/bin/mvn -version'
                 sh 'mvn -f JavaSpiNNaker package'
+                }
             }
         stage('Install') {
             environment {
