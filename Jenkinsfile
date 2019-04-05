@@ -61,7 +61,9 @@ pipeline {
                 sh 'echo "enable_advanced_monitor_support = True" >> ~/.spynnaker.cfg'
                 sh 'echo "[Java]" >> ~/.spynnaker.cfg'
                 sh 'echo "use_java = True" >> ~/.spynnaker.cfg'
+                sh 'echo "java_call=/usr/bin/java" >> ~/.spynnaker.cfg'
                 sh 'echo "<testsuite tests="0"></testsuite>" > results.xml'
+                sh /usr/bin/java -version
             }
         }
         stage('Test test_many_boards') {
