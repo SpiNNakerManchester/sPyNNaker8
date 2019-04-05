@@ -330,7 +330,10 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 # Defined in this file to prevent an import loop
 class Spynnaker8FailedState(SpynnakerFailedState,
                             Spynnaker8SimulatorInterface):
-    __slots__ = ()
+    __slots__ = ("write_on_end")
+
+    def __init__(self):
+        self.write_on_end = []
 
     @property
     def dt(self):
@@ -359,6 +362,7 @@ class Spynnaker8FailedState(SpynnakerFailedState,
     @property
     def t(self):
         raise ConfigurationException(FAILED_STATE_MSG)
+
 
 
 # At import time change the default FailedState
