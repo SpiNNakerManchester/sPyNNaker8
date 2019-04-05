@@ -38,6 +38,7 @@ pipeline {
                 sh '/usr/bin/javac -version'
                 sh '/usr/bin/mvn -version'
                 sh 'mvn -f JavaSpiNNaker package'
+                sh 'pwd'
                 }
             }
         stage('Install') {
