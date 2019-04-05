@@ -73,8 +73,7 @@ pipeline {
                 sh 'echo "use_java = True" >> ~/.spynnaker.cfg'
                 sh 'echo "java_call=/usr/bin/java" >> ~/.spynnaker.cfg'
                 sh 'printf "java_spinnaker_path=" >> ~/.spynnaker.cfg'
-                sh 'printf pwd >> ~/.spynnaker.cfg'
-                sh 'echo "/JavaSpiNNaker" >> ~/.spynnaker.cfg'
+                sh 'pwd >> ~/.spynnaker.cfg'
                 sh 'echo "<testsuite tests="0"></testsuite>" > results.xml'
             }
         }
