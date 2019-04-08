@@ -1,5 +1,4 @@
 import os
-import unittest
 import pacman.operations.algorithm_reports.reports as reports_names
 from pacman.operations.algorithm_reports.network_specification import \
     NetworkSpecification
@@ -16,7 +15,7 @@ from p8_integration_tests.base_test_case import BaseTestCase
 import spynnaker8 as sim
 
 
-class TestDebug(BaseTestCase):
+class CheckDebug(BaseTestCase):
     """
     that it does not crash in debug mode. All reports on.
     """
@@ -61,10 +60,13 @@ class TestDebug(BaseTestCase):
             # "provenance_data/pacman.xml"  = different test
             # write_board_chip_report
             BoardChipReport.AREA_CODE_REPORT_NAME,
-            # write_data_speed_up_report
-            DataSpeedUpPacketGatherMachineVertex.REPORT_NAME
             ]
         sim.setup(1.0)
+        configs = globals_variables.get_simulator()._config
+        if (configs.getboolean("Machine", "enable_advanced_monitor_support")
+                and not configs.getboolean("Java", "use_java")):
+            # write_data_speed_up_report
+            reports.append(DataSpeedUpPacketGatherMachineVertex.REPORT_NAME)
         pop = sim.Population(100, sim.IF_curr_exp, {}, label="pop")
         pop.record("v")
         inp = sim.Population(1, sim.SpikeSourceArray(
@@ -80,10 +82,3 @@ class TestDebug(BaseTestCase):
         found = os.listdir(report_directory)
         for report in reports:
             self.assertIn(report, found)
-
-    def test_debug(self):
-        self.runsafe(self.debug)
-
-
-if __name__ == '__main__':
-    unittest.main()
