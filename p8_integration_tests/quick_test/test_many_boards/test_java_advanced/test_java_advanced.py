@@ -14,14 +14,14 @@ class TestJavaAdvanced(BaseTestCase):
         t_after_check = time.time()
         results = self.get_run_time_of_BufferExtractor()
         self.report(
-            results, "java_advanced_n_boards=2_n_neurons=255_simtime=300")
+            results, "java_advanced_n_boards=2_n_neurons=50_simtime=300")
         self.report(
             "machine run time was: {} seconds\n".format(
                 t_after_machine-t_before),
-            "java_advanced_n_boards=2_n_neurons=255_simtime=300")
+            "java_advanced_n_boards=2_n_neurons=50_simtime=300")
         self.report(
             "total run time was: {} seconds\n".format(t_after_check-t_before),
-            "java_advanced_n_boards=2_n_neurons=255_simtime=300")
+            "java_advanced_n_boards=2_n_neurons=50_simtime=300")
         sim.end()
 
     def test_do_run(self):
