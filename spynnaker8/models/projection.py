@@ -49,10 +49,7 @@ class Projection(PyNNProjectionCommon):
         if synapse_type is None:
             synapse_type = SynapseDynamicsStatic()
 
-        # move weights and delays over to the connector to satisfy PyNN 8
-        # and 7 compatibility
-        connector.set_weights_and_delays(
-            synapse_type.weight, synapse_type.delay)
+        # set the space function as required
         connector.set_space(space)
 
         # as a from list connector can have plastic parameters, grab those (
@@ -60,9 +57,10 @@ class Projection(PyNNProjectionCommon):
         if isinstance(connector, FromListConnector):
             synapse_plastic_parameters = connector.get_extra_parameters()
             if synapse_plastic_parameters is not None:
-                for parameter in synapse_plastic_parameters.dtype.names:
+                for i, parameter in enumerate(
+                        connector.get_extra_parameter_names()):
                     synapse_type.set_value(
-                        parameter, synapse_plastic_parameters[:, parameter])
+                        parameter, synapse_plastic_parameters[:, i])
 
         # set rng if needed
         rng = None

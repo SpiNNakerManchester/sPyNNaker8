@@ -36,6 +36,12 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
                 model = cellclass()
             else:
                 model = cellclass(**cellparams)
+        else:
+            if cellparams is not None:
+                raise ConfigurationException(
+                    "cellclass is an instance which includes params so "
+                    "cellparams must be None")
+
         self._celltype = model
 
         # build our initial objects
