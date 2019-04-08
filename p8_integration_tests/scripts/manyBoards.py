@@ -37,8 +37,13 @@ class ManyBoards(object):
             if i >= n_boards:
                 break
             offset = machine.BOARD_48_CHIPS[i % 48]
-            self._pops.append(self.add_pop(
-                chip.x + offset[0], chip.y + offset[1], n_neurons, input))
+            x = chip.x + offset[0]
+            y = chip.y + offset[1]
+            # safety code in case there is a hole in the board
+            if not machine.is_chip_at(x, y):
+                x = chip.x
+                y = chip.y
+            self._pops.append(self.add_pop(x, y, n_neurons, input))
 
     def do_run(self, n_boards, n_neurons, simtime):
         self._simtime = simtime
@@ -56,6 +61,6 @@ if __name__ == '__main__':
     main entrance method
     """
     me = ManyBoards()
-    run = me.do_run(n_boards=5, n_neurons=255, simtime=300)
+    run = me.do_run(n_boards=10, n_neurons=2, simtime=300)
     me.check_all_data()
     run.end()
