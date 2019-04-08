@@ -9,7 +9,7 @@ pipeline {
             }
             steps {
                 // remove all directories left if Jenkins ended badly
-                sh 'rm -rf support SpiNNUtils SpiNNMachine SpiNNStorageHandlers SpiNNMan PACMAN DataSpecification spalloc spinnaker_tools spinn_common SpiNNFrontEndCommon sPyNNaker IntroLab PyNN8Examples JavaSpiNNaker'
+                sh 'rm -rf support SpiNNUtils SpiNNMachine SpiNNStorageHandlers SpiNNMan PACMAN DataSpecification spalloc spinnaker_tools spinn_common SpiNNFrontEndCommon sPyNNaker IntroLab PyNN8Examples JavaSpiNNaker reports'
                 sh 'git clone https://github.com/SpiNNakerManchester/SupportScripts.git support'
                 sh 'pip3 install --upgrade setuptools wheel'
                 sh 'pip install --only-binary=numpy,scipy,matplotlib numpy scipy matplotlib'
@@ -32,11 +32,6 @@ pipeline {
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/JavaSpiNNaker'
             }
         }
-        stage('Build'){
-            steps {
-                sh 'mvn -f JavaSpiNNaker package'
-                }
-            }
         stage('Install') {
             environment {
                 SPINN_DIRS = "${workspace}/spinnaker_tools"
@@ -57,6 +52,7 @@ pipeline {
                 sh 'pip install pytest-instafail'
                 sh 'python ./setup.py install'
                 sh 'python -m spynnaker8.setup_pynn'
+                sh 'mvn -f JavaSpiNNaker package'
             }
         }
         stage('Before Script') {
@@ -71,11 +67,6 @@ pipeline {
                 sh 'printf "java_spinnaker_path=" >> ~/.spynnaker.cfg'
                 sh 'pwd >> ~/.spynnaker.cfg'
                 sh 'echo "<testsuite tests="0"></testsuite>" > results.xml'
-            }
-        }
-        stage('Test test_many_boards') {
-            steps {
-                sh 'py.test p8_integration_tests/quick_test/test_many_boards --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 1200'
             }
         }
         stage('Test') {
@@ -124,7 +115,7 @@ pipeline {
         }
     }
     post {
-        success {
+        always {
             junit 'results.xml'
             cleanWs()
         }
