@@ -16,7 +16,7 @@ def add_scripts(a_dir, prefix_len, test_file, exceptions, broken):
             test_file.write("\n    def ")
             test_file.write(name)
             test_file.write("(self):\n        self.check_script(\"")
-            test_file.write(script_path)
+            test_file.write(os.path.abspath(script_path))
             if a_script in broken:
                 test_file.write("\", True)\n\n    def test_")
             else:
