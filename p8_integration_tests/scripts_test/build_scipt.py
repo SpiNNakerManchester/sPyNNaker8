@@ -40,6 +40,7 @@ if __name__ == '__main__':
     introlab_header = os.path.join(tests_dir, "intro_labs_header.py")
     copyfile(introlab_header, introlab_script)
     with open(introlab_script, "a") as introlab_file:
+        introlab_file.write("# flake8: noqa\n")
         add_scripts(introlab_dir, len(introlab_dir)+1, introlab_file,
                     ["sudoku.py"], [])
 
@@ -52,6 +53,7 @@ if __name__ == '__main__':
     examples_header = os.path.join(tests_dir, "examples_header.py")
     copyfile(examples_header, examples_script)
     with open(examples_script, "a") as examples_file:
+        examples_file.write("# flake8: noqa\n")
         add_scripts(examples_dir, len(examples_dir)+1, examples_file,
                     ["pushbot_ethernet_example.py"],
                     ["synfire_if_curr_exp_large_array.py"])

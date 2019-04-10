@@ -1,7 +1,7 @@
 import spynnaker8 as p
 
 pre_rate = 500
-dt=2
+dt = 2
 
 p.setup(1)
 simtime = 20

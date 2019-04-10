@@ -1,6 +1,4 @@
 import os
-import unittest
-from spinn_front_end_common.utilities import globals_variables
 from p8_integration_tests.base_test_case import BaseTestCase
 import matplotlib
 matplotlib.use('Agg')
