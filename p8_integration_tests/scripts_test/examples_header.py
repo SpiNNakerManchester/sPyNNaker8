@@ -1,8 +1,8 @@
 import os
-from p8_integration_tests.base_test_case import BaseTestCase
+from p8_integration_tests.scripts_test.script_checker import ScriptChecker
 
 
-class TestExamples(BaseTestCase):
+class TestExamples(ScriptChecker):
     """
     test the introlabs
     """
