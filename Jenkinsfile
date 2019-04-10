@@ -29,7 +29,7 @@ pipeline {
                 // scripts
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/IntroLab.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/PyNN8Examples.git'
-                sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/JavaSpiNNaker'
+                //sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/JavaSpiNNaker'
             }
         }
         stage('Install') {
@@ -52,7 +52,7 @@ pipeline {
                 sh 'pip install pytest-instafail'
                 sh 'python ./setup.py install'
                 sh 'python -m spynnaker8.setup_pynn'
-                sh 'mvn -f JavaSpiNNaker package'
+                //sh 'mvn -f JavaSpiNNaker package'
             }
         }
         stage('Before Script') {
@@ -71,7 +71,7 @@ pipeline {
         }
         stage('Run scripts') {
             steps {
-                sh 'python p8_integration_tests/build_scipt.py'
+                sh 'python p8_integration_tests/scripts_test/build_scipt.py'
                 sh 'py.test p8_integration_tests/scripts_test --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 1200'
             }
         }
