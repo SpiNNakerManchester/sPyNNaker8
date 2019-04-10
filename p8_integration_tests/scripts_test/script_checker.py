@@ -17,8 +17,6 @@ class ScriptChecker(BaseTestCase):
         from runpy import run_path
         try:
             run_path(script)
-            if plotting:
-                assert self._show
             self.report(script, "scripts_ran_successfully")
         except Exception as ex:
             if broken:
