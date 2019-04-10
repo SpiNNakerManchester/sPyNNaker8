@@ -142,9 +142,6 @@ class BaseTestCase(unittest.TestCase):
                 last_error = ex
                 retries += 1
                 globals_variables.unset_simulator()
-        last_error = ex
-        retries += 1
-        globals_variables.unset_simulator()
         raise last_error
 
     def get_placements(self, label):
