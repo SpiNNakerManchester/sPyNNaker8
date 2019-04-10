@@ -5,6 +5,7 @@ import sys
 import unittest
 from unittest import SkipTest
 import spinn_utilities.conf_loader as conf_loader
+from spinnman.exceptions import SpinnmanException
 from spalloc.job import JobDestroyedError
 from spinn_front_end_common.utilities import globals_variables
 
@@ -109,6 +110,11 @@ class BaseTestCase(unittest.TestCase):
         test_dir = os.path.dirname(p8_integration_tests_directory)
         return os.path.join(test_dir, "JobDestroyedError.txt")
 
+    def spinnman_exception_path(self):
+        p8_integration_tests_directory = os.path.dirname(__file__)
+        test_dir = os.path.dirname(p8_integration_tests_directory)
+        return os.path.join(test_dir, "JobDestroyedError.txt")
+
     def runsafe(self, method):
         retries = 0
         last_error = None
@@ -126,6 +132,19 @@ class BaseTestCase(unittest.TestCase):
                 last_error = ex
                 retries += 1
                 globals_variables.unset_simulator()
+            except SpinnmanException as ex:
+                class_file = sys.modules[self.__module__].__file__
+                with open(self.spinnman_exception_path, "a") as exc_file:
+                    exc_file.write(class_file)
+                    exc_file.write("\n")
+                    exc_file.write(str(ex))
+                    exc_file.write("\n")
+                last_error = ex
+                retries += 1
+                globals_variables.unset_simulator()
+        last_error = ex
+        retries += 1
+        globals_variables.unset_simulator()
         raise last_error
 
     def get_placements(self, label):
