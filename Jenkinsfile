@@ -111,7 +111,7 @@ pipeline {
         }
     }
     post {
-        always {
+        success {
             junit 'results.xml'
             cleanWs()
         }
