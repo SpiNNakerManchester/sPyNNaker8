@@ -198,11 +198,11 @@ def EthernetSensorPopulation(
     if not isinstance(device, AbstractEthernetSensor):
         raise Exception("Model must be an instance of AbstractEthernetSensor")
     injector_params = dict(device.get_injector_parameters())
-    injector_params['notify'] = False
 
     population = Population(
-        device.get_n_neurons(), SpikeInjector(**injector_params),
-        label=device.get_injector_label())
+        device.get_n_neurons(), SpikeInjector(notify=False),
+        label=device.get_injector_label(),
+        additional_parameters=injector_params)
     if isinstance(device, AbstractSendMeMulticastCommandsVertex):
         ethernet_command_connection = EthernetCommandConnection(
             device.get_translator(), [device], local_host,
