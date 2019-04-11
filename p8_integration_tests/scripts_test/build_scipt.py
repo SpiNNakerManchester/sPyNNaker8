@@ -56,4 +56,6 @@ if __name__ == '__main__':
         examples_file.write("# flake8: noqa\n")
         add_scripts(examples_dir, len(examples_dir)+1, examples_file,
                     ["pushbot_ethernet_example.py"],
-                    ["synfire_if_curr_exp_large_array.py"])
+                    ["synfire_if_curr_exp_large_array.py",
+                     "vogels_2011.py",
+                     "vogels_2011_live.py"])
