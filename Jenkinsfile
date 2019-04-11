@@ -52,7 +52,7 @@ pipeline {
                 sh 'pip install pytest-instafail'
                 sh 'python ./setup.py install'
                 sh 'python -m spynnaker8.setup_pynn'
-                //sh 'mvn -f JavaSpiNNaker package'
+                sh 'mvn -f JavaSpiNNaker package'
             }
         }
         stage('Before Script') {
