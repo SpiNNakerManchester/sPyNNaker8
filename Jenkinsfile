@@ -69,15 +69,15 @@ pipeline {
                 sh 'echo "<testsuite tests="0"></testsuite>" > results.xml'
             }
         }
+        stage('Test') {
+            steps {
+                sh 'py.test p8_integration_tests/quick_test/ --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 1200'
+            }
+        }
         stage('Run scripts') {
             steps {
                 sh 'python p8_integration_tests/scripts_test/build_scipt.py'
                 sh 'py.test p8_integration_tests/scripts_test --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 1200'
-            }
-        }
-        stage('Test') {
-            steps {
-                sh 'py.test p8_integration_tests/quick_test/ --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 1200'
             }
         }
         //stage('What do they do Tests') {
