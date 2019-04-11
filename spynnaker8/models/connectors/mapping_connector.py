@@ -3,7 +3,7 @@ from spynnaker.pyNN.models.neural_projections.connectors import (
     CommonMappingConnector)
 
 
-class MappingConnector(CommonCSAConnector):
+class MappingConnector(CommonMappingConnector):
     """
     Create a mapping connector.
 

@@ -20,4 +20,4 @@ class KernelConnector(CommonKernelConnector):
         super(KernelConnector, self).__init__(
             shape_pre, shape_post, shape_kernel,
             shape_common, pre_sample_steps, pre_start_coords,
-            post_sample_steps, post_start_coords, safe, verbose)
+            post_sample_steps, post_start_coords, safe, space, verbose)
