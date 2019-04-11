@@ -54,6 +54,12 @@ from spynnaker8.models.connectors.one_to_one_connector import \
 # noinspection PyUnresolvedReferences
 from spynnaker8.models.connectors.small_world_connector import \
     SmallWorldConnector
+# noinspection PyUnresolvedReferences
+from spynnaker8.models.connectors.kernel_connector import \
+    KernelConnector
+# noinspection PyUnresolvedReferences
+from spynnaker8.models.connectors.mapping_connector import \
+    MappingConnector
 
 # synapse structures
 from spynnaker8.models.synapse_dynamics.synapse_dynamics_static import \
