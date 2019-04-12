@@ -18,7 +18,6 @@ class TestScripts(BaseTestCase):
         # Jenkins appears to place Introlabs here otherwise keep looking
         if not os.path.exists(self._introlab_dir):
             parent_dir = os.path.dirname(spynnaker8_dir)
-            print(parent_dir)
             self._introlab_dir = os.path.join(parent_dir, "IntroLab")
 
     def mockshow(self):
