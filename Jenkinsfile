@@ -1,6 +1,6 @@
 pipeline {
     agent {
-        docker { image 'python' }
+        docker { image 'python3.6' }
     }
     stages {
         stage('Before Install') {
@@ -8,9 +8,10 @@ pipeline {
                 TRAVIS_BRANCH = "${env.BRANCH_NAME}"
             }
             steps {
+                // remove all directories left if Jenkins ended badly
+                sh 'rm -rf support SpiNNUtils SpiNNMachine SpiNNStorageHandlers SpiNNMan PACMAN DataSpecification spalloc spinnaker_tools spinn_common SpiNNFrontEndCommon sPyNNaker IntroLab PyNN8Examples JavaSpiNNaker reports'
                 sh 'git clone https://github.com/SpiNNakerManchester/SupportScripts.git support'
-                // Bring pip up to date
-                sh 'pip install --upgrade pip setuptools wheel'
+                sh 'pip3 install --upgrade setuptools wheel'
                 sh 'pip install --only-binary=numpy,scipy,matplotlib numpy scipy matplotlib'
                 // SpiNNakerManchester internal dependencies; development mode
                 sh 'support/pipinstall.sh git://github.com/SpiNNakerManchester/SpiNNUtils.git'
@@ -25,6 +26,10 @@ pipeline {
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/spinn_common.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/SpiNNFrontEndCommon.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/sPyNNaker.git'
+                // scripts
+                sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/IntroLab.git'
+                sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/PyNN8Examples.git'
+                //sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/JavaSpiNNaker'
             }
         }
         stage('Install') {
@@ -47,6 +52,7 @@ pipeline {
                 sh 'pip install pytest-instafail'
                 sh 'python ./setup.py install'
                 sh 'python -m spynnaker8.setup_pynn'
+                //sh 'mvn -f JavaSpiNNaker package'
             }
         }
         stage('Before Script') {
@@ -54,12 +60,38 @@ pipeline {
                 sh 'echo "[Machine]" > ~/.spynnaker.cfg'
                 sh 'echo "spalloc_server = 10.11.192.11" >> ~/.spynnaker.cfg'
                 sh 'echo "spalloc_user = Jenkins" >> ~/.spynnaker.cfg'
+                sh 'echo "enable_advanced_monitor_support = True" >> ~/.spynnaker.cfg'
+                sh 'echo "[Java]" >> ~/.spynnaker.cfg'
+                sh 'echo "use_java = True" >> ~/.spynnaker.cfg'
+                sh 'echo "java_call=/usr/bin/java" >> ~/.spynnaker.cfg'
+                sh 'printf "java_spinnaker_path=" >> ~/.spynnaker.cfg'
+                sh 'pwd >> ~/.spynnaker.cfg'
+                sh 'echo "<testsuite tests="0"></testsuite>" > results.xml'
             }
         }
         stage('Test') {
             steps {
-                sh 'echo "<testsuite tests="0"></testsuite>" > results.xml'
-                sh 'py.test p8_integration_tests --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 1200'
+                sh 'py.test p8_integration_tests/quick_test/ --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 1200'
+            }
+        }
+        stage('Run scripts') {
+            steps {
+                sh 'python p8_integration_tests/scripts_test/build_scipt.py'
+                sh 'py.test p8_integration_tests/scripts_test --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 1200'
+            }
+        }
+        //stage('What do they do Tests') {
+        //    steps {
+        //        sh 'py.test p8_integration_tests/test_csa_connectors --forked --instafail spynnaker8 --timeout 1200'
+        //        sh 'py.test p8_integration_tests/test_current_calculation --forked --instafail spynnaker8 --timeout 1200'
+        //        sh 'py.test p8_integration_tests/test_if_curr_exp_live_buffers --forked --instafail spynnaker8 --timeout 1200'
+        //        sh 'py.test p8_integration_tests/test_live_packet_gather --forked --instafail spynnaker8 --timeout 1200'
+        //   }
+        //}
+        // Timeout too short or test too long maybe a nightly crome
+        stage('Longer Test') {
+            steps {
+                sh 'py.test p8_integration_tests/long_test --forked --instafail --timeout 12000'
             }
         }
         stage('Coverage') {
@@ -67,9 +99,19 @@ pipeline {
                 sh 'COVERALLS_REPO_TOKEN=l0cQjQq6Sm5MGb67RiWkY2WE4r74YFAfk COVERALLS_PARALLEL=true coveralls'
             }
         }
+        stage('Reports') {
+            steps {
+                sh 'find reports/* -type f -print -exec cat {}  \\;'
+            }
+        }
+        stage('No Destroyed') {
+            steps {
+                sh 'py.test p8_integration_tests/destroyed_checker_test --forked --instafail --timeout 120'
+            }
+        }
     }
     post {
-        always {
+        success {
             junit 'results.xml'
             cleanWs()
         }
