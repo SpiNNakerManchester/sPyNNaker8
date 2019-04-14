@@ -97,7 +97,7 @@ class SynapseDynamicsStructuralStatic(StaticStructuralBaseClass):
             seed=None):
 
         if not stdp_model:
-            stdp_model = SynapseDynamicsStatic()
+            stdp_model = SynapseDynamicsStatic(weight=weight, delay=delay)
 
         super(SynapseDynamicsStructuralStatic, self).__init__(
             stdp_model=stdp_model, f_rew=f_rew, weight=weight, delay=delay,
