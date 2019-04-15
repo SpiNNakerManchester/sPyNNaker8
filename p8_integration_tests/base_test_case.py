@@ -134,7 +134,7 @@ class BaseTestCase(unittest.TestCase):
                 globals_variables.unset_simulator()
             except SpinnmanException as ex:
                 class_file = sys.modules[self.__module__].__file__
-                with open(self.spinnman_exception_path, "a") as exc_file:
+                with open(self.spinnman_exception_path(), "a") as exc_file:
                     exc_file.write(class_file)
                     exc_file.write("\n")
                     exc_file.write(str(ex))
