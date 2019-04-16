@@ -33,6 +33,9 @@ class TestVeryLow(BaseTestCase):
         synfire_run.get_output_pop_gsyn_exc_numpy()
         synfire_run.get_output_pop_voltage_numpy()
 
+    def more_runs(self):
+        self.runsafe(self.more_runs)
+
 
 if __name__ == '__main__':
     synfire_run.do_run(n_neurons, neurons_per_core=neurons_per_core,
