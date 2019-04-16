@@ -15,7 +15,7 @@ class MyTestCase(BaseTestCase):
         for neuron_id in range(0, n_neurons):
             spike_array.append(list())
             for counter in range(0, 50):
-                random_time = random.randint(0, 5000)
+                random_time = random.randint(0, 4999)
                 boxed_array = numpy.append(
                     boxed_array, [[neuron_id, random_time]], axis=0)
                 spike_array[neuron_id].append(random_time)
@@ -33,6 +33,8 @@ class MyTestCase(BaseTestCase):
         spike_array_spikes = input.spinnaker_get_data("spikes")
         boxed_array = boxed_array[numpy.lexsort((boxed_array[:, 1],
                                                  boxed_array[:, 0]))]
+        for i in range(len(spike_array_spikes)):
+            numpy.testing.assert_array_equal(spike_array_spikes[i], boxed_array[i])
         numpy.testing.assert_array_equal(spike_array_spikes, boxed_array)
 
         sim.end()

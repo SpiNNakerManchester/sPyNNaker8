@@ -75,7 +75,7 @@ class MyTestCase(BaseTestCase):
         for neuron_id in range(0, n_neurons):
             spike_array.append(list())
             for counter in range(0, 20):
-                random_time = random.randint(0, 5000)
+                random_time = random.randint(0, 4999)
                 boxed_array = numpy.append(
                     boxed_array, [[neuron_id, random_time]], axis=0)
                 spike_array[neuron_id].append(random_time)
