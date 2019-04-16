@@ -50,7 +50,7 @@ class MyTestCase(BaseTestCase):
     def test_recording_1_element(self):
         self.runsafe(self.recording_1_element)
 
-    def recording_numerious_element(self):
+    def recording_numerious_element(self, run_zero):
         p.setup(timestep=1.0, min_delay=1.0, max_delay=144.0)
         n_neurons = 20  # number of neurons in each population
         p.set_number_of_neurons_per_core(p.IF_curr_exp, n_neurons / 2)
@@ -92,6 +92,8 @@ class MyTestCase(BaseTestCase):
 
         populations[1].record("spikes")
 
+        if run_zero:
+            p.run(0)
         p.run(5000)
 
         spike_array_spikes = populations[1].spinnaker_get_data("spikes")
@@ -100,5 +102,14 @@ class MyTestCase(BaseTestCase):
         numpy.testing.assert_array_equal(spike_array_spikes, boxed_array)
         p.end()
 
-    def test_recording_numerious_element(self):
-        self.runsafe(self.recording_numerious_element)
+    def recording_numerious_element_no_zero(self):
+        self.recording_numerious_element(False)
+
+    def test_recording_numerious_element_no_zero(self):
+        self.runsafe(self.recording_numerious_element_no_zero)
+
+    def recording_numerious_element_with_zero(self):
+        self.recording_numerious_element(True)
+
+    def test_recording_numerious_element_with_zero(self):
+        self.runsafe(self.recording_numerious_element_with_zero)
