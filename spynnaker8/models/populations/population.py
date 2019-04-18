@@ -142,8 +142,8 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
             # handle special case of 'all'
             if variables == "all":
                 logger.warning(
-                    "This is non-standard PyNN, and therefore may not be "
-                    "portable to other simulators.")
+                    'record("all") is non-standard PyNN, and therefore may '
+                    'not be portable to other simulators.')
 
                 # get all possible recordings for this vertex
                 variables = self._get_all_possible_recordable_variables()
