@@ -5,7 +5,7 @@ import unittest
 from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt
 
-num_repeats = 20
+num_repeats = 200
 cycle_time = 1023
 timestep = 1
 p.setup(timestep) # simulation timestep (ms)
@@ -29,6 +29,7 @@ readout_neuron_params = {
 
 tau_err = 20
 p.set_number_of_neurons_per_core(p.extra_models.IFCurrExpERBP, 128)
+p.set_number_of_neurons_per_core(p.SpikeSourceArray, 32)
 
 w_in_rec_exc = 0.2
 w_in_rec_exc_dist = p.RandomDistribution(
@@ -192,16 +193,19 @@ pop_rec = p.Population(1,  # number of neurons
 # Build Projections
 ###############################################################################
 
+timing_dependence=p.TimingDependenceERBP(
+        tau_plus=tau_err, A_plus=1, A_minus=1)
+weight_dependence=p.WeightDependenceERBP(
+        w_min=0.0, w_max=1, reg_rate=0.001)
+
 #######################################
 # input to recurrent excitatory
 #######################################
 
 # Define learning rule object
 learning_rule = p.STDPMechanism(
-    timing_dependence=p.TimingDependenceERBP(
-        tau_plus=tau_err, A_plus=1, A_minus=1),
-    weight_dependence=p.WeightDependenceERBP(
-        w_min=0.0, w_max=1),
+    timing_dependence=timing_dependence,
+    weight_dependence=weight_dependence,
     weight=w_in_rec_exc_dist,
     delay=timestep)
 
@@ -217,10 +221,8 @@ inp_rec_exc = p.Projection(
 # input to recurrent inhibitory
 # Define learning rule object
 learning_rule = p.STDPMechanism(
-    timing_dependence=p.TimingDependenceERBP(
-        tau_plus=tau_err, A_plus=1, A_minus=1),
-    weight_dependence=p.WeightDependenceERBP(
-        w_min=0.0, w_max=1),
+    timing_dependence=timing_dependence,
+    weight_dependence=weight_dependence,
     weight=w_in_rec_inh_dist,
     delay=timestep)
 
@@ -240,7 +242,7 @@ inp_rec_inh = p.Projection(
 # Run Simulation
 ###############################################################################
 
-pop_in.record('spikes')
+# pop_in.record('spikes')
 pop_rec.record("all")
 
 p.run(runtime)
@@ -252,15 +254,15 @@ p.run(runtime)
 # p.run(runtime/8)
 # p.run(runtime/8)
 
-in_spikes = pop_in.get_data('spikes')
+# in_spikes = pop_in.get_data('spikes')
 pop_rec_data = pop_rec.get_data()
 
 
 # Plot
 F = Figure(
     # plot data for postsynaptic neuron
-    Panel(in_spikes.segments[0].spiketrains,
-          yticks=True, markersize=2, xlim=(0, runtime)),
+#     Panel(in_spikes.segments[0].spiketrains,
+#           yticks=True, markersize=2, xlim=(0, runtime)),
     Panel(pop_rec_data.segments[0].spiketrains,
           yticks=True, markersize=2, xlim=(0, runtime)
           ),

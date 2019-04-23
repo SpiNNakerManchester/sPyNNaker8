@@ -5,7 +5,7 @@ import unittest
 from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt
 
-batches = 40
+batches = 1
 num_repeats = 5  # in a batch
 cycle_time = 1023
 timestep = 1
@@ -211,16 +211,24 @@ pop_out = p.Population(3, # HARDCODED 3: One readout; one exc err, one inh err
 # Build Projections
 ###############################################################################
 
+hidden_pop_timing_dependence=p.TimingDependenceERBP(
+        tau_plus=tau_err, A_plus=1, A_minus=1)
+hidden_pop_weight_dependence=p.WeightDependenceERBP(
+        w_min=0.0, w_max=1, reg_rate=0.0)
+
+out_pop_timing_dependence=p.TimingDependenceERBP(
+        tau_plus=tau_err, A_plus=1, A_minus=1)
+out_pop_weight_dependence=p.WeightDependenceERBP(
+        w_min=0.0, w_max=1, reg_rate=0.0)
+
 #######################################
 # input to recurrent excitatory
 #######################################
 
 # Define learning rule object
 learning_rule = p.STDPMechanism(
-    timing_dependence=p.TimingDependenceERBP(
-        tau_plus=tau_err, A_plus=1, A_minus=1),
-    weight_dependence=p.WeightDependenceERBP(
-        w_min=0.0, w_max=1),
+    timing_dependence=hidden_pop_timing_dependence,
+    weight_dependence=hidden_pop_weight_dependence,
     weight=w_in_rec_exc_dist,
     delay=timestep)
 
@@ -236,10 +244,8 @@ inp_rec_exc = p.Projection(
 # input to recurrent inhibitory
 # Define learning rule object
 learning_rule = p.STDPMechanism(
-    timing_dependence=p.TimingDependenceERBP(
-        tau_plus=tau_err, A_plus=1, A_minus=1),
-    weight_dependence=p.WeightDependenceERBP(
-        w_min=0.0, w_max=1),
+    timing_dependence=hidden_pop_timing_dependence,
+    weight_dependence=hidden_pop_weight_dependence,
     weight=w_in_rec_inh_dist,
     delay=timestep)
 
@@ -258,10 +264,8 @@ inp_rec_inh = p.Projection(
 #######################################
 # Define learning rule object
 learning_rule = p.STDPMechanism(
-    timing_dependence=p.TimingDependenceERBP(
-        tau_plus=tau_err, A_plus=1, A_minus=1),
-    weight_dependence=p.WeightDependenceERBP(
-        w_min=0.0, w_max=1),
+    timing_dependence=hidden_pop_timing_dependence,
+    weight_dependence=hidden_pop_weight_dependence,
     weight=w_rec_rec_dist,
     delay=timestep)
 
@@ -276,10 +280,8 @@ rec_rec_exc = p.Projection(
 # input to recurrent inhibitory
 # Define learning rule object
 learning_rule = p.STDPMechanism(
-    timing_dependence=p.TimingDependenceERBP(
-        tau_plus=tau_err, A_plus=1, A_minus=1),
-    weight_dependence=p.WeightDependenceERBP(
-        w_min=0.0, w_max=1),
+    timing_dependence=hidden_pop_timing_dependence,
+    weight_dependence=hidden_pop_weight_dependence,
     weight=w_rec_rec_dist,
     delay=timestep)
 
@@ -308,10 +310,8 @@ for i in range(0,100,2):
 
 # Define learning rule object
 learning_rule = p.STDPMechanism(
-    timing_dependence=p.TimingDependenceERBP(
-        tau_plus=tau_err, A_plus=1, A_minus=1),
-    weight_dependence=p.WeightDependenceERBP(
-        w_min=0.0, w_max=1),
+    timing_dependence=out_pop_timing_dependence,
+    weight_dependence=out_pop_weight_dependence,
     weight=w_rec_out_dist,
     delay=timestep)
 
@@ -327,10 +327,8 @@ rec_out_exc = p.Projection(
 # recurrent to out inhibitory
 # Define learning rule object
 learning_rule = p.STDPMechanism(
-    timing_dependence=p.TimingDependenceERBP(
-        tau_plus=tau_err, A_plus=1, A_minus=1),
-    weight_dependence=p.WeightDependenceERBP(
-        w_min=0.0, w_max=1),
+    timing_dependence=out_pop_timing_dependence,
+    weight_dependence=out_pop_weight_dependence,
     weight=w_rec_out_dist,
     delay=timestep)
 
