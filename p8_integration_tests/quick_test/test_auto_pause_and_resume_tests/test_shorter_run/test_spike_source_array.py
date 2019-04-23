@@ -34,7 +34,8 @@ class MyTestCase(BaseTestCase):
         boxed_array = boxed_array[numpy.lexsort((boxed_array[:, 1],
                                                  boxed_array[:, 0]))]
         for i in range(len(spike_array_spikes)):
-            numpy.testing.assert_array_equal(spike_array_spikes[i], boxed_array[i])
+            numpy.testing.assert_array_equal(
+                spike_array_spikes[i], boxed_array[i])
         numpy.testing.assert_array_equal(spike_array_spikes, boxed_array)
 
         sim.end()
