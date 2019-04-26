@@ -12,22 +12,24 @@ tau_err = 200.0
 gamma = 0.3
 w_err_exc = 1
 w_err_inh = 0.75
-w_plastic = 2
+w_plastic = 2.0
 dt_exc = [16,
         43, 44, 45, 46
           ]  # time difference of 15, +1 for a single timestep delay
-dt_inh = [18,
+dt_inh = [
+        18,
         42,
         67
           ]  # time difference of 8, +1 for a single timestep delay
+l_rate = 0.5
 
 # Hidden neuron population - i.e. postsynaptic population
 neuron_params = {
-    "v_thresh": -50.0,  # do not change - hard-coded in C for now
-    "v_reset": -70.0,
-    "v_rest": -65.0,
-    "v": -60.0,
-    "i_offset": 0.25}  # DC input - to enable interesting p_j
+    "v_thresh": 30.0,  # do not change - hard-coded in C for now
+    "v_reset": 0.0,
+    "v_rest": 0.0,
+    "v": 20.0,
+    "i_offset": 1}  # DC input - to enable interesting p_j
 
 pop_hidden = p.Population(1,  # number of neurons
                           p.extra_models.IFCurrExpERBP(**neuron_params),
@@ -58,7 +60,7 @@ inh_err_src = p.Population(1,
 # Define learning rule object
 learning_rule = p.STDPMechanism(
     timing_dependence=p.TimingDependenceERBP(
-        tau_plus=tau_err, A_plus=1, A_minus=1),
+        tau_plus=tau_err, A_plus=l_rate, A_minus=l_rate),
     weight_dependence=p.WeightDependenceERBP(
         w_min=0.0, w_max=2 * w_plastic),
     weight=w_plastic,
@@ -112,8 +114,8 @@ for exc_err_spike in dt_exc:
     p_j = gamma * ((neuron_params["v"] - neuron_params["v_rest"]) /
                    (neuron_params["v_thresh"] - neuron_params["v_rest"]))
     trace_at_err_spike = p_j * numpy.exp(-exc_err_spike / tau_err)
-    dw_exc += trace_at_err_spike * w_err_exc
-    # print dw_exc
+    dw_exc += trace_at_err_spike * w_err_exc * l_rate
+    print dw_exc
 
 # Hand calculate weight update to check SpiNNajer operation
 dw_inh = 0
@@ -121,8 +123,8 @@ for inh_err_spike in dt_inh:
     p_j = gamma * ((neuron_params["v"] - neuron_params["v_rest"]) /
                    (neuron_params["v_thresh"] - neuron_params["v_rest"]))
     trace_at_err_spike = p_j * numpy.exp(-inh_err_spike / tau_err)
-    dw_inh += trace_at_err_spike * w_err_inh
-    # print dw_inh
+    dw_inh += trace_at_err_spike * w_err_inh * l_rate
+    print dw_inh
 
 
 

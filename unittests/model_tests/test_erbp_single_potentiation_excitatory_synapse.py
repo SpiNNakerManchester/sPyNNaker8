@@ -10,10 +10,10 @@ runtime = 200
 # Learning rule parameters
 tau_err = 200.0
 gamma = 0.3
-w_err = 0.05
-w_plastic = 0.5
+w_err = 1 # 0.2
+w_plastic = 2 # 0.5
 dt = 16  # time difference of 15, +1 for a single timestep delay
-
+l_rate = 0.5
 
 # Hidden neuron population - i.e. postsynaptic population
 neuron_params = {
@@ -44,9 +44,9 @@ err_src = p.Population(1,
 # Define learning rule object
 learning_rule = p.STDPMechanism(
     timing_dependence=p.TimingDependenceERBP(
-        tau_plus=tau_err, A_plus=1, A_minus=1),
+        tau_plus=tau_err, A_plus=l_rate, A_minus=l_rate),
     weight_dependence=p.WeightDependenceERBP(
-        w_min=0.0, w_max=1),
+        w_min=0.0, w_max=2 * w_plastic),
     weight=w_plastic,
     delay=timestep)
 
@@ -87,7 +87,7 @@ weight = synapse_plastic.get('weight', 'list', with_address=False)[0]
 p_j = gamma * ((neuron_params["v"] - neuron_params["v_rest"]) /
                (neuron_params["v_thresh"] - neuron_params["v_rest"]))
 trace_at_err_spike = p_j * numpy.exp(-dt / tau_err)
-dw = trace_at_err_spike * w_err
+dw = trace_at_err_spike * w_err * l_rate
 hand_calc_weight = w_plastic + dw
 
 print "Original weight: {}".format(w_plastic)

@@ -8,7 +8,7 @@ class TimingDependenceERBP(_BaseClass):
         "_a_minus"]
 
     def __init__(
-            self, tau_plus=20.0, tau_minus=20.0, A_plus=0.01, A_minus=0.01):
+            self, tau_plus=20.0, tau_minus=20.0, A_plus=1, A_minus=1):
         super(TimingDependenceERBP, self).__init__(
             tau_plus=tau_plus, tau_minus=tau_minus)
         self._a_plus = A_plus
