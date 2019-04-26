@@ -147,14 +147,14 @@ def error_activity(error_):
         else:
             rate.append(min_rate)
 
-        if error_>=0.0:
-            IO_agonist[0:100]=min_rate
-            IO_antagonist=rate
-        else:
-            IO_antagonist[0:100]=min_rate
-            IO_agonist=rate
+    if error_>=0.0:
+        IO_agonist[0:100]=min_rate
+        IO_antagonist=rate
+    else:
+        IO_antagonist[0:100]=min_rate
+        IO_agonist=rate
 
-        ea_rate = np.concatenate((IO_agonist,IO_antagonist))
+    ea_rate = np.concatenate((IO_agonist,IO_antagonist))
 
     return ea_rate
 
@@ -321,7 +321,7 @@ out_pop = sim.Population(128, sim.IF_curr_exp(), label='pop_out')
 #
 #
 #
-# sim.run(10)
+#sim.run(10)
 #
-# sim.end()
+#sim.end()
 
