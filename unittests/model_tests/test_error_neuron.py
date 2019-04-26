@@ -18,7 +18,7 @@ label_src = pyNN.Population(10, pyNN.SpikeSourcePoisson(**{"rate":50}),
 
 label_proj = pyNN.Projection(label_src, error_neuron,
                              pyNN.AllToAllConnector(),
-                             pyNN.StaticSynapse(weight=0.01, delay=timestep),
+                             pyNN.StaticSynapse(weight=0.05, delay=timestep),
                              receptor_type="label")
 
 error_neuron.record('all')
