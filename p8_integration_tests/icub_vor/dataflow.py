@@ -23,17 +23,8 @@ from pyNN.random import RandomDistribution, NumpyRNG
 
 from spynnaker.pyNN.models.neuron.plasticity.stdp.common import plasticity_helpers
 
-# identifiers for edge partitions,
-# RETINA_X_SIZE = 304
-# RETINA_Y_SIZE = 240
-# RETINA_BASE_KEY = 0x00000000
-# RETINA_MASK = 0xFF000000
-# FILTER_BASE_KEY = 0x01000000
-# FILTER_BASE_MASK = 0xFFFFFE00
-# RETINA_Y_BIT_SHIFT = 9
-
-NUM_NEUR_IN = 72960
-NUM_NEUR_OUT = 256
+NUM_NEUR_IN = 145920 # 2x240x304 mask -> 0xFFFE0000
+NUM_NEUR_OUT = 145920
 
 class ICUBInputVertex(
         ApplicationSpiNNakerLinkVertex,
@@ -56,7 +47,7 @@ class ICUBInputVertex(
         return [FixedKeyAndMaskConstraint(
             keys_and_masks=[BaseKeyAndMask(
                 base_key=0, #upper part of the key,
-                mask=0xFFFFFF00)])] #256 neurons in the LSB bits ,
+                mask=0xFFFE0000)])] #256 neurons in the LSB bits ,
                 #keys, i.e. neuron addresses of the input population that sits in the ICUB vertex,
 
 class ICUBOutputVertex(ApplicationSpiNNakerLinkVertex,
@@ -88,42 +79,44 @@ class ICUBOutputVertex(ApplicationSpiNNakerLinkVertex,
     @overrides(AbstractSendMeMulticastCommandsVertex.timed_commands)
     def timed_commands(self):
         return []
-    
+
 #     @overrides(AbstractProvidesOutgoingPartitionConstraints.
 #                get_outgoing_partition_constraints)
+    # ADDED MASK IN ATTEMPT TO FIX
     def get_outgoing_partition_constraints(self, partition):
         return [FixedKeyAndMaskConstraint(
             keys_and_masks=[BaseKeyAndMask(
-                base_key=0, #upper part of the key,
-                mask=0xFFFFFF00)])] #256 neurons in the LSB bits ,
+                base_key=0x00300000, #upper part of the key,
+                mask=0xFFFE0000)])] #256 neurons in the LSB bits ,
                 #keys, i.e. neuron addresses of the input population that sits in the ICUB vertex,
 
 
 
 
 sim.setup(timestep=1.0)
-sim.set_number_of_neurons_per_core(sim.IF_curr_exp, 32)
+# sim.set_number_of_neurons_per_core(sim.IF_curr_exp, 32)
 
 # set up populations,
 pop = sim.Population(None, ICUBInputVertex(spinnaker_link_id=0), label='pop_in')
 
 #neural population    ,
-pop_DCN = sim.Population(256, sim.IF_curr_exp(), label='pop_DCN') #1DCN receives from 20PC (in biology is from 100PC),
+neuron_pop = sim.Population(256, sim.IF_curr_exp(), label='neuron_pop')
+
+sim.Projection(pop, neuron_pop, sim.OneToOneConnector(), sim.StaticSynapse(weight=1.0))
+
 
 pop_out = sim.Population(None, ICUBOutputVertex(spinnaker_link_id=0), label='pop_out')
+#sim.Projection(neuron_pop, pop_out, sim.FixedProbabilityConnector(0.1), sim.StaticSynapse(weight=1.0))
 
-# sim.Projection(pop, neuron_pop, sim.FixedProbabilityConnector(0.1), sim.StaticSynapse(weight=1.0))
-#input_proj_in2DCN = sim.Projection(pop, pop_DCN, sim.OneToOneConnector(),synapse_type=sim.StaticSynapse(weight=1, delay=1), receptor_type='excitatory'),
-#input_proj_DCN2out = sim.Projection(pop_DCN, pop_out, sim.OneToOneConnector(),synapse_type=sim.StaticSynapse(weight=10, delay=1), receptor_type='excitatory'),
+sim.external_devices.activate_live_output_to(neuron_pop,pop_out)
 
-sim.external_devices.activate_live_output_to(pop_DCN,pop)
-#sim.external_devices.activate_live_output_to(pop_DCN,pop_out)
+
 
 #recordings and simulations,
-# pop_DCN.record([spikes])
+#neuron_pop.record([spikes])
 simtime = 6000 #ms,
 sim.run(simtime)
-# neo = pop_DCN.get_data(variables=[spikes])
+# neo = neuron_pop.get_data(variables=[spikes])
 # spikes = neo.segments[0].spiketrains
 # print spikes
 #v = neo.segments[0].filter(name='v')[0],
