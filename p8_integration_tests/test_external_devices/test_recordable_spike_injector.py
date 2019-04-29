@@ -1,10 +1,13 @@
-import spynnaker8 as p
-import time
+try:
+    from collections.abc import defaultdict
+except ImportError:
+    from collections import defaultdict
 from random import randint
-from collections import defaultdict
-from six import iteritems
-from p8_integration_tests.base_test_case import BaseTestCase
+import time
 import unittest
+from six import iteritems
+import spynnaker8 as p
+from p8_integration_tests.base_test_case import BaseTestCase
 
 
 class TestRecordableSpikeInjector(BaseTestCase):

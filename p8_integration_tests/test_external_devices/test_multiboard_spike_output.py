@@ -1,7 +1,7 @@
+import unittest
 import spynnaker8 as p
 import spynnaker8.external_devices as e
 from p8_integration_tests.base_test_case import BaseTestCase
-import unittest
 
 
 class TestMultiBoardSpikeOutput(BaseTestCase):
@@ -36,6 +36,7 @@ class TestMultiBoardSpikeOutput(BaseTestCase):
 
         p.run(1000)
         p.end()
+        live_output.close()
 
         for label in labels:
             print("Received {} of 1000 spikes from {}".format(

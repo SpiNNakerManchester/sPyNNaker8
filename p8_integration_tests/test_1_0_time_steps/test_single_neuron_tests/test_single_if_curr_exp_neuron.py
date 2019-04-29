@@ -3,13 +3,10 @@ test that a single neuron of if curr exp works as expected
 """
 
 # general imports
-from unittest import SkipTest
-
-from p8_integration_tests.base_test_case import BaseTestCase
 import spynnaker.plot_utils as plot_utils
-
-from p8_integration_tests.scripts.synfire_run import SynfireRunner
 from spynnaker8 import SpikeSourcePoisson
+from p8_integration_tests.base_test_case import BaseTestCase
+from p8_integration_tests.scripts.synfire_run import SynfireRunner
 
 cell_params = {'cm': 0.25,
                'i_offset': 0.0,
@@ -49,24 +46,14 @@ class TestIfCurrExpSingleNeuron(BaseTestCase):
     tests the get spikes given a simulation at 0.1 ms time steps
     """
     def test_single_neuron(self):
-        results = do_run(seed=self._test_seed)
-        (noise_spike_times, s_pop_spikes, s_pop_voltages) = results
-        if self._test_seed == 1:
-            self.assertEquals(797, len(noise_spike_times))
-            self.assertEquals(16, len(s_pop_spikes))
-        else:
-            try:
-                self.assertLess(800, len(noise_spike_times))
-                self.assertGreater(900, len(noise_spike_times))
-                self.assertLess(2, len(s_pop_spikes))
-                self.assertGreater(25, len(s_pop_spikes))
-            except Exception as ex:
-                # Just in case the range failed
-                raise SkipTest(ex)
+        results = do_run(seed=1)
+        (noise_spike_times, s_pop_spikes, _) = results
+        self.assertEquals(758, len(noise_spike_times))
+        self.assertEquals(15, len(s_pop_spikes))
 
 
 if __name__ == '__main__':
-    results = do_run()
+    results = do_run(seed=1)
     (noise_spike_times, s_pop_spikes, s_pop_voltages) = results
     print(noise_spike_times)
     print(len(noise_spike_times))

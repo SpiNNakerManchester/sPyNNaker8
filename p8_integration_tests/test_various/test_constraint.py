@@ -3,11 +3,13 @@
 Synfirechain-like example
 """
 from p8_integration_tests.base_test_case import BaseTestCase
+from pacman.exceptions import PacmanCanNotFindChipException
 
 import spynnaker8 as p
 import spynnaker.plot_utils as plot_utils
 
 import numpy as np
+from unittest import SkipTest
 
 
 def do_run(nNeurons):
@@ -52,7 +54,10 @@ class ATest(BaseTestCase):
 
     def test_run(self):
         nNeurons = 200  # number of neurons in each population
-        (v1, gsyn1, v2, gsyn2, spikes1, spikes2) = do_run(nNeurons)
+        try:
+            (v1, gsyn1, v2, gsyn2, spikes1, spikes2) = do_run(nNeurons)
+        except PacmanCanNotFindChipException as ex:
+            raise SkipTest(ex)
 
         self.assertEquals(20, len(spikes1))
         self.assertEquals(20, len(spikes2))

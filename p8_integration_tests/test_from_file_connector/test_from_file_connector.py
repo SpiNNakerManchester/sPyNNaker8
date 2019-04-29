@@ -1,11 +1,10 @@
-import spynnaker8 as p
-from p8_integration_tests.base_test_case import BaseTestCase
-from pyNN.utility.plotting import Figure, Panel
-import matplotlib.pyplot as plt
-from spynnaker8.utilities import neo_convertor
-
 import os
 import numpy
+import matplotlib.pyplot as plt
+from pyNN.utility.plotting import Figure, Panel
+import spynnaker8 as p
+from spynnaker8.utilities import neo_convertor
+from p8_integration_tests.base_test_case import BaseTestCase
 
 
 def do_run(plot):
@@ -47,11 +46,11 @@ def do_run(plot):
 
     # Set up fromfileconnectors by writing to file
     connection_list1 = [
-                (0, 0, 0.1, 0.1),
-                (3, 0, 0.2, 0.11),
-                (2, 3, 0.3, 0.12),
-                (5, 1, 0.4, 0.13),
-                (0, 1, 0.5, 0.14),
+                (0, 0, 0.1, 10),
+                (3, 0, 0.2, 11),
+                (2, 3, 0.3, 12),
+                (5, 1, 0.4, 13),
+                (0, 1, 0.5, 14),
                 ]
     path1 = "test1.connections"
     if os.path.exists(path1):
@@ -62,26 +61,50 @@ def do_run(plot):
     numpy.savetxt(file1, connection_list1)
     file_connector1 = p.FromFileConnector(file1)
 
+    # PyNN allows the column order (after i,j) to be different,
+    # so we can test that here; the user needs to specify the order
     connection_list2 = [
-                (4, 9, 0.3, 0.12),
-                (1, 5, 0.4, 0.13),
-                (7, 6, 0.1, 0.1),
-                (6, 5, 0.5, 0.14),
-                (8, 2, 0.2, 0.11),
+                (4, 9, 12, 0.3),
+                (1, 5, 13, 0.4),
+                (7, 6, 1, 0.1),
+                (6, 5, 14, 0.5),
+                (8, 2, 11, 0.2),
                 ]
     path2 = "test2.connections"
     if os.path.exists(path2):
         os.remove(path2)
 
     file2 = path2
-    numpy.savetxt(file2, connection_list2)
+    numpy.savetxt(file2, connection_list2,
+                  header='columns = ["i", "j", "delay", "weight"]')
     file_connector2 = p.FromFileConnector(file2)
 
-    # Projections within populations
+    # PyNN also allows the user to set the number of columns as
+    # long as they also specify what the column headers are;
+    # in this instance the user just specifies the delays
+    connection_list3 = [
+                (2, 7, 3.0),
+                (3, 8, 4.0),
+                (7, 6, 5.0),
+                (5, 4, 6.0),
+                (1, 2, 7.0),
+                ]
+    path3 = "test3.connections"
+    if os.path.exists(path3):
+        os.remove(path3)
+
+    file3 = path3
+    numpy.savetxt(file3, connection_list3,
+                  header='columns = ["i", "j", "delay"]')
+    file_connector3 = p.FromFileConnector(file3)
+
+    # Projections between populations
     p.Projection(exc_pop, inh_pop, file_connector1,
                  p.StaticSynapse(weight=2.0, delay=5))
     p.Projection(inh_pop, exc_pop, file_connector2,
                  p.StaticSynapse(weight=1.5, delay=10))
+    p.Projection(inh_pop, exc_pop, file_connector3,
+                 p.StaticSynapse(weight=1.0, delay=1))
 
     exc_pop.record(['v', 'spikes'])
     inh_pop.record(['v', 'spikes'])
@@ -115,7 +138,7 @@ class FromFileConnectorTest(BaseTestCase):
         v, spikes = do_run(plot=False)
         # any checks go here
         spikes_test = neo_convertor.convert_spikes(spikes)
-        self.assertEquals(3, len(spikes_test))
+        self.assertEquals(2, len(spikes_test))
 
 
 if __name__ == '__main__':
