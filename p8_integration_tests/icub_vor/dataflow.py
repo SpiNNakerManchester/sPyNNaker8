@@ -70,43 +70,6 @@ class ICUBInputVertex(
     def timed_commands(self):
         return []
 
-# class ICUBOutputVertex(ApplicationSpiNNakerLinkVertex,
-#                        AbstractSendMeMulticastCommandsVertex):
-#
-#     def __init__(self, spinnaker_link_id, board_address=None,
-#                  constraints=None, label=None):
-#
-#         ApplicationSpiNNakerLinkVertex.__init__(
-#             self, n_atoms=NUM_NEUR_OUT, spinnaker_link_id=spinnaker_link_id,
-#             board_address=board_address, label=label)
-#         AbstractSendMeMulticastCommandsVertex.__init__(self)
-#
-#     @property
-#     @overrides(AbstractSendMeMulticastCommandsVertex.start_resume_commands)
-#     def start_resume_commands(self):
-#         return [MultiCastCommand(
-#             key=0x80000000, payload=0, repeat=5, delay_between_repeats=100)]
-#
-#     @property
-#     @overrides(AbstractSendMeMulticastCommandsVertex.pause_stop_commands)
-#     def pause_stop_commands(self):
-#         return [MultiCastCommand(
-#             key=0x40000000, payload=0, repeat=5, delay_between_repeats=100)]
-#
-#     @property
-#     @overrides(AbstractSendMeMulticastCommandsVertex.timed_commands)
-#     def timed_commands(self):
-#         return []
-#
-# #     @overrides(AbstractProvidesOutgoingPartitionConstraints.
-# #                get_outgoing_partition_constraints)
-#     # ADDED MASK IN ATTEMPT TO FIX
-#     def get_outgoing_partition_constraints(self, partition):
-#         return [FixedKeyAndMaskConstraint(
-#             keys_and_masks=[BaseKeyAndMask(
-#                 base_key=0x00300000, #upper part of the key,
-#                 mask=MASK_OUT)])] #256 neurons in the LSB bits ,
-#                 #keys, i.e. neuron addresses of the input population that sits in the ICUB vertex,
 
 sim.setup(timestep=1.0)
 # sim.set_number_of_neurons_per_core(sim.IF_curr_exp, 32)
