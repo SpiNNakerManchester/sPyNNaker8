@@ -23,12 +23,15 @@ from pyNN.random import RandomDistribution, NumpyRNG
 
 from spynnaker.pyNN.models.neuron.plasticity.stdp.common import plasticity_helpers
 
-NUM_NEUR_IN = 145920 # 2x240x304 mask -> 0xFFFE0000
-NUM_NEUR_OUT = 145920
+NUM_NEUR_IN = 1024 #1024 # 2x240x304 mask -> 0xFFFE0000
+MASK_IN = 0xFFFFFC00 #0xFFFFFC00
+NUM_NEUR_OUT = 1024
+MASK_OUT =0xFFFFFC00
 
 class ICUBInputVertex(
         ApplicationSpiNNakerLinkVertex,
-        AbstractProvidesOutgoingPartitionConstraints):
+        AbstractProvidesOutgoingPartitionConstraints,
+        AbstractSendMeMulticastCommandsVertex):
 
     def __init__(self, spinnaker_link_id, board_address=None,
                  constraints=None, label=None):
@@ -39,7 +42,7 @@ class ICUBInputVertex(
 
         AbstractProvidesNKeysForPartition.__init__(self)
         AbstractProvidesOutgoingPartitionConstraints.__init__(self)
-
+        AbstractSendMeMulticastCommandsVertex.__init__(self)
 
     @overrides(AbstractProvidesOutgoingPartitionConstraints.
                get_outgoing_partition_constraints)
@@ -47,27 +50,14 @@ class ICUBInputVertex(
         return [FixedKeyAndMaskConstraint(
             keys_and_masks=[BaseKeyAndMask(
                 base_key=0, #upper part of the key,
-                mask=0xFFFE0000)])] #256 neurons in the LSB bits ,
+                mask=MASK_IN)])]
                 #keys, i.e. neuron addresses of the input population that sits in the ICUB vertex,
-
-class ICUBOutputVertex(ApplicationSpiNNakerLinkVertex,
-                       AbstractSendMeMulticastCommandsVertex):
-
-    def __init__(self, spinnaker_link_id, board_address=None,
-                 constraints=None, label=None):
-
-        ApplicationSpiNNakerLinkVertex.__init__(
-            self, n_atoms=NUM_NEUR_OUT, spinnaker_link_id=spinnaker_link_id,
-            board_address=board_address, label=label)
-        AbstractSendMeMulticastCommandsVertex.__init__(self)
-
 
     @property
     @overrides(AbstractSendMeMulticastCommandsVertex.start_resume_commands)
     def start_resume_commands(self):
         return [MultiCastCommand(
             key=0x80000000, payload=0, repeat=5, delay_between_repeats=100)]
-
 
     @property
     @overrides(AbstractSendMeMulticastCommandsVertex.pause_stop_commands)
@@ -80,18 +70,43 @@ class ICUBOutputVertex(ApplicationSpiNNakerLinkVertex,
     def timed_commands(self):
         return []
 
-#     @overrides(AbstractProvidesOutgoingPartitionConstraints.
-#                get_outgoing_partition_constraints)
-    # ADDED MASK IN ATTEMPT TO FIX
-    def get_outgoing_partition_constraints(self, partition):
-        return [FixedKeyAndMaskConstraint(
-            keys_and_masks=[BaseKeyAndMask(
-                base_key=0x00300000, #upper part of the key,
-                mask=0xFFFE0000)])] #256 neurons in the LSB bits ,
-                #keys, i.e. neuron addresses of the input population that sits in the ICUB vertex,
-
-
-
+# class ICUBOutputVertex(ApplicationSpiNNakerLinkVertex,
+#                        AbstractSendMeMulticastCommandsVertex):
+#
+#     def __init__(self, spinnaker_link_id, board_address=None,
+#                  constraints=None, label=None):
+#
+#         ApplicationSpiNNakerLinkVertex.__init__(
+#             self, n_atoms=NUM_NEUR_OUT, spinnaker_link_id=spinnaker_link_id,
+#             board_address=board_address, label=label)
+#         AbstractSendMeMulticastCommandsVertex.__init__(self)
+#
+#     @property
+#     @overrides(AbstractSendMeMulticastCommandsVertex.start_resume_commands)
+#     def start_resume_commands(self):
+#         return [MultiCastCommand(
+#             key=0x80000000, payload=0, repeat=5, delay_between_repeats=100)]
+#
+#     @property
+#     @overrides(AbstractSendMeMulticastCommandsVertex.pause_stop_commands)
+#     def pause_stop_commands(self):
+#         return [MultiCastCommand(
+#             key=0x40000000, payload=0, repeat=5, delay_between_repeats=100)]
+#
+#     @property
+#     @overrides(AbstractSendMeMulticastCommandsVertex.timed_commands)
+#     def timed_commands(self):
+#         return []
+#
+# #     @overrides(AbstractProvidesOutgoingPartitionConstraints.
+# #                get_outgoing_partition_constraints)
+#     # ADDED MASK IN ATTEMPT TO FIX
+#     def get_outgoing_partition_constraints(self, partition):
+#         return [FixedKeyAndMaskConstraint(
+#             keys_and_masks=[BaseKeyAndMask(
+#                 base_key=0x00300000, #upper part of the key,
+#                 mask=MASK_OUT)])] #256 neurons in the LSB bits ,
+#                 #keys, i.e. neuron addresses of the input population that sits in the ICUB vertex,
 
 sim.setup(timestep=1.0)
 # sim.set_number_of_neurons_per_core(sim.IF_curr_exp, 32)
@@ -100,35 +115,36 @@ sim.setup(timestep=1.0)
 pop = sim.Population(None, ICUBInputVertex(spinnaker_link_id=0), label='pop_in')
 
 #neural population    ,
-neuron_pop = sim.Population(256, sim.IF_curr_exp(), label='neuron_pop')
+neuron_pop = sim.Population(NUM_NEUR_OUT, sim.IF_curr_exp(), label='neuron_pop')
 
-sim.Projection(pop, neuron_pop, sim.OneToOneConnector(), sim.StaticSynapse(weight=1.0))
+sim.Projection(pop, neuron_pop, sim.OneToOneConnector(), sim.StaticSynapse(weight=20.0))
 
+#pop_out = sim.Population(None, ICUBOutputVertex(spinnaker_link_id=0), label='pop_out')
 
-pop_out = sim.Population(None, ICUBOutputVertex(spinnaker_link_id=0), label='pop_out')
-#sim.Projection(neuron_pop, pop_out, sim.FixedProbabilityConnector(0.1), sim.StaticSynapse(weight=1.0))
-
-sim.external_devices.activate_live_output_to(neuron_pop,pop_out)
-
+sim.external_devices.activate_live_output_to(neuron_pop,pop)
 
 
 #recordings and simulations,
-#neuron_pop.record([spikes])
-simtime = 6000 #ms,
+neuron_pop.record("spikes")
+
+simtime = 30000 #ms,
 sim.run(simtime)
-# neo = neuron_pop.get_data(variables=[spikes])
-# spikes = neo.segments[0].spiketrains
-# print spikes
-#v = neo.segments[0].filter(name='v')[0],
-#print v ,
+
+# continuous run until key press
+#sim.external_devices.run_forever()
+#raw_input('Press enter to stop')
+
+exc_spikes = neuron_pop.get_data("spikes")
+
+Figure(
+    # raster plot of the neuron_pop
+    Panel(exc_spikes.segments[0].spiketrains, xlabel="Time/ms", xticks=True,
+          yticks=True, markersize=0.2, xlim=(0, simtime)),
+    title="neuron_pop: spikes"
+)
+plt.show()
 
 sim.end()
 
-# plot.Figure(
-# # plot spikes (or in this case spike),
-# plot.Panel(spikes, yticks=True, markersize=5, xlim=(0, simtime))
-# plt.show()
-
-
-
+print("finished")
 
