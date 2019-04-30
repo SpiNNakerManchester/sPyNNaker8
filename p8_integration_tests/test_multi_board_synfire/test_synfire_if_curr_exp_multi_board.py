@@ -9,6 +9,20 @@ runtime = 5000
 p.setup(timestep=1.0, min_delay=1.0, max_delay=144.0,
         n_chips_required=(48 * 2) + 1)
 
+
+def valid_chips(chip_locations):
+    """ Does magic to ensure that only existing chip locations are used. """
+    # Don't use chip_locations on top-right edge of board in inputs.
+    machine = p.get_machine()
+    valid_chip_locations = []
+    for l_x, l_y in chip_locations:
+        while not machine.is_chip_at(l_x, l_y):
+            l_x += 1
+            l_y += 1
+        valid_chip_locations.append((l_x, l_y))
+    return valid_chip_locations
+
+
 nNeurons = 200  # number of neurons in each population
 p.set_number_of_neurons_per_core(p.IF_curr_exp, nNeurons / 2)
 
@@ -37,7 +51,7 @@ for i in range(0, nNeurons - 1):
 injectionConnection = [(0, 0)]
 joiner_connection = [(nNeurons - 1, 0)]
 spikeArray = {'spike_times': [[0]]}
-locs = [(0, 0), (5, 5), (10, 6), (2, 10), (9, 1), (4, 8)]
+locs = valid_chips([(0, 0), (5, 5), (10, 6), (2, 10), (9, 1), (4, 8)])
 for index in range(0, len(locs)):
     populations.append(
         p.Population(nNeurons, p.IF_curr_exp(**cell_params_lif),
