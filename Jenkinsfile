@@ -71,13 +71,13 @@ pipeline {
         }
         stage('Test') {
             steps {
-                sh 'py.test p8_integration_tests/quick_test/ --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 1200'
+                sh 'py.test p8_integration_tests/quick_test/ --forked --show-progress --cov spynnaker8 --cov spynnaker --cov spinn_front_end_common --cov pacman --cov data_specification --cov spinnman --cov spinn_machine --cov spinn_storage_handlers --cov spalloc --junitxml results.xml --timeout 1200'
             }
         }
         stage('Run scripts') {
             steps {
                 sh 'python p8_integration_tests/scripts_test/build_scipt.py'
-                sh 'py.test p8_integration_tests/scripts_test --forked --instafail --cov spynnaker8 --junitxml results.xml --timeout 1200'
+                sh 'py.test p8_integration_tests/scripts_test --forked --instafail --cov spynnaker8 --cov-append --junitxml results.xml --timeout 1200'
             }
         }
         //stage('What do they do Tests') {
@@ -88,10 +88,10 @@ pipeline {
         //        sh 'py.test p8_integration_tests/test_live_packet_gather --forked --instafail spynnaker8 --timeout 1200'
         //   }
         //}
-        // Timeout too short or test too long maybe a nightly crome
+        // Timeout too short or test too long maybe a nightly cron
         stage('Longer Test') {
             steps {
-                sh 'py.test p8_integration_tests/long_test --forked --instafail --timeout 12000'
+                sh 'py.test p8_integration_tests/long_test --forked --instafail --cov spynnaker8 --cov-append --junitxml results.xml --timeout 12000'
             }
         }
         stage('Coverage') {
