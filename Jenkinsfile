@@ -38,14 +38,15 @@ pipeline {
                 NEURAL_MODELLING_DIRS = "${workspace}/sPyNNaker/neural_modelling"
             }
             steps {
-                // C Build
+                // Install SpiNNUtils first as needed for C build
+                sh 'cd SpiNNUtils && python setup.py install'
+                // C Build next as builds files to be installed in Python
                 sh 'make -C $SPINN_DIRS'
                 sh 'make -C spinn_common install'
                 sh 'make -C SpiNNFrontEndCommon/c_common'
                 sh 'make -C SpiNNFrontEndCommon/c_common install'
                 sh 'make -C sPyNNaker/neural_modelling'
                 // Python install
-                sh 'cd SpiNNUtils && python setup.py install'
                 sh 'cd SpiNNMachine && python setup.py install'
                 sh 'cd SpiNNStorageHandlers && python setup.py install'
                 sh 'cd SpiNNMan && python setup.py install'
