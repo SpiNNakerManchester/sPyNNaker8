@@ -1,3 +1,5 @@
+#!usr/bin/python
+
 import socket
 import spynnaker8 as sim
 import numpy as np
@@ -5,6 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from decode_events import*
 from functions import*
+import yarp
 
 from pacman.model.constraints.key_allocator_constraints import FixedKeyAndMaskConstraint
 from pacman.model.graphs.application import ApplicationSpiNNakerLinkVertex
@@ -29,10 +32,12 @@ from pyNN.random import RandomDistribution, NumpyRNG
 
 from spynnaker.pyNN.models.neuron.plasticity.stdp.common import plasticity_helpers
 
+# yarp.Network.init()
+
 NUM_NEUR_IN = 1024 #1024 # 2x240x304 mask -> 0xFFFE0000
 MASK_IN = 0xFFFFFC00 #0xFFFFFC00
 NUM_NEUR_OUT = 1024
-MASK_OUT =0xFFFFFC00
+MASK_OUT =0xFFFFFFFC
 
 class ICUBInputVertex(
         ApplicationSpiNNakerLinkVertex,
@@ -92,10 +97,12 @@ class ICUBInputVertex(
         return []
 
 def convert_data_mapping(x, y, down_sample_x, down_sample_y):
-    # address = (int(y) << 12) + (int(x) << 1) + 1
-    x /= (304 / down_sample_x)
-    y /= (240 / down_sample_y)
-    address = (y * 304) + x
+    if simulate:
+        x /= (304 / down_sample_x)
+        y /= (240 / down_sample_y)
+        address = (y * 304) + x
+    else:
+        address = (int(y) << 12) + (int(x) << 1) + 1
     return int(address)
 
 def convert_data(data):
@@ -107,10 +114,12 @@ def convert_data(data):
 def convert_pixel_mapping(pixel, down_sample_x, down_sample_y):
     x = pixel % 304
     y = (pixel - x) / 304
-    # x /= (304 / down_sample_x)
-    # y /= (240 / down_sample_y)
-    address = (y << 12) + (x << 1) + 1
-    # address = (y * down_sample_x) + x
+    if simulate:
+        x /= (304 / down_sample_x)
+        y /= (240 / down_sample_y)
+        address = (y * down_sample_x) + x
+    else:
+        address = (y << 12) + (x << 1) + 1
     return address
 
 def map_neurons_to_field(length, x_segments, y_segments, scale_down, layers, x_size=304, y_size=240, central_x=304,
@@ -176,7 +185,7 @@ def convert_xy_field_to_id(field_x, field_y, width, length):
     id = (field_y * width) + field_x
     return id
 
-def map_to_from_list(mapping, width, length, scale_down, pixel_weight=0.1, x_size=304, y_size=240, motor_weight=0.3):
+def map_to_from_list(mapping, width, length, scale_down, pixel_weight=5, x_size=304, y_size=240, motor_weight=1.5):
     # motor_weight *= width * length
     mapping, field_size = mapping
     layers = len(mapping)
@@ -260,8 +269,9 @@ def connect_it_up(visual_input, motor_output, connections, width, length):
         # hidden_pop = sim.Population(width * length, sim.IF_curr_exp(), label="hidden_pop_{}".format(layer))
         # hidden_pops.append(hidden_pop)
         for i in range(width*length):
-            hidden_pop = sim.Population(1, sim.IF_cond_exp(tau_refrac=3), label="hidden_pop_{}_{}".format(layer, i))
-            hidden_pop.record(["spikes", "v"])
+            hidden_pop = sim.Population(1, sim.IF_curr_exp(tau_refrac=3), label="hidden_pop_{}_{}".format(layer, i))
+            if simulate:
+                hidden_pop.record(["spikes", "v"])
             hidden_pops.append(hidden_pop)
         list_of_lists = segment_hidden_pop(visual_connections[layer], width, length, False)
         for i in range(len(list_of_lists)):
@@ -279,12 +289,13 @@ def connect_it_up(visual_input, motor_output, connections, width, length):
     print "finished connecting"
     return all_pops
 
+simulate = True
 
 sim.setup(timestep=1.0)
 # sim.set_number_of_neurons_per_core(sim.IF_curr_exp, 255)
 
-width = 4
-length = 4
+width = 2
+length = 2
 
 # mapping_1 = map_neurons_to_field(64, 19, 15, 0.9, 5)
 mapping_2 = map_neurons_to_field(20, width, length, 0.9, 0)
@@ -303,7 +314,6 @@ print "created all connections"
 sim.setup(timestep=1.0)
 # sim.set_number_of_neurons_per_core(sim.IF_curr_exp, 32)
 
-simulate = False
 # set up populations,
 if simulate:
     # Assuming channel 0 as left camera and channel 1 as right camera
@@ -326,11 +336,9 @@ if simulate:
 else:
     vis_pop = sim.Population(None, ICUBInputVertex(spinnaker_link_id=0), label='pop_in')
 
-#neural population    ,
-# neuron_pop = sim.Population(NUM_NEUR_OUT, sim.IF_curr_exp(), label='neuron_pop')
-
-pop_out = sim.Population(4, sim.IF_cond_exp(tau_refrac=3), label="motor_control")
-# pop_out.record(['spikes', 'v'])
+pop_out = sim.Population(4, sim.IF_curr_exp(tau_refrac=3), label="motor_control")
+if simulate:
+    pop_out.record(['spikes', 'v'])
 
 # pop_out = sim.Population(None, ICUBOutputVertex(spinnaker_link_id=0), label='pop_out')
 
@@ -348,52 +356,67 @@ hidden_pops = connect_it_up(vis_pop, pop_out, connections_2, width, length)
 
 sim.external_devices.activate_live_output_to(pop_out, vis_pop)
 
+# out_port = yarp.BufferedPortBottle()
+# out_port.open('/spinn:o')
+# # bottle = out_port.prepare()
+# # bottle.clear()
+# # bottle.addInt32(2)
+# # out_port.write()
+# # out_port
+# # b.addString("thing")
+# while True:
+#     bottle = out_port.prepare()
+#     bottle.clear()
+#     bottle.addInt32(2)
+#     out_port.write()
 
 #recordings and simulations,
 #neuron_pop.record("spikes")
 
 simtime = 30000 #ms,
-# sim.run(simtime)
+if simulate:
+    sim.run(simtime)
+else:
+    sim.external_devices.run_forever()
+    raw_input('Press enter to stop')
 
 # continuous run until key press
 # remember: do NOT record when running in this mode
-sim.external_devices.run_forever()
-raw_input('Press enter to stop')
 
-# exc_spikes = neuron_pop.get_data("spikes")
-# exc_spikes = pop_out.get_data("spikes")
-# exc_v = pop_out.get_data("v")
-# # hidden_spikes = []
-# # hidden_v = []
-# # for i in range(len(hidden_pops[0])):
-# #     hidden_spikes.append(hidden_pops[0][i].get_data("spikes"))
-# #     hidden_v.append(hidden_pops[0][i].get_data("v"))
-# # input_spikes = test_input.get_data("spikes")
-# # input_v = test_input.get_data("v")
-#
-# Figure(
-#     # raster plot of the neuron_pop
-#     Panel(exc_spikes.segments[0].spiketrains, xlabel="Time/ms", xticks=True,
-#           yticks=True, markersize=0.2, xlim=(0, simtime)),
-#     Panel(exc_v.segments[0].filter(name='v')[0], ylabel="Membrane potential (mV)", yticks=True),
-#     # Panel(hidden_spikes[0].segments[0].spiketrains, xlabel="Time/ms", xticks=True,
-#     #       yticks=True, markersize=0.2, xlim=(0, simtime)),
-#     # Panel(hidden_v[0].segments[0].filter(name='v')[0], ylabel="Membrane potential (mV)", yticks=True),
-#     # Panel(hidden_spikes[1].segments[0].spiketrains, xlabel="Time/ms", xticks=True,
-#     #       yticks=True, markersize=0.2, xlim=(0, simtime)),
-#     # Panel(hidden_v[1].segments[0].filter(name='v')[0], ylabel="Membrane potential (mV)", yticks=True),
-#     # Panel(hidden_spikes[2].segments[0].spiketrains, xlabel="Time/ms", xticks=True,
-#     #       yticks=True, markersize=0.2, xlim=(0, simtime)),
-#     # Panel(hidden_v[2].segments[0].filter(name='v')[0], ylabel="Membrane potential (mV)", yticks=True),
-#     # Panel(hidden_spikes[3].segments[0].spiketrains, xlabel="Time/ms", xticks=True,
-#     #       yticks=True, markersize=0.2, xlim=(0, simtime)),
-#     # Panel(hidden_v[3].segments[0].filter(name='v')[0], ylabel="Membrane potential (mV)", yticks=True),
-#     # Panel(input_spikes.segments[0].spiketrains, xlabel="Time/ms", xticks=True,
-#     #       yticks=True, markersize=0.2, xlim=(0, simtime)),
-#     # Panel(input_v.segments[0].filter(name='v')[0], ylabel="Membrane potential (mV)", yticks=True),
-#     title="neuron_pop: spikes"
-# )
-# plt.show()
+if simulate:
+    exc_spikes = pop_out.get_data("spikes")
+    exc_v = pop_out.get_data("v")
+    hidden_spikes = []
+    hidden_v = []
+    for i in range(len(hidden_pops[0])):
+        hidden_spikes.append(hidden_pops[0][i].get_data("spikes"))
+        hidden_v.append(hidden_pops[0][i].get_data("v"))
+    # input_spikes = test_input.get_data("spikes")
+    # input_v = test_input.get_data("v")
+
+    Figure(
+        # raster plot of the neuron_pop
+        Panel(exc_spikes.segments[0].spiketrains, xlabel="Time/ms", xticks=True,
+              yticks=True, markersize=0.2, xlim=(0, simtime)),
+        Panel(exc_v.segments[0].filter(name='v')[0], ylabel="Membrane potential (mV)", yticks=True),
+        Panel(hidden_spikes[0].segments[0].spiketrains, xlabel="Time/ms", xticks=True,
+              yticks=True, markersize=0.2, xlim=(0, simtime)),
+        Panel(hidden_v[0].segments[0].filter(name='v')[0], ylabel="Membrane potential (mV)", yticks=True),
+        Panel(hidden_spikes[1].segments[0].spiketrains, xlabel="Time/ms", xticks=True,
+              yticks=True, markersize=0.2, xlim=(0, simtime)),
+        Panel(hidden_v[1].segments[0].filter(name='v')[0], ylabel="Membrane potential (mV)", yticks=True),
+        Panel(hidden_spikes[2].segments[0].spiketrains, xlabel="Time/ms", xticks=True,
+              yticks=True, markersize=0.2, xlim=(0, simtime)),
+        Panel(hidden_v[2].segments[0].filter(name='v')[0], ylabel="Membrane potential (mV)", yticks=True),
+        Panel(hidden_spikes[3].segments[0].spiketrains, xlabel="Time/ms", xticks=True,
+              yticks=True, markersize=0.2, xlim=(0, simtime)),
+        Panel(hidden_v[3].segments[0].filter(name='v')[0], ylabel="Membrane potential (mV)", yticks=True),
+        # Panel(input_spikes.segments[0].spiketrains, xlabel="Time/ms", xticks=True,
+        #       yticks=True, markersize=0.2, xlim=(0, simtime)),
+        # Panel(input_v.segments[0].filter(name='v')[0], ylabel="Membrane potential (mV)", yticks=True),
+        title="neuron_pop: spikes"
+    )
+    plt.show()
 
 sim.end()
 
