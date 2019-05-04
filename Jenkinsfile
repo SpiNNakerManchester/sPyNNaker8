@@ -66,18 +66,20 @@ pipeline {
                 sh 'echo "java_call=/usr/bin/java" >> ~/.spynnaker.cfg'
                 sh 'printf "java_spinnaker_path=" >> ~/.spynnaker.cfg'
                 sh 'pwd >> ~/.spynnaker.cfg'
+                sh 'rm -f coverage.xml'
+                sh 'rm -f .coveragerc'
                 sh 'echo "<testsuite tests="0"></testsuite>" > results.xml'
             }
         }
         stage('Test') {
             steps {
-                sh 'py.test p8_integration_tests/quick_test/ --forked --show-progress --cov spynnaker8 --cov spynnaker --cov spinn_front_end_common --cov pacman --cov data_specification --cov spinnman --cov spinn_machine --cov spinn_storage_handlers --cov spalloc --junitxml results.xml --timeout 1200'
+                run_pytest('p8_integration_tests/quick_test/', 1200)
             }
         }
         stage('Run scripts') {
             steps {
                 sh 'python p8_integration_tests/scripts_test/build_scipt.py'
-                sh 'py.test p8_integration_tests/scripts_test --forked --instafail --cov spynnaker8 --cov-append --junitxml results.xml --timeout 1200'
+                run_pytest('py.test p8_integration_tests/scripts_test', 1200)
             }
         }
         //stage('What do they do Tests') {
@@ -88,23 +90,12 @@ pipeline {
         //        sh 'py.test p8_integration_tests/test_live_packet_gather --forked --instafail spynnaker8 --timeout 1200'
         //   }
         //}
-        // Timeout too short or test too long maybe a nightly cron
-        stage('Longer Test') {
-            steps {
-                sh 'py.test p8_integration_tests/long_test --forked --instafail --cov spynnaker8 --cov-append --junitxml results.xml --timeout 12000'
-            }
-        }
-        stage('Coverage') {
-            steps {
-                sh 'COVERALLS_REPO_TOKEN=l0cQjQq6Sm5MGb67RiWkY2WE4r74YFAfk COVERALLS_PARALLEL=true coveralls'
-            }
-        }
         stage('Reports') {
             steps {
                 sh 'find reports/* -type f -print -exec cat {}  \\;'
             }
         }
-        stage('No Destroyed') {
+        stage('Check Destroyed') {
             steps {
                 sh 'py.test p8_integration_tests/destroyed_checker_test --forked --instafail --timeout 120'
             }
@@ -113,7 +104,12 @@ pipeline {
     post {
         success {
             junit 'results.xml'
+            cobertura coberturaReportFile: 'coverage.xml'
             cleanWs()
         }
     }
+}
+
+def run_pytest(String tests, int timeout) {
+    sh 'py.test ${tests} --forked --show-progress --cov spynnaker8 --cov spynnaker --cov spinn_front_end_common --cov pacman --cov data_specification --cov spinnman --cov spinn_machine --cov spinn_storage_handlers --cov spalloc --junitxml results.xml --cov-report xml:coverage.xml --cov-append --timeout ${timeout}'
 }
