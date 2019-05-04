@@ -123,5 +123,5 @@ pipeline {
 }
 
 def run_pytest(String tests, int timeout) {
-    sh 'py.test ${tests} --forked --show-progress --cov spynnaker8 --cov spynnaker --cov spinn_front_end_common --cov pacman --cov data_specification --cov spinnman --cov spinn_machine --cov spinn_storage_handlers --cov spalloc --junitxml results.xml --cov-report xml:coverage.xml --cov-append --timeout ${timeout}'
+    sh 'py.test ' + ${tests} + ' --forked --show-progress --cov spynnaker8 --cov spynnaker --cov spinn_front_end_common --cov pacman --cov data_specification --cov spinnman --cov spinn_machine --cov spinn_storage_handlers --cov spalloc --junitxml results.xml --cov-report xml:coverage.xml --cov-append --timeout ' + ${timeout}
 }
