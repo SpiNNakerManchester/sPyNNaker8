@@ -13,7 +13,7 @@ gamma = 0.3
 w_err = 0.2
 w_plastic = 0.5
 dt = 16  # time difference of 15, +1 for a single timestep delay
-l_rate = 0.1
+l_rate = 0.01
 
 
 # Hidden neuron population - i.e. postsynaptic population

@@ -5,8 +5,8 @@ import unittest
 from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt
 
-batches = 10
-num_repeats = 10  # in a batch
+batches = 75
+num_repeats = 5  # in a batch
 cycle_time = 1023
 timestep = 1
 p.setup(timestep) # simulation timestep (ms)
@@ -30,10 +30,13 @@ readout_neuron_params = {
     }
 
 tau_err = 20
-p.set_number_of_neurons_per_core(p.extra_models.IFCurrExpERBP, 32)
-p.set_number_of_neurons_per_core(p.SpikeSourceArray, 32)
 
-w_in_rec_exc = 0.1
+init_weight = 0.2
+
+p.set_number_of_neurons_per_core(p.extra_models.IFCurrExpERBP, 8)
+p.set_number_of_neurons_per_core(p.SpikeSourceArray, 8)
+
+w_in_rec_exc = init_weight
 w_in_rec_exc_dist = p.RandomDistribution(
         distribution='normal_clipped', mu=w_in_rec_exc, sigma=w_in_rec_exc,
         low=0.0, high=2*w_in_rec_exc)
@@ -45,17 +48,17 @@ w_in_rec_inh_dist = p.RandomDistribution(
         low=0.0, high=2*w_in_rec_inh)
 
 
-w_rec_rec = 0.1
+w_rec_rec = init_weight
 w_rec_rec_dist = p.RandomDistribution(
         distribution='normal_clipped', mu=w_rec_rec, sigma=w_rec_rec,
         low=0.0, high=2*w_rec_rec)
 
-w_rec_out = 0.2
+w_rec_out = init_weight
 w_rec_out_dist = p.RandomDistribution(
         distribution='normal_clipped', mu=w_rec_out, sigma=w_rec_out,
         low=0.0, high=2*w_rec_out)
 
-w_out_out = 0.1
+w_out_out = init_weight
 w_out_out_dist = p.RandomDistribution(
         distribution='normal_clipped', mu=w_out_out, sigma=w_out_out,
         low=0.0, high=2*w_out_out)
@@ -212,12 +215,12 @@ pop_out = p.Population(3, # HARDCODED 3: One readout; one exc err, one inh err
 ###############################################################################
 
 hidden_pop_timing_dependence=p.TimingDependenceERBP(
-        tau_plus=tau_err, A_plus=1, A_minus=1)
+        tau_plus=tau_err, A_plus=0.01, A_minus=0.01, is_readout=False)
 hidden_pop_weight_dependence=p.WeightDependenceERBP(
-        w_min=0.0, w_max=1, reg_rate=0.001)
+        w_min=0.0, w_max=1, reg_rate=0.1)
 
 out_pop_timing_dependence=p.TimingDependenceERBP(
-        tau_plus=tau_err, A_plus=1, A_minus=1)
+        tau_plus=tau_err, A_plus=0.01, A_minus=0.01, is_readout=True)
 out_pop_weight_dependence=p.WeightDependenceERBP(
         w_min=0.0, w_max=1, reg_rate=0.0)
 
@@ -273,7 +276,7 @@ learning_rule = p.STDPMechanism(
 rec_rec_exc = p.Projection(
     pop_rec,
     pop_rec,
-    p.FixedProbabilityConnector(0.4),
+    p.FixedProbabilityConnector(1.0),
     synapse_type=learning_rule,
     receptor_type="excitatory")
 
@@ -290,7 +293,7 @@ learning_rule = p.STDPMechanism(
 rec_rec_inh = p.Projection(
     pop_rec,
     pop_rec,
-    p.FixedProbabilityConnector(0.4),
+    p.FixedProbabilityConnector(1.0),
     synapse_type=learning_rule,
     receptor_type="inhibitory")
 

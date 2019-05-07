@@ -5,12 +5,14 @@ from spynnaker.pyNN.models.neuron.plasticity.stdp.timing_dependence \
 class TimingDependenceERBP(_BaseClass):
     __slots__ = [
         "_a_plus",
-        "_a_minus"]
+        "_a_minus",
+        ]
 
     def __init__(
-            self, tau_plus=20.0, tau_minus=20.0, A_plus=1, A_minus=1):
+            self, tau_plus=20.0, tau_minus=20.0, A_plus=1, A_minus=1,
+            is_readout=False):
         super(TimingDependenceERBP, self).__init__(
-            tau_plus=tau_plus, tau_minus=tau_minus)
+            tau_plus=tau_plus, tau_minus=tau_minus, is_readout=is_readout)
         self._a_plus = A_plus
         self._a_minus = A_minus
 
