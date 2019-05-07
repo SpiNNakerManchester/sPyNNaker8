@@ -14,13 +14,13 @@ pipeline {
                 sh 'pip3 install --upgrade setuptools wheel'
                 sh 'pip install --only-binary=numpy,scipy,matplotlib numpy scipy matplotlib'
                 // SpiNNakerManchester internal dependencies; development mode
-                sh 'support/gitclone.sh git://github.com/SpiNNakerManchester/SpiNNUtils.git'
-                sh 'support/gitclone.sh git://github.com/SpiNNakerManchester/SpiNNMachine.git'
-                sh 'support/gitclone.sh git://github.com/SpiNNakerManchester/SpiNNStorageHandlers.git'
-                sh 'support/gitclone.sh git://github.com/SpiNNakerManchester/SpiNNMan.git'
-                sh 'support/gitclone.sh git://github.com/SpiNNakerManchester/PACMAN.git'
-                sh 'support/gitclone.sh git://github.com/SpiNNakerManchester/DataSpecification.git'
-                sh 'support/gitclone.sh git://github.com/SpiNNakerManchester/spalloc.git'
+                sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/SpiNNUtils.git'
+                sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/SpiNNMachine.git'
+                sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/SpiNNStorageHandlers.git'
+                sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/SpiNNMan.git'
+                sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/PACMAN.git'
+                sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/DataSpecification.git'
+                sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/spalloc.git'
                 // C dependencies
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/spinnaker_tools.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/spinn_common.git'
@@ -92,12 +92,12 @@ pipeline {
             steps {
                 run_pytest('SpiNNStorageHandlers/tests', 1200)
                 run_pytest('SpiNNMachine/unittests', 1200)
-                run_pytest('SpiNNMan/unittests', 1200)
+                run_pytest('SpiNNMan/unittests SpiNNMan/integration_tests', 1200)
                 run_pytest('PACMAN/unittests', 1200)
-                run_pytest('DataSpecification/unittests', 1200)
-                run_pytest('SpiNNFrontEndCommon/unittests', 1200)
+                run_pytest('DataSpecification/unittests DataSpecification/integration_tests', 1200)
+                run_pytest('SpiNNFrontEndCommon/unittests SpiNNFrontEndCommon/fec_integration_tests', 1200)
                 run_pytest('sPyNNaker/unittests', 1200)
-                run_pytest('sPyNNaker8/unittests', 1200)
+                run_pytest('unittests', 1200)
             }
         }
         stage('Test') {
