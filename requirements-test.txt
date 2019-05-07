@@ -4,5 +4,6 @@ flake8
 pytest-cov
 pytest-timeout
 pytest-forked
+pytest-progress
 sphinx==1.5.3
 testfixtures
