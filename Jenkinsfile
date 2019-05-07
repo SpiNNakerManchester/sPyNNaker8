@@ -100,17 +100,17 @@ pipeline {
                 run_pytest('unittests', 1200)
             }
         }
-        stage('Test') {
-            steps {
-                run_pytest('p8_integration_tests/quick_test/', 1200)
-            }
-        }
-        stage('Run scripts') {
-            steps {
-                sh 'python p8_integration_tests/scripts_test/build_scipt.py'
-                run_pytest('p8_integration_tests/scripts_test', 1200)
-            }
-        }
+        //stage('Test') {
+        //    steps {
+        //        run_pytest('p8_integration_tests/quick_test/', 1200)
+        //    }
+        //}
+        //stage('Run scripts') {
+        //    steps {
+        //        sh 'python p8_integration_tests/scripts_test/build_scipt.py'
+        //        run_pytest('p8_integration_tests/scripts_test', 1200)
+        //    }
+        //}
         //stage('What do they do Tests') {
         //    steps {
         //        sh 'py.test p8_integration_tests/test_csa_connectors --forked --instafail spynnaker8 --timeout 1200'
