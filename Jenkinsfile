@@ -108,7 +108,7 @@ pipeline {
         stage('Run scripts') {
             steps {
                 sh 'python p8_integration_tests/scripts_test/build_scipt.py'
-                run_pytest('py.test p8_integration_tests/scripts_test', 1200)
+                run_pytest('p8_integration_tests/scripts_test', 1200)
             }
         }
         //stage('What do they do Tests') {
