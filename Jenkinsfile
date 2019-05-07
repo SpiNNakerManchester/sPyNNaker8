@@ -84,19 +84,20 @@ pipeline {
                 sh 'pwd >> ~/.spynnaker.cfg'
                 sh 'rm -f coverage.xml'
                 sh 'rm -f .coveragerc'
+                sh 'touch ~/spinnaker.cfg'
                 sh 'echo "<testsuite tests="0"></testsuite>" > results.xml'
             }
         }
         stage('Unit Tests') {
             steps {
-                run_pytest('SpiNNStorageHandlers', 1200)
-                run_pytest('SpiNNMachine', 1200)
-                run_pytest('SpiNNMan', 1200)
-                run_pytest('PACMAN', 1200)
-                run_pytest('DataSpecification', 1200)
-                run_pytest('SpiNNFrontEndCommon', 1200)
-                run_pytest('sPyNNaker', 1200)
-                run_pytest('sPyNNaker8', 1200)
+                run_pytest('SpiNNStorageHandlers/tests', 1200)
+                run_pytest('SpiNNMachine/unittests', 1200)
+                run_pytest('SpiNNMan/unittests', 1200)
+                run_pytest('PACMAN/unittests', 1200)
+                run_pytest('DataSpecification/unittests', 1200)
+                run_pytest('SpiNNFrontEndCommon/unittests', 1200)
+                run_pytest('sPyNNaker/unittests', 1200)
+                run_pytest('sPyNNaker8/unittests', 1200)
             }
         }
         stage('Test') {
