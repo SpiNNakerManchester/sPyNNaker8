@@ -84,7 +84,7 @@ pipeline {
                 sh 'pwd >> ~/.spynnaker.cfg'
                 sh 'rm -f coverage.xml'
                 sh 'rm -f .coveragerc'
-                sh 'touch ~/spinnaker.cfg'
+                sh 'echo "# Empty config" >  ~/.spinnaker.cfg'
                 sh 'echo "<testsuite tests="0"></testsuite>" > results.xml'
             }
         }
