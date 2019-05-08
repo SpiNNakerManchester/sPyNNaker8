@@ -10,7 +10,6 @@ pipeline {
             steps {
                 sh 'rm -rf ${WORKSPACE}/*'
                 sh 'rm -rf ${WORKSPACE}/.[a-zA-Z0-9]*'
-                checkout scm
             }
         }
         stage('Before Install') {
@@ -35,9 +34,10 @@ pipeline {
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/spinn_common.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/SpiNNFrontEndCommon.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/sPyNNaker.git'
+                sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/sPyNNaker8.git'
                 // scripts
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/IntroLab.git'
-                //sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/PyNN8Examples.git'
+                sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/PyNN8Examples.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/JavaSpiNNaker'
             }
         }
@@ -64,6 +64,8 @@ pipeline {
                 sh 'cd spalloc && python setup.py develop'
                 sh 'cd SpiNNFrontEndCommon && python setup.py develop'
                 sh 'cd sPyNNaker && python setup.py develop'
+                sh 'cd sPyNNaker8 && python ./setup.py develop'
+                sh 'python -m spynnaker8.setup_pynn'
                 sh 'pip install -r SpiNNMachine/requirements-test.txt'
                 sh 'pip install -r SpiNNStorageHandlers/requirements-test.txt'
                 sh 'pip install -r SpiNNMan/requirements-test.txt'
@@ -72,11 +74,9 @@ pipeline {
                 sh 'pip install -r spalloc/requirements-test.txt'
                 sh 'pip install -r SpiNNFrontEndCommon/requirements-test.txt'
                 sh 'pip install -r sPyNNaker/requirements-test.txt'
-                sh 'pip install -r requirements-test.txt'
+                sh 'pip install -r sPyNNaker8/requirements-test.txt'
                 sh 'pip install python-coveralls "coverage>=4.4"'
                 sh 'pip install pytest-instafail'
-                sh 'python ./setup.py develop'
-                sh 'python -m spynnaker8.setup_pynn'
                 sh 'mvn -f JavaSpiNNaker package'
             }
         }
@@ -99,29 +99,29 @@ pipeline {
         }
         stage('Unit Tests') {
             steps {
-                //run_pytest('SpiNNUtils/unittests', 1200)
-                //run_pytest('SpiNNStorageHandlers/tests', 1200)
-                //run_pytest('SpiNNMachine/unittests', 1200)
-                //run_pytest('SpiNNMan/unittests SpiNNMan/integration_tests', 1200)
+                run_pytest('SpiNNUtils/unittests', 1200)
+                run_pytest('SpiNNStorageHandlers/tests', 1200)
+                run_pytest('SpiNNMachine/unittests', 1200)
+                run_pytest('SpiNNMan/unittests SpiNNMan/integration_tests', 1200)
                 run_pytest('PACMAN/unittests', 1200)
-                //run_pytest('spalloc/tests', 1200)
+                run_pytest('spalloc/tests', 1200)
                 run_pytest('DataSpecification/unittests DataSpecification/integration_tests', 1200)
                 run_pytest('SpiNNFrontEndCommon/unittests SpiNNFrontEndCommon/fec_integration_tests', 1200)
-                //run_pytest('sPyNNaker/unittests', 1200)
-                //run_pytest('unittests', 1200)
+                run_pytest('sPyNNaker/unittests', 1200)
+                run_pytest('sPyNNaker8/unittests', 1200)
             }
         }
-        //stage('Test') {
-        //    steps {
-        //        run_pytest('p8_integration_tests/quick_test/', 1200)
-        //    }
-        //}
-        //stage('Run scripts') {
-        //    steps {
-        //        sh 'python p8_integration_tests/scripts_test/build_scipt.py'
-        //        run_pytest('p8_integration_tests/scripts_test', 1200)
-        //    }
-        //}
+        stage('Test') {
+            steps {
+                run_pytest('sPyNNaker8/p8_integration_tests/quick_test/', 1200)
+            }
+        }
+        stage('Run scripts') {
+            steps {
+                sh 'python sPyNNaker8/p8_integration_tests/scripts_test/build_scipt.py'
+                run_pytest('sPyNNaker8/p8_integration_tests/scripts_test', 1200)
+            }
+        }
         //stage('What do they do Tests') {
         //    steps {
         //        sh 'py.test p8_integration_tests/test_csa_connectors --forked --instafail spynnaker8 --timeout 1200'
@@ -137,7 +137,7 @@ pipeline {
         }
         stage('Check Destroyed') {
             steps {
-                sh 'py.test p8_integration_tests/destroyed_checker_test --forked --instafail --timeout 120'
+                sh 'py.test sPyNNaker8/p8_integration_tests/destroyed_checker_test --forked --instafail --timeout 120'
             }
         }
     }
