@@ -9,7 +9,7 @@ pipeline {
         stage('Clean and Checkout') {
             steps {
                 sh 'rm -rf ${WORKSPACE}/*'
-                sh 'rm -rf ${WORKSPACE}/.*'
+                sh 'rm -rf ${WORKSPACE}/.[a-zA-Z0-9]*'
                 checkout scm
             }
         }
