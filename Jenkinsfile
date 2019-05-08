@@ -7,8 +7,10 @@ pipeline {
     }
     stages {
         stage('Clean and Checkout') {
-            cleanWs()
-            checkout scm
+            steps {
+                cleanWs()
+                checkout scm
+            }
         }
         stage('Before Install') {
             environment {
