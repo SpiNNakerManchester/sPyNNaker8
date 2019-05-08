@@ -1,2 +1,7 @@
 [run]
 branch = True
+
+[paths]
+source =
+    DataSpecification/data_specification
+    */data_specification/

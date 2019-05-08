@@ -37,7 +37,7 @@ pipeline {
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/sPyNNaker.git'
                 // scripts
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/IntroLab.git'
-                sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/PyNN8Examples.git'
+                //sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/PyNN8Examples.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/JavaSpiNNaker'
             }
         }
@@ -99,14 +99,15 @@ pipeline {
         }
         stage('Unit Tests') {
             steps {
-                run_pytest('SpiNNStorageHandlers/tests', 1200)
-                run_pytest('SpiNNMachine/unittests', 1200)
-                run_pytest('SpiNNMan/unittests SpiNNMan/integration_tests', 1200)
-                run_pytest('PACMAN/unittests', 1200)
-                run_pytest('DataSpecification/unittests DataSpecification/integration_tests', 1200)
+                //run_pytest('SpiNNStorageHandlers/tests', 1200)
+                //run_pytest('SpiNNMachine/unittests', 1200)
+                //run_pytest('SpiNNMan/unittests SpiNNMan/integration_tests', 1200)
+                //run_pytest('PACMAN/unittests', 1200)
+                //run_pytest('spalloc/tests', 1200)
+                //run_pytest('DataSpecification/unittests DataSpecification/integration_tests', 1200)
                 run_pytest('SpiNNFrontEndCommon/unittests SpiNNFrontEndCommon/fec_integration_tests', 1200)
-                run_pytest('sPyNNaker/unittests', 1200)
-                run_pytest('unittests', 1200)
+                //run_pytest('sPyNNaker/unittests', 1200)
+                //run_pytest('unittests', 1200)
             }
         }
         //stage('Test') {
