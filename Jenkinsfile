@@ -92,7 +92,7 @@ pipeline {
                 sh 'printf "java_spinnaker_path=" >> ~/.spynnaker.cfg'
                 sh 'pwd >> ~/.spynnaker.cfg'
                 sh 'rm -f coverage.xml'
-                sh 'rm -f .coveragerc'
+                sh 'rm -f .coverage'
                 sh 'echo "# Empty config" >  ~/.spinnaker.cfg'
                 sh 'echo "<testsuite tests="0"></testsuite>" > results.xml'
             }
