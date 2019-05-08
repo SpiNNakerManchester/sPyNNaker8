@@ -8,7 +8,8 @@ pipeline {
     stages {
         stage('Clean and Checkout') {
             steps {
-                deleteDir()
+                sh 'rm -rf ${WORKSPACE}/*'
+                sh 'rm -rf ${WORKSPACE}/.*'
                 checkout scm
             }
         }
