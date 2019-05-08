@@ -2,14 +2,20 @@ pipeline {
     agent {
         docker { image 'python3.6' }
     }
+    options {
+        skipDefaultCheckout true
+    }
     stages {
+        stage('Clean and Checkout') {
+            cleanWs()
+            checkout scm
+        }
         stage('Before Install') {
             environment {
                 TRAVIS_BRANCH = "${env.BRANCH_NAME}"
             }
             steps {
                 // remove all directories left if Jenkins ended badly
-                sh 'rm -rf support SpiNNUtils SpiNNMachine SpiNNStorageHandlers SpiNNMan PACMAN DataSpecification spalloc spinnaker_tools spinn_common SpiNNFrontEndCommon sPyNNaker IntroLab PyNN8Examples JavaSpiNNaker reports'
                 sh 'git clone https://github.com/SpiNNakerManchester/SupportScripts.git support'
                 sh 'pip3 install --upgrade setuptools wheel'
                 sh 'pip install --only-binary=numpy,scipy,matplotlib numpy scipy matplotlib'
@@ -134,7 +140,6 @@ pipeline {
         success {
             junit 'results.xml'
             cobertura coberturaReportFile: 'coverage.xml'
-            cleanWs()
         }
     }
 }
