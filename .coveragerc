@@ -2,9 +2,9 @@
 branch = True
 
 [paths]
-source =
+data_spec_source =
     DataSpecification/data_specification
     */data_specification
-source =
+pacman_source =
     PACMAN/pacman
     */pacman
