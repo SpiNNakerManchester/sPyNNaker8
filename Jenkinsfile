@@ -48,7 +48,7 @@ pipeline {
             }
             steps {
                 // Install SpiNNUtils first as needed for C build
-                sh 'cd SpiNNUtils && python setup.py install'
+                sh 'cd SpiNNUtils && python setup.py develop'
                 // C Build next as builds files to be installed in Python
                 sh 'make -C $SPINN_DIRS'
                 sh 'make -C spinn_common install'
@@ -56,14 +56,14 @@ pipeline {
                 sh 'make -C SpiNNFrontEndCommon/c_common install'
                 sh 'make -C sPyNNaker/neural_modelling'
                 // Python install
-                sh 'cd SpiNNMachine && python setup.py install'
-                sh 'cd SpiNNStorageHandlers && python setup.py install'
-                sh 'cd SpiNNMan && python setup.py install'
-                sh 'cd PACMAN && python setup.py install'
-                sh 'cd DataSpecification && python setup.py install'
-                sh 'cd spalloc && python setup.py install'
-                sh 'cd SpiNNFrontEndCommon && python setup.py install'
-                sh 'cd sPyNNaker && python setup.py install'
+                sh 'cd SpiNNMachine && python setup.py develop'
+                sh 'cd SpiNNStorageHandlers && python setup.py develop'
+                sh 'cd SpiNNMan && python setup.py develop'
+                sh 'cd PACMAN && python setup.py develop'
+                sh 'cd DataSpecification && python setup.py develop'
+                sh 'cd spalloc && python setup.py develop'
+                sh 'cd SpiNNFrontEndCommon && python setup.py develop'
+                sh 'cd sPyNNaker && python setup.py develop'
                 sh 'pip install -r SpiNNMachine/requirements-test.txt'
                 sh 'pip install -r SpiNNStorageHandlers/requirements-test.txt'
                 sh 'pip install -r SpiNNMan/requirements-test.txt'
@@ -75,7 +75,7 @@ pipeline {
                 sh 'pip install -r requirements-test.txt'
                 sh 'pip install python-coveralls "coverage>=4.4"'
                 sh 'pip install pytest-instafail'
-                sh 'python ./setup.py install'
+                sh 'python ./setup.py develop'
                 sh 'python -m spynnaker8.setup_pynn'
                 sh 'mvn -f JavaSpiNNaker package'
             }
@@ -99,6 +99,7 @@ pipeline {
         }
         stage('Unit Tests') {
             steps {
+                //run_pytest('SpiNNUtils/unittests', 1200)
                 //run_pytest('SpiNNStorageHandlers/tests', 1200)
                 //run_pytest('SpiNNMachine/unittests', 1200)
                 //run_pytest('SpiNNMan/unittests SpiNNMan/integration_tests', 1200)

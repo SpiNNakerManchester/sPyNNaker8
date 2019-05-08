@@ -1,10 +1,2 @@
 [run]
 branch = True
-
-[paths]
-data_spec_source =
-    DataSpecification/data_specification
-    */data_specification
-pacman_source =
-    PACMAN/pacman
-    */pacman
