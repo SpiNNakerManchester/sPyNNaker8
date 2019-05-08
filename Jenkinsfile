@@ -102,7 +102,7 @@ pipeline {
                 //run_pytest('SpiNNStorageHandlers/tests', 1200)
                 //run_pytest('SpiNNMachine/unittests', 1200)
                 //run_pytest('SpiNNMan/unittests SpiNNMan/integration_tests', 1200)
-                //run_pytest('PACMAN/unittests', 1200)
+                run_pytest('PACMAN/unittests', 1200)
                 //run_pytest('spalloc/tests', 1200)
                 run_pytest('DataSpecification/unittests DataSpecification/integration_tests', 1200)
                 run_pytest('SpiNNFrontEndCommon/unittests SpiNNFrontEndCommon/fec_integration_tests', 1200)

@@ -4,4 +4,7 @@ branch = True
 [paths]
 source =
     DataSpecification/data_specification
-    */data_specification/
+    */data_specification
+source =
+    PACMAN/pacman
+    */pacman
