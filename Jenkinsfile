@@ -107,21 +107,21 @@ pipeline {
                 run_pytest('spalloc/tests', 1200)
                 run_pytest('DataSpecification/unittests DataSpecification/integration_tests', 1200)
                 run_pytest('SpiNNFrontEndCommon/unittests SpiNNFrontEndCommon/fec_integration_tests', 1200)
-                run_pytest('sPyNNaker/unittests', 1200)
-                run_pytest('sPyNNaker8/unittests', 1200)
+                //run_pytest('sPyNNaker/unittests', 1200)
+                //run_pytest('sPyNNaker8/unittests', 1200)
             }
         }
-        stage('Test') {
-            steps {
-                run_pytest('sPyNNaker8/p8_integration_tests/quick_test/', 1200)
-            }
-        }
-        stage('Run scripts') {
-            steps {
-                sh 'python sPyNNaker8/p8_integration_tests/scripts_test/build_scipt.py'
-                run_pytest('sPyNNaker8/p8_integration_tests/scripts_test', 1200)
-            }
-        }
+        //stage('Test') {
+        //    steps {
+        //        run_pytest('sPyNNaker8/p8_integration_tests/quick_test/', 1200)
+        //    }
+        //}
+        //stage('Run scripts') {
+        //    steps {
+        //        sh 'python sPyNNaker8/p8_integration_tests/scripts_test/build_scipt.py'
+        //        run_pytest('sPyNNaker8/p8_integration_tests/scripts_test', 1200)
+        //    }
+        //}
         stage('Reports') {
             steps {
                 sh 'find reports/* -type f -print -exec cat {}  \\;'
@@ -137,6 +137,10 @@ pipeline {
         success {
             junit 'results.xml'
             cobertura coberturaReportFile: 'coverage.xml'
+            script {
+                currentBuild.result = 'SUCCESS'
+            }
+            step([$class: 'CompareCoverageAction', publishResultAs: 'statusCheck', scmVars: [GIT_URL: env.GIT_URL]])
         }
     }
 }
