@@ -122,11 +122,6 @@ pipeline {
                 run_pytest('sPyNNaker8/p8_integration_tests/scripts_test', 1200)
             }
         }
-        //stage('What do they do Tests') {
-        //    steps {
-        //        sh 'py.test p8_integration_tests/test_csa_connectors --forked --instafail spynnaker8 --timeout 1200'
-        //   }
-        //}
         stage('Reports') {
             steps {
                 sh 'find reports/* -type f -print -exec cat {}  \\;'
