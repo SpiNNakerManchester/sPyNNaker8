@@ -153,7 +153,7 @@ pipeline {
             script {
                 currentBuild.result = 'SUCCESS'
             }
-            step([$class: 'CompareCoverageAction', publishResultAs: 'statusCheck', scmVars: [GIT_URL: pullRequest.url]])
+            step([$class: 'CompareCoverageAction', publishResultAs: 'statusCheck'])
         }
     }
 }
