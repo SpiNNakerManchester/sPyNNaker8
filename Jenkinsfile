@@ -124,7 +124,7 @@ pipeline {
         //}
         stage('Reports') {
             steps {
-                sh 'if [-d reports]; then find reports/* -type f -print -exec cat {}  \\; ; fi'
+                sh 'if [ -d reports ]; then find reports/* -type f -print -exec cat {}  \\; ; fi'
             }
         }
         stage('Check Destroyed') {
@@ -134,7 +134,7 @@ pipeline {
         }
     }
     post {
-        changed {
+        always {
             script {
                 emailext subject: '$DEFAULT_SUBJECT',
                     body: '$DEFAULT_CONTENT',
@@ -143,17 +143,12 @@ pipeline {
                         [$class: 'DevelopersRecipientProvider'],
                         [$class: 'RequesterRecipientProvider']
                     ],
-                    replyTo: '$DEFAULT_REPLYTO',
-                    to: '$DEFAULT_RECIPIENTS'
+                    replyTo: '$DEFAULT_REPLYTO'
             }
         }
         success {
             junit 'results.xml'
             cobertura coberturaReportFile: 'coverage.xml'
-            script {
-                currentBuild.result = 'SUCCESS'
-            }
-            step([$class: 'CompareCoverageAction', publishResultAs: 'statusCheck'])
         }
     }
 }
