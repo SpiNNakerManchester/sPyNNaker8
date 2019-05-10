@@ -106,7 +106,7 @@ pipeline {
                 run_pytest('PACMAN/unittests', 1200)
                 run_pytest('spalloc/tests', 1200)
                 run_pytest('DataSpecification/unittests DataSpecification/integration_tests', 1200)
-                run_pytest('SpiNNFrontEndCommon/unittests SpiNNFrontEndCommon/fec_integration_tests', 1200)
+                //run_pytest('SpiNNFrontEndCommon/unittests SpiNNFrontEndCommon/fec_integration_tests', 1200)
                 //run_pytest('sPyNNaker/unittests', 1200)
                 //run_pytest('sPyNNaker8/unittests', 1200)
             }
