@@ -101,7 +101,7 @@ class KernelConnectorTest(BaseTestCase):
     def test_oddsquarek_run(self):
         (psh, psw, ksh, ksw) = (4, 4, 3, 3)
         v, spikes, weightsdelays = do_run(psh, psw, ksh, ksw, plot=False)
-        # any checks go here
+        # Checks go here
         self.assertEqual(25, len(weightsdelays))
         list10 = (1, 0, 5.0, 20.0)
         list11 = (1, 1, 7.0, 10.0)
@@ -117,7 +117,7 @@ class KernelConnectorTest(BaseTestCase):
     def test_evensquarek_run(self):
         (psh, psw, ksh, ksw) = (4, 4, 2, 2)
         v, spikes, weightsdelays = do_run(psh, psw, ksh, ksw, plot=False)
-        # any checks go here
+        # Checks go here
         self.assertEqual(9, len(weightsdelays))
         list01 = (0, 1, 5.0, 20.0)
         list03 = (0, 3, 7.0, 10.0)
@@ -129,8 +129,7 @@ class KernelConnectorTest(BaseTestCase):
     def test_nonsquarek_run(self):
         (psh, psw, ksh, ksw) = (4, 4, 1, 3)
         v, spikes, weightsdelays = do_run(psh, psw, ksh, ksw, plot=False)
-        print('check:', len(weightsdelays), len(spikes), len(v))
-        # any checks go here
+        # Checks go here
         self.assertEqual(10, len(weightsdelays))
         list10 = (1, 0, 7.0, 10.0)
         list42 = (4, 2, 5.0, 20.0)
@@ -142,8 +141,7 @@ class KernelConnectorTest(BaseTestCase):
     def test_bigger_nonsquarep_run(self):
         (psh, psw, ksh, ksw) = (32, 16, 3, 3)
         v, spikes, weightsdelays = do_run(psh, psw, ksh, ksw, plot=False)
-        print('check:', len(weightsdelays), len(spikes), len(v))
-        # any checks go here
+        # Checks go here
         self.assertEqual(1081, len(weightsdelays))
         list10 = (1, 0, 5.0, 20.0)
         list11 = (1, 1, 7.0, 10.0)
