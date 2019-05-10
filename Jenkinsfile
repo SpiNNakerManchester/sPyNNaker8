@@ -124,7 +124,7 @@ pipeline {
         //}
         stage('Reports') {
             steps {
-                sh 'find reports/* -type f -print -exec cat {}  \\;'
+                sh 'if [-d reports]; then find reports/* -type f -print -exec cat {}  \\; ; fi'
             }
         }
         stage('Check Destroyed') {
