@@ -68,7 +68,7 @@ pipeline {
                 sh 'cd sPyNNaker && python setup.py install'
                 sh 'cd sPyNNaker8 && python ./setup.py install'
                 sh 'python -m spynnaker8.setup_pynn'
-                sh 'pip install python-coveralls "coverage>=4.4"'
+                sh 'pip install -r sPyNNaker8/requirements-test.txt'
                 sh 'pip install pytest-instafail'
                 sh 'mvn -f JavaSpiNNaker package'
             }
