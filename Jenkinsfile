@@ -118,12 +118,6 @@ pipeline {
                 run_pytest('sPyNNaker8/p8_integration_tests/quick_test/', 1200, 'sPyNNaker8_Integration')
             }
         }
-        stage('Run scripts') {
-            steps {
-                sh 'python sPyNNaker8/p8_integration_tests/scripts_test/build_scipt.py'
-                run_pytest('sPyNNaker8/p8_integration_tests/scripts_test', 1200, 'sPyNNaker8Scripts')
-            }
-        }
         stage('Reports') {
             steps {
                 sh 'if [ -d reports ]; then find reports/* -type f -print -exec cat {}  \\; ; fi'
