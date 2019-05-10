@@ -101,27 +101,27 @@ pipeline {
         }
         stage('Unit Tests') {
             steps {
-                run_pytest('SpiNNUtils/unittests', 1200)
-                run_pytest('SpiNNStorageHandlers/tests', 1200)
-                run_pytest('SpiNNMachine/unittests', 1200)
-                run_pytest('SpiNNMan/unittests SpiNNMan/integration_tests', 1200)
-                run_pytest('PACMAN/unittests', 1200)
-                run_pytest('spalloc/tests', 1200)
-                run_pytest('DataSpecification/unittests DataSpecification/integration_tests', 1200)
-                //run_pytest('SpiNNFrontEndCommon/unittests SpiNNFrontEndCommon/fec_integration_tests', 1200)
-                //run_pytest('sPyNNaker/unittests', 1200)
-                //run_pytest('sPyNNaker8/unittests', 1200)
+                run_pytest('SpiNNUtils/unittests', 1200, 'SpiNNUtils')
+                run_pytest('SpiNNStorageHandlers/tests', 1200, 'SpiNNStorageHandlers')
+                run_pytest('SpiNNMachine/unittests', 1200, 'SpiNNMachine')
+                run_pytest('SpiNNMan/unittests SpiNNMan/integration_tests', 1200, 'SpiNNMan')
+                run_pytest('PACMAN/unittests', 1200, 'PACMAN')
+                run_pytest('spalloc/tests', 1200, 'spalloc')
+                run_pytest('DataSpecification/unittests DataSpecification/integration_tests', 1200, 'DataSpecification')
+                //run_pytest('SpiNNFrontEndCommon/unittests SpiNNFrontEndCommon/fec_integration_tests', 1200, 'SpiNNFrontEndCommon')
+                //run_pytest('sPyNNaker/unittests', 1200, 'sPyNNaker')
+                //run_pytest('sPyNNaker8/unittests', 1200, 'sPyNNaker8')
             }
         }
         //stage('Test') {
         //    steps {
-        //        run_pytest('sPyNNaker8/p8_integration_tests/quick_test/', 1200)
+        //        run_pytest('sPyNNaker8/p8_integration_tests/quick_test/', 1200, 'sPyNNaker8_Integration')
         //    }
         //}
         //stage('Run scripts') {
         //    steps {
         //        sh 'python sPyNNaker8/p8_integration_tests/scripts_test/build_scipt.py'
-        //        run_pytest('sPyNNaker8/p8_integration_tests/scripts_test', 1200)
+        //        run_pytest('sPyNNaker8/p8_integration_tests/scripts_test', 1200, 'sPyNNaker8Scripts')
         //    }
         //}
         stage('Reports') {
