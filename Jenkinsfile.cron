@@ -37,10 +37,12 @@ pipeline {
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/spinn_common.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/SpiNNFrontEndCommon.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/sPyNNaker.git'
+                // Java dependencies
+                sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/JavaSpiNNaker'
                 // scripts
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/IntroLab.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/PyNN8Examples.git'
-                sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/JavaSpiNNaker'
+                sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/microcircuit_model.git'
             }
         }
         stage('Install') {
@@ -68,13 +70,17 @@ pipeline {
                 sh 'cd sPyNNaker && python setup.py install'
                 sh 'cd sPyNNaker8 && python ./setup.py install'
                 sh 'python -m spynnaker8.setup_pynn'
+                // Test requirements
                 sh 'pip install -r sPyNNaker8/requirements-test.txt'
+                // Additional requirements for testing here
                 sh 'pip install pytest-instafail'
+                // Java install
                 sh 'mvn -f JavaSpiNNaker package'
             }
         }
         stage('Before Script') {
             steps {
+                // Write a config file for spalloc and java use
                 sh 'echo "[Machine]" > ~/.spynnaker.cfg'
                 sh 'echo "spalloc_server = 10.11.192.11" >> ~/.spynnaker.cfg'
                 sh 'echo "spalloc_user = Jenkins" >> ~/.spynnaker.cfg'
@@ -84,13 +90,14 @@ pipeline {
                 sh 'echo "java_call=/usr/bin/java" >> ~/.spynnaker.cfg'
                 sh 'printf "java_spinnaker_path=" >> ~/.spynnaker.cfg'
                 sh 'pwd >> ~/.spynnaker.cfg'
+                // Create a directory for test outputs
                 sh 'mkdir junit/'
             }
         }
         stage('Test') {
             steps {
                 run_pytest('sPyNNaker8/p8_integration_tests/quick_test/', 1200, 'sPyNNaker8_Integration')
-                run_pytest('sPyNNaker8/p8_integration_tests/long_test/', 1200, 'sPyNNaker8_Integration_Long')
+                run_pytest('sPyNNaker8/p8_integration_tests/long_test/', 12000, 'sPyNNaker8_Integration_Long')
             }
         }
         stage('Run scripts') {

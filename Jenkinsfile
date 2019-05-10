@@ -37,9 +37,7 @@ pipeline {
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/spinn_common.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/SpiNNFrontEndCommon.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/sPyNNaker.git'
-                // scripts
-                sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/IntroLab.git'
-                sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/PyNN8Examples.git'
+                // Java dependencies
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/JavaSpiNNaker'
             }
         }
@@ -68,6 +66,7 @@ pipeline {
                 sh 'cd sPyNNaker && python setup.py develop'
                 sh 'cd sPyNNaker8 && python ./setup.py develop'
                 sh 'python -m spynnaker8.setup_pynn'
+                // Test requirements
                 sh 'pip install -r SpiNNMachine/requirements-test.txt'
                 sh 'pip install -r SpiNNStorageHandlers/requirements-test.txt'
                 sh 'pip install -r SpiNNMan/requirements-test.txt'
@@ -77,13 +76,16 @@ pipeline {
                 sh 'pip install -r SpiNNFrontEndCommon/requirements-test.txt'
                 sh 'pip install -r sPyNNaker/requirements-test.txt'
                 sh 'pip install -r sPyNNaker8/requirements-test.txt'
+                // Additional requirements for testing here
                 sh 'pip install python-coveralls "coverage>=4.4"'
                 sh 'pip install pytest-instafail pytest-xdist'
+                // Java install
                 sh 'mvn -f JavaSpiNNaker package'
             }
         }
         stage('Before Script') {
             steps {
+                // Write a config file for spalloc and java use
                 sh 'echo "[Machine]" > ~/.spynnaker.cfg'
                 sh 'echo "spalloc_server = 10.11.192.11" >> ~/.spynnaker.cfg'
                 sh 'echo "spalloc_user = Jenkins" >> ~/.spynnaker.cfg'
@@ -93,9 +95,12 @@ pipeline {
                 sh 'echo "java_call=/usr/bin/java" >> ~/.spynnaker.cfg'
                 sh 'printf "java_spinnaker_path=" >> ~/.spynnaker.cfg'
                 sh 'pwd >> ~/.spynnaker.cfg'
+                // Prepare coverage
                 sh 'rm -f coverage.xml'
                 sh 'rm -f .coverage'
+                // Prepare for unit tests
                 sh 'echo "# Empty config" >  ~/.spinnaker.cfg'
+                // Create a directory for test outputs
                 sh 'mkdir junit/'
             }
         }
