@@ -18,7 +18,8 @@ def do_run(psh, psw, ksh, ksw, plot):
     spiking = [[n*5, (n_pop*5)-1-(n*5)] for n in range(n_pop)]
     print('ssa using ', spiking)
 
-    input_pop = sim.Population(n_pop, sim.SpikeSourceArray(spiking), label="input")
+    input_pop = sim.Population(n_pop, sim.SpikeSourceArray(spiking),
+                               label="input")
     pop = sim.Population(n_pop // 4, sim.IF_curr_exp(), label="pop")
 
     weights = 5.0
@@ -35,8 +36,10 @@ def do_run(psh, psw, ksh, ksw, plot):
     shape_post = [psh // 2, psw // 2]
     shape_kernel = [ksh, ksw]
 
-    weight_list = [[7.0 if (a+b)%2==0 else 5.0 for a in range(ksw)] for b in range(ksh)]
-    delay_list = [[20.0 if (a+b)%2==1 else 10.0 for a in range(ksw)] for b in range(ksh)]
+    weight_list = [[7.0 if ((a + b) % 2 == 0) else 5.0 for a in range(ksw)]
+                   for b in range(ksh)]
+    delay_list = [[20.0 if ((a + b) % 2 == 1) else 10.0 for a in range(ksw)]
+                  for b in range(ksh)]
 
     weight_kernel = np.asarray(weight_list)
     delay_kernel = np.asarray(delay_list)
@@ -57,7 +60,7 @@ def do_run(psh, psw, ksh, ksw, plot):
     sim.run(runtime)
 
     weightsdelays = sorted(c2.get(['weight', 'delay'], 'list'),
-                           key = lambda x: x[1])
+                           key=lambda x: x[1])
     print(weightsdelays)
     print('there are', len(weightsdelays), 'connections')
 

@@ -130,6 +130,7 @@ __all__ = [
     'FixedNumberPreConnector', 'FixedProbabilityConnector',
     'FromFileConnector', 'FromListConnector', 'IndexBasedProbabilityConnector',
     'FixedTotalNumberConnector', 'OneToOneConnector', 'SmallWorldConnector',
+    'KernelConnector',
     # synapse structures
     'StaticSynapse',
     # plastic stuff
