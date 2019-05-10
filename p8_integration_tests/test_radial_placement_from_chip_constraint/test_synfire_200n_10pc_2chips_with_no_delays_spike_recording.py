@@ -2,8 +2,10 @@
 """
 Synfirechain-like example
 """
+from unittest import SkipTest
 from pacman.model.constraints.placer_constraints import (
     RadialPlacementFromChipConstraint)
+from pacman.exceptions import PacmanPlaceException
 import spynnaker.plot_utils as plot_utils
 import spynnaker.spike_checker as spike_checker
 from p8_integration_tests.base_test_case import BaseTestCase
@@ -21,13 +23,16 @@ synfire_run = SynfireRunner()
 class Synfire200n10pc2chipsWithNoDelaysSpikeRecording(BaseTestCase):
 
     def test_run(self):
-        synfire_run.do_run(nNeurons, delay=delay,
-                           neurons_per_core=neurons_per_core,
-                           constraint=constraint, record_v=record_v,
-                           record_gsyn_exc=record_gsyn,
-                           record_gsyn_inh=record_gsyn)
-        spikes = synfire_run.get_output_pop_spikes_numpy()
+        try:
+            synfire_run.do_run(nNeurons, delay=delay,
+                               neurons_per_core=neurons_per_core,
+                               constraint=constraint, record_v=record_v,
+                               record_gsyn_exc=record_gsyn,
+                               record_gsyn_inh=record_gsyn)
+        except PacmanPlaceException as ex:
+            raise SkipTest(ex)
 
+        spikes = synfire_run.get_output_pop_spikes_numpy()
         self.assertEquals(333, len(spikes))
         spike_checker.synfire_spike_checker(spikes, nNeurons)
 
