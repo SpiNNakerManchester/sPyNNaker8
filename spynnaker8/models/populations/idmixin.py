@@ -111,6 +111,11 @@ class IDMixin(object):
         return self._population == other._population and \
             self._id == other._id
 
+    def __ne__(self, other):
+        if not isinstance(other, IDMixin):
+            return True
+        return not other.__eq__()
+
     def __str__(self):
         return str(self._population) + "[" + str(self._id) + "]"
 
