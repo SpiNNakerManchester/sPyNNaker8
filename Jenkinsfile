@@ -151,6 +151,10 @@ pipeline {
         success {
             junit 'junit/*.xml'
             cobertura coberturaReportFile: 'coverage.xml'
+            script {
+                currentBuild.result = 'SUCCESS'
+            }
+            step([$class: 'CompareCoverageAction', publishResultAs: 'statusCheck'])
         }
     }
 }
