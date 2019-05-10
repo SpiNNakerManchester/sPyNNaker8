@@ -22,6 +22,7 @@ synfire_run = SynfireRunner()
 
 class Synfire200n10pc2chipsWithNoDelaysSpikeRecording(BaseTestCase):
 
+    @unittest.skip("RadialPlacement issues")
     def test_run(self):
         try:
             synfire_run.do_run(nNeurons, delay=delay,
