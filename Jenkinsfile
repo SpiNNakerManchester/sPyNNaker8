@@ -10,6 +10,9 @@ pipeline {
             steps {
                 sh 'rm -rf ${WORKSPACE}/*'
                 sh 'rm -rf ${WORKSPACE}/.[a-zA-Z0-9]*'
+                dir('sPyNNaker8') {
+                    checkout scm
+                }
             }
         }
         stage('Before Install') {
@@ -34,7 +37,6 @@ pipeline {
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/spinn_common.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/SpiNNFrontEndCommon.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/sPyNNaker.git'
-                sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/sPyNNaker8.git'
                 // scripts
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/IntroLab.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/PyNN8Examples.git'
@@ -157,3 +159,5 @@ def run_pytest(String tests, int timeout, String results) {
     sh 'echo "<testsuite tests="0"></testsuite>" > junit/' + results + '.xml'
     sh 'py.test ' + tests + ' -rs --forked --show-progress --cov-branch --cov spynnaker8 --cov spynnaker --cov spinn_front_end_common --cov pacman --cov data_specification --cov spinnman --cov spinn_machine --cov spinn_storage_handlers --cov spalloc --cov spinn_utilities --junitxml junit/' + results + '.xml --cov-report xml:coverage.xml --cov-append --timeout ' + timeout
 }
+
+def get_
