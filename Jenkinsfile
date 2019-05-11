@@ -37,6 +37,9 @@ pipeline {
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/spinn_common.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/SpiNNFrontEndCommon.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/sPyNNaker.git'
+                // scripts
+                sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/IntroLab.git'
+                sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/PyNN8Examples.git'
                 // Java dependencies
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/JavaSpiNNaker'
             }
