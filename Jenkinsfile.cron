@@ -42,7 +42,7 @@ pipeline {
                 // scripts
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/IntroLab.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/PyNN8Examples.git'
-                sh 'GIT_SSH_COMMAND="ssh -vvv" git clone git@github.com:SpiNNakerManchester/microcircuit_model.git'
+                sh 'support/gitclone.sh git@github.com:SpiNNakerManchester/microcircuit_model.git'
             }
         }
         stage('Install') {
