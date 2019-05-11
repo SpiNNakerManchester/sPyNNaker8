@@ -17,7 +17,7 @@ pipeline {
         }
         stage('Before Install') {
             environment {
-                TRAVIS_BRANCH = "${env.BRANCH_NAME}"
+                TRAVIS_BRANCH = "${env.GIT_BRANCH}"
             }
             steps {
                 // Verify the branch
