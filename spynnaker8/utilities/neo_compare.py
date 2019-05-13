@@ -2,13 +2,20 @@
 from spynnaker8.utilities.version_util import pynn8_syntax
 
 
-def compare_spiketrain(spiketrain1, spiketrain2):
+def compare_spiketrain(spiketrain1, spiketrain2, same_length=True):
     """ Checks two Spiketrains have the exact same data
 
     :param spiketrain1: first spiketrain
     :type spiketrain1: SpikeTrain
     :param spiketrain2: second spiketrain
     :type spiketrain: SpikeTrain
+    :param same_length: Flag to indicate if the same length of data is held.\
+        I.e.: All spikes up to the same time.\
+        If False allows one trains to have additional spikes after the first \
+        ends
+        This is used to compare data extracted part way with data extracted \
+        at the end.
+    :type same_length: bool
     :rtype: None
     :raises AssertionError: If the spiketrains are not equal
     """
@@ -18,7 +25,7 @@ def compare_spiketrain(spiketrain1, spiketrain2):
         raise AssertionError(
             "Different annotations['source_index'] found {} and {}".format(
                 id1, id2))
-    if len(spiketrain1) != len(spiketrain2):
+    if same_length and len(spiketrain1) != len(spiketrain2):
         raise AssertionError(
             "spiketrains1 has {} spikes while spiketrains2 as {} for ID {}"
             .format(len(spiketrain1), len(spiketrain2), id1))
@@ -30,7 +37,8 @@ def compare_spiketrain(spiketrain1, spiketrain2):
                     spike1, spike2, id1))
 
 
-def compare_spiketrains(spiketrains1, spiketrains2, same_data=True):
+def compare_spiketrains(
+        spiketrains1, spiketrains2, same_data=True, same_length=True):
     """ Check two Lists of SpikeTrains have the exact same data
 
     :param spiketrains1: First list SpikeTrains to compare
@@ -42,7 +50,13 @@ def compare_spiketrains(spiketrains1, spiketrains2, same_data=True):
         If False allows one or both lists to be Empty.\
         Even if False none empty lists must be the same length
     :type same_data: bool
-    :rtype: Non
+    :param same_length: Flag to indicate if the same length of data is held.\
+        I.e.: All spikes up to the same time.\
+        If False allows one trains to have additional spikes after the first \
+        ends
+        This is used to compare data extracted part way with data extracted \
+        at the end.
+    :type same_length: bool
     :raises AssertionError: If the spiketrains are not equal
     """
     if not same_data and (not spiketrains1 or not spiketrains2):
@@ -53,10 +67,10 @@ def compare_spiketrains(spiketrains1, spiketrains2, same_data=True):
             "analogsignalarrays".format(
                 len(spiketrains1), len(spiketrains2)))
     for spiketrain1, spiketrain2 in zip(spiketrains1, spiketrains2):
-        compare_spiketrain(spiketrain1, spiketrain2)
+        compare_spiketrain(spiketrain1, spiketrain2, same_length)
 
 
-def compare_analogsignal(as1, as2):
+def compare_analogsignal(as1, as2, same_length=True):
     """ Compares two analogsignalarray Objects to see if they are the same
 
     :param as1: first analogsignal\
@@ -65,7 +79,13 @@ def compare_analogsignal(as1, as2):
     :param as2: second analogsignal\
         holding list of individual analogsignal Objects
     :type as2: Analogsignal
-    :rtype: None
+    :param same_length: Flag to indicate if the same length of data is held.\
+        I.e.: All spikes up to the same time.\
+        If False allows one trains to have additional data after the first \
+        ends.
+        This is used to compare data extracted part way with data extracted \
+        at the end.
+    :type same_length: bool
     :raises AssertionError: If the analogsignalarrays are not equal
     """
     if pynn8_syntax:
@@ -80,7 +100,7 @@ def compare_analogsignal(as1, as2):
             "analogsignalarray1 has name {} while analogsignalarray1 has {}"
             .format(as1.name, as2.name))
 
-    if len(as1_index) != len(as2_index):
+    if same_length and len(as1_index) != len(as2_index):
         raise AssertionError(
             "channel_index 1 has len {} while channel_index 2 has {} for {}"
             .format(len(as1_index), len(as2_index), as1.name))
@@ -91,7 +111,7 @@ def compare_analogsignal(as1, as2):
                 "ID 1 is {} while ID 2 is {} for {}".format(
                     id1, id2, as1.name))
 
-    if len(as1.times) != len(as2.times):
+    if same_length and len(as1.times) != len(as2.times):
         raise AssertionError(
             "times 1 has len {} while times 2 has {} for {}".format(
                 len(as1.times), len(as2.times), as1.name))
@@ -102,7 +122,7 @@ def compare_analogsignal(as1, as2):
                 "time 1 is {} while time 2 is {} for {}".format(
                     time1, time2, as1.name))
 
-    if len(as1) != len(as2):
+    if same_length and len(as1) != len(as2):
         raise AssertionError(
             "analogsignal 1 has len {} while analogsignal 2 has {} for {}"
             .format(len(as1), len(as2), as1.name))
@@ -120,7 +140,7 @@ def compare_analogsignal(as1, as2):
                         value1, value2, as1.name))
 
 
-def compare_segments(seg1, seg2, same_data=True):
+def compare_segments(seg1, seg2, same_data=True, same_length=True):
     """
     :param seg1: First Segment to check
     :type seg1: Segment
@@ -130,10 +150,18 @@ def compare_segments(seg1, seg2, same_data=True):
         I.e.: Same spikes, v, gsyn_exc and gsyn_inh.\
         If False only data in both blocks is compared
     :type same_data: bool
+    :param same_length: Flag to indicate if the same length of data is held.\
+        I.e.: All spikes up to the same time.\
+        If False allows one trains to have additional data after the first \
+        ends.
+        This is used to compare data extracted part way with data extracted \
+        at the end.
+    :type same_length: bool
     :rtype: None
     :raises AssertionError: If the segments are not equal
     """
-    compare_spiketrains(seg1.spiketrains, seg2.spiketrains, same_data)
+    compare_spiketrains(
+        seg1.spiketrains, seg2.spiketrains, same_data, same_length)
     if pynn8_syntax:
         seg1_analogsignals = seg1.analogsignalarrays
         seg2_analogsignals = seg2.analogsignalarrays
@@ -157,10 +185,11 @@ def compare_segments(seg1, seg2, same_data=True):
                         name))
         else:
             analogsignal2 = seg2.filter(name=name)[0]
-            compare_analogsignal(analogsignal1, analogsignal2)
+            compare_analogsignal(analogsignal1, analogsignal2, same_length)
 
 
-def compare_blocks(neo1, neo2, same_runs=True, same_data=True):
+def compare_blocks(
+        neo1, neo2, same_runs=True, same_data=True, same_length=True):
     """ Compares two neo Blocks to see if they hold the same data.
 
     :param neo1: First block to check
@@ -174,6 +203,13 @@ def compare_blocks(neo1, neo2, same_runs=True, same_data=True):
         I.e.: Same spikes, v, gsyn_exc and gsyn_inh.\
         If False only data in both blocks is compared
     :type same_data: bool
+    :param same_length: Flag to indicate if the same length of data is held.\
+        I.e.: All spikes up to the same time.\
+        If False allows one trains to have additional data after the first \
+        ends.
+        This is used to compare data extracted part way with data extracted \
+        at the end.
+    :type same_length: bool
     :rtype: None
     :raises AssertionError: If the blocks are not equal
     """
@@ -182,4 +218,4 @@ def compare_blocks(neo1, neo2, same_runs=True, same_data=True):
             "Block1 has {} segments while block2 as {} segments".format(
                 len(neo1.segments), len(neo2.segments)))
     for seg1, seg2 in zip(neo1.segments, neo2.segments):
-        compare_segments(seg1, seg2, same_data)
+        compare_segments(seg1, seg2, same_data, same_length)
