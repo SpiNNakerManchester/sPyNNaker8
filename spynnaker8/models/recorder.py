@@ -5,6 +5,7 @@ from six import string_types
 from six.moves import xrange
 import neo
 import quantities
+from spinn_utilities import logger_utils
 from spinn_utilities.ordered_set import OrderedSet
 from spinn_utilities.log import FormatAdapter
 from spinn_front_end_common.utilities.globals_variables import get_simulator
@@ -368,6 +369,12 @@ class Recorder(RecordingCommon):
         t_start = recording_start_time * quantities.ms
         sampling_period = sampling_interval * quantities.ms
         if view_indexes is None:
+            if not numpy.array_equal(data_indexes, self._all_ids):
+                msg = "Warning getting data on a whole population when " \
+                      "selective recording is active will result in only " \
+                      "the requested neurons being returned in numerical " \
+                      "order and without repeats."
+                logger_utils.warn_once(logger, msg)
             indexes = numpy.array(data_indexes)
         elif view_indexes == data_indexes:
             indexes = numpy.array(data_indexes)
