@@ -15,7 +15,7 @@ from spynnaker.pyNN.models.neuron.builds import (
     IF_curr_dual_exp, IzkCondExpBase as
     Izhikevich_cond, IFCurrExpSEMDBase as
     IF_curr_exp_sEMD, IFCurrExpERBP, PoissonNeuron, ReadoutPoissonNeuron,
-    ErrorNeuron)
+    ErrorNeuron, ReadoutPoissonNeuronNonSpike)
 
 # plastic weight spynnaker 8
 from spynnaker8.models.synapse_dynamics.weight_dependence \
@@ -26,6 +26,7 @@ __all__ = [
     'IFCurDelta', 'IFCurrExpCa2Adaptive', 'IFCondExpStoc',
     'Izhikevich_cond', 'IF_curr_dual_exp', 'IF_curr_exp_sEMD',
     'IFCurrExpERBP', 'PoissonNeuron', 'ErrorNeuron',
+    'ReadoutPoissonNeuronNonSpike',
 
 
     # sPyNNaker 8 plastic stuff
