@@ -17,11 +17,12 @@ pipeline {
         }
         stage('Before Install') {
             environment {
-                TRAVIS_BRANCH = "${env.BRANCH_NAME}"
+                TRAVIS_BRANCH = getGitBranchName()
             }
             steps {
                 // Verify the branch
                 sh 'echo "Branch is $TRAVIS_BRANCH"'
+                sh 'printenv'
                 // remove all directories left if Jenkins ended badly
                 sh 'git clone https://github.com/SpiNNakerManchester/SupportScripts.git support'
                 sh 'pip3 install --upgrade setuptools wheel'
@@ -141,4 +142,8 @@ pipeline {
 def run_pytest(String tests, int timeout, String results) {
     sh 'echo "<testsuite tests="0"></testsuite>" > junit/' + results + '.xml'
     sh 'py.test ' + tests + ' -rs --forked --show-progress --junitxml junit/' + results + '.xml --timeout ' + timeout
+}
+
+def getGitBranchName() {
+    return scm.branches[0].name
 }
