@@ -109,21 +109,21 @@ pipeline {
         }
         stage('Unit Tests') {
             steps {
-                run_pytest('SpiNNUtils/unittests', 1200, 'SpiNNUtils')
-                run_pytest('SpiNNStorageHandlers/tests', 1200, 'SpiNNStorageHandlers')
-                run_pytest('SpiNNMachine/unittests', 1200, 'SpiNNMachine')
-                run_pytest('SpiNNMan/unittests SpiNNMan/integration_tests', 1200, 'SpiNNMan')
-                run_pytest('PACMAN/unittests', 1200, 'PACMAN')
-                run_pytest('spalloc/tests', 1200, 'spalloc')
-                run_pytest('DataSpecification/unittests DataSpecification/integration_tests', 1200, 'DataSpecification')
-                run_pytest('SpiNNFrontEndCommon/unittests SpiNNFrontEndCommon/fec_integration_tests', 1200, 'SpiNNFrontEndCommon')
-                run_pytest('sPyNNaker/unittests', 1200, 'sPyNNaker')
-                run_pytest('sPyNNaker8/unittests', 1200, 'sPyNNaker8')
+                run_pytest('SpiNNUtils/unittests', 1200, 'SpiNNUtils', 'auto')
+                run_pytest('SpiNNStorageHandlers/tests', 1200, 'SpiNNStorageHandlers', 'auto')
+                run_pytest('SpiNNMachine/unittests', 1200, 'SpiNNMachine', 'auto')
+                run_pytest('SpiNNMan/unittests SpiNNMan/integration_tests', 1200, 'SpiNNMan', 'auto')
+                run_pytest('PACMAN/unittests', 1200, 'PACMAN', 'auto')
+                run_pytest('spalloc/tests', 1200, 'spalloc', '1')
+                run_pytest('DataSpecification/unittests DataSpecification/integration_tests', 1200, 'DataSpecification', 'auto')
+                run_pytest('SpiNNFrontEndCommon/unittests SpiNNFrontEndCommon/fec_integration_tests', 1200, 'SpiNNFrontEndCommon', 'auto')
+                run_pytest('sPyNNaker/unittests', 1200, 'sPyNNaker', 'auto')
+                run_pytest('sPyNNaker8/unittests', 1200, 'sPyNNaker8', 'auto')
             }
         }
         stage('Test') {
             steps {
-                run_pytest('sPyNNaker8/p8_integration_tests/quick_test/', 1200, 'sPyNNaker8_Integration')
+                run_pytest('sPyNNaker8/p8_integration_tests/quick_test/', 1200, 'sPyNNaker8_Integration', 'auto')
             }
         }
         stage('Reports') {
@@ -161,7 +161,7 @@ pipeline {
     }
 }
 
-def run_pytest(String tests, int timeout, String results) {
+def run_pytest(String tests, int timeout, String results, String threads) {
     sh 'echo "<testsuite tests="0"></testsuite>" > junit/' + results + '.xml'
-    sh 'py.test ' + tests + ' -rs -n auto --forked --show-progress --cov-branch --cov spynnaker8 --cov spynnaker --cov spinn_front_end_common --cov pacman --cov data_specification --cov spinnman --cov spinn_machine --cov spinn_storage_handlers --cov spalloc --cov spinn_utilities --junitxml junit/' + results + '.xml --cov-report xml:coverage.xml --cov-append --timeout ' + timeout
+    sh 'py.test ' + tests + ' -rs -n ' + threads + ' --forked --show-progress --cov-branch --cov spynnaker8 --cov spynnaker --cov spinn_front_end_common --cov pacman --cov data_specification --cov spinnman --cov spinn_machine --cov spinn_storage_handlers --cov spalloc --cov spinn_utilities --junitxml junit/' + results + '.xml --cov-report xml:coverage.xml --cov-append --timeout ' + timeout
 }
