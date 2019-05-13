@@ -22,7 +22,6 @@ pipeline {
             steps {
                 // Verify the branch
                 sh 'echo "Branch is $TRAVIS_BRANCH"'
-                sh 'printenv'
                 // remove all directories left if Jenkins ended badly
                 sh 'git clone https://github.com/SpiNNakerManchester/SupportScripts.git support'
                 sh 'pip3 install --upgrade setuptools wheel'
