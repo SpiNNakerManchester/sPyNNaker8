@@ -145,5 +145,7 @@ def run_pytest(String tests, int timeout, String results) {
 }
 
 def getGitBranchName() {
-    return scm.branches[0].name
+    dir('sPyNNaker8') {
+        return sh(returnStdout: true, script: 'git rev-parse --abbrev-ref HEAD').trim()
+    }
 }
