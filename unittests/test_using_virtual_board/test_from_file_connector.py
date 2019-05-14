@@ -2,6 +2,7 @@ import os
 import numpy
 import spynnaker8 as sim
 from p8_integration_tests.base_test_case import BaseTestCase
+import tempfile
 
 WEIGHT = 5
 DELAY = 2
@@ -41,25 +42,27 @@ class TestOneToOneConnector(BaseTestCase):
     def check_other_connect(
             self, aslist, header=None, w_index=2, d_index=3, sources=6,
             destinations=8):
-        afile = "test.connections"
-        if os.path.exists(afile):
-            os.remove(afile)
+        _, name = tempfile.mkstemp(".temp")
         if header:
-            numpy.savetxt(afile, aslist, header=header)
+            numpy.savetxt(name, aslist, header=header)
         else:
-            numpy.savetxt(afile, aslist)
+            numpy.savetxt(name, aslist)
 
         sim.setup(1.0)
         pop1 = sim.Population(sources, sim.IF_curr_exp(), label="pop1")
         pop2 = sim.Population(destinations, sim.IF_curr_exp(), label="pop2")
         synapse_type = sim.StaticSynapse(weight=WEIGHT, delay=DELAY)
         projection = sim.Projection(
-            pop1, pop2, sim.FromFileConnector(afile),
+            pop1, pop2, sim.FromFileConnector(name),
             synapse_type=synapse_type)
         sim.run(0)
         self.check_weights(
             projection, aslist, w_index, d_index, sources, destinations)
         sim.end()
+        try:
+            os.unlink(name)
+        except OSError:
+            pass
 
     def test_simple(self):
         as_list = [
