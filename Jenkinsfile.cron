@@ -110,7 +110,7 @@ pipeline {
         }
         stage('Reports') {
             steps {
-                sh 'find . -maxdepth 3 -type f -wholename "*/reports/*" -print -exec cat \{\}  \;'
+                sh 'find . -maxdepth 3 -type f -wholename "*/reports/*" -print -exec cat \\{\\}  \\;'
             }
         }
         stage('Check Destroyed') {
