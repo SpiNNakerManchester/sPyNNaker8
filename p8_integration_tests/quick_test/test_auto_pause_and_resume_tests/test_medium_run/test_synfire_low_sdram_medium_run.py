@@ -26,12 +26,15 @@ class TestVeryLow(BaseTestCase):
             # CB Currently eight but could change
             # Needs to be larger than 1000 timesteps version
             self.assert_logs_messages(
-                lc.records, "*** Running simulation... ***", 'INFO', 8)
+                lc.records, "*** Running simulation... ***", 'INFO', 3)
 
         self.assertEquals(158, len(spikes))
         spike_checker.synfire_spike_checker(spikes, n_neurons)
         synfire_run.get_output_pop_gsyn_exc_numpy()
         synfire_run.get_output_pop_voltage_numpy()
+
+    def more_runs(self):
+        self.runsafe(self.more_runs)
 
 
 if __name__ == '__main__':

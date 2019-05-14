@@ -2,12 +2,10 @@
 Synfirechain-like example
 """
 from testfixtures import LogCapture
-from unittest import SkipTest
-
-from p8_integration_tests.base_test_case import BaseTestCase
-from p8_integration_tests.scripts.synfire_run import SynfireRunner
 import spynnaker.plot_utils as plot_utils
 import spynnaker.spike_checker as spike_checker
+from p8_integration_tests.base_test_case import BaseTestCase
+from p8_integration_tests.scripts.synfire_run import SynfireRunner
 
 n_neurons = 200  # number of neurons in each population
 runtime = 3000
@@ -17,25 +15,27 @@ synfire_run = SynfireRunner()
 
 class TestVeryLow(BaseTestCase):
     """
-    tests the run is split by auto pause resume
+    tests the run is split buy auto pause resume
     """
 
-    def test_get_multi_run(self):
-        raise SkipTest("Broken in master but to be fixed in new SDRAm branch")
-
+    def more_runs(self):
+        self.assert_not_spin_three()
         with LogCapture() as lc:
             synfire_run.do_run(n_neurons, neurons_per_core=neurons_per_core,
                                run_times=[runtime])
             spikes = synfire_run.get_output_pop_spikes_numpy()
-            # CB Currently three but could change needs to be > 1
-            # Needs to be less than test_shorter_run_version
+            # CB Currently eight but could change
+            # Needs to be larger than 1000 timesteps version
             self.assert_logs_messages(
-                lc.records, "*** Running simulation... ***", 'INFO', 3)
+                lc.records, "*** Running simulation... ***", 'INFO', 1)
 
         self.assertEquals(158, len(spikes))
         spike_checker.synfire_spike_checker(spikes, n_neurons)
         synfire_run.get_output_pop_gsyn_exc_numpy()
         synfire_run.get_output_pop_voltage_numpy()
+
+    def test_more_runs(self):
+        self.runsafe(self.more_runs)
 
 
 if __name__ == '__main__':

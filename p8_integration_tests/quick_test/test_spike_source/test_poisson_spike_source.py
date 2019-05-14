@@ -14,7 +14,7 @@ class MyTestCase(BaseTestCase):
         self.assertAlmostEqual(expected, count/len(spikes), delta=expected/10,
                                msg="Errror on {}".format(input.label))
 
-    def recording_poisson_spikes(self):
+    def recording_poisson_spikes(self, run_zero):
         sim.setup(timestep=1.0, min_delay=1.0, max_delay=144.0)
         n_neurons = 200  # number of neurons in each population
         sim.set_number_of_neurons_per_core(sim.IF_curr_exp, n_neurons / 2)
@@ -39,13 +39,24 @@ class MyTestCase(BaseTestCase):
 
         input.record("spikes")
 
+        if run_zero:
+            sim.run(0)
         sim.run(5000)
         self.check_spikes(input, 5)
 
         sim.end()
 
-    def test_recording_poisson_spikes(self):
-        self.runsafe(self.recording_poisson_spikes)
+    def recording_poisson_spikes_no_zero(self):
+        self.recording_poisson_spikes(False)
+
+    def test_recording_poisson_spikes_no_zero(self):
+        self.runsafe(self.recording_poisson_spikes_no_zero)
+
+    def recording_poisson_spikes_with_zero(self):
+        self.recording_poisson_spikes(True)
+
+    def test_recording_poisson_spikes_with_zero(self):
+        self.runsafe(self.recording_poisson_spikes_with_zero)
 
     def recording_poisson_spikes_big(self):
         sim.setup(timestep=1.0, min_delay=1.0, max_delay=144.0)
