@@ -1,5 +1,0 @@
-These tests are left as csa is currently broken.
-While fixed in csa master not in a release.
-https://github.com/INCF/csa/issues/10
-
-Also need more work on extactly what to check.
