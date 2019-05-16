@@ -71,6 +71,10 @@ from spynnaker8.models.synapse_dynamics.weight_dependence\
 from spynnaker8.models.synapse_dynamics.timing_dependence\
     .timing_dependence_spike_pair import TimingDependenceSpikePair as \
     SpikePairRule
+from spynnaker8.pyNN.models.plasticity_components.timing_dependence \
+    .timing_dependence_izhikevich_neuromodulation \
+    import TimingDependenceIzhikevichNeuromodulation \
+    as IzhikevichNeuromodulation
 
 # neuron stuff
 # noinspection PyUnresolvedReferences
@@ -79,6 +83,10 @@ from spynnaker.pyNN.models.neuron.builds.if_cond_exp_base import \
 # noinspection PyUnresolvedReferences
 from spynnaker.pyNN.models.neuron.builds.if_curr_exp_base import \
     IFCurrExpBase as IF_curr_exp
+from spynnaker.pyNN.models.neuron.builds. \
+     if_curr_exp_izhikevich_neuromodulation \
+     import IFCurrExpIzhikevichNeuromodulation \
+     as IF_curr_exp_izhikevich_neuromodulation
 # noinspection PyUnresolvedReferences
 from spynnaker.pyNN.models.neuron.builds.if_curr_alpha import \
     IFCurrAlpha as IF_curr_alpha
@@ -132,8 +140,10 @@ __all__ = [
     # plastic stuff
     'STDPMechanism', 'AdditiveWeightDependence',
     'MultiplicativeWeightDependence', 'SpikePairRule',
+    'IzhikevichNeuromodulation',
     # neuron stuff
     'IF_cond_exp', 'IF_curr_exp', "IF_curr_alpha",
+    'IF_curr_exp_izhikevich_neuromodulation',
     'Izhikevich', 'SpikeSourceArray', 'SpikeSourcePoisson',
     # pops
     'Assembly', 'Population', 'PopulationView',
