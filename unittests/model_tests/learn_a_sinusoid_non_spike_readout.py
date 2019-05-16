@@ -418,8 +418,9 @@ for i in range(batches):
 
     print "run: {}".format(i)
     p.run(runtime/batches)
+    if i is 0:
+        in_spikes = pop_in.get_data('spikes')
 
-    in_spikes = pop_in.get_data('spikes')
     pop_rec_data = pop_rec.get_data('spikes')
     pop_out_data = pop_out.get_data()
 
@@ -427,7 +428,8 @@ for i in range(batches):
     F = Figure(
         # plot data for postsynaptic neuron
         Panel(in_spikes.segments[0].spiketrains,
-              yticks=True, markersize=2, xlim=(plot_start, plot_end)),
+#               yticks=True, markersize=2, xlim=(plot_start, plot_end)),
+              yticks=True, markersize=2, xlim=(0, runtime/batches)),
         Panel(pop_rec_data.segments[0].spiketrains,
               yticks=True, markersize=2, xlim=(plot_start, plot_end)
               ),
