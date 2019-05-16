@@ -1,5 +1,5 @@
-from spynnaker.pyNN.utilities.random_stats import AbstractRandomStats
 import scipy.stats
+from spynnaker.pyNN.utilities.random_stats import AbstractRandomStats
 
 
 class RandomStatsScipyImpl(AbstractRandomStats):

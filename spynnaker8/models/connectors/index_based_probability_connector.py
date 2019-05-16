@@ -1,6 +1,5 @@
-from spynnaker.pyNN.models.neural_projections.connectors \
-    import IndexBasedProbabilityConnector as \
-    CommonIndexBasedProbabilityConnector
+from spynnaker.pyNN.models.neural_projections.connectors import (
+    IndexBasedProbabilityConnector as CommonIndexBasedProbabilityConnector)
 
 
 class IndexBasedProbabilityConnector(CommonIndexBasedProbabilityConnector):

@@ -1,8 +1,7 @@
 from pyNN.random import RandomDistribution
 from pyNN.connectors import OneToOneConnector as PyNNOneToOneConnector
-
-from spynnaker.pyNN.models.neural_projections.connectors \
-    import OneToOneConnector as CommonOneToOneConnector
+from spynnaker.pyNN.models.neural_projections.connectors import (
+    OneToOneConnector as CommonOneToOneConnector)
 
 
 class OneToOneConnector(CommonOneToOneConnector, PyNNOneToOneConnector):
