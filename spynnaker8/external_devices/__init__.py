@@ -107,6 +107,13 @@ def run_forever():
     AbstractSpiNNakerCommon.run(globals_variables.get_simulator(), None)
 
 
+def request_stop():
+    """ Request a stop in the simulation without a complete stop.  Will stop\
+        after the next auto-pause-and-resume cycle
+    """
+    globals_variables.get_simulator().stop_run()
+
+
 def register_database_notification_request(hostname, notify_port, ack_port):
     """ Adds a socket system which is registered with the notification protocol
 
@@ -198,11 +205,11 @@ def EthernetSensorPopulation(
     if not isinstance(device, AbstractEthernetSensor):
         raise Exception("Model must be an instance of AbstractEthernetSensor")
     injector_params = dict(device.get_injector_parameters())
-    injector_params['notify'] = False
 
     population = Population(
-        device.get_n_neurons(), SpikeInjector(**injector_params),
-        label=device.get_injector_label())
+        device.get_n_neurons(), SpikeInjector(notify=False),
+        label=device.get_injector_label(),
+        additional_parameters=injector_params)
     if isinstance(device, AbstractSendMeMulticastCommandsVertex):
         ethernet_command_connection = EthernetCommandConnection(
             device.get_translator(), [device], local_host,
@@ -219,19 +226,10 @@ def EthernetSensorPopulation(
 
 
 def SpikeInjector(
-        label=None, port=None, notify=True, virtual_key=None,
-        database_notify_host=None, database_notify_port_num=None,
+        notify=True, database_notify_host=None, database_notify_port_num=None,
         database_ack_port_num=None):
     """ Supports adding a spike injector to the application graph.
 
-    :param n_neurons: the number of neurons the spike injector will emulate
-    :type n_neurons: int
-    :param label: the label given to the population
-    :type label: str
-    :param port: the port number used to listen for injections of spikes
-    :type port: int
-    :param virtual_key: the virtual key used in the routing system
-    :type virtual_key: int
     :param database_notify_host: the hostname for the device which is\
         listening to the database notification.
     :type database_notify_host: str

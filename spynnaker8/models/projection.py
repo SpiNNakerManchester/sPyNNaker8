@@ -49,10 +49,7 @@ class Projection(PyNNProjectionCommon):
         if synapse_type is None:
             synapse_type = SynapseDynamicsStatic()
 
-        # move weights and delays over to the connector to satisfy PyNN 8
-        # and 7 compatibility
-        connector.set_weights_and_delays(
-            synapse_type.weight, synapse_type.delay)
+        # set the space function as required
         connector.set_space(space)
 
         # as a from list connector can have plastic parameters, grab those (
@@ -60,9 +57,10 @@ class Projection(PyNNProjectionCommon):
         if isinstance(connector, FromListConnector):
             synapse_plastic_parameters = connector.get_extra_parameters()
             if synapse_plastic_parameters is not None:
-                for parameter in synapse_plastic_parameters.dtype.names:
+                for i, parameter in enumerate(
+                        connector.get_extra_parameter_names()):
                     synapse_type.set_value(
-                        parameter, synapse_plastic_parameters[:, parameter])
+                        parameter, synapse_plastic_parameters[:, i])
 
         # set rng if needed
         rng = None
@@ -136,13 +134,18 @@ class Projection(PyNNProjectionCommon):
         if with_address:
             data_items.append("source")
             data_items.append("target")
+            if "source" in attribute_names:
+                logger.warning(
+                    "Ignoring request to get source as with_address=True. ")
+                attribute_names.remove("source")
+            if "target" in attribute_names:
+                logger.warning(
+                    "Ignoring request to get target as with_address=True. ")
+                attribute_names.remove("target")
 
         # Split out attributes in to standard versus synapse dynamics data
         fixed_values = list()
         for attribute in attribute_names:
-            # if with address set to true, we have decided the end user is
-            # being stupid if they request source and/or target then they get
-            # it twice
             data_items.append(attribute)
             if attribute not in {"source", "target", "weight", "delay"}:
                 value = self._synapse_information.synapse_dynamics.get_value(

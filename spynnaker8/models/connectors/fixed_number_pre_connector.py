@@ -45,7 +45,8 @@ class FixedNumberPreConnector(CommonFixedNumberPreConnector,
         # pylint: disable=too-many-arguments
         super(FixedNumberPreConnector, self).__init__(
             n=n, allow_self_connections=allow_self_connections,
-            with_replacement=with_replacement, safe=safe, verbose=verbose)
+            with_replacement=with_replacement, safe=safe, verbose=verbose,
+            rng=rng)
 
     @property
     def n(self):
