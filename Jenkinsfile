@@ -128,7 +128,7 @@ pipeline {
         }
         stage('Reports') {
             steps {
-                sh 'if [ -d reports ]; then find reports/* -type f -print -exec cat {}  \\; ; fi'
+                sh 'find . -maxdepth 3 -type f -wholename "*/reports/*" -print -exec cat \\{\\}  \\;'
             }
         }
         stage('Check Destroyed') {
