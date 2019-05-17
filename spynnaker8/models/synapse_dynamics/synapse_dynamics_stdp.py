@@ -16,7 +16,7 @@ class SynapseDynamicsSTDP(_BaseClass):
     def __init__(
             self, timing_dependence, weight_dependence,
             voltage_dependence=None, dendritic_delay_fraction=1.0,
-            weight=0.0, delay=None):
+            weight=0.0, delay=None, neuromodulation=False):
         # pylint: disable=too-many-arguments
 
         # move data from timing to weight dependence over as needed to reflect
@@ -34,7 +34,8 @@ class SynapseDynamicsSTDP(_BaseClass):
             timing_dependence=timing_dependence,
             weight_dependence=weight_dependence,
             voltage_dependence=voltage_dependence,
-            dendritic_delay_fraction=dendritic_delay_fraction)
+            dendritic_delay_fraction=dendritic_delay_fraction,
+            neuromodulation=neuromodulation)
 
         self._weight = weight
         self._delay = delay

@@ -71,7 +71,7 @@ from spynnaker8.models.synapse_dynamics.weight_dependence\
 from spynnaker8.models.synapse_dynamics.timing_dependence\
     .timing_dependence_spike_pair import TimingDependenceSpikePair as \
     SpikePairRule
-from spynnaker8.pyNN.models.plasticity_components.timing_dependence \
+from spynnaker8.models.synapse_dynamics.timing_dependence \
     .timing_dependence_izhikevich_neuromodulation \
     import TimingDependenceIzhikevichNeuromodulation \
     as IzhikevichNeuromodulation
