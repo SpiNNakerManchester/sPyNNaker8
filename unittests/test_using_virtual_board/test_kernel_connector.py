@@ -5,11 +5,9 @@ from p8_integration_tests.base_test_case import BaseTestCase
 
 class TestKernelConnector(BaseTestCase):
 
-    def do_run(psh, psw, ksh, ksw, pre_start=[0, 0], post_start=[0, 0],
+    def do_run(self, psh, psw, ksh, ksw, pre_start=[0, 0], post_start=[0, 0],
                pre_step=[1, 1], post_step=[1, 1]):
         sim.setup(timestep=1.0)
-
-        # Note: this is working for square images and square odd-sided kernels
 
         # determine population size and runtime from the kernel sizes
         n_pop = psw*psh
@@ -57,7 +55,7 @@ class TestKernelConnector(BaseTestCase):
 
     def test_oddsquarek_run(self):
         (psh, psw, ksh, ksw) = (4, 4, 3, 3)
-        weightsdelays = do_run(psh, psw, ksh, ksw)
+        weightsdelays = self.do_run(psh, psw, ksh, ksw)
         # Checks go here
         self.assertEqual(25, len(weightsdelays))
         list10 = (1, 0, 5.0, 20.0)
@@ -71,7 +69,7 @@ class TestKernelConnector(BaseTestCase):
 
     def test_evensquarek_run(self):
         (psh, psw, ksh, ksw) = (4, 4, 2, 2)
-        v, spikes, weightsdelays = do_run(psh, psw, ksh, ksw, plot=False)
+        v, spikes, weightsdelays = self.do_run(psh, psw, ksh, ksw)
         # Checks go here
         self.assertEqual(9, len(weightsdelays))
         list01 = (0, 1, 5.0, 20.0)
@@ -81,7 +79,7 @@ class TestKernelConnector(BaseTestCase):
 
     def test_nonsquarek_run(self):
         (psh, psw, ksh, ksw) = (4, 4, 1, 3)
-        v, spikes, weightsdelays = do_run(psh, psw, ksh, ksw, plot=False)
+        v, spikes, weightsdelays = self.do_run(psh, psw, ksh, ksw)
         # Checks go here
         self.assertEqual(10, len(weightsdelays))
         list10 = (1, 0, 7.0, 10.0)
@@ -91,7 +89,7 @@ class TestKernelConnector(BaseTestCase):
 
     def test_bigger_nonsquarep_run(self):
         (psh, psw, ksh, ksw) = (32, 16, 3, 3)
-        v, spikes, weightsdelays = do_run(psh, psw, ksh, ksw, plot=False)
+        v, spikes, weightsdelays = self.do_run(psh, psw, ksh, ksw)
         # Checks go here
         self.assertEqual(1081, len(weightsdelays))
         list10 = (1, 0, 5.0, 20.0)
