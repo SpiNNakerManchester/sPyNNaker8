@@ -25,14 +25,15 @@ class TestKernelConnector(BaseTestCase):
         shape_post = [psh // 2, psw // 2]
         shape_kernel = [ksh, ksw]
 
-        weight_list = [[7.0 if ((a + b) % 2 == 0) else 5.0 for a in range(ksw)]
-                       for b in range(ksh)]
-        delay_list = [[20.0 if ((a + b) % 2 == 1) else 10.0 for a in range(ksw)]
-                      for b in range(ksh)]
+        weight_list = [[7.0 if ((a + b) % 2 == 0) else 5.0
+                        for a in range(ksw)] for b in range(ksh)]
+        delay_list = [[20.0 if ((a + b) % 2 == 1) else 10.0
+                       for a in range(ksw)] for b in range(ksh)]
         weight_kernel = np.asarray(weight_list)
         delay_kernel = np.asarray(delay_list)
 
-        kernel_connector = sim.KernelConnector(shape_pre, shape_post, shape_kernel,
+        kernel_connector = sim.KernelConnector(shape_pre, shape_post,
+                                               shape_kernel,
                                                weight_kernel=weight_kernel,
                                                delay_kernel=delay_kernel,
                                                pre_sample_steps=pre_step,
