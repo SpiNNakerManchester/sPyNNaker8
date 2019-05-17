@@ -12,6 +12,7 @@ from .idmixin import IDMixin
 from .population_base import PopulationBase
 from .population_view import PopulationView
 from spynnaker8.models.recorder import Recorder
+from spinnak_ear.spinnakear_vertex import SpiNNakEarVertex
 
 logger = logging.getLogger(__name__)
 
@@ -107,13 +108,16 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         :param sampling_interval: a value in milliseconds, and an integer\
             multiple of the simulation timestep.
         """
-        if indexes is not None:
-            logger.warn(
-                "record indexes parameter is non-standard PyNN, so may not "
-                "be portable to other simulators. "
-                "It is now deprecated and replaced with views")
-        self._record_with_indexes(
-            variables, to_file, sampling_interval, indexes)
+        if isinstance(self._vertex,SpiNNakEarVertex):
+            self._vertex.record(variables)
+        else:
+            if indexes is not None:
+                logger.warn(
+                    "record indexes parameter is non-standard PyNN, so may not "
+                    "be portable to other simulators. "
+                    "It is now deprecated and replaced with views")
+            self._record_with_indexes(
+                variables, to_file, sampling_interval, indexes)
 
     def _record_with_indexes(
             self, variables, to_file, sampling_interval, indexes):
@@ -252,11 +256,14 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         :type annotations: dict
         :rtype: neo.Block
         """
-        if not gather:
-            logger.warning("sPyNNaker only supports gather=True. We will run "
-                           "as if gather was set to True.")
+        if isinstance(self._vertex,SpiNNakEarVertex):
+            return self._vertex.get_data(variables)
+        else:
+            if not gather:
+                logger.warning("sPyNNaker only supports gather=True. We will run "
+                               "as if gather was set to True.")
 
-        return self._extract_neo_block(variables, None, clear, annotations)
+            return self._extract_neo_block(variables, None, clear, annotations)
 
     def get_data_by_indexes(
             self, variables, indexes, clear=False, annotations=None):
