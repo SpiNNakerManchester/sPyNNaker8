@@ -36,6 +36,12 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
                 model = cellclass()
             else:
                 model = cellclass(**cellparams)
+        else:
+            if cellparams is not None:
+                raise ConfigurationException(
+                    "cellclass is an instance which includes params so "
+                    "cellparams must be None")
+
         self._celltype = model
 
         # build our initial objects
@@ -136,8 +142,8 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
             # handle special case of 'all'
             if variables == "all":
                 logger.warning(
-                    "This is non-standard PyNN, and therefore may not be "
-                    "portable to other simulators.")
+                    'record("all") is non-standard PyNN, and therefore may '
+                    'not be portable to other simulators.')
 
                 # get all possible recordings for this vertex
                 variables = self._get_all_possible_recordable_variables()
