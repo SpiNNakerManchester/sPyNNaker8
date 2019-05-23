@@ -20,3 +20,8 @@ class TestJavaAdvanced(BaseTestCase):
 
     def test_do_run(self):
         self.runsafe(self.do_run)
+
+
+if __name__ == "__main__":
+    obj = TestJavaAdvanced()
+    obj.do_run()
