@@ -223,6 +223,12 @@ class RandomDistribution(_PynnRandomDistribution):
           -
     """
 
+    def __str__(self):
+        return super(RandomDistribution, self).__str__()
+
+    def __repr__(self):
+        return self.__str__()
+
 
 # Patch the bugs in the PyNN documentation... Ugh!
 def distance(src, tgt, mask=None, scale_factor=1.0, offset=0.0,

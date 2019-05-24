@@ -1,29 +1,24 @@
-import logging
-import neo
-import os
-import numpy
-import quantities
 from datetime import datetime
+import logging
+import numpy
 from six import string_types
 from six.moves import xrange
-from neo.io import NeoHdf5IO, PickleIO, NeoMatlabIO
+import neo
+import quantities
+from spinn_utilities import logger_utils
 from spinn_utilities.ordered_set import OrderedSet
 from spinn_utilities.log import FormatAdapter
-
-from spynnaker.pyNN.models.common import AbstractNeuronRecordable
-from spynnaker.pyNN.models.common import AbstractSpikeRecordable
-from spynnaker.pyNN.models.recording_common import RecordingCommon
-from spynnaker.pyNN.utilities import utility_calls
-from spynnaker.pyNN.utilities.constants import \
-    SPIKES, MEMBRANE_POTENTIAL, GSYN_EXCIT, GSYN_INHIB
 from spinn_front_end_common.utilities.globals_variables import get_simulator
+from spynnaker.pyNN.models.common import (
+    AbstractNeuronRecordable, AbstractSpikeRecordable)
+from spynnaker.pyNN.models.recording_common import RecordingCommon
+from spynnaker.pyNN.utilities.constants import (
+    SPIKES, MEMBRANE_POTENTIAL, GSYN_EXCIT, GSYN_INHIB)
 from spynnaker.pyNN.exceptions import InvalidParameterType
-from spynnaker8.models.data_cache import DataCache
+from .data_cache import DataCache
 from spynnaker8.utilities.version_util import pynn8_syntax
 
-
 logger = FormatAdapter(logging.getLogger(__name__))
-
 
 _DEFAULT_UNITS = {
     SPIKES: "spikes",
@@ -39,28 +34,6 @@ class Recorder(RecordingCommon):
         super(Recorder, self).__init__(population)
         self._recording_start_time = get_simulator().t
         self._data_cache = {}
-
-    @staticmethod
-    def _get_io(filename):
-        """ Return a Neo IO instance, guessing the type based on the filename\
-            suffix.
-        """
-        logger.debug("Creating Neo IO for filename {}", filename)
-        directory = os.path.dirname(filename)
-        utility_calls.check_directory_exists_and_create_if_not(directory)
-        extension = os.path.splitext(filename)[1]
-        if extension in ('.txt', '.ras', '.v', '.gsyn'):
-            raise IOError(
-                "ASCII-based formats are not currently supported for output"
-                " data. Try using the file extension '.pkl' or '.h5'")
-        elif extension in ('.h5',):
-            return NeoHdf5IO(filename=filename)
-        elif extension in ('.pkl', '.pickle'):
-            return PickleIO(filename=filename)
-        elif extension == '.mat':
-            return NeoMatlabIO(filename=filename)
-        else:  # function to be improved later
-            raise Exception("file extension %s not supported" % extension)
 
     def _extract_neo_block(self, variables, view_indexes, clear, annotations):
         """ Extracts block from the vertices and puts them into a Neo block
@@ -362,7 +335,7 @@ class Recorder(RecordingCommon):
                 t_start=recording_start_time,
                 t_stop=t_stop,
                 units='ms',
-                sampling_rate=sampling_interval,
+                sampling_interval=sampling_interval,
                 source_population=label,
                 source_id=self._population.index_to_id(index),
                 source_index=index)
@@ -396,6 +369,12 @@ class Recorder(RecordingCommon):
         t_start = recording_start_time * quantities.ms
         sampling_period = sampling_interval * quantities.ms
         if view_indexes is None:
+            if not numpy.array_equal(data_indexes, self._all_ids):
+                msg = "Warning getting data on a whole population when " \
+                      "selective recording is active will result in only " \
+                      "the requested neurons being returned in numerical " \
+                      "order and without repeats."
+                logger_utils.warn_once(logger, msg)
             indexes = numpy.array(data_indexes)
         elif view_indexes == data_indexes:
             indexes = numpy.array(data_indexes)

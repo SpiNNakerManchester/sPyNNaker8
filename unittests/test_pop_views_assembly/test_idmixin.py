@@ -1,7 +1,6 @@
 import pytest
-
-from p8_integration_tests.base_test_case import BaseTestCase
 import spynnaker8 as sim
+from p8_integration_tests.base_test_case import BaseTestCase
 
 N_NEURONS = 4
 LABEL = "pop_1"
