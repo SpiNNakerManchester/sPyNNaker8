@@ -5,7 +5,7 @@ import math
 import unittest
 from pyNN.utility.plotting import Figure, Panel
 from pyNN.space import Grid2D
-from pyNN.random import RandomDistribution, NumpyRNG
+from pyNN.random import RandomDistribution
 
 '''
 Model Parameters
@@ -37,6 +37,7 @@ neuron_params = {
     "i_vel": 0.175,
     "tau_m": 10, # membrane time constant
     "tau_refrac": 5,
+    "dir_pref": [1, 4, 3, 2]
                  }
 
 pop_grid = Grid2D(aspect_ratio=1.0, dx=1.0, dy=1.0, x0=0.0, y0=0.0, z=0, fill_order='sequential')
@@ -49,7 +50,6 @@ pop_exc = p.Population(4,
                        label="Grid cells"
                        )
 
-print(pop_exc.positions)
 pop_exc.record("all")
 # pop_exc.describe(template='grid_cell_pop_default.txt', engine='default')
 
