@@ -5,16 +5,36 @@ import unittest
 from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt
 
+'''
+Model Parameters
+cell_rows = 132
+cell_cols = 112
+timestep = 1
+rest_pot = -65
+reset_pot = -67
+thres_pot = -63
+membrane_time_constant = 10
+membrane_resistance = 10
+refractory_period = 5
+input_curr = 2.4
+vel_curr = 0.175
+orientation_pref_shift = 2
+syn_weight = -0.6
+syn_delay = 5*rand()
+'''
+
 p.setup(1) # simulation timestep (ms)
 runtime = 200
 
 # Post-synapse population
 neuron_params = {
-    "v_thresh": -50,
-    "v_reset": -70,
+    "v_thresh": -63,
+    "v_reset": -67,
     "v_rest": -65,
-    "i_offset": 0, # DC input
-    "i_vel": 1.0
+    "i_offset": 2.4, # DC input
+    "i_vel": 0.175,
+    "tau_m": 10, # membrane time constant
+    "tau_refrac": 5,
                  }
 
 pop_exc = p.Population(1, # number of neurons
