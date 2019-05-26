@@ -37,7 +37,7 @@ neuron_params = {
     "i_vel": 0.175,
     "tau_m": 10, # membrane time constant
     "tau_refrac": 5,
-    "dir_pref": [1, 4, 3, 2]
+    # "dir_pref": [1, 4, 3, 2]
                  }
 
 pop_grid = Grid2D(aspect_ratio=1.0, dx=1.0, dy=1.0, x0=0.0, y0=0.0, z=0, fill_order='sequential')
@@ -50,6 +50,19 @@ pop_exc = p.Population(4,
                        structure=pop_grid,
                        label="Grid cells"
                        )
+
+# Initialise neuron directional preference
+def init_dir_pref(pos):
+    x,y = pos.T
+    if(x % 2 == 0 and y % 2 == 0):
+        return 1
+    elif(x % 2 != 0 and y % 2 != 0):
+        return 4
+    elif (x % 2 != 0 and y % 2 == 0):
+        return 3
+    elif (x % 2 == 0 and y % 2 != 0):
+        return 2
+pop_exc.set(dir_pref=lambda i: init_dir_pref(pop_exc.position_generator(i)))
 
 pop_exc.record("all")
 # pop_exc.describe(template='grid_cell_pop_default.txt', engine='default')
