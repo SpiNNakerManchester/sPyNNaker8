@@ -1,8 +1,5 @@
 import spynnaker8 as p
 import matplotlib.pyplot as plt
-import numpy
-import math
-import unittest
 from pyNN.utility.plotting import Figure, Panel
 from pyNN.space import Grid2D
 from pyNN.random import RandomDistribution, NumpyRNG
@@ -25,25 +22,27 @@ syn_weight = -0.6
 syn_delay = 5*rand()
 '''
 
-p.setup(1) # simulation timestep (ms)
+p.setup(1)  # simulation timestep (ms)
 runtime = 200
+grid_row = 2
+grid_col = 2
 
 # Post-synapse population
 neuron_params = {
     "v_thresh": -63,
     "v_reset": -67,
     "v_rest": -65,
-    "i_offset": 2.4, # DC input
+    "i_offset": 2.4,  # DC input
     "i_vel": 0.175,
-    "tau_m": 10, # membrane time constant
+    "tau_m": 10,  # membrane time constant
     "tau_refrac": 5,
     # "dir_pref": [1, 4, 3, 2]
-                 }
+}
 
-pop_grid = Grid2D(aspect_ratio=1.0, dx=1.0, dy=1.0, x0=0.0, y0=0.0, z=0, fill_order='sequential')
+pop_grid = Grid2D(aspect_ratio=1.0, dx=1.0, dy=1.0, x0=-grid_col / 2, y0=-grid_row / 2, z=0, fill_order='sequential')
 rng = NumpyRNG(seed=41, parallel_safe=True)
 v_init = RandomDistribution('uniform', (-70, -60), rng)
-pop_exc = p.Population(4,
+pop_exc = p.Population(grid_row * grid_col,
                        p.extra_models.GridCell(**neuron_params),
                        cellparams=None,
                        initial_values={'v': v_init},
@@ -51,17 +50,20 @@ pop_exc = p.Population(4,
                        label="Grid cells"
                        )
 
+
 # Initialise neuron directional preference
 def init_dir_pref(pos):
-    x,y = pos.T
-    if(x % 2 == 0 and y % 2 == 0):
+    x, y = pos.T
+    if x % 2 == 0 and y % 2 == 0:
         return 1
-    elif(x % 2 != 0 and y % 2 != 0):
+    elif x % 2 != 0 and y % 2 != 0:
         return 4
-    elif (x % 2 != 0 and y % 2 == 0):
+    elif x % 2 != 0 and y % 2 == 0:
         return 3
-    elif (x % 2 == 0 and y % 2 != 0):
+    elif x % 2 == 0 and y % 2 != 0:
         return 2
+
+
 pop_exc.set(dir_pref=lambda i: init_dir_pref(pop_exc.position_generator(i)))
 
 pop_exc.record("all")
@@ -85,7 +87,7 @@ F = Figure(
     Panel(exc_data.segments[0].spiketrains,
           yticks=True, markersize=2, xlim=(0, runtime)
           ),
-    )
+)
 
 plt.show()
 p.end()
