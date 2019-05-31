@@ -5,7 +5,7 @@ import unittest
 from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt
 
-batches = 10
+batches = 50
 num_repeats = 5  # in a batch
 cycle_time = 1023
 timestep = 1
@@ -87,37 +87,43 @@ for i in range(1024):
 readout_neuron_params_0 = {
     "v": 0,
     "v_thresh": 30, # controls firing rate of error neurons
-    "target_data": target_data_0
+    "target_data": target_data_0,
+    "tau_m": 50,
     }
 
 readout_neuron_params_1 = {
     "v": 0,
     "v_thresh": 30, # controls firing rate of error neurons
-    "target_data": target_data_1
+    "target_data": target_data_1,
+    "tau_m": 50,
     }
 
 readout_neuron_params_2 = {
     "v": 0,
     "v_thresh": 30, # controls firing rate of error neurons
-    "target_data": target_data_2
+    "target_data": target_data_2,
+    "tau_m": 50,
     }
 
 readout_neuron_params_3 = {
     "v": 0,
     "v_thresh": 30, # controls firing rate of error neurons
-    "target_data": target_data_3
+    "target_data": target_data_3,
+    "tau_m": 50,
     }
 
 readout_neuron_params_4 = {
     "v": 0,
     "v_thresh": 30, # controls firing rate of error neurons
-    "target_data": target_data_4
+    "target_data": target_data_4,
+    "tau_m": 50,
     }
 
 readout_neuron_params_5 = {
     "v": 0,
     "v_thresh": 30, # controls firing rate of error neurons
-    "target_data": target_data_5
+    "target_data": target_data_5,
+    "tau_m": 50,
     }
 
 tau_err = 20
@@ -347,7 +353,7 @@ hidden_pop_weight_dependence=p.WeightDependenceERBP(
         w_min=0.0, w_max=1, reg_rate=1)
 
 out_pop_timing_dependence=p.TimingDependenceERBP(
-        tau_plus=tau_err, A_plus=0.1, A_minus=0.1, is_readout=True)
+        tau_plus=tau_err, A_plus=0.05, A_minus=0.05, is_readout=True)
 out_pop_weight_dependence=p.WeightDependenceERBP(
         w_min=0.0, w_max=1, reg_rate=0.0)
 
