@@ -5,7 +5,7 @@ import unittest
 from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt
 
-batches = 50
+batches = 10
 num_repeats = 5  # in a batch
 cycle_time = 1023
 timestep = 1
@@ -24,21 +24,101 @@ erbp_neuron_params = {
 #     "tau_refrac": 50
     }
 
+# Load data
+bottle_traj = numpy.load('reaching_trajectories_periodic/bottle.npy')
+t0 = bottle_traj[1][:,0][::2][0:1024]
+t1 = bottle_traj[1][:,1][::2][0:1024]
+t2 = bottle_traj[1][:,2][::2][0:1024]
+t3 = bottle_traj[1][:,3][::2][0:1024]
+t4 = bottle_traj[1][:,4][::2][0:1024]
+t5 = bottle_traj[1][:,5][::2][0:1024]
+
+sf = 10
 
 # Generate terget data for readout neuron
-target_data = []
+target_data_0 = []
 for i in range(1024):
-            target_data.append(
-                5 + 2 * numpy.sin(2 * i * 2* numpy.pi / 1024) \
-                    + 2 * numpy.sin((4 * i * 2* numpy.pi / 1024))
+            target_data_0.append(
+                t0[i]*sf
+#                 5 + 2 * numpy.sin(2 * i * 2* numpy.pi / 1024) \
+#                     + 2 * numpy.sin((4 * i * 2* numpy.pi / 1024))
                 )
 
-readout_neuron_params = {
+target_data_1 = []
+for i in range(1024):
+            target_data_1.append(
+                t1[i]*sf
+#                 -10 + 2 * numpy.sin(2 * i * 2* numpy.pi / 1024) \
+#                     + 2 * numpy.sin((4 * i * 2* numpy.pi / 1024))
+                )
+
+target_data_2 = []
+for i in range(1024):
+            target_data_2.append(
+                t2[i]*sf
+#                 -10 + 2 * numpy.sin(2 * i * 2* numpy.pi / 1024) \
+#                     + 2 * numpy.sin((4 * i * 2* numpy.pi / 1024))
+                )
+
+target_data_3 = []
+for i in range(1024):
+            target_data_3.append(
+                t3[i]*sf
+#                 -10 + 2 * numpy.sin(2 * i * 2* numpy.pi / 1024) \
+#                     + 2 * numpy.sin((4 * i * 2* numpy.pi / 1024))
+                )
+
+target_data_4 = []
+for i in range(1024):
+            target_data_4.append(
+                t4[i]*sf
+#                 -10 + 2 * numpy.sin(2 * i * 2* numpy.pi / 1024) \
+#                     + 2 * numpy.sin((4 * i * 2* numpy.pi / 1024))
+                )
+
+target_data_5 = []
+for i in range(1024):
+            target_data_5.append(
+                t5[i]*sf
+#                 -10 + 2 * numpy.sin(2 * i * 2* numpy.pi / 1024) \
+#                     + 2 * numpy.sin((4 * i * 2* numpy.pi / 1024))
+                )
+
+readout_neuron_params_0 = {
     "v": 0,
     "v_thresh": 30, # controls firing rate of error neurons
-    "target_data": target_data
+    "target_data": target_data_0
     }
 
+readout_neuron_params_1 = {
+    "v": 0,
+    "v_thresh": 30, # controls firing rate of error neurons
+    "target_data": target_data_1
+    }
+
+readout_neuron_params_2 = {
+    "v": 0,
+    "v_thresh": 30, # controls firing rate of error neurons
+    "target_data": target_data_2
+    }
+
+readout_neuron_params_3 = {
+    "v": 0,
+    "v_thresh": 30, # controls firing rate of error neurons
+    "target_data": target_data_3
+    }
+
+readout_neuron_params_4 = {
+    "v": 0,
+    "v_thresh": 30, # controls firing rate of error neurons
+    "target_data": target_data_4
+    }
+
+readout_neuron_params_5 = {
+    "v": 0,
+    "v_thresh": 30, # controls firing rate of error neurons
+    "target_data": target_data_5
+    }
 
 tau_err = 20
 
@@ -213,13 +293,49 @@ pop_rec = p.Population(100,  # number of neurons
                        p.extra_models.IFCurrExpERBP(**erbp_neuron_params),
                        label="pop_rec")
 
-# Output population
-pop_out = p.Population(3, # HARDCODED 3: One readout; one exc err, one inh err
+# Output populations
+pop_out_0 = p.Population(3, # HARDCODED 3: One readout; one exc err, one inh err
                        p.extra_models.ReadoutPoissonNeuronNonSpike(
-                            **readout_neuron_params
+                            **readout_neuron_params_0
                            ),  # Neuron model
-                       label="pop_out" # identifier
+                       label="pop_out_0" # identifier
                        )
+
+pop_out_1 = p.Population(3, # HARDCODED 3: One readout; one exc err, one inh err
+                       p.extra_models.ReadoutPoissonNeuronNonSpike(
+                            **readout_neuron_params_1
+                           ),  # Neuron model
+                       label="pop_out_1" # identifier
+                       )
+
+pop_out_2 = p.Population(3, # HARDCODED 3: One readout; one exc err, one inh err
+                       p.extra_models.ReadoutPoissonNeuronNonSpike(
+                            **readout_neuron_params_2
+                           ),  # Neuron model
+                       label="pop_out_2" # identifier
+                       )
+
+pop_out_3 = p.Population(3, # HARDCODED 3: One readout; one exc err, one inh err
+                       p.extra_models.ReadoutPoissonNeuronNonSpike(
+                            **readout_neuron_params_3
+                           ),  # Neuron model
+                       label="pop_out_3" # identifier
+                       )
+
+pop_out_4 = p.Population(3, # HARDCODED 3: One readout; one exc err, one inh err
+                       p.extra_models.ReadoutPoissonNeuronNonSpike(
+                            **readout_neuron_params_4
+                           ),  # Neuron model
+                       label="pop_out_4" # identifier
+                       )
+
+pop_out_5 = p.Population(3, # HARDCODED 3: One readout; one exc err, one inh err
+                       p.extra_models.ReadoutPoissonNeuronNonSpike(
+                            **readout_neuron_params_5
+                           ),  # Neuron model
+                       label="pop_out_5" # identifier
+                       )
+
 
 ###############################################################################
 # Build Projections
@@ -330,11 +446,45 @@ learning_rule = p.STDPMechanism(
     delay=timestep)
 
 # Create excitatory recurrent to out projection
-rec_out_exc = p.Projection(
+rec_out_exc_0 = p.Projection(
     pop_rec,
-    pop_out,
+    pop_out_0,
     p.FromListConnector(conn_list_exc),
-#     synapse_type=p.StaticSynapse(weight=0.1, delay=1),
+    synapse_type=learning_rule,
+    receptor_type="excitatory")
+
+rec_out_exc_1 = p.Projection(
+    pop_rec,
+    pop_out_1,
+    p.FromListConnector(conn_list_exc),
+    synapse_type=learning_rule,
+    receptor_type="excitatory")
+
+rec_out_exc_2 = p.Projection(
+    pop_rec,
+    pop_out_2,
+    p.FromListConnector(conn_list_exc),
+    synapse_type=learning_rule,
+    receptor_type="excitatory")
+
+rec_out_exc_3 = p.Projection(
+    pop_rec,
+    pop_out_3,
+    p.FromListConnector(conn_list_exc),
+    synapse_type=learning_rule,
+    receptor_type="excitatory")
+
+rec_out_exc_4 = p.Projection(
+    pop_rec,
+    pop_out_4,
+    p.FromListConnector(conn_list_exc),
+    synapse_type=learning_rule,
+    receptor_type="excitatory")
+
+rec_out_exc_5 = p.Projection(
+    pop_rec,
+    pop_out_5,
+    p.FromListConnector(conn_list_exc),
     synapse_type=learning_rule,
     receptor_type="excitatory")
 
@@ -348,11 +498,45 @@ learning_rule = p.STDPMechanism(
 
 # Create inhibitory recurrent projection from recurrent to hidden neuron using
 # learning rule
-rec_out_inh = p.Projection(
+rec_out_inh_0 = p.Projection(
     pop_rec,
-    pop_out,
+    pop_out_0,
     p.FromListConnector(conn_list_inh),
-#     p.StaticSynapse(weight=0.1, delay=1),
+    synapse_type=learning_rule,
+    receptor_type="inhibitory")
+
+rec_out_inh_1 = p.Projection(
+    pop_rec,
+    pop_out_1,
+    p.FromListConnector(conn_list_inh),
+    synapse_type=learning_rule,
+    receptor_type="inhibitory")
+
+rec_out_inh_2 = p.Projection(
+    pop_rec,
+    pop_out_2,
+    p.FromListConnector(conn_list_inh),
+    synapse_type=learning_rule,
+    receptor_type="inhibitory")
+
+rec_out_inh_3 = p.Projection(
+    pop_rec,
+    pop_out_3,
+    p.FromListConnector(conn_list_inh),
+    synapse_type=learning_rule,
+    receptor_type="inhibitory")
+
+rec_out_inh_4 = p.Projection(
+    pop_rec,
+    pop_out_4,
+    p.FromListConnector(conn_list_inh),
+    synapse_type=learning_rule,
+    receptor_type="inhibitory")
+
+rec_out_inh_5 = p.Projection(
+    pop_rec,
+    pop_out_5,
+    p.FromListConnector(conn_list_inh),
     synapse_type=learning_rule,
     receptor_type="inhibitory")
 
@@ -362,19 +546,75 @@ rec_out_inh = p.Projection(
 
 # Connect excitatory fb neuron (1) to all recurrent neurons
 # rand_out_w.next()
-exc_fb_rec_conn_list = [[1, x, 0.01*w_rec_out_dist.next(), 1] for x in range(100)]
+exc_fb_rec_conn_list_0 = [[1, x, 0.01*w_rec_out_dist.next(), 1] for x in range(100)]
+exc_fb_rec_conn_list_1 = [[1, x, 0.01*w_rec_out_dist.next(), 1] for x in range(100)]
+exc_fb_rec_conn_list_2 = [[1, x, 0.01*w_rec_out_dist.next(), 1] for x in range(100)]
+exc_fb_rec_conn_list_3 = [[1, x, 0.01*w_rec_out_dist.next(), 1] for x in range(100)]
+exc_fb_rec_conn_list_4 = [[1, x, 0.01*w_rec_out_dist.next(), 1] for x in range(100)]
+exc_fb_rec_conn_list_5 = [[1, x, 0.01*w_rec_out_dist.next(), 1] for x in range(100)]
+
 # Connect inhibitory fb neuron (2) to all recurrent neurons
 # rand_out_w.next()
-inh_fb_rec_conn_list = [[2, x, 0.01*w_rec_out_dist.next(), 1] for x in range(100)]
+inh_fb_rec_conn_list_0 = [[2, x, 0.01*w_rec_out_dist.next(), 1] for x in range(100)]
+inh_fb_rec_conn_list_1 = [[2, x, 0.01*w_rec_out_dist.next(), 1] for x in range(100)]
+inh_fb_rec_conn_list_2 = [[2, x, 0.01*w_rec_out_dist.next(), 1] for x in range(100)]
+inh_fb_rec_conn_list_3 = [[2, x, 0.01*w_rec_out_dist.next(), 1] for x in range(100)]
+inh_fb_rec_conn_list_4 = [[2, x, 0.01*w_rec_out_dist.next(), 1] for x in range(100)]
+inh_fb_rec_conn_list_5 = [[2, x, 0.01*w_rec_out_dist.next(), 1] for x in range(100)]
 
-fb_out_rec_exc = p.Projection(
-    pop_out, pop_rec, p.FromListConnector(exc_fb_rec_conn_list),
+# Readout 0
+fb_out_rec_exc_0 = p.Projection(
+    pop_out_0, pop_rec, p.FromListConnector(exc_fb_rec_conn_list_0),
     p.StaticSynapse(weight=10, delay=1), receptor_type="exc_err")
 
-fb_out_rec_inh = p.Projection(
-    pop_out, pop_rec, p.FromListConnector(inh_fb_rec_conn_list),
+fb_out_rec_inh_0 = p.Projection(
+    pop_out_0, pop_rec, p.FromListConnector(inh_fb_rec_conn_list_0),
     p.StaticSynapse(weight=10, delay=1), receptor_type="inh_err")
 
+# Readout 1
+fb_out_rec_exc_1 = p.Projection(
+    pop_out_1, pop_rec, p.FromListConnector(exc_fb_rec_conn_list_1),
+    p.StaticSynapse(weight=10, delay=1), receptor_type="exc_err")
+
+fb_out_rec_inh_1 = p.Projection(
+    pop_out_1, pop_rec, p.FromListConnector(inh_fb_rec_conn_list_1),
+    p.StaticSynapse(weight=10, delay=1), receptor_type="inh_err")
+
+# Readout 2
+fb_out_rec_exc_2 = p.Projection(
+    pop_out_2, pop_rec, p.FromListConnector(exc_fb_rec_conn_list_2),
+    p.StaticSynapse(weight=10, delay=1), receptor_type="exc_err")
+
+fb_out_rec_inh_2 = p.Projection(
+    pop_out_2, pop_rec, p.FromListConnector(inh_fb_rec_conn_list_2),
+    p.StaticSynapse(weight=10, delay=1), receptor_type="inh_err")
+
+# Readout 3
+fb_out_rec_exc_3 = p.Projection(
+    pop_out_3, pop_rec, p.FromListConnector(exc_fb_rec_conn_list_3),
+    p.StaticSynapse(weight=10, delay=1), receptor_type="exc_err")
+
+fb_out_rec_inh_3 = p.Projection(
+    pop_out_3, pop_rec, p.FromListConnector(inh_fb_rec_conn_list_3),
+    p.StaticSynapse(weight=10, delay=1), receptor_type="inh_err")
+
+# Readout 4
+fb_out_rec_exc_4 = p.Projection(
+    pop_out_4, pop_rec, p.FromListConnector(exc_fb_rec_conn_list_4),
+    p.StaticSynapse(weight=10, delay=1), receptor_type="exc_err")
+
+fb_out_rec_inh_4 = p.Projection(
+    pop_out_4, pop_rec, p.FromListConnector(inh_fb_rec_conn_list_4),
+    p.StaticSynapse(weight=10, delay=1), receptor_type="inh_err")
+
+# Readout 5
+fb_out_rec_exc_5 = p.Projection(
+    pop_out_5, pop_rec, p.FromListConnector(exc_fb_rec_conn_list_5),
+    p.StaticSynapse(weight=10, delay=1), receptor_type="exc_err")
+
+fb_out_rec_inh_5 = p.Projection(
+    pop_out_5, pop_rec, p.FromListConnector(inh_fb_rec_conn_list_5),
+    p.StaticSynapse(weight=10, delay=1), receptor_type="inh_err")
 
 # Now to output layer to gate plasticity on output weights
 # rand_out_w.next()
@@ -396,26 +636,13 @@ fb_out_rec_inh = p.Projection(
 
 pop_in.record('spikes')
 pop_rec.record("spikes")
-pop_out.record("all")
+pop_out_0.record("all")
+pop_out_1.record("all")
+pop_out_2.record("all")
+pop_out_3.record("all")
+pop_out_4.record("all")
+pop_out_5.record("all")
 
-
-# p.run(runtime)
-
-# p.run(runtime/8)
-# p.run(runtime/8)
-# p.run(runtime/8)
-# p.run(runtime/8)
-# p.run(runtime/8)
-# p.run(runtime/8)
-# p.run(runtime/8)
-
-# p.run(runtime/4)
-# p.run(runtime/4)
-#
-# p.run(runtime/4)
-# p.run(runtime/4)
-# p.run(runtime/4)
-# p.run(runtime/4)
 
 plot_start = 0
 window =  num_repeats * cycle_time
@@ -424,6 +651,7 @@ plot_end = plot_start + window
 
 conv_plot = plt
 conv_plot.figure(2)
+conv_plot.legend()
 conv_plot.xlim(0, runtime/cycle_time)
 # conv_plot.pause(0.1)
 
@@ -436,22 +664,69 @@ for i in range(batches):
         in_spikes = pop_in.get_data('spikes')
 
     pop_rec_data = pop_rec.get_data('spikes')
-    pop_out_data = pop_out.get_data()
+    pop_out_0_data = pop_out_0.get_data()
+    pop_out_1_data = pop_out_1.get_data()
+    pop_out_2_data = pop_out_2.get_data()
+    pop_out_3_data = pop_out_3.get_data()
+    pop_out_4_data = pop_out_4.get_data()
+    pop_out_5_data = pop_out_5.get_data()
 
-    err_hist = pop_out_data.segments[0].filter(name='v')[0][:,2].magnitude
+    err_hist_0 = pop_out_0_data.segments[0].filter(name='v')[0][:,2].magnitude
+    err_hist_1 = pop_out_1_data.segments[0].filter(name='v')[0][:,2].magnitude
+    err_hist_2 = pop_out_2_data.segments[0].filter(name='v')[0][:,2].magnitude
+    err_hist_3 = pop_out_3_data.segments[0].filter(name='v')[0][:,2].magnitude
+    err_hist_4 = pop_out_4_data.segments[0].filter(name='v')[0][:,2].magnitude
+    err_hist_5 = pop_out_5_data.segments[0].filter(name='v')[0][:,2].magnitude
 
-    err_conv = []
+    err_conv_0 = []
+    err_conv_1 = []
+    err_conv_2 = []
+    err_conv_3 = []
+    err_conv_4 = []
+    err_conv_5 = []
 
     # break error history into single iterations
     for i in range(num_repeats*(i+1)):
-        err_conv.append(
+        err_conv_0.append(
             numpy.sum(numpy.abs(
-                err_hist[(i*cycle_time) : ((i+1) * cycle_time)]
+                err_hist_0[(i*cycle_time) : ((i+1) * cycle_time)]
+                ))
+
+            )
+        err_conv_1.append(
+            numpy.sum(numpy.abs(
+                err_hist_1[(i*cycle_time) : ((i+1) * cycle_time)]
                 ))
             )
+        err_conv_2.append(
+            numpy.sum(numpy.abs(
+                err_hist_2[(i*cycle_time) : ((i+1) * cycle_time)]
+                ))
+            )
+        err_conv_3.append(
+            numpy.sum(numpy.abs(
+                err_hist_3[(i*cycle_time) : ((i+1) * cycle_time)]
+                ))
+            )
+        err_conv_4.append(
+            numpy.sum(numpy.abs(
+                err_hist_4[(i*cycle_time) : ((i+1) * cycle_time)]
+                ))
+            )
+        err_conv_5.append(
+            numpy.sum(numpy.abs(
+                err_hist_5[(i*cycle_time) : ((i+1) * cycle_time)]
+                ))
+            )
+
     conv_plot.figure(2)
-    print err_conv
-    conv_plot.plot(err_conv)
+
+    conv_plot.plot(err_conv_0, label='Readout 0')
+    conv_plot.plot(err_conv_1, label='Readout 1')
+    conv_plot.plot(err_conv_2, label='Readout 2')
+    conv_plot.plot(err_conv_3, label='Readout 3')
+    conv_plot.plot(err_conv_4, label='Readout 4')
+    conv_plot.plot(err_conv_5, label='Readout 5')
     conv_plot.pause(0.1)
 
     # Plot
@@ -463,21 +738,43 @@ for i in range(batches):
         Panel(pop_rec_data.segments[0].spiketrains,
               yticks=True, markersize=2, xlim=(plot_start, plot_end)
               ),
-        Panel(pop_out_data.segments[0].filter(name='v')[0],
-              ylabel="Membrane potential (mV)",
-              data_labels=[pop_out.label], yticks=True, xlim=(plot_start, plot_end)
+        Panel(pop_out_0_data.segments[0].filter(name='v')[0],
+              ylabel="Readout 0",
+              data_labels=[pop_out_0.label], yticks=True, xlim=(plot_start, plot_end)
               ),
-        Panel(pop_out_data.segments[0].filter(name='gsyn_exc')[0],
-              ylabel="gsyn excitatory (mV)",
-              data_labels=[pop_out.label], yticks=True, xlim=(plot_start, plot_end)
+        Panel(pop_out_1_data.segments[0].filter(name='v')[0],
+              ylabel="Readout 1",
+              data_labels=[pop_out_1.label], yticks=True, xlim=(plot_start, plot_end)
               ),
-        Panel(pop_out_data.segments[0].filter(name='gsyn_inh')[0],
-              ylabel="gsyn inhibitory (mV)",
-              data_labels=[pop_out.label], yticks=True, xlim=(plot_start, plot_end)
+        Panel(pop_out_2_data.segments[0].filter(name='v')[0],
+              ylabel="Readout 2",
+              data_labels=[pop_out_2.label], yticks=True, xlim=(plot_start, plot_end)
               ),
-        Panel(pop_out_data.segments[0].spiketrains,
-              yticks=True, markersize=2, xlim=(plot_start, plot_end)),
-        annotations="Batch: {}".format(i)
+        Panel(pop_out_3_data.segments[0].filter(name='v')[0],
+              ylabel="Readout 3",
+              data_labels=[pop_out_3.label], yticks=True, xlim=(plot_start, plot_end)
+              ),
+        Panel(pop_out_4_data.segments[0].filter(name='v')[0],
+              ylabel="Readout 4",
+              data_labels=[pop_out_4.label], yticks=True, xlim=(plot_start, plot_end)
+              ),
+        Panel(pop_out_5_data.segments[0].filter(name='v')[0],
+              ylabel="Readout 5",
+              data_labels=[pop_out_5.label], yticks=True, xlim=(plot_start, plot_end)
+              ),
+#         Panel(pop_out_data.segments[0].filter(name='gsyn_exc')[0],
+#               ylabel="gsyn excitatory (mV)",
+#               data_labels=[pop_out.label], yticks=True, xlim=(plot_start, plot_end)
+#               ),
+#         Panel(pop_out_data.segments[0].filter(name='gsyn_inh')[0],
+#               ylabel="gsyn inhibitory (mV)",
+#               data_labels=[pop_out.label], yticks=True, xlim=(plot_start, plot_end)
+#               ),
+#         Panel(pop_out_0_data.segments[0].spiketrains,
+#               yticks=True, markersize=2, xlim=(plot_start, plot_end)),
+#         Panel(pop_out_1_data.segments[0].spiketrains,
+#               yticks=True, markersize=2, xlim=(plot_start, plot_end)),
+#         annotations="Batch: {}".format(i)
         )
 
     plt.pause(0.05)
