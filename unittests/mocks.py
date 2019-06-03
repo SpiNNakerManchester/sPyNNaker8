@@ -85,3 +85,6 @@ class MockSimulator(object):
         simulator = MockSimulator()
         globals_variables.set_simulator(simulator)
         return simulator
+
+    def machine_time_step(self):
+        return 1000.0
