@@ -245,25 +245,37 @@ class Recorder(RecordingCommon):
 
     def _get_all_possible_recordable_variables(self):
         variables = OrderedSet()
-        if isinstance(self._population._vertex, AbstractSpikeRecordable):
+
+        if isinstance(self._population._vertex, Iterable):
+            vertex = self._population._vertex[0]
+        else:
+            vertex = self._population._vertex
+
+        if isinstance(vertex, AbstractSpikeRecordable):
             variables.add(SPIKES)
-        if isinstance(self._population._vertex, AbstractNeuronRecordable):
+        if isinstance(vertex, AbstractNeuronRecordable):
             variables.update(
-                self._population._vertex.get_recordable_variables())
+                vertex.get_recordable_variables())
         return variables
 
     def _get_all_recording_variables(self):
         possibles = self._get_all_possible_recordable_variables()
         variables = OrderedSet()
+
+        if isinstance(self._population._vertex, Iterable):
+            vertex = self._population._vertex[0]
+        else:
+            vertex = self._population._vertex
+
         for possible in possibles:
             if possible == SPIKES:
-                if isinstance(self._population._vertex,
+                if isinstance(vertex,
                               AbstractSpikeRecordable) \
-                        and self._population._vertex.is_recording_spikes():
+                        and vertex.is_recording_spikes():
                     variables.add(possible)
-            elif isinstance(self._population._vertex,
+            elif isinstance(vertex,
                             AbstractNeuronRecordable) and \
-                    self._population._vertex.is_recording(possible):
+                    vertex.is_recording(possible):
                 variables.add(possible)
         return variables
 
@@ -283,24 +295,30 @@ class Recorder(RecordingCommon):
         return metadata
 
     def _clear_recording(self, variables):
+
+        if isinstance(self._population._vertex, Iterable):
+            vertex = self._population._vertex[0]
+        else:
+            vertex = self._population._vertex
+
         for variable in variables:
             if variable == SPIKES:
-                self._population._vertex.clear_spike_recording(
+                vertex.clear_spike_recording(
                     get_simulator().buffer_manager,
                     get_simulator().placements,
                     get_simulator().graph_mapper)
             elif variable == MEMBRANE_POTENTIAL:
-                self._population._vertex.clear_v_recording(
+                vertex.clear_v_recording(
                     get_simulator().buffer_manager,
                     get_simulator().placements,
                     get_simulator().graph_mapper)
             elif variable == GSYN_EXCIT:
-                self._population._vertex.clear_gsyn_inhibitory_recording(
+                vertex.clear_gsyn_inhibitory_recording(
                     get_simulator().buffer_manager,
                     get_simulator().placements,
                     get_simulator().graph_mapper)
             elif variable == GSYN_INHIB:
-                self._population._vertex.clear_gsyn_excitatory_recording(
+                vertex.clear_gsyn_excitatory_recording(
                     get_simulator().buffer_manager,
                     get_simulator().placements,
                     get_simulator().graph_mapper)
