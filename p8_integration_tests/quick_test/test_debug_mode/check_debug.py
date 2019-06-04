@@ -19,7 +19,7 @@ class CheckDebug(BaseTestCase):
     """
     that it does not crash in debug mode. All reports on.
     """
-    def debug(self):
+    def debug(self, run_zero):
         reports = [
             # write_energy_report
             "Detailed_energy_report.rpt",
@@ -61,6 +61,7 @@ class CheckDebug(BaseTestCase):
             # write_board_chip_report
             BoardChipReport.AREA_CODE_REPORT_NAME,
             ]
+
         sim.setup(1.0)
         configs = globals_variables.get_simulator()._config
         if (configs.getboolean("Machine", "enable_advanced_monitor_support")
@@ -73,6 +74,8 @@ class CheckDebug(BaseTestCase):
             spike_times=[0]), label="input")
         sim.Projection(inp, pop, sim.AllToAllConnector(),
                        synapse_type=sim.StaticSynapse(weight=5))
+        if run_zero:
+            sim.run(0)
         sim.run(1000)
         pop.get_data("v")
         report_directory = globals_variables.get_simulator().\

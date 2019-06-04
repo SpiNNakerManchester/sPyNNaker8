@@ -18,20 +18,23 @@ class TestMultiBoardSpikeOutput(BaseTestCase):
         machine = p.get_machine()
 
         labels = list()
+        pops = list()
         for chip in machine.ethernet_connected_chips:
             # print("Adding population on {}, {}".format(chip.x, chip.y))
             label = "{}, {}".format(chip.x, chip.y)
-            labels.append(label)
             spike_cells = {"spike_times": [i for i in range(100)]}
             pop = p.Population(10, p.SpikeSourceArray(**spike_cells),
                                label=label)
             pop.add_placement_constraint(chip.x, chip.y)
-            p.external_devices.activate_live_output_for(pop)
+            labels.append(label)
+            pops.append(pop)
             TestMultiBoardSpikeOutput.counts[label] = 0
 
         live_output = p.external_devices.SpynnakerLiveSpikesConnection(
-            receive_labels=labels)
-        for label in labels:
+            receive_labels=labels, local_port=None)
+        for label, pop in zip(labels, pops):
+            p.external_devices.activate_live_output_for(
+                pop, database_notify_port_num=live_output.local_port)
             live_output.add_receive_callback(
                 label, TestMultiBoardSpikeOutput.spike_receiver)
 
