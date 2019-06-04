@@ -30,7 +30,7 @@ from spynnaker.pyNN.models.neuron.plasticity.stdp.common import plasticity_helpe
 NUM_NEUR_IN = 1024 #1024 # 2x240x304 mask -> 0xFFFE0000
 MASK_IN = 0xFFFFFC00 #0xFFFFFC00
 NUM_NEUR_OUT = 1024
-MASK_OUT =0xFFFFFC00
+#MASK_OUT =0xFFFFFC00
 
 class ICUBInputVertex(
         ApplicationSpiNNakerLinkVertex,
@@ -105,22 +105,21 @@ sim.Projection(pop, neuron_pop, sim.OneToOneConnector(), sim.StaticSynapse(weigh
 
 sim.external_devices.activate_live_output_to(neuron_pop,pop)
 
-
 #recordings and simulations,
-#neuron_pop.record("spikes")
+# neuron_pop.record("spikes")
 
-simtime = 30000 #ms,
-#sim.run(simtime)
+# simtime = 30000 #ms,
+# sim.run(simtime)
 
 # continuous run until key press
 # remember: do NOT record when running in this mode
 sim.external_devices.run_forever()
 raw_input('Press enter to stop')
 
-# #exc_spikes = neuron_pop.get_data("spikes")
+# exc_spikes = neuron_pop.get_data("spikes")
 #
 # Figure(
-#     # raster plot of the neuron_pop
+# #     raster plot of the neuron_pop
 #     Panel(exc_spikes.segments[0].spiketrains, xlabel="Time/ms", xticks=True,
 #           yticks=True, markersize=0.2, xlim=(0, simtime)),
 #     title="neuron_pop: spikes"
