@@ -26,7 +26,7 @@ class TestGetGsyn(BaseTestCase):
                            run_times=[runtime])
         spikes = synfire_run.get_output_pop_spikes_numpy()
         gsyn = synfire_run.get_output_pop_gsyn_exc_numpy()
-        self.assertEquals(12, len(spikes))
+        self.assertEqual(12, len(spikes))
         spike_checker.synfire_spike_checker(spikes, n_neurons)
         gsyn_tools.check_sister_gysn(__file__, n_neurons, runtime, gsyn)
 

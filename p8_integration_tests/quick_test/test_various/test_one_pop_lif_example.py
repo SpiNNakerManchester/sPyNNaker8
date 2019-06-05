@@ -39,7 +39,7 @@ class OnePopLifExample(BaseTestCase):
     def do_run(self):
         nNeurons = 5  # number of neurons in each population
         (v, gsyn, spikes) = do_run(nNeurons)
-        self.assertEquals(5, len(spikes))
+        self.assertEqual(5, len(spikes))
         self.assertEqual(spikes[0][0], 0)
         self.assertEqual(spikes[0][1], 76)
         self.assertEqual(spikes[1][0], 1)

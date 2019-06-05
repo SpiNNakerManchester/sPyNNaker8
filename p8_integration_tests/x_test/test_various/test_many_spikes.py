@@ -36,7 +36,7 @@ class BigManySpikes(BaseTestCase):
         neo = do_run(nNeurons, 68)
         try:
             spike_count = neo_convertor.count_spikes(neo)
-            self.assertEquals(spike_count, 7200)
+            self.assertEqual(spike_count, 7200)
         except Exception as ex:
             # Just in case the range failed
             raise SkipTest(ex)
@@ -46,7 +46,7 @@ class BigManySpikes(BaseTestCase):
         neo = do_run(nNeurons, 69)
         try:
             spike_count = neo_convertor.count_spikes(neo)
-            self.assertEquals(spike_count, 7200)
+            self.assertEqual(spike_count, 7200)
         except Exception as ex:
             # Just in case the range failed
             raise SkipTest(ex)
