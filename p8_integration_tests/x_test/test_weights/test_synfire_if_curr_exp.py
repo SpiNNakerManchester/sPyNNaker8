@@ -23,8 +23,8 @@ class SynfireIfCurr_exp(BaseTestCase):
         spikes = synfire_run.get_output_pop_spikes_numpy()
         weights = synfire_run.get_weights()
 
-        self.assertEquals(263, len(spikes))
-        self.assertEquals(200, len(weights))
+        self.assertEqualss(263, len(spikes))
+        self.assertEqualss(200, len(weights))
         spike_checker.synfire_spike_checker(spikes, nNeurons)
 
 

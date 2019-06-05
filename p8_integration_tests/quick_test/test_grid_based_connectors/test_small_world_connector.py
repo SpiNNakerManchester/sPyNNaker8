@@ -108,7 +108,7 @@ class SmallWorldConnectorTest(BaseTestCase):
     def check_weights(self, weights):
         s_list = [s for (s, _, _) in weights]
         s_counts = [(i, s_list.count(i)) for i in range(25)]
-        self.assertEqual(self.S_COUNTS, s_counts)
+        self.assertEquals(self.S_COUNTS, s_counts)
         single_connected = self.directly_connected(weights)
         two_step_connected = self.next_connected(
             single_connected, single_connected)
@@ -117,14 +117,14 @@ class SmallWorldConnectorTest(BaseTestCase):
 
         # There is a minor chance this fails so if it ever does add a skip
         for i in range(25):
-            self.assertEqual(25, len(three_step_connected[i]))
+            self.assertEquals(25, len(three_step_connected[i]))
 
     def a_run(self):
         v, spikes, weights = do_run(plot=False)
         # any checks go here
         v_test = neo_convertor.convert_data(v, name='v')
         spikes_test = neo_convertor.convert_data(spikes, name='spikes')
-        self.assertEquals(25000, len(v_test))
+        self.assertEqualss(25000, len(v_test))
         # Not sure checking spike len is telling us much
         self.assertLess(7750, len(spikes_test))
         self.assertGreater(8250, len(spikes_test))

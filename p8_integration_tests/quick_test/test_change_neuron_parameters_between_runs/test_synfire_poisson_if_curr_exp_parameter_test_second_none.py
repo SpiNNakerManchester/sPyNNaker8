@@ -38,7 +38,7 @@ class TestSynfirePoissonIfCurrExpParameterTestSecondNone(BaseTestCase):
         spikes = synfire_run.get_output_pop_spikes_numpy()
         # Check input spikes stop
         hist = numpy.histogram(input[:, 1], bins=[0, 5000, 10000])
-        self.assertEqual(0, hist[0][1])
+        self.assertEquals(0, hist[0][1])
         spike_checker.synfire_multiple_lines_spike_checker(spikes, n_neurons,
                                                            len(input),
                                                            wrap_around=False)

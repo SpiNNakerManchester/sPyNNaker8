@@ -41,8 +41,8 @@ class TestPoisson(BaseTestCase):
 
     def test_run(self):
         (spikes1, spikes2) = do_run(self._test_seed)
-        self.assertEquals(31, len(spikes1))
-        self.assertEquals(15, len(spikes2))
+        self.assertEqualss(31, len(spikes1))
+        self.assertEqualss(15, len(spikes2))
 
 
 if __name__ == '__main__':

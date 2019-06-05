@@ -67,25 +67,25 @@ class LargePopWeightDelayRetrival(BaseTestCase):
         (pre_delays_array, pre_delays_list, pre_weights_array,
             pre_weights_list, post_delays_array, post_delays_list,
             post_weights_array, post_weights_list) = do_run()
-        self.assertEqual((sources, targets), pre_delays_array.shape)
-        self.assertEqual((sources, targets), pre_weights_array.shape)
-        self.assertEqual((sources, targets), post_delays_array.shape)
-        self.assertEqual((sources, targets), post_weights_array.shape)
-        self.assertEqual(sources * targets, len(pre_delays_list))
-        self.assertEqual(sources * targets, len(pre_weights_list))
-        self.assertEqual(sources * targets, len(post_delays_list))
-        self.assertEqual(sources * targets, len(post_weights_list))
+        self.assertEquals((sources, targets), pre_delays_array.shape)
+        self.assertEquals((sources, targets), pre_weights_array.shape)
+        self.assertEquals((sources, targets), post_delays_array.shape)
+        self.assertEquals((sources, targets), post_weights_array.shape)
+        self.assertEquals(sources * targets, len(pre_delays_list))
+        self.assertEquals(sources * targets, len(pre_weights_list))
+        self.assertEquals(sources * targets, len(post_delays_list))
+        self.assertEquals(sources * targets, len(post_weights_list))
         self.assertTrue(numpy.allclose(pre_delays_array, post_delays_array))
         self.assertTrue(numpy.allclose(pre_weights_array, post_weights_array))
         for i in range(sources*targets):
-            self.assertEqual(pre_weights_list[i][2], pre_weights_array
+            self.assertEquals(pre_weights_list[i][2], pre_weights_array
                              [pre_weights_list[i][0]][pre_weights_list[i][1]])
-            self.assertEqual(pre_delays_list[i][2], pre_delays_array
+            self.assertEquals(pre_delays_list[i][2], pre_delays_array
                              [pre_delays_list[i][0]][pre_delays_list[i][1]])
-            self.assertEqual(
+            self.assertEquals(
                 post_weights_list[i][2], post_weights_array
                 [post_weights_list[i][0]][post_weights_list[i][1]])
-            self.assertEqual(post_delays_list[i][2], post_delays_array
+            self.assertEquals(post_delays_list[i][2], post_delays_array
                              [post_delays_list[i][0]][post_delays_list[i][1]])
 
     def test_compare_before_and_after(self):

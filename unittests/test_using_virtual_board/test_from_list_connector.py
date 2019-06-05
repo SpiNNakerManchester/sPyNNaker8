@@ -21,16 +21,16 @@ class TestOneToOneConnector(BaseTestCase):
             while from_as[1] >= destinations:
                 as_index += 1
                 from_as = aslist[as_index]
-            self.assertEqual(from_as[0], source)
-            self.assertEqual(from_as[1], dest)
+            self.assertEquals(from_as[0], source)
+            self.assertEquals(from_as[1], dest)
             if w_index:
                 self.assertAlmostEqual(from_as[w_index], weight, 4)
             else:
-                self.assertEqual(WEIGHT, weight)
+                self.assertEquals(WEIGHT, weight)
             if d_index:
                 self.assertAlmostEqual(from_as[d_index], delay, 4)
             else:
-                self.assertEqual(DELAY, delay)
+                self.assertEquals(DELAY, delay)
             as_index += 1
         while as_index < len(aslist):
             from_as = aslist[as_index]
@@ -128,7 +128,7 @@ class TestOneToOneConnector(BaseTestCase):
             synapse_type=synapse_type)
         weights = projection.get(["weight"], "list")
         sim.run(0)
-        self.assertEqual(1, len(weights))
+        self.assertEquals(1, len(weights))
         sim.end()
 
     def test_using_static_synapse_singles(self):

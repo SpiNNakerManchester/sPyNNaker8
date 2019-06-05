@@ -7,8 +7,8 @@ class TestAllToAllConnector(BaseTestCase):
     def check_weights(self, projection, sources, destinations):
         weights = projection.get(["weight"], "list")
         s_d_set = set((s, d) for s, d, _ in weights)
-        self.assertEqual(len(weights), sources * destinations)
-        self.assertEqual(len(s_d_set), sources * destinations)
+        self.assertEquals(len(weights), sources * destinations)
+        self.assertEquals(len(s_d_set), sources * destinations)
 
     def check_other_connect(self, sources, destinations):
         sim.setup(1.0)
@@ -57,7 +57,7 @@ class TestAllToAllConnector(BaseTestCase):
         sim.run(0)
         try:
             length = len(weights)
-            self.assertEqual(3, length)
+            self.assertEquals(3, length)
         except Exception:
             sim.end()
             self.known_issue(

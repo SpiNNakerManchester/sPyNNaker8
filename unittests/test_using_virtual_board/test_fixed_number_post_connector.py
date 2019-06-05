@@ -16,7 +16,7 @@ class TestFixedNumberPostConnector(BaseTestCase):
         count = connections
         for (source, destination, _) in weights:
             if source != last_source:
-                self.assertEqual(connections, count)
+                self.assertEquals(connections, count)
                 last_source = source
                 count = 1
             else:
@@ -27,7 +27,7 @@ class TestFixedNumberPostConnector(BaseTestCase):
             if not allow_self_connections:
                 self.assertNotEqual(source, destination)
 
-        self.assertEqual(connections, count)
+        self.assertEquals(connections, count)
 
     def check_self_connect(
             self, connections, with_replacement, allow_self_connections):
@@ -128,5 +128,5 @@ class TestFixedNumberPostConnector(BaseTestCase):
             synapse_type=synapse_type)
         weights = projection.get(["weight"], "list")
         sim.run(0)
-        self.assertEqual(6, len(weights))
+        self.assertEquals(6, len(weights))
         sim.end()

@@ -62,7 +62,7 @@ class MwhSynfireWithDifferentMachineTimeSteps(BaseTestCase):
     def test_run(self):
         nNeurons = 3  # number of neurons in each population
         (v, spikes) = do_run(nNeurons)
-        self.assertEquals(51, len(spikes))
+        self.assertEqualss(51, len(spikes))
 
 
 if __name__ == '__main__':

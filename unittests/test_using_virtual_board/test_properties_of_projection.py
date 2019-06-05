@@ -30,6 +30,6 @@ class TestProps(BaseTestCase):
         proj_label = proj.label
         proj_source = proj.pre
         proj_dest = proj.post
-        self.assertEqual(source, proj_source)
-        self.assertEqual(dest, proj_dest)
-        self.assertEqual(test_label, proj_label)
+        self.assertEquals(source, proj_source)
+        self.assertEquals(dest, proj_dest)
+        self.assertEquals(test_label, proj_label)

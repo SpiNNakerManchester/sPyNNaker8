@@ -20,10 +20,10 @@ class TestConstraint(BaseTestCase):
         sim.run(simtime)
         placements = self.get_placements("pop_1")
         sim.end()
-        self.assertEqual(4, len(placements))
+        self.assertEquals(4, len(placements))
         for [x, y, _] in placements:
-            self.assertEqual("1", x)
-            self.assertEqual("1", y)
+            self.assertEquals("1", x)
+            self.assertEquals("1", y)
 
     def test_radial_many(self):
         sim.setup(timestep=1.0)
@@ -39,7 +39,7 @@ class TestConstraint(BaseTestCase):
         sim.run(simtime)
         placements = self.get_placements("pop_1")
         sim.end()
-        self.assertEqual(20, len(placements))
+        self.assertEquals(20, len(placements))
         count = 0
         for [x, y, _] in placements:
             if x == "1" and y == "1":

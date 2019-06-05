@@ -15,46 +15,46 @@ class Test_IDMixin(BaseTestCase):
         pop_1 = sim.Population(n_neurons, sim.IF_curr_exp(), label=label)
         mask = [1, 3]
         view = PopulationView(pop_1, mask, label=label)
-        self.assertEqual(2, view.size)
-        self.assertEqual(2, view.local_size)
+        self.assertEquals(2, view.size)
+        self.assertEquals(2, view.local_size)
 
-        self.assertEqual(label, view.label)
-        self.assertEqual(pop_1.celltype, view.celltype)
+        self.assertEquals(label, view.label)
+        self.assertEquals(pop_1.celltype, view.celltype)
 
         view_initial_values = view.initial_values
         pop_initial_values = pop_1.initial_values
-        self.assertEqual(len(view_initial_values), len(pop_initial_values))
+        self.assertEquals(len(view_initial_values), len(pop_initial_values))
         for key in pop_initial_values:
-            self.assertEqual(
+            self.assertEquals(
                 pop_initial_values[key][3], view_initial_values[key][1])
 
-        self.assertEqual(pop_1, view.parent)
-        self.assertEqual(mask, view.mask)
+        self.assertEquals(pop_1, view.parent)
+        self.assertEquals(mask, view.mask)
 
         cells = view.all_cells
-        self.assertEqual(2, len(cells))
-        self.assertEqual(1, cells[0].id)
-        self.assertEqual(3, cells[1].id)
+        self.assertEquals(2, len(cells))
+        self.assertEquals(1, cells[0].id)
+        self.assertEquals(3, cells[1].id)
 
-        self.assertEqual(cells, view.local_cells)
-        self.assertEqual(cells[0], view[1])
+        self.assertEquals(cells, view.local_cells)
+        self.assertEquals(cells[0], view[1])
 
         iterator = iter(view)
-        self.assertEqual(1, next(iterator).id)
-        self.assertEqual(3, next(iterator).id)
+        self.assertEquals(1, next(iterator).id)
+        self.assertEquals(3, next(iterator).id)
         with pytest.raises(StopIteration):
             next(iterator)
 
-        self.assertEqual(2, len(view))
+        self.assertEquals(2, len(view))
 
         iterator = view.all()
-        self.assertEqual(1, next(iterator).id)
-        self.assertEqual(3, next(iterator).id)
+        self.assertEquals(1, next(iterator).id)
+        self.assertEquals(3, next(iterator).id)
         with pytest.raises(StopIteration):
             next(iterator)
 
-        self.assertEqual(view.can_record("v"), pop_1.can_record("v"))
-        self.assertEqual(view.conductance_based, pop_1.conductance_based)
+        self.assertEquals(view.can_record("v"), pop_1.can_record("v"))
+        self.assertEquals(view.conductance_based, pop_1.conductance_based)
 
         describe = view.describe()
         self.assertIn('PopulationView "pop_1"', describe)
@@ -62,7 +62,7 @@ class Test_IDMixin(BaseTestCase):
         self.assertIn('size   : 2', describe)
         self.assertIn('mask   : [1, 3]', describe)
 
-        self.assertEqual(pop_1.find_units("v"), view.find_units("v"))
+        self.assertEquals(pop_1.find_units("v"), view.find_units("v"))
 
         sim.end()
 
@@ -74,10 +74,10 @@ class Test_IDMixin(BaseTestCase):
         view = PopulationView(pop_1, [1, 3], label="Odds")
 
         pop_1.set(tau_m=2)
-        self.assertEqual([2, 2, 2, 2], pop_1.get("tau_m"))
-        self.assertEqual([2, 2], view.get("tau_m", simplify=False))
+        self.assertEquals([2, 2, 2, 2], pop_1.get("tau_m"))
+        self.assertEquals([2, 2], view.get("tau_m", simplify=False))
         view.set(tau_m=3)
-        self.assertEqual([2, 3, 2, 3], pop_1.get("tau_m"))
+        self.assertEquals([2, 3, 2, 3], pop_1.get("tau_m"))
         sim.end()
 
     def test_view_of_view(self):
@@ -87,43 +87,43 @@ class Test_IDMixin(BaseTestCase):
         view1 = PopulationView(pop_1, [1, 3, 5, 7, 9], label="Odds")
         view2 = PopulationView(view1, [1, 3], label="AlternativeOdds")
         # Not a normal way to access but good to test
-        self.assertEqual([3, 7], view2._indexes)
-        self.assertEqual(view2.parent, view1)
-        self.assertEqual(view1.grandparent, pop_1)
-        self.assertEqual(view2.grandparent, pop_1)
+        self.assertEquals([3, 7], view2._indexes)
+        self.assertEquals(view2.parent, view1)
+        self.assertEquals(view1.grandparent, pop_1)
+        self.assertEquals(view2.grandparent, pop_1)
         cells = view2.all_cells
-        self.assertEqual(3, cells[0].id)
-        self.assertEqual(7, cells[1].id)
-        self.assertEqual(3, view1.id_to_index(7))
-        self.assertEqual([3, 0], view1.id_to_index([7, 1]))
-        self.assertEqual(1, view2.id_to_index(7))
+        self.assertEquals(3, cells[0].id)
+        self.assertEquals(7, cells[1].id)
+        self.assertEquals(3, view1.id_to_index(7))
+        self.assertEquals([3, 0], view1.id_to_index([7, 1]))
+        self.assertEquals(1, view2.id_to_index(7))
         view3 = view1[1:3]
-        self.assertEqual([3, 5], view3._indexes)
+        self.assertEquals([3, 5], view3._indexes)
         view4 = view1.sample(2)
-        self.assertEqual(2, len(view4._indexes))
+        self.assertEquals(2, len(view4._indexes))
         sim.end()
 
     def test_initial_value(self):
         sim.setup(timestep=1.0)
         pop = sim.Population(5, sim.IF_curr_exp(), label="pop_1")
-        self.assertEqual([-65, -65, -65, -65, -65], pop.get_initial_value("v"))
+        self.assertEquals([-65, -65, -65, -65, -65], pop.get_initial_value("v"))
         view = PopulationView(pop, [1, 3], label="Odds")
         view2 = PopulationView(pop, [1, 2], label="OneTwo")
         view_iv = view.initial_values
-        self.assertEqual(3, len(view_iv))
-        self.assertEqual([-65, -65], view_iv["v"])
+        self.assertEquals(3, len(view_iv))
+        self.assertEquals([-65, -65], view_iv["v"])
         view.initialize(v=-60)
-        self.assertEqual([-65, -60, -65, -60, -65], pop.get_initial_value("v"))
-        self.assertEqual([-60, -60], view.initial_values["v"])
-        self.assertEqual([-60, -65], view2.initial_values["v"])
+        self.assertEquals([-65, -60, -65, -60, -65], pop.get_initial_value("v"))
+        self.assertEquals([-60, -60], view.initial_values["v"])
+        self.assertEquals([-60, -65], view2.initial_values["v"])
         rand_distr = RandomDistribution("uniform",
                                         parameters_pos=[-65.0, -55.0],
                                         rng=NumpyRNG(seed=85524))
         view.initialize(v=rand_distr)
-        self.assertEqual([-64.43349869042906, -63.663421790102184],
+        self.assertEquals([-64.43349869042906, -63.663421790102184],
                          view.initial_values["v"])
         view.initialize(v=lambda i: -65 + i / 10.0)
-        self.assertEqual([-64.9, -64.7], view.initial_values["v"])
+        self.assertEquals([-64.9, -64.7], view.initial_values["v"])
         sim.end()
 
     def test_projection(self):

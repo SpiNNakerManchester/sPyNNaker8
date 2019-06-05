@@ -30,23 +30,23 @@ class TestUtilityCalls(unittest.TestCase):
 
     @unittest.skip("Not implemented")
     def test_is_conductance(self):
-        self.assertEqual(True, False, "NotImplementedError")
+        self.assertEquals(True, False, "NotImplementedError")
 
     @unittest.skip("Not implemented")
     def test_check_weight(self):
-        self.assertEqual(True, False, "NotImplementedError")
+        self.assertEquals(True, False, "NotImplementedError")
 
     @unittest.skip("Not implemented")
     def test_check_delay(self):
-        self.assertEqual(True, False, "NotImplementedError")
+        self.assertEquals(True, False, "NotImplementedError")
 
     @unittest.skip("Not implemented")
     def test_get_region_base_address_offset(self):
-        self.assertEqual(True, False, "Test not implemented yet")
+        self.assertEquals(True, False, "Test not implemented yet")
 
     @unittest.skip("Not implemented")
     def test_get_ring_buffer_to_input_left_shift(self):
-        self.assertEqual(True, False, "Test not implemented yet")
+        self.assertEquals(True, False, "Test not implemented yet")
 
     def test_convert_param_to_numpy_random_distribution(self):
         setup(1.0)
@@ -55,21 +55,21 @@ class TestUtilityCalls(unittest.TestCase):
         multi_value = utility_calls.convert_param_to_numpy(random, 10)
 
         self.assertTrue(hasattr(single_value, "__iter__"))
-        self.assertEqual(len(single_value), 1)
+        self.assertEquals(len(single_value), 1)
         self.assertTrue(hasattr(multi_value, "__iter__"))
-        self.assertEqual(len(multi_value), 10)
+        self.assertEquals(len(multi_value), 10)
 
     @unittest.skip("Not implemented")
     def test_convert_param_to_numpy_iterable(self):
-        self.assertEqual(True, False, "Test not implemented yet")
+        self.assertEquals(True, False, "Test not implemented yet")
 
     @unittest.skip("Not implemented")
     def test_convert_param_to_numpy_random(self):
-        self.assertEqual(True, False, "Test not implemented yet")
+        self.assertEquals(True, False, "Test not implemented yet")
 
     @unittest.skip("Not implemented")
     def test_convert_param_to_numpy_exception(self):
-        self.assertEqual(True, False, "Test not implemented yet")
+        self.assertEquals(True, False, "Test not implemented yet")
 
 
 if __name__ == '__main__':

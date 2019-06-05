@@ -223,8 +223,8 @@ class SpikeIoMultiRun(BaseTestCase):
 
     def test_run(self):
         (spikes_forward, spikes_backward) = do_run()
-        self.assertEqual(600, len(spikes_forward))
-        self.assertEqual(600, len(spikes_backward))
+        self.assertEquals(600, len(spikes_forward))
+        self.assertEquals(600, len(spikes_backward))
 
 
 if __name__ == '__main__':

@@ -60,7 +60,7 @@ class TestGetSpikesAt0_1msTimeStep(BaseTestCase):
                                [122, 491], [123, 495], [124, 499]]
 
         for spike_element, read_element in zip(spikes, pre_recorded_spikes):
-            self.assertEqual(spike_element[0], read_element[0])
+            self.assertEquals(spike_element[0], read_element[0])
             self.assertAlmostEqual(spike_element[1], read_element[1],
                                    delta=0.4)
 

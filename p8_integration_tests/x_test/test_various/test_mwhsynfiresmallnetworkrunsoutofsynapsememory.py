@@ -60,7 +60,7 @@ class MwhSynfire(BaseTestCase):
     def test_run(self):
         nNeurons = 3  # number of neurons in each population
         (v, spikes) = do_run(nNeurons)
-        self.assertEquals(12, len(spikes))
+        self.assertEqualss(12, len(spikes))
 
 
 if __name__ == '__main__':

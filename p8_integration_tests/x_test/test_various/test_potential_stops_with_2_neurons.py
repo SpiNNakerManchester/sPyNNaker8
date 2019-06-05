@@ -60,7 +60,7 @@ class ParamsSetAsList(BaseTestCase):
     def test_run(self):
         nNeurons = 2  # number of neurons in each population
         (v, gsyn, spikes) = do_run(nNeurons)
-        self.assertEquals(17, len(spikes))
+        self.assertEqualss(17, len(spikes))
 
 
 if __name__ == '__main__':

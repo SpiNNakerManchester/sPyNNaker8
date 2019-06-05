@@ -129,5 +129,5 @@ class TestFixedNumberPreConnector(BaseTestCase):
             synapse_type=synapse_type)
         weights = projection.get(["weight"], "list")
         sim.run(0)
-        self.assertEqual(6, len(weights))
+        self.assertEquals(6, len(weights))
         sim.end()

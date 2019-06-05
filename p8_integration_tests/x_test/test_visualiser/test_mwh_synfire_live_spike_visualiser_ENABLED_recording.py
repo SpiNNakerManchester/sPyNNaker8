@@ -59,7 +59,7 @@ class TestMWHSynfireEnabledRecording(BaseTestCase):
     def test_run(self):
         spikes = do_run()
         # check something
-        self.assertEqual(len(spikes), 200)
+        self.assertEquals(len(spikes), 200)
 
 
 if __name__ == '__main__':

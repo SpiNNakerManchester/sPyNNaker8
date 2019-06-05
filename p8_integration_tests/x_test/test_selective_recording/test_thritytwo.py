@@ -20,12 +20,12 @@ class TestSampling(BaseTestCase):
         neo = pop_1.get_data(variables=["spikes", "v"])
         spikes = neo.segments[0].spiketrains
         # Include all the spiketrains as there is no outside index
-        self.assertEquals(40, len(spikes))
+        self.assertEqualss(40, len(spikes))
         for i in range(32):
-            self.assertEquals(1, len(spikes[i]))
+            self.assertEqualss(1, len(spikes[i]))
         for i in range(32, 40):
-            self.assertEquals(0, len(spikes[i]))
+            self.assertEqualss(0, len(spikes[i]))
         v = neo.segments[0].filter(name='v')[0]
-        self.assertEquals(32, len(v.channel_index.index))
-        self.assertEquals(32, len(v[0]))
+        self.assertEqualss(32, len(v.channel_index.index))
+        self.assertEqualss(32, len(v[0]))
         sim.end()

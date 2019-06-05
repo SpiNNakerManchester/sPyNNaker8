@@ -23,9 +23,9 @@ class SynfireIfCurrExp(BaseTestCase):
         v = synfire_run.get_output_pop_voltage_list()
         spikes = synfire_run.get_output_pop_spikes_list()
 
-        self.assertEqual(0, len(v))
-        self.assertEqual(0, len(gsyn))
-        self.assertEqual(0, len(spikes))
+        self.assertEquals(0, len(v))
+        self.assertEquals(0, len(gsyn))
+        self.assertEquals(0, len(spikes))
 
 
 if __name__ == '__main__':

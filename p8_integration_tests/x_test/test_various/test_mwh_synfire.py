@@ -69,7 +69,7 @@ class MwhSynfire(BaseTestCase):
         nNeurons = 100  # number of neurons in each population
         (v, gsyn, spikes) = do_run(nNeurons)
         spike_checker.synfire_spike_checker(spikes, nNeurons)
-        self.assertEquals(199, len(spikes))
+        self.assertEqualss(199, len(spikes))
 
 
 if __name__ == '__main__':

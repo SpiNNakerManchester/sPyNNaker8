@@ -40,21 +40,21 @@ class Synfire20n20pcDelaysDelayExtensionsAllRecording(BaseTestCase):
         v = synfire_run.get_output_pop_voltage_numpy()
         spikes = synfire_run.get_output_pop_spikes_numpy()
 
-        self.assertEquals(n_neurons * runtime, len(gsyn_exc))
+        self.assertEqualss(n_neurons * runtime, len(gsyn_exc))
         read_gsyn = numpy.loadtxt(gysn_file, delimiter=',')
         self.assertTrue(numpy.allclose(read_gsyn, gsyn_exc_7, rtol=1e-04),
                         "gsyn synakker method mismatch")
         self.assertTrue(numpy.allclose(read_gsyn, gsyn_exc, rtol=1e-04),
                         "gsyn neo method mismatch")
 
-        self.assertEquals(n_neurons * runtime, len(v))
+        self.assertEqualss(n_neurons * runtime, len(v))
         read_v = numpy.loadtxt(v_file, delimiter=',')
         self.assertTrue(numpy.allclose(read_v, v_7, rtol=1e-03),
                         "v synakker method mismatch")
         self.assertTrue(numpy.allclose(read_v, v, rtol=1e-03),
                         "v neo method mismatch")
 
-        self.assertEquals(expected_spikes, len(spikes))
+        self.assertEqualss(expected_spikes, len(spikes))
         spike_checker.synfire_spike_checker(spikes, n_neurons)
         read_spikes = numpy.loadtxt(spike_file, delimiter=',')
         self.assertTrue(numpy.allclose(read_spikes, spikes_7),
@@ -78,17 +78,17 @@ class Synfire20n20pcDelaysDelayExtensionsAllRecording(BaseTestCase):
         v = synfire_run.get_output_pop_voltage_numpy()
         spikes = synfire_run.get_output_pop_spikes_numpy()
 
-        self.assertEquals(n_neurons * runtime, len(gsyn_exc))
+        self.assertEqualss(n_neurons * runtime, len(gsyn_exc))
         read_gsyn = numpy.loadtxt(gysn_file, delimiter=',')
         self.assertTrue(numpy.allclose(read_gsyn, gsyn_exc, rtol=1e-04),
                         "gsyn neo method mismatch")
 
-        self.assertEquals(n_neurons * runtime, len(v))
+        self.assertEqualss(n_neurons * runtime, len(v))
         read_v = numpy.loadtxt(v_file, delimiter=',')
         self.assertTrue(numpy.allclose(read_v, v, rtol=1e-03),
                         "v neo method mismatch")
 
-        self.assertEquals(expected_spikes, len(spikes))
+        self.assertEqualss(expected_spikes, len(spikes))
         spike_checker.synfire_spike_checker(spikes, n_neurons)
         read_spikes = numpy.loadtxt(spike_file, delimiter=',')
         self.assertTrue(numpy.allclose(read_spikes, spikes),

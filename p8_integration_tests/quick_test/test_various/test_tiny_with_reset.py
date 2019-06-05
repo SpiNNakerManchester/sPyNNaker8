@@ -36,10 +36,10 @@ class TinyTest(BaseTestCase):
             all1.segments[0].spiketrains)
         spikes2 = neo_convertor.convert_spiketrains(
             all2.segments[1].spiketrains)
-        self.assertEqual(spikes1.all(), spikes2.all())
+        self.assertEquals(spikes1.all(), spikes2.all())
         v1 = neo_convertor.convert_data(all1, name="v", run=0)
         v2 = neo_convertor.convert_data(all2, name="v", run=1)
-        self.assertEqual(v1.all(), v2.all())
+        self.assertEquals(v1.all(), v2.all())
 
     def test_run(self):
         self.runsafe(self.check_run)

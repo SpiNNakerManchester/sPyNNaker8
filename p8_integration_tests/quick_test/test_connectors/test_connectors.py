@@ -41,9 +41,9 @@ class ConnectorsTest(BaseTestCase):
     def check_counts(self, counts, connections, repeats):
         for count in counts:
             if not repeats:
-                self.assertEqual(1, max(count))
+                self.assertEquals(1, max(count))
         if max(count) < OVERFLOW:
-            self.assertEqual(connections, sum(count))
+            self.assertEquals(connections, sum(count))
 
     def check_connection(self, projection, destination, connections, repeats,
                          type, n_destinations=DESTINATIONS):
@@ -66,28 +66,28 @@ class ConnectorsTest(BaseTestCase):
             self.assertLess(source, SOURCES)
             self.assertLess(destination, n_destinations)
         if type == "post":
-            self.assertEqual(connections * SOURCES, len(weights))
+            self.assertEquals(connections * SOURCES, len(weights))
             self.check_counts(counts, connections, repeats)
         elif type == "pre":
-            self.assertEqual(connections * n_destinations, len(weights))
+            self.assertEquals(connections * n_destinations, len(weights))
             self.check_counts(numpy.transpose(counts), connections, repeats)
         elif type == "one":
-            self.assertEqual(connections, len(weights))
+            self.assertEquals(connections, len(weights))
             last_source = -1
             for (source, destination, _) in weights:
                 self.assertNotEqual(source, last_source)
                 last_source = source
-                self.assertEqual(source, destination)
+                self.assertEquals(source, destination)
             while len(counts) > n_destinations:
                 no_connections = counts.pop()
-                self.assertEqual(0, sum(no_connections))
+                self.assertEquals(0, sum(no_connections))
             self.check_counts(counts, 1, repeats)
         else:
-            self.assertEqual(connections, len(weights))
+            self.assertEquals(connections, len(weights))
             if not repeats:
-                self.assertEqual(1, the_max)
+                self.assertEquals(1, the_max)
             if the_max < OVERFLOW:
-                self.assertEqual(connections, sum(map(sum, counts)))
+                self.assertEquals(connections, sum(map(sum, counts)))
 
     def check_connector(self, connector, connections, repeats, type="post",
                         n_destinations=DESTINATIONS):
@@ -199,9 +199,9 @@ class ConnectorsTest(BaseTestCase):
         for i, count in enumerate(counts):
             for j in range(n_destinations):
                 if i == j:
-                    self.assertEqual(count[j], 2)
+                    self.assertEquals(count[j], 2)
                 else:
-                    self.assertEqual(count[j], 1)
+                    self.assertEquals(count[j], 1)
         sim.end()
 
     def test_multiple_connectors(self):

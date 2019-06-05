@@ -22,7 +22,7 @@ class TestConstraint(BaseTestCase):
         sim.run(simtime)
         placements = self.get_placements("pop_1")
         sim.end()
-        self.assertEqual(4, len(placements))
+        self.assertEquals(4, len(placements))
         for [x, y, _] in placements:
-            self.assertEqual("1", x)
-            self.assertEqual("1", y)
+            self.assertEquals("1", x)
+            self.assertEquals("1", y)

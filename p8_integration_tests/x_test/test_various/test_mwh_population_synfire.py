@@ -87,17 +87,17 @@ class MwhPopulationSynfire(BaseTestCase):
             nNeurons = 200  # number of neurons in each population
             neurons_per_core = 256
             (v, gsyn, spikes) = do_run(nNeurons, neurons_per_core)
-            self.assertEquals(600, len(spikes))
+            self.assertEqualss(600, len(spikes))
         except SpinnmanTimeoutException as ex:
             raise SkipTest(ex)
-        self.assertEquals(600, len(spikes))
+        self.assertEqualss(600, len(spikes))
 
     def test_run_light(self):
         self.assert_not_spin_three()
         nNeurons = 200  # number of neurons in each population
         neurons_per_core = 50
         (v, gsyn, spikes) = do_run(nNeurons, neurons_per_core)
-        self.assertEquals(600, len(spikes))
+        self.assertEqualss(600, len(spikes))
 
 
 if __name__ == '__main__':

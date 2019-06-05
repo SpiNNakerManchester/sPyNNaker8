@@ -33,13 +33,13 @@ class TestSetRecord(BaseTestCase):
         try:
             ssa.record("v")
         except Exception as e:
-            self.assertEqual(
+            self.assertEquals(
                 "This population does not support the recording of v!",
                 str(e))
         try:
             ssp.record("v")
         except Exception as e:
-            self.assertEqual(
+            self.assertEquals(
                 "This population does not support the recording of v!",
                 str(e))
 

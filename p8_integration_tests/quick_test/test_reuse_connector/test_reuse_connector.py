@@ -32,11 +32,11 @@ class ReuseConnectorTest(BaseTestCase):
         test_1_list.append((0, 0, 2.0, 2.0))
         test_2_list = []
         test_2_list.append((0, 0, 1.0, 1.0))
-        self.assertEquals(1, len(proj_1_list))
-        self.assertEquals(1, len(proj_2_list))
+        self.assertEqualss(1, len(proj_1_list))
+        self.assertEqualss(1, len(proj_2_list))
         for i in range(4):
-            self.assertEquals(test_1_list[0][i], proj_1_list[0][i])
-            self.assertEquals(test_2_list[0][i], proj_2_list[0][i])
+            self.assertEqualss(test_1_list[0][i], proj_1_list[0][i])
+            self.assertEqualss(test_2_list[0][i], proj_2_list[0][i])
 
     def test_run(self):
         self.runsafe(self.check_run)

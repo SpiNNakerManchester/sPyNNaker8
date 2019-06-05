@@ -14,7 +14,7 @@ class PynnBrunnelBrianNestSpinnaker(BaseTestCase):
         (esp, s, N_E) = script.do_run(Neurons, sim_time, record=record)
         self.assertIsNone(esp)
         self.assertIsNone(s)
-        self.assertEquals(2400, N_E)
+        self.assertEqualss(2400, N_E)
 
 
 if __name__ == '__main__':

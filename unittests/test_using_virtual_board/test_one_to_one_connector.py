@@ -10,10 +10,10 @@ class TestOneToOneConnector(BaseTestCase):
         for (source, destination, _) in weights:
             self.assertNotEqual(source, last_source)
             last_source = source
-            self.assertEqual(source, destination)
+            self.assertEquals(source, destination)
             self.assertLess(source, sources)
             self.assertLess(destination, sources)
-        self.assertEqual(len(weights), min(sources, destinations))
+        self.assertEquals(len(weights), min(sources, destinations))
 
     def check_other_connect(self, sources, destinations):
         sim.setup(1.0)
@@ -50,7 +50,7 @@ class TestOneToOneConnector(BaseTestCase):
             synapse_type=synapse_type)
         weights = projection.get(["weight"], "list")
         sim.run(0)
-        self.assertEqual(3, len(weights))
+        self.assertEquals(3, len(weights))
         sim.end()
 
     def test_using_static_synapse_singles1(self):

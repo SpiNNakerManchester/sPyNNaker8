@@ -12,9 +12,9 @@ class TestPopulation(BaseTestCase):
         label = "pop_1"
         sim.setup(timestep=1.0)
         pop_1 = sim.Population(n_neurons, sim.IF_curr_exp(), label=label)
-        self.assertEquals(n_neurons, pop_1.size)
-        self.assertEquals(label, pop_1.label)
-        self.assertEquals(sim.IF_curr_exp, type(pop_1.celltype))
+        self.assertEqualss(n_neurons, pop_1.size)
+        self.assertEqualss(label, pop_1.label)
+        self.assertEqualss(sim.IF_curr_exp, type(pop_1.celltype))
         v_init = -60
         pop_1.initialize(v=v_init)
         initial_values = pop_1.initial_values
@@ -29,7 +29,7 @@ class TestPopulation(BaseTestCase):
         pop_1.all_cells
         pop_1.local_cells
 
-        self.assertEquals(n_neurons, pop_1.local_size)
+        self.assertEqualss(n_neurons, pop_1.local_size)
 
         pop_1.structure
         sim.end()
@@ -64,19 +64,19 @@ class TestPopulation(BaseTestCase):
         pop_1 = sim.Population(n_neurons, sim.IF_curr_exp(), label=label)
         pop_1.set(tau_m=2)
         values = pop_1.get("tau_m")
-        self.assertEqual([2, 2, 2, 2, 2], values)
+        self.assertEquals([2, 2, 2, 2, 2], values)
         values = pop_1.get_by_selector(slice(1, 3), "tau_m")
-        self.assertEquals([2, 2], values)
+        self.assertEqualss([2, 2], values)
         pop_1.set_by_selector(slice(1, 3), "tau_m", 3)
         values = pop_1.get("tau_m")
-        self.assertEqual([2, 3, 3, 2, 2], values)
+        self.assertEquals([2, 3, 3, 2, 2], values)
         values = pop_1.get(["cm", "v_thresh"])
-        self.assertEqual([1.0, 1.0, 1.0, 1.0, 1.0], values['cm'])
-        self.assertEqual(
+        self.assertEquals([1.0, 1.0, 1.0, 1.0, 1.0], values['cm'])
+        self.assertEquals(
             [-50.0, -50.0, -50.0, -50.0, -50.0], values["v_thresh"])
         values = pop_1.get_by_selector([1, 3, 4], ["cm", "v_thresh"])
-        self.assertEqual([1.0, 1.0, 1.0], values['cm'])
-        self.assertEqual(
+        self.assertEquals([1.0, 1.0, 1.0], values['cm'])
+        self.assertEquals(
             [-50.0, -50.0, -50.0], values["v_thresh"])
         sim.end()
 
@@ -125,18 +125,18 @@ class TestPopulation(BaseTestCase):
         pop = sim.Population(4, sim.IF_curr_exp(), label="a label")
 
         iterator = iter(pop)
-        self.assertEqual(0, next(iterator).id)
-        self.assertEqual(1, next(iterator).id)
-        self.assertEqual(2, next(iterator).id)
-        self.assertEqual(3, next(iterator).id)
+        self.assertEquals(0, next(iterator).id)
+        self.assertEquals(1, next(iterator).id)
+        self.assertEquals(2, next(iterator).id)
+        self.assertEquals(3, next(iterator).id)
         with pytest.raises(StopIteration):
             next(iterator)
 
         iterator = pop.all()
-        self.assertEqual(0, next(iterator).id)
-        self.assertEqual(1, next(iterator).id)
-        self.assertEqual(2, next(iterator).id)
-        self.assertEqual(3, next(iterator).id)
+        self.assertEquals(0, next(iterator).id)
+        self.assertEquals(1, next(iterator).id)
+        self.assertEquals(2, next(iterator).id)
+        self.assertEquals(3, next(iterator).id)
         with pytest.raises(StopIteration):
             next(iterator)
 

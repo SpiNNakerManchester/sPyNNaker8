@@ -33,12 +33,12 @@ class PynnBrunnelBrianNestSpinnaker(BaseTestCase):
             Neurons, sim_time, record=True, seed=1)
         esp_numpy = neo_convertor.convert_spikes(esp)
         s_numpy = neo_convertor.convert_spikes(s)
-        self.assertEquals(2400, N_E)
+        self.assertEqualss(2400, N_E)
         # Range required, because random delays are used, and although these
         # are seeded, the order of generation is not consistent
         self.assertLessEqual(210, len(esp_numpy))
         self.assertGreaterEqual(230, len(esp_numpy))
-        self.assertEquals(23888, len(s_numpy))
+        self.assertEqualss(23888, len(s_numpy))
 
 
 if __name__ == '__main__':
