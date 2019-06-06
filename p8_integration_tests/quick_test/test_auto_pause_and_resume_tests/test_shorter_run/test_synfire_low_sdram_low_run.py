@@ -28,7 +28,7 @@ class TestVeryLow(BaseTestCase):
             self.assert_logs_messages(
                 lc.records, "*** Running simulation... ***", 'INFO', 8)
 
-        self.assertEquals(158, len(spikes))
+        self.assertEqual(158, len(spikes))
         spike_checker.synfire_spike_checker(spikes, n_neurons)
         synfire_run.get_output_pop_gsyn_exc_numpy()
         synfire_run.get_output_pop_voltage_numpy()

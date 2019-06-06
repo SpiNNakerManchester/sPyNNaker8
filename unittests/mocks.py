@@ -76,6 +76,10 @@ class MockSimulator(object):
     def id_counter(self):
         return 1
 
+    @property
+    def machine_time_step(self):
+        return 1000
+
     @id_counter.setter
     def id_counter(self, value):
         pass

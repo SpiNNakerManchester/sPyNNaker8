@@ -23,7 +23,7 @@ class Synfire200n10pc2chipsWithNoDelaysSpikeRecording(BaseTestCase):
                            record_gsyn_inh=record_gsyn)
         spikes = synfire_run.get_output_pop_spikes_numpy()
 
-        self.assertEquals(333, len(spikes))
+        self.assertEqual(333, len(spikes))
         spike_checker.synfire_spike_checker(spikes, nNeurons)
 
 
