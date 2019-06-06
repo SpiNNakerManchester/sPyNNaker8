@@ -36,7 +36,7 @@ class TestPrintGsyn(BaseTestCase):
         spikes = synfire_run.get_output_pop_spikes_numpy()
         gsyn = synfire_run.get_output_pop_gsyn_exc_neo()
 
-        self.assertEquals(12, len(spikes))
+        self.assertEqual(12, len(spikes))
         spike_checker.synfire_spike_checker(spikes, n_neurons)
         io = PickleIO(filename=gsyn_path)
         gsyn_saved = io.read()[0]
