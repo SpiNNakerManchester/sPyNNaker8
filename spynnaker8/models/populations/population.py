@@ -324,6 +324,15 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
             except InvalidParameterType:
                 super(Population, self)._initialize(parameter, value)
 
+    def tset(self, **kwargs):
+        logger.warn(
+            "This function is deprecated; call pop.set(...) instead")
+        for parameter, value in iteritems(kwargs):
+            try:
+                super(Population, self).set(parameter, value)
+            except InvalidParameterType:
+                super(Population, self)._initialize(parameter, value)
+
     def initialize(self, **kwargs):
         for parameter, value in iteritems(kwargs):
             super(Population, self)._initialize(parameter, value)

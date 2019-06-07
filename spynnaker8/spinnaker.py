@@ -363,6 +363,10 @@ class Spynnaker8FailedState(SpynnakerFailedState,
     def t(self):
         raise ConfigurationException(FAILED_STATE_MSG)
 
+    @staticmethod
+    def get_generated_output(output):
+        return globals_variables.get_generated_output(output)
+
 
 # At import time change the default FailedState
 globals_variables.set_failed_state(Spynnaker8FailedState())
