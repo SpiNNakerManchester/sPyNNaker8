@@ -15,7 +15,7 @@ authors:
   email: Andrew.Gait@manchester.ac.uk
   family-names: Gait
   given-names: Andrew
-  orcid: http://orcid.org/0000-0001-9349-1096
+  orcid: https://orcid.org/0000-0001-9349-1096
   website: https://personalpages.manchester.ac.uk/staff/Andrew.Gait/
 - email: andreas.stoeckel@googlemail.com
   family-names: Stöckel
@@ -123,11 +123,11 @@ contact:
   country: GB
   name: SpiNNaker Software Team
   post-code: M13 9PL
-date-released:
-email: spinnakerusers@googlegroups.com
-identifier:
-message: If you use this software, please cite it as below.
+  email: spinnakerusers@googlegroups.com
+date-released: 2019-6-10 #FIXME
+#identifier:
+message: If you use this software, please cite it using the metadata from this file.
 repository: https://github.com/SpiNNakerManchester/sPyNNaker8
 title: The PyNN 0.8 / 0.9 Implementation for executing on SpiNNaker machines.
 url: http://spinnakermanchester.github.io/
-version:
+version: TODO
