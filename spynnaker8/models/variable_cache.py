@@ -4,8 +4,8 @@ class VariableCache(object):
     Typically used to recreate the Neo object for one type of variable for\
     one segment
     """
-    __slots__ = ("_data", "_indexes", "_n_neurons", "_sampling_interval",
-                 "_units")
+    __slots__ = ("__data", "__indexes", "__n_neurons", "__sampling_interval",
+                 "__units")
 
     def __init__(self, data, indexes, n_neurons, units, sampling_interval):
         """
@@ -19,28 +19,28 @@ class VariableCache(object):
         :param units: the units in which the data is
         :type units: str
         """
-        self._data = data
-        self._indexes = indexes
-        self._n_neurons = n_neurons
-        self._units = units
-        self._sampling_interval = sampling_interval
+        self.__data = data
+        self.__indexes = indexes
+        self.__n_neurons = n_neurons
+        self.__units = units
+        self.__sampling_interval = sampling_interval
 
     @property
     def data(self):
-        return self._data
+        return self.__data
 
     @property
     def indexes(self):
-        return self._indexes
+        return self.__indexes
 
     @property
     def n_neurons(self):
-        return self._n_neurons
+        return self.__n_neurons
 
     @property
     def units(self):
-        return self._units
+        return self.__units
 
     @property
     def sampling_interval(self):
-        return self._sampling_interval
+        return self.__sampling_interval

@@ -3,5 +3,7 @@ flake8
 # pytest will be brought in by pytest-cov
 pytest-cov
 pytest-timeout
+pytest-forked
+pytest-progress
 sphinx==1.5.3
 testfixtures
