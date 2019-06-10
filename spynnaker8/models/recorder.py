@@ -120,7 +120,7 @@ class Recorder(RecordingCommon):
             if filter_ids[neuron_id]:
                 # add population first ID to ensure all atoms have a unique
                 # identifier (PyNN enforcement)
-                record_ids.append(neuron_id + self._population._first_id)
+                record_ids.append(neuron_id + self._population.first_id)
         return record_ids
 
     def _clean_variables(self, variables):
@@ -284,8 +284,8 @@ class Recorder(RecordingCommon):
             'size': self._population.size,
             'first_index': 0,
             'last_index': self._population.size,
-            'first_id': int(self._population._first_id),
-            'last_id': int(self._population._last_id),
+            'first_id': int(self._population.first_id),
+            'last_id': int(self._population.last_id),
             'label': self._population.label,
             'simulator': get_simulator().name,
         }
