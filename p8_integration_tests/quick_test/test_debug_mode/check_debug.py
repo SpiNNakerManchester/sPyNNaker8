@@ -67,7 +67,8 @@ class CheckDebug(BaseTestCase):
         if (configs.getboolean("Machine", "enable_advanced_monitor_support")
                 and not configs.getboolean("Java", "use_java")):
             # write_data_speed_up_report
-            reports.append(DataSpeedUpPacketGatherMachineVertex.OUT_REPORT_NAME)
+            reports.append(
+                DataSpeedUpPacketGatherMachineVertex.OUT_REPORT_NAME)
             reports.append(DataSpeedUpPacketGatherMachineVertex.IN_REPORT_NAME)
         pop = sim.Population(100, sim.IF_curr_exp, {}, label="pop")
         pop.record("v")
