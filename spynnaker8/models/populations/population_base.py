@@ -13,6 +13,7 @@ class PopulationBase(object):
 
     Mainly pass through and not implemented
     """
+    __slots__ = []
 
     @property
     def local_cells(self):

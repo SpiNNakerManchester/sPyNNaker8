@@ -207,13 +207,13 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
             "structure": None,
             "size": self.size,
             "size_local": self.size,
-            "first_id": self._first_id,
-            "last_id": self._last_id,
+            "first_id": self.first_id,
+            "last_id": self.last_id,
         }
         context.update(self._annotations)
         if self.size > 0:
             context.update({
-                "local_first_id": self._first_id,
+                "local_first_id": self.first_id,
                 "cell_parameters": {}})
         if self._structure:
             context["structure"] = self._structure.describe(template=None)

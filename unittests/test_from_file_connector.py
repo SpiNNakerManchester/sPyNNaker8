@@ -67,7 +67,10 @@ def test_connector(
             assert(extra_params[:, i].shape == (len(clist), ))
 
     # Check weights and delays are used or ignored as expected
+    pre_slice = Slice(0, 10)
+    post_slice = Slice(0, 10)
     block = connector.create_synaptic_block(
-        weights, delays, [], 0, [], 0, Slice(0, 10), Slice(0, 10), 1)
+        weights, delays, [pre_slice], 0, [post_slice], 0, pre_slice,
+        post_slice, 1)
     assert(numpy.array_equal(block["weight"], numpy.array(expected_weights)))
     assert(numpy.array_equal(block["delay"], numpy.array(expected_delays)))
