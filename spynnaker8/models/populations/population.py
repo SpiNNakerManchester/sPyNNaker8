@@ -43,6 +43,7 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
                     "cellparams must be None")
 
         self._celltype = model
+        self._cellparams = cellparams
 
         # build our initial objects
         super(Population, self).__init__(
