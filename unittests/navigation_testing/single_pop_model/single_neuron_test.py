@@ -1,7 +1,6 @@
 import spynnaker8 as p
 import matplotlib.pyplot as plt
 from pyNN.utility.plotting import Figure, Panel
-from pyNN.space import Grid2D
 from pyNN.random import RandomDistribution, NumpyRNG
 
 '''
@@ -30,7 +29,7 @@ neuron_params = {
     "v_thresh": -50,
     "v_reset": -65,
     "v_rest": -65,
-    "i_offset": 0,  # DC input
+    "i_offset": 1,  # DC input
     "i_vel_drive": 0,
     "tau_m": 20,  # membrane time constant
     "tau_refrac": 0.1,
@@ -48,7 +47,6 @@ pop_exc = p.Population(1,
                        )
 
 pop_exc.record("all")
-pop_exc.describe(template='grid_cell_pop_default.txt', engine='default')
 p.run(runtime)
 
 exc_data = pop_exc.get_data()
@@ -58,14 +56,16 @@ F = Figure(
     # plot data for postsynaptic neuron
     Panel(exc_data.segments[0].filter(name='v')[0],
           ylabel="Membrane potential (mV)",
-          data_labels=[pop_exc.label], yticks=True, xlim=(0, runtime)
+          xlabel="Time (ms)",
+          data_labels=[pop_exc.label], yticks=True, xticks=True, xlim=(0, runtime)
           ),
     Panel(exc_data.segments[0].filter(name='gsyn_exc')[0],
           ylabel="gsyn excitatory (mV)",
-          data_labels=[pop_exc.label], yticks=True, xlim=(0, runtime)
+          xlabel="Time (ms)",
+          data_labels=[pop_exc.label], yticks=True, xticks=True, xlim=(0, runtime)
           ),
     Panel(exc_data.segments[0].spiketrains,
-          yticks=True, markersize=2, xlim=(0, runtime)
+          yticks=True, xticks=True, markersize=2, xlim=(0, runtime)
           ),
 )
 
