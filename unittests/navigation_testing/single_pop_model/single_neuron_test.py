@@ -32,12 +32,11 @@ neuron_params = {
     "i_offset": 1,  # DC input
     "i_vel_drive": 0,
     "tau_m": 20,  # membrane time constant
-    "tau_refrac": 0.1,
-    "dir_pref": 0
+    "tau_refrac": 1,
 }
 
 rng = NumpyRNG(seed=41, parallel_safe=True)
-v_init = RandomDistribution('uniform', (-70, -55), rng)
+v_init = RandomDistribution('uniform', (-65, -50), rng)
 pop_exc = p.Population(1,
                        p.extra_models.GridCell(**neuron_params),
                        cellparams=None,
@@ -50,6 +49,7 @@ pop_exc.record("all")
 p.run(runtime)
 
 exc_data = pop_exc.get_data()
+firing_rate = len(exc_data.segments[0].spiketrains[0]) * (1000/runtime)
 
 # Plot
 F = Figure(
@@ -71,3 +71,8 @@ F = Figure(
 
 plt.show()
 p.end()
+
+print("Firing rate=" + str(firing_rate) + "Hz")
+print("i_offset=" + str(neuron_params['i_offset']) + "nA")
+print("tau_refrac=" + str(neuron_params['tau_refrac']) + "ms")
+print("tau_m=" + str(neuron_params['tau_m']) + "ms")
