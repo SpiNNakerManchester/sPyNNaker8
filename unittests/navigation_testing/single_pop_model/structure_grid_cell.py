@@ -4,6 +4,8 @@ from pyNN.utility.plotting import Figure, Panel
 from pyNN.space import Grid2D
 from pyNN.random import RandomDistribution, NumpyRNG
 import utilities as util
+import numpy as np
+
 
 '''
 Paper Model Parameters
@@ -37,17 +39,13 @@ neuron_params = {
     "i_offset": 1,  # DC input
     "i_vel_drive": 0,
     "tau_m": 20,  # membrane time constant
-    "tau_refrac": 0.1,
+    "tau_refrac": 1,
 }
 
-rng = NumpyRNG(seed=41, parallel_safe=True)
-
-synaptic_weight = -0.6
-synaptic_delay = RandomDistribution('uniform', (5, 6), rng)
-synaptic_radius = 1
+rng = NumpyRNG(seed=None, parallel_safe=True)
 
 pop_grid = Grid2D(aspect_ratio=1.0, dx=1.0, dy=1.0, x0=0, y0=0, z=0, fill_order='sequential')
-v_init = RandomDistribution('uniform', (-70, -55), rng)
+v_init = RandomDistribution('uniform', (-65, -50), rng)
 pop_exc = p.Population(grid_row * grid_col,
                        p.extra_models.GridCell(**neuron_params),
                        cellparams=None,
@@ -56,15 +54,39 @@ pop_exc = p.Population(grid_row * grid_col,
                        label="Grid cells"
                        )
 
-# Initialise neuron directional preferences
-# pop_exc.set(dir_pref=lambda i: util.init_dir_pref(pop_exc.positions[i]))
+synaptic_weight = -0.6
+synaptic_delay = RandomDistribution('uniform', (5, 6), rng)
+synaptic_radius = np.array([1, 1])
+orientation_pref_shift = 1
+
+# Create recurrent connections
+loopConnections = list()
+for i in range(0, grid_row*grid_col):
+    # print(str(pop_exc.positions[i]) + " Dir: " + str(util.get_dir_pref(pop_exc.positions[i])))
+    for j in range(0, grid_row*grid_col):
+        # If different neurons
+        if (i != j):
+            i_pos = (pop_exc.positions[i])[:2]
+            j_pos = (pop_exc.positions[j])[:2]
+
+            # TODO Check if neurons are on boundary
+            diff_pos = np.subtract(i_pos, j_pos)
+            dir_pref = np.array(util.get_dir_pref(i_pos))
+
+            if(np.all(synaptic_radius >= abs(np.subtract(diff_pos, orientation_pref_shift * dir_pref)))):
+                singleConnection = (i, j, synaptic_weight, synaptic_delay.next())
+                loopConnections.append(singleConnection)
+
+proj_exc = p.Projection(
+    pop_exc, pop_exc, p.FromListConnector(loopConnections),
+    p.StaticSynapse(weight=synaptic_weight, delay=synaptic_delay))
 
 pop_exc.record("all")
-print(pop_exc.describe(template='population_default.txt', engine='default'))
-
 p.run(runtime)
+
 exc_data = pop_exc.get_data()
-firing_rate = len(exc_data.segments[0].spiketrains[0]) * (1000/runtime)
+firing_rate = pop_exc.mean_spike_count(gather=True) * (1000/runtime)
+print("Mean spike count=" + str(pop_exc.mean_spike_count(gather=True)))
 
 # Plot
 F = Figure(
@@ -87,6 +109,8 @@ F = Figure(
 plt.show()
 p.end()
 
+# print(pop_exc.describe(template='population_default.txt', engine='default'))
+# print(loopConnections)
 print("Firing rate=" + str(firing_rate) + "Hz")
 print("i_offset=" + str(neuron_params['i_offset']) + "nA")
 print("tau_refrac=" + str(neuron_params['tau_refrac']) + "ms")
