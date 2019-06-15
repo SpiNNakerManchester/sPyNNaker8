@@ -36,7 +36,7 @@ neuron_params = {
     "v_thresh": -50,
     "v_reset": -65,
     "v_rest": -65,
-    "i_offset": 1,  # DC input
+    "i_offset": 0.9,  # DC input
     "i_vel_drive": 0,
     "tau_m": 20,  # membrane time constant
     "tau_refrac": 1,
@@ -53,6 +53,9 @@ pop_exc = p.Population(grid_row * grid_col,
                        structure=pop_grid,
                        label="Grid cells"
                        )
+
+# Create view
+view_exc = p.PopulationView(pop_exc, np.array([1,2,3,4]))
 
 synaptic_weight = -0.6
 synaptic_delay = RandomDistribution('uniform', (5, 6), rng)
@@ -90,7 +93,7 @@ proj_exc = p.Projection(
 pop_exc.record("all")
 p.run(runtime)
 
-exc_data = pop_exc.get_data()
+exc_data = view_exc.get_data()
 firing_rate = pop_exc.mean_spike_count(gather=True) * (1000/runtime)
 print("Mean spike count=" + str(pop_exc.mean_spike_count(gather=True)))
 
