@@ -27,8 +27,8 @@ syn_delay = 5*rand()
 
 p.setup(1)  # simulation timestep (ms)
 runtime = 200
-grid_row = 2
-grid_col = 2
+grid_row = 3
+grid_col = 3
 p.set_number_of_neurons_per_core(p.IF_curr_exp, grid_row*grid_col)
 
 # Post-synapse population
@@ -42,7 +42,7 @@ neuron_params = {
     "tau_refrac": 1,
 }
 
-rng = NumpyRNG(seed=None, parallel_safe=True)
+rng = NumpyRNG(seed=77364, parallel_safe=True)
 
 pop_grid = Grid2D(aspect_ratio=1.0, dx=1.0, dy=1.0, x0=0, y0=0, z=0, fill_order='sequential')
 v_init = RandomDistribution('uniform', (-65, -50), rng)
@@ -68,18 +68,24 @@ for i in range(0, grid_row*grid_col):
         if (i != j):
             i_pos = (pop_exc.positions[i])[:2]
             j_pos = (pop_exc.positions[j])[:2]
-
-            # TODO Check if neurons are on boundary
-            diff_pos = np.subtract(i_pos, j_pos)
+            diff_pos = np.subtract(j_pos, i_pos)
             dir_pref = np.array(util.get_dir_pref(i_pos))
 
-            if(np.all(synaptic_radius >= abs(np.subtract(diff_pos, orientation_pref_shift * dir_pref)))):
-                singleConnection = (i, j, synaptic_weight, synaptic_delay.next())
+            # Wrap plane into torus
+            if((i_pos[0] == 0 and j_pos[0] == grid_row-1) or
+                    (i_pos[0] == grid_row-1 and j_pos[0] == 0)):
+                diff_pos[0] = 1
+            if((i_pos[1] == 0 and j_pos[1] == grid_row-1) or
+                    (i_pos[1] == grid_row-1 and j_pos[1] == 0)):
+                diff_pos[1] = 1
+
+            if(np.all(abs(np.subtract(diff_pos, orientation_pref_shift * dir_pref)) <= synaptic_radius)):
+                singleConnection = (i, j)
                 loopConnections.append(singleConnection)
 
 proj_exc = p.Projection(
     pop_exc, pop_exc, p.FromListConnector(loopConnections),
-    p.StaticSynapse(weight=synaptic_weight, delay=synaptic_delay))
+    p.StaticSynapse(weight=synaptic_weight, delay=synaptic_delay.next()))
 
 pop_exc.record("all")
 p.run(runtime)
@@ -110,7 +116,7 @@ plt.show()
 p.end()
 
 # print(pop_exc.describe(template='population_default.txt', engine='default'))
-# print(loopConnections)
+print(loopConnections)
 print("Firing rate=" + str(firing_rate) + "Hz")
 print("i_offset=" + str(neuron_params['i_offset']) + "nA")
 print("tau_refrac=" + str(neuron_params['tau_refrac']) + "ms")
