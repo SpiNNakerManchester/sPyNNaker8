@@ -1,22 +1,19 @@
 import logging
+import functools
 import numpy
 from six import string_types
-
 from pyNN import common as pynn_common, recording
 from pyNN.space import Space as PyNNSpace
-
+from spinn_front_end_common.utilities import globals_variables
+from spinn_front_end_common.utilities.exceptions import ConfigurationException
+from spynnaker.pyNN.exceptions import InvalidParameterType
 from spynnaker8.models.connectors import FromListConnector
 from spynnaker8.models.synapse_dynamics import SynapseDynamicsStatic
-from spynnaker8.models.populations.population import Population
-from spynnaker8.models.populations.population_view import PopulationView
-from spynnaker8._version import __version__
-
+# This line has to come in this order as it otherwise causes a circular
+# dependency
 from spynnaker.pyNN.models.pynn_projection_common import PyNNProjectionCommon
-from spinn_front_end_common.utilities import globals_variables
-from spynnaker.pyNN.exceptions import InvalidParameterType
-
-from spinn_front_end_common.utilities.exceptions import ConfigurationException
-import functools
+from spynnaker8.models.populations import Population, PopulationView
+from spynnaker8._version import __version__
 
 logger = logging.getLogger(__name__)
 
@@ -25,8 +22,9 @@ class Projection(PyNNProjectionCommon):
     """ sPyNNaker 8 projection class
     """
     # pylint: disable=redefined-builtin
+    __slots__ = [
+        "__simulator"]
 
-    _simulator = None
     _static_synapse_class = SynapseDynamicsStatic
 
     def __init__(
@@ -47,15 +45,12 @@ class Projection(PyNNProjectionCommon):
             space = PyNNSpace()
 
         # set the simulator object correctly.
-        self._simulator = globals_variables.get_simulator()
+        self.__simulator = globals_variables.get_simulator()
 
         if synapse_type is None:
             synapse_type = SynapseDynamicsStatic()
 
-        # move weights and delays over to the connector to satisfy PyNN 8
-        # and 7 compatibility
-        connector.set_weights_and_delays(
-            synapse_type.weight, synapse_type.delay)
+        # set the space function as required
         connector.set_space(space)
 
         # as a from list connector can have plastic parameters, grab those (
@@ -63,9 +58,10 @@ class Projection(PyNNProjectionCommon):
         if isinstance(connector, FromListConnector):
             synapse_plastic_parameters = connector.get_extra_parameters()
             if synapse_plastic_parameters is not None:
-                for parameter in synapse_plastic_parameters.dtype.names:
+                for i, parameter in enumerate(
+                        connector.get_extra_parameter_names()):
                     synapse_type.set_value(
-                        parameter, synapse_plastic_parameters[:, parameter])
+                        parameter, synapse_plastic_parameters[:, i])
 
         # set rng if needed
         rng = None
@@ -74,12 +70,12 @@ class Projection(PyNNProjectionCommon):
 
         super(Projection, self).__init__(
             connector=connector, synapse_dynamics_stdp=synapse_type,
-            target=receptor_type, spinnaker_control=self._simulator,
+            target=receptor_type, spinnaker_control=self.__simulator,
             pre_synaptic_population=pre_synaptic_population,
             post_synaptic_population=post_synaptic_population, rng=rng,
-            machine_time_step=self._simulator.machine_time_step,
-            user_max_delay=self._simulator.max_delay, label=label,
-            time_scale_factor=self._simulator.time_scale_factor)
+            machine_time_step=self.__simulator.machine_time_step,
+            user_max_delay=self.__simulator.max_delay, label=label,
+            time_scale_factor=self.__simulator.time_scale_factor)
 
     def _check_population_param(self, param):
         if isinstance(param, Population):
@@ -139,13 +135,18 @@ class Projection(PyNNProjectionCommon):
         if with_address:
             data_items.append("source")
             data_items.append("target")
+            if "source" in attribute_names:
+                logger.warning(
+                    "Ignoring request to get source as with_address=True. ")
+                attribute_names.remove("source")
+            if "target" in attribute_names:
+                logger.warning(
+                    "Ignoring request to get target as with_address=True. ")
+                attribute_names.remove("target")
 
         # Split out attributes in to standard versus synapse dynamics data
         fixed_values = list()
         for attribute in attribute_names:
-            # if with address set to true, we have decided the end user is
-            # being stupid if they request source and/or target then they get
-            # it twice
             data_items.append(attribute)
             if attribute not in {"source", "target", "weight", "delay"}:
                 value = self._synapse_information.synapse_dynamics.get_value(
@@ -210,7 +211,7 @@ class Projection(PyNNProjectionCommon):
         pynn_common.Projection.weightHistogram(
             self, min=min, max=max, nbins=nbins)
 
-    def _save_callback(
+    def __save_callback(
             self, save_file, format,  # @ReservedAssignment
             metadata, data):
         data_file = save_file
@@ -243,7 +244,7 @@ class Projection(PyNNProjectionCommon):
         self._get_data(
             attribute_names, format, with_address,
             notify=functools.partial(
-                self._save_callback, args=[file, format, metadata]))
+                self.__save_callback, file, format, metadata))
 
     @property
     def pre(self):

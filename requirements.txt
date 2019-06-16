@@ -14,3 +14,4 @@ appdirs >= 1.4.2 , < 2.0.0
 neo >= 0.5.2, < 0.7.0
 matplotlib
 csa
+#spinnaker_tools

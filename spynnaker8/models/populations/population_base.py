@@ -1,8 +1,8 @@
 from __future__ import division
 import logging
 from six import add_metaclass, itervalues
-from spinn_utilities.abstract_base import AbstractBase, abstractmethod, \
-    abstractproperty
+from spinn_utilities.abstract_base import (
+    AbstractBase, abstractmethod, abstractproperty)
 
 logger = logging.getLogger(__name__)
 
@@ -13,6 +13,7 @@ class PopulationBase(object):
 
     Mainly pass through and not implemented
     """
+    __slots__ = []
 
     @property
     def local_cells(self):

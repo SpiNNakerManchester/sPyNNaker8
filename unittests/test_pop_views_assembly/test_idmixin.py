@@ -1,7 +1,6 @@
 import pytest
-
-from p8_integration_tests.base_test_case import BaseTestCase
 import spynnaker8 as sim
+from p8_integration_tests.base_test_case import BaseTestCase
 
 N_NEURONS = 4
 LABEL = "pop_1"
@@ -13,7 +12,7 @@ class TestIDMixin(BaseTestCase):
         sim.setup(timestep=1.0)
         pop_1 = sim.Population(N_NEURONS, sim.IF_curr_exp(), label=LABEL)
         cells = pop_1.all_cells
-        assert 0 == cells[0]._id
+        assert 0 == cells[0].id
         assert pop_1 == cells[0]._population
         assert len(str(cells[0])) > 0
         assert len(repr(cells[0])) > 0

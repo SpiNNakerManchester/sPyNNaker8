@@ -1,17 +1,17 @@
-from spynnaker.pyNN.models.neuron.synapse_dynamics \
-    import SynapseDynamicsSTDP as _BaseClass
 from spinn_front_end_common.utilities import globals_variables
+from spynnaker.pyNN.models.neuron.synapse_dynamics import (
+    SynapseDynamicsSTDP as
+    _BaseClass)
 
 TIME_STAMP_BYTES = 4
-
 # When not using the MAD scheme, how many pre-synaptic events are buffered
 NUM_PRE_SYNAPTIC_EVENTS = 4
 
 
 class SynapseDynamicsSTDP(_BaseClass):
     __slots__ = [
-        "_delay",
-        "_weight"]
+        "__delay",
+        "__weight"]
 
     def __init__(
             self, timing_dependence, weight_dependence,
@@ -36,21 +36,21 @@ class SynapseDynamicsSTDP(_BaseClass):
             voltage_dependence=voltage_dependence,
             dendritic_delay_fraction=dendritic_delay_fraction)
 
-        self._weight = weight
-        self._delay = delay
+        self.__weight = weight
+        self.__delay = delay
 
     @property
     def weight(self):
-        return self._weight
+        return self.__weight
 
     @weight.setter
     def weight(self, new_value):
-        self._weight = new_value
+        self.__weight = new_value
 
     @property
     def delay(self):
-        return self._delay
+        return self.__delay
 
     @delay.setter
     def delay(self, new_value):
-        self._delay = new_value
+        self.__delay = new_value

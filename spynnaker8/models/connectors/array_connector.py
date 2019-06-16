@@ -1,5 +1,5 @@
-from spynnaker.pyNN.models.neural_projections.connectors \
-    import ArrayConnector as CommonArrayConnector
+from spynnaker.pyNN.models.neural_projections.connectors import (
+    ArrayConnector as CommonArrayConnector)
 
 
 class ArrayConnector(CommonArrayConnector):

@@ -1,17 +1,17 @@
 import logging
+import neo
+import inspect
 from six import iteritems, string_types
+from pyNN import descriptions
+from spinn_front_end_common.utilities import globals_variables
+from spinn_front_end_common.utilities.exceptions import ConfigurationException
 from spynnaker.pyNN.exceptions import InvalidParameterType
 from spynnaker.pyNN.models.pynn_population_common import PyNNPopulationCommon
 from spynnaker.pyNN.utilities.constants import SPIKES
-from spinn_front_end_common.utilities import globals_variables
-from spinn_front_end_common.utilities.exceptions import ConfigurationException
-
+from .idmixin import IDMixin
+from .population_base import PopulationBase
+from .population_view import PopulationView
 from spynnaker8.models.recorder import Recorder
-from spynnaker8.models.populations import IDMixin, PopulationBase
-from spynnaker8.models.populations.population_view import PopulationView
-
-from pyNN import descriptions
-import inspect
 
 logger = logging.getLogger(__name__)
 
@@ -36,6 +36,12 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
                 model = cellclass()
             else:
                 model = cellclass(**cellparams)
+        else:
+            if cellparams is not None:
+                raise ConfigurationException(
+                    "cellclass is an instance which includes params so "
+                    "cellparams must be None")
+
         self._celltype = model
 
         # build our initial objects
@@ -136,8 +142,8 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
             # handle special case of 'all'
             if variables == "all":
                 logger.warning(
-                    "This is non-standard PyNN, and therefore may not be "
-                    "portable to other simulators.")
+                    'record("all") is non-standard PyNN, and therefore may '
+                    'not be portable to other simulators.')
 
                 # get all possible recordings for this vertex
                 variables = self._get_all_possible_recordable_variables()
@@ -177,7 +183,7 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
                            "as if gather was set to True.")
 
         if isinstance(io, string_types):
-            io = self._get_io(io)
+            io = neo.get_io(io)
 
         data = self._extract_neo_block(variables, None, clear, annotations)
         # write the neo block to the file
@@ -201,13 +207,13 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
             "structure": None,
             "size": self.size,
             "size_local": self.size,
-            "first_id": self._first_id,
-            "last_id": self._last_id,
+            "first_id": self.first_id,
+            "last_id": self.last_id,
         }
         context.update(self._annotations)
         if self.size > 0:
             context.update({
-                "local_first_id": self._first_id,
+                "local_first_id": self.first_id,
                 "cell_parameters": {}})
         if self._structure:
             context["structure"] = self._structure.describe(template=None)
@@ -318,6 +324,15 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
             except InvalidParameterType:
                 super(Population, self)._initialize(parameter, value)
 
+    def tset(self, **kwargs):
+        logger.warn(
+            "This function is deprecated; call pop.set(...) instead")
+        for parameter, value in iteritems(kwargs):
+            try:
+                super(Population, self).set(parameter, value)
+            except InvalidParameterType:
+                super(Population, self)._initialize(parameter, value)
+
     def initialize(self, **kwargs):
         for parameter, value in iteritems(kwargs):
             super(Population, self)._initialize(parameter, value)
@@ -362,8 +377,29 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
 
     def get(self, parameter_names, gather=False, simplify=True):
         if simplify is not True:
-            logger.warning("The simplify value is ignored if not set to true")
-        return super(Population, self).get(parameter_names, gather)
+            logger.warn("The simplify value is ignored if not set to true")
+        return PyNNPopulationCommon.get(self, parameter_names, gather)
+
+    @property
+    def positions(self):
+        """ Return the position array for structured populations.
+        """
+        if self._positions is None:
+            if self._structure is None:
+                raise ValueError("attempted to retrieve positions "
+                                 "for an unstructured population")
+            self._positions = self._structure.generate_positions(
+                self._vertex.n_atoms)
+        return self._positions.T  # change of order in pyNN 0.8
+
+    @positions.setter
+    def positions(self, positions):
+        """ Sets all the positions in the population.
+        """
+        self._positions = positions
+
+        # state that something has changed in the population,
+        self._change_requires_mapping = True
 
     @property
     def all_cells(self):
