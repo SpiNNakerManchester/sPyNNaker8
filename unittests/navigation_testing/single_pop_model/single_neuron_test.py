@@ -22,7 +22,7 @@ syn_delay = 5*rand()
 '''
 
 p.setup(1)  # simulation timestep (ms)
-runtime = 200
+runtime = 500
 
 # Post-synapse population
 neuron_params = {
@@ -50,6 +50,7 @@ p.run(runtime)
 
 exc_data = pop_exc.get_data()
 firing_rate = len(exc_data.segments[0].spiketrains[0]) * (1000/runtime)
+print("Mean spike count=" + str(pop_exc.mean_spike_count(gather=True)))
 
 # Plot
 F = Figure(
