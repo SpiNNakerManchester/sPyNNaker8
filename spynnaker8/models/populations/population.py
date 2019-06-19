@@ -12,8 +12,8 @@ from .idmixin import IDMixin
 from .population_base import PopulationBase
 from .population_view import PopulationView
 from spynnaker8.models.recorder import Recorder
-from spinnak_ear.spinnakear_vertex import SpiNNakEarVertex
-
+from spinnak_ear.spinnak_ear_application_vertex.spinnakear_application_vertex\
+    import SpiNNakEarApplicationVertex
 logger = logging.getLogger(__name__)
 
 
@@ -108,7 +108,7 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         :param sampling_interval: a value in milliseconds, and an integer\
             multiple of the simulation timestep.
         """
-        if isinstance(self._vertex, SpiNNakEarVertex):
+        if isinstance(self._vertex, SpiNNakEarApplicationVertex):
             self._vertex.record(variables)
         else:
             if indexes is not None:
@@ -256,12 +256,13 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         :type annotations: dict
         :rtype: neo.Block
         """
-        if isinstance(self._vertex,SpiNNakEarVertex):
+        if isinstance(self._vertex, SpiNNakEarApplicationVertex):
             return self._vertex.get_data(variables)
         else:
             if not gather:
-                logger.warning("sPyNNaker only supports gather=True. We will run "
-                               "as if gather was set to True.")
+                logger.warning(
+                    "sPyNNaker only supports gather=True. We will run as if "
+                    "gather was set to True.")
 
             return self._extract_neo_block(variables, None, clear, annotations)
 
