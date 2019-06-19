@@ -26,20 +26,25 @@ syn_delay = 5*rand()
 '''
 
 p.setup(1)  # simulation timestep (ms)
-runtime = 200
+runtime = 500
 
-grid_row = 8
-grid_col = 8
+grid_row = 4
+grid_col = 4
 p.set_number_of_neurons_per_core(p.IF_curr_exp, grid_row*grid_col)
 
 is_auto_receptor = False
+
+synaptic_weight = -0.6
+# synaptic_delay = RandomDistribution('uniform', low=0, high=1, rng=rng)
+synaptic_radius = 1
+orientation_pref_shift = 1
 
 # Post-synapse population
 neuron_params = {
     "v_thresh": -50,
     "v_reset": -65,
     "v_rest": -65,
-    "i_offset": 0.9,  # DC input
+    "i_offset": 0.8,  # DC input
     "i_vel_drive": 0,
     "tau_m": 20,  # membrane time constant
     "tau_refrac": 1,
@@ -60,39 +65,25 @@ pop_exc = p.Population(grid_row * grid_col,
 # Create view
 view_exc = p.PopulationView(pop_exc, np.array([0,1,2,3]))
 
-synaptic_weight = -0.6
-synaptic_delay = RandomDistribution('uniform', low=0, high=5, rng=rng)
-synaptic_radius = 4
-orientation_pref_shift = 1
-
 # Create recurrent connections
 loopConnections = list()
 for i in range(0, grid_row*grid_col):
-    # print(str(pop_exc.positions[i]) + " Dir: " + str(util.get_dir_pref(pop_exc.positions[i])))
     for j in range(0, grid_row*grid_col):
         # If different neurons
         if (i != j or is_auto_receptor):
-            i_pos = (pop_exc.positions[i])[:2]
-            j_pos = (pop_exc.positions[j])[:2]
-            diff_pos = np.subtract(j_pos, i_pos)
-            dir_pref = np.array(util.get_dir_pref(i_pos))
+            postsyn_pos = (pop_exc.positions[i])[:2]
+            presyn_pos = (pop_exc.positions[j])[:2]
+            euc_dist = util.get_neuron_distance_periodic(grid_col, grid_row, postsyn_pos, presyn_pos)
+            dir_pref = np.array(util.get_dir_pref(presyn_pos))
 
-            # # Wrap plane into torus
-            # if((i_pos[0] == 0 and j_pos[0] == grid_row-1) or
-            #         (i_pos[0] == grid_row-1 and j_pos[0] == 0)):
-            #     diff_pos[0] = 1
-            # if((i_pos[1] == 0 and j_pos[1] == grid_row-1) or
-            #         (i_pos[1] == grid_row-1 and j_pos[1] == 0)):
-            #     diff_pos[1] = 1
-
-            if(np.all(abs(np.subtract(diff_pos, orientation_pref_shift * dir_pref)) <= synaptic_radius)):
-                singleConnection = (i, j)
+            # Establish connection
+            if(np.all(abs(euc_dist - (orientation_pref_shift * dir_pref) <= synaptic_radius))):
+                singleConnection = (j, i, synaptic_weight, euc_dist)
                 loopConnections.append(singleConnection)
 
-# space = p.Space(axes='xy', periodic_boundaries=((0, 100), (0, 100), None))
 proj_exc = p.Projection(
     pop_exc, pop_exc, p.FromListConnector(loopConnections),
-    p.StaticSynapse(weight=synaptic_weight, delay=synaptic_delay.next()),
+    p.StaticSynapse(),
     receptor_type='inhibitory',
     label="inhibitory connections")
 
@@ -100,6 +91,7 @@ pop_exc.record("all")
 p.run(runtime)
 
 exc_data = view_exc.get_data()
+# exc_data = pop_exc.get_data()
 firing_rate = pop_exc.mean_spike_count(gather=True) * (1000/runtime)
 print("Mean spike count=" + str(pop_exc.mean_spike_count(gather=True)))
 
@@ -113,6 +105,11 @@ F = Figure(
           ),
     Panel(exc_data.segments[0].filter(name='gsyn_exc')[0],
           ylabel="gsyn excitatory (mV)",
+          xlabel="Time (ms)",
+          data_labels=[pop_exc.label], yticks=True, xticks=True, xlim=(0, runtime)
+          ),
+    Panel(exc_data.segments[0].filter(name='gsyn_inh')[0],
+          ylabel="gsyn inhibitory (mV)",
           xlabel="Time (ms)",
           data_labels=[pop_exc.label], yticks=True, xticks=True, xlim=(0, runtime)
           ),
