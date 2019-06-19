@@ -27,9 +27,12 @@ syn_delay = 5*rand()
 
 p.setup(1)  # simulation timestep (ms)
 runtime = 200
-grid_row = 3
-grid_col = 3
+
+grid_row = 8
+grid_col = 8
 p.set_number_of_neurons_per_core(p.IF_curr_exp, grid_row*grid_col)
+
+is_auto_receptor = False
 
 # Post-synapse population
 neuron_params = {
@@ -45,7 +48,7 @@ neuron_params = {
 rng = NumpyRNG(seed=77364, parallel_safe=True)
 
 pop_grid = Grid2D(aspect_ratio=1.0, dx=1.0, dy=1.0, x0=0, y0=0, z=0, fill_order='sequential')
-v_init = RandomDistribution('uniform', (-65, -50), rng)
+v_init = RandomDistribution('uniform', low=-65, high=-50, rng=rng)
 pop_exc = p.Population(grid_row * grid_col,
                        p.extra_models.GridCell(**neuron_params),
                        cellparams=None,
@@ -55,11 +58,11 @@ pop_exc = p.Population(grid_row * grid_col,
                        )
 
 # Create view
-view_exc = p.PopulationView(pop_exc, np.array([1,2,3,4]))
+view_exc = p.PopulationView(pop_exc, np.array([0,1,2,3]))
 
 synaptic_weight = -0.6
-synaptic_delay = RandomDistribution('uniform', (5, 6), rng)
-synaptic_radius = np.array([1, 1])
+synaptic_delay = RandomDistribution('uniform', low=0, high=5, rng=rng)
+synaptic_radius = 4
 orientation_pref_shift = 1
 
 # Create recurrent connections
@@ -68,27 +71,30 @@ for i in range(0, grid_row*grid_col):
     # print(str(pop_exc.positions[i]) + " Dir: " + str(util.get_dir_pref(pop_exc.positions[i])))
     for j in range(0, grid_row*grid_col):
         # If different neurons
-        if (i != j):
+        if (i != j or is_auto_receptor):
             i_pos = (pop_exc.positions[i])[:2]
             j_pos = (pop_exc.positions[j])[:2]
             diff_pos = np.subtract(j_pos, i_pos)
             dir_pref = np.array(util.get_dir_pref(i_pos))
 
-            # Wrap plane into torus
-            if((i_pos[0] == 0 and j_pos[0] == grid_row-1) or
-                    (i_pos[0] == grid_row-1 and j_pos[0] == 0)):
-                diff_pos[0] = 1
-            if((i_pos[1] == 0 and j_pos[1] == grid_row-1) or
-                    (i_pos[1] == grid_row-1 and j_pos[1] == 0)):
-                diff_pos[1] = 1
+            # # Wrap plane into torus
+            # if((i_pos[0] == 0 and j_pos[0] == grid_row-1) or
+            #         (i_pos[0] == grid_row-1 and j_pos[0] == 0)):
+            #     diff_pos[0] = 1
+            # if((i_pos[1] == 0 and j_pos[1] == grid_row-1) or
+            #         (i_pos[1] == grid_row-1 and j_pos[1] == 0)):
+            #     diff_pos[1] = 1
 
             if(np.all(abs(np.subtract(diff_pos, orientation_pref_shift * dir_pref)) <= synaptic_radius)):
                 singleConnection = (i, j)
                 loopConnections.append(singleConnection)
 
+# space = p.Space(axes='xy', periodic_boundaries=((0, 100), (0, 100), None))
 proj_exc = p.Projection(
     pop_exc, pop_exc, p.FromListConnector(loopConnections),
-    p.StaticSynapse(weight=synaptic_weight, delay=synaptic_delay.next()))
+    p.StaticSynapse(weight=synaptic_weight, delay=synaptic_delay.next()),
+    receptor_type='inhibitory',
+    label="inhibitory connections")
 
 pop_exc.record("all")
 p.run(runtime)
