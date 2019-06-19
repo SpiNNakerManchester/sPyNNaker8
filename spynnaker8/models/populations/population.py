@@ -108,7 +108,7 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         :param sampling_interval: a value in milliseconds, and an integer\
             multiple of the simulation timestep.
         """
-        if isinstance(self._vertex,SpiNNakEarVertex):
+        if isinstance(self._vertex, SpiNNakEarVertex):
             self._vertex.record(variables)
         else:
             if indexes is not None:
