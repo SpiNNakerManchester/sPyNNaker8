@@ -108,16 +108,13 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         :param sampling_interval: a value in milliseconds, and an integer\
             multiple of the simulation timestep.
         """
-        if isinstance(self._vertex, SpiNNakEarApplicationVertex):
-            self._vertex.record(variables)
-        else:
-            if indexes is not None:
-                logger.warn(
-                    "record indexes parameter is non-standard PyNN, so may not "
-                    "be portable to other simulators. "
-                    "It is now deprecated and replaced with views")
-            self._record_with_indexes(
-                variables, to_file, sampling_interval, indexes)
+        if indexes is not None:
+            logger.warn(
+                "record indexes parameter is non-standard PyNN, so may not "
+                "be portable to other simulators. "
+                "It is now deprecated and replaced with views")
+        self._record_with_indexes(
+            variables, to_file, sampling_interval, indexes)
 
     def _record_with_indexes(
             self, variables, to_file, sampling_interval, indexes):
