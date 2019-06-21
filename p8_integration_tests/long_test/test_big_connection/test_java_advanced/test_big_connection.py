@@ -32,3 +32,8 @@ class TestBigConnection(BaseTestCase):
         spikes = pop2.spinnaker_get_data("spikes")
         self.assertEqual(sources * destinations, len(spikes))
         sim.end()
+
+
+if __name__ == "__main__":
+    obj = TestBigConnection()
+    obj.test_big()

@@ -22,13 +22,13 @@ class SynfireProjectionOnSameChip(BaseTestCase):
                            run_times=runtimes, get_weights=get_weights,
                            get_delays=get_delays)
         weights = synfire_run.get_weights()
-        self.assertEquals(n_neurons, len(weights[0]))
-        self.assertEquals(n_neurons, len(weights[1]))
+        self.assertEqual(n_neurons, len(weights[0]))
+        self.assertEqual(n_neurons, len(weights[1]))
         self.assertTrue(numpy.allclose(weights[0][0][2], weights[1][0][2]))
 
         delays = synfire_run.get_delay()
-        self.assertEquals(n_neurons, len(delays[0]))
-        self.assertEquals(n_neurons, len(delays[1]))
+        self.assertEqual(n_neurons, len(delays[0]))
+        self.assertEqual(n_neurons, len(delays[1]))
         self.assertTrue(numpy.allclose(delays[0][0][2], delays[1][0][2]))
 
     def test_get_before_and_after(self):
