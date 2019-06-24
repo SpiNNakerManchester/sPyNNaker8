@@ -87,6 +87,11 @@ from spynnaker.pyNN.models.neuron.builds. \
      if_curr_exp_izhikevich_neuromodulation \
      import IFCurrExpIzhikevichNeuromodulation \
      as IF_curr_exp_izhikevich_neuromodulation
+     
+from spynnaker.pyNN.models.neuron.builds. \
+     izk_curr_exp_izhikevich_neuromodulation \
+     import IZKCurrExpIzhikevichNeuromodulation \
+     as IZK_curr_exp_izhikevich_neuromodulation
 # noinspection PyUnresolvedReferences
 from spynnaker.pyNN.models.neuron.builds.if_curr_alpha import \
     IFCurrAlpha as IF_curr_alpha
@@ -143,7 +148,7 @@ __all__ = [
     'IzhikevichNeuromodulation',
     # neuron stuff
     'IF_cond_exp', 'IF_curr_exp', "IF_curr_alpha",
-    'IF_curr_exp_izhikevich_neuromodulation',
+    'IF_curr_exp_izhikevich_neuromodulation', 'IZK_curr_exp_izhikevich_neuromodulation',
     'Izhikevich', 'SpikeSourceArray', 'SpikeSourcePoisson',
     # pops
     'Assembly', 'Population', 'PopulationView',
