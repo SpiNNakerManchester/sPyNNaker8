@@ -10,8 +10,8 @@ NUM_PRE_SYNAPTIC_EVENTS = 4
 
 class SynapseDynamicsSTDP(_BaseClass):
     __slots__ = [
-        "_delay",
-        "_weight"]
+        "__delay",
+        "__weight"]
 
     def __init__(
             self, timing_dependence, weight_dependence,
@@ -37,21 +37,21 @@ class SynapseDynamicsSTDP(_BaseClass):
             dendritic_delay_fraction=dendritic_delay_fraction,
             neuromodulation=neuromodulation)
 
-        self._weight = weight
-        self._delay = delay
+        self.__weight = weight
+        self.__delay = delay
 
     @property
     def weight(self):
-        return self._weight
+        return self.__weight
 
     @weight.setter
     def weight(self, new_value):
-        self._weight = new_value
+        self.__weight = new_value
 
     @property
     def delay(self):
-        return self._delay
+        return self.__delay
 
     @delay.setter
     def delay(self, new_value):
-        self._delay = new_value
+        self.__delay = new_value

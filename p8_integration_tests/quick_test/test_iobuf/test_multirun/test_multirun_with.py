@@ -41,7 +41,7 @@ class TestIobuffMultirun(BaseTestCase):
         self.assertNotEqual(prov_path, prov_patha)
         size6 = self.check_size(prov_patha)
         # Should write the same thing again
-        self.assertEquals(size1, size6)
+        self.assertEqual(size1, size6)
         sim.end()
 
         # Should not add anything on end.

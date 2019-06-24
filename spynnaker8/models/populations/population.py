@@ -207,13 +207,13 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
             "structure": None,
             "size": self.size,
             "size_local": self.size,
-            "first_id": self._first_id,
-            "last_id": self._last_id,
+            "first_id": self.first_id,
+            "last_id": self.last_id,
         }
         context.update(self._annotations)
         if self.size > 0:
             context.update({
-                "local_first_id": self._first_id,
+                "local_first_id": self.first_id,
                 "cell_parameters": {}})
         if self._structure:
             context["structure"] = self._structure.describe(template=None)
@@ -318,6 +318,15 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         return self._get_variable_unit(variable)
 
     def set(self, **kwargs):
+        for parameter, value in iteritems(kwargs):
+            try:
+                super(Population, self).set(parameter, value)
+            except InvalidParameterType:
+                super(Population, self)._initialize(parameter, value)
+
+    def tset(self, **kwargs):
+        logger.warn(
+            "This function is deprecated; call pop.set(...) instead")
         for parameter, value in iteritems(kwargs):
             try:
                 super(Population, self).set(parameter, value)

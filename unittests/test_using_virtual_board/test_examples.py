@@ -1,3 +1,4 @@
+import io
 import os
 import unittest
 import matplotlib.pyplot as plt
@@ -43,8 +44,8 @@ class TestScripts(BaseTestCase):
                 script = os.path.join(directory, a_script)
                 try:
                     globals_variables.unset_simulator()
-                    plotting = "import matplotlib.pyplot" in open(
-                        script).read()
+                    with io.open(script, encoding="latin_1") as f:
+                        plotting = "import matplotlib.pyplot" in f.read()
                     if plotting:
                         self.check_plotting_script(script)
                     else:
