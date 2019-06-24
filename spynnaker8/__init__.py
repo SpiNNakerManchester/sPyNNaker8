@@ -87,11 +87,18 @@ from spynnaker.pyNN.models.neuron.builds. \
      if_curr_exp_izhikevich_neuromodulation \
      import IFCurrExpIzhikevichNeuromodulation \
      as IF_curr_exp_izhikevich_neuromodulation
-     
+
+# Adding Izhikevich current and conductance based models - June 2019     
 from spynnaker.pyNN.models.neuron.builds. \
      izk_curr_exp_izhikevich_neuromodulation \
      import IZKCurrExpIzhikevichNeuromodulation \
      as IZK_curr_exp_izhikevich_neuromodulation
+     
+from spynnaker.pyNN.models.neuron.builds. \
+     izk_cond_exp_izhikevich_neuromodulation \
+     import IZKCondExpIzhikevichNeuromodulation \
+     as IZK_cond_exp_izhikevich_neuromodulation
+     
 # noinspection PyUnresolvedReferences
 from spynnaker.pyNN.models.neuron.builds.if_curr_alpha import \
     IFCurrAlpha as IF_curr_alpha
@@ -149,7 +156,7 @@ __all__ = [
     # neuron stuff
     'IF_cond_exp', 'IF_curr_exp', "IF_curr_alpha",
     'IF_curr_exp_izhikevich_neuromodulation', 'IZK_curr_exp_izhikevich_neuromodulation',
-    'Izhikevich', 'SpikeSourceArray', 'SpikeSourcePoisson',
+    'Izhikevich', 'SpikeSourceArray', 'SpikeSourcePoisson', 'IZK_cond_exp_izhikevich_neuromodulation'
     # pops
     'Assembly', 'Population', 'PopulationView',
     # projection
