@@ -19,7 +19,7 @@ class FixedNumberPreConnector(CommonFixedNumberPreConnector,
             with_replacement=False, rng=None, callback=None):
         """
         :param n: \
-            number of random pre-synaptic neurons connected to output
+            number of random pre-synaptic neurons connected to post-neurons
         :type n: int
         :param allow_self_connections: \
             if the connector is used to connect a Population to itself, this\
@@ -47,11 +47,3 @@ class FixedNumberPreConnector(CommonFixedNumberPreConnector,
             n=n, allow_self_connections=allow_self_connections,
             with_replacement=with_replacement, safe=safe, verbose=verbose,
             rng=rng)
-
-    @property
-    def n(self):
-        return self._n_pre
-
-    @n.setter
-    def n(self, new_value):
-        self._n_pre = new_value
