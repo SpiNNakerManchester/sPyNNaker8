@@ -119,15 +119,16 @@ class TestFixedNumberPreConnector(BaseTestCase):
         with self.assertRaises(SpynnakerException):
             self.check_other_connect(SOURCES+3, with_replacement)
 
-    def test_get_before_run(self):
-        sim.setup(1.0)
-        pop1 = sim.Population(3, sim.IF_curr_exp(), label="pop1")
-        pop2 = sim.Population(3, sim.IF_curr_exp(), label="pop2")
-        synapse_type = sim.StaticSynapse(weight=5, delay=1)
-        projection = sim.Projection(
-            pop1, pop2, sim.FixedNumberPreConnector(2),
-            synapse_type=synapse_type)
-        weights = projection.get(["weight"], "list")
-        sim.run(0)
-        self.assertEqual(6, len(weights))
-        sim.end()
+    # https://github.com/SpiNNakerManchester/sPyNNaker/issues/613
+#     def test_get_before_run(self):
+#         sim.setup(1.0)
+#         pop1 = sim.Population(3, sim.IF_curr_exp(), label="pop1")
+#         pop2 = sim.Population(3, sim.IF_curr_exp(), label="pop2")
+#         synapse_type = sim.StaticSynapse(weight=5, delay=1)
+#         projection = sim.Projection(
+#             pop1, pop2, sim.FixedNumberPreConnector(2),
+#             synapse_type=synapse_type)
+#         weights = projection.get(["weight"], "list")
+#         sim.run(0)
+#         self.assertEqual(6, len(weights))
+#         sim.end()
