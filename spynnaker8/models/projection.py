@@ -22,8 +22,9 @@ class Projection(PyNNProjectionCommon):
     """ sPyNNaker 8 projection class
     """
     # pylint: disable=redefined-builtin
+    __slots__ = [
+        "__simulator"]
 
-    _simulator = None
     _static_synapse_class = SynapseDynamicsStatic
 
     def __init__(
@@ -44,7 +45,7 @@ class Projection(PyNNProjectionCommon):
             space = PyNNSpace()
 
         # set the simulator object correctly.
-        self._simulator = globals_variables.get_simulator()
+        self.__simulator = globals_variables.get_simulator()
 
         if synapse_type is None:
             synapse_type = SynapseDynamicsStatic()
@@ -69,12 +70,12 @@ class Projection(PyNNProjectionCommon):
 
         super(Projection, self).__init__(
             connector=connector, synapse_dynamics_stdp=synapse_type,
-            target=receptor_type, spinnaker_control=self._simulator,
+            target=receptor_type, spinnaker_control=self.__simulator,
             pre_synaptic_population=pre_synaptic_population,
             post_synaptic_population=post_synaptic_population, rng=rng,
-            machine_time_step=self._simulator.machine_time_step,
-            user_max_delay=self._simulator.max_delay, label=label,
-            time_scale_factor=self._simulator.time_scale_factor)
+            machine_time_step=self.__simulator.machine_time_step,
+            user_max_delay=self.__simulator.max_delay, label=label,
+            time_scale_factor=self.__simulator.time_scale_factor)
 
     def _check_population_param(self, param):
         if isinstance(param, Population):
@@ -134,13 +135,18 @@ class Projection(PyNNProjectionCommon):
         if with_address:
             data_items.append("source")
             data_items.append("target")
+            if "source" in attribute_names:
+                logger.warning(
+                    "Ignoring request to get source as with_address=True. ")
+                attribute_names.remove("source")
+            if "target" in attribute_names:
+                logger.warning(
+                    "Ignoring request to get target as with_address=True. ")
+                attribute_names.remove("target")
 
         # Split out attributes in to standard versus synapse dynamics data
         fixed_values = list()
         for attribute in attribute_names:
-            # if with address set to true, we have decided the end user is
-            # being stupid if they request source and/or target then they get
-            # it twice
             data_items.append(attribute)
             if attribute not in {"source", "target", "weight", "delay"}:
                 value = self._synapse_information.synapse_dynamics.get_value(
@@ -205,7 +211,7 @@ class Projection(PyNNProjectionCommon):
         pynn_common.Projection.weightHistogram(
             self, min=min, max=max, nbins=nbins)
 
-    def _save_callback(
+    def __save_callback(
             self, save_file, format,  # @ReservedAssignment
             metadata, data):
         data_file = save_file
@@ -238,7 +244,7 @@ class Projection(PyNNProjectionCommon):
         self._get_data(
             attribute_names, format, with_address,
             notify=functools.partial(
-                self._save_callback, file, format, metadata))
+                self.__save_callback, file, format, metadata))
 
     @property
     def pre(self):
