@@ -26,6 +26,15 @@ def get_neuron_distance_periodic(grid_w, grid_h, pos1, pos2):
     return math.sqrt(math.pow(min(delta_x, grid_w - delta_x), 2) +
                      math.pow(min(delta_y, grid_h - delta_y), 2))
 
+
+# Get the synapses for a given neuron
+def get_neuron_connections(neuron_id, connections):
+    neuron_connections = list()
+    for connection in connections:
+        if connection[0] == neuron_id or connection[1] == neuron_id:
+            neuron_connections.append(connection)
+    return neuron_connections
+
 # def plot_neuron_fire_heatmap(spiketrains):
 #     spike_freq = np.zeros(len(spiketrains))
 #     fig, ax = plt.subplots()
