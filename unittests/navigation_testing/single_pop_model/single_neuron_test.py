@@ -61,7 +61,12 @@ F = Figure(
           data_labels=[pop_exc.label], yticks=True, xticks=True, xlim=(0, runtime)
           ),
     Panel(exc_data.segments[0].filter(name='gsyn_exc')[0],
-          ylabel="gsyn excitatory (mV)",
+          ylabel="excitatory synaptic conduction (uS)",
+          xlabel="Time (ms)",
+          data_labels=[pop_exc.label], yticks=True, xticks=True, xlim=(0, runtime)
+          ),
+    Panel(exc_data.segments[0].filter(name='gsyn_inh')[0],
+          ylabel="inhibitory synaptic conduction (uS)",
           xlabel="Time (ms)",
           data_labels=[pop_exc.label], yticks=True, xticks=True, xlim=(0, runtime)
           ),
