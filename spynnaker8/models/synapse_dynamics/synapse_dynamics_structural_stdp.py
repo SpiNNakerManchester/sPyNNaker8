@@ -106,7 +106,7 @@ class SynapseDynamicsStructuralSTDP(STDPStructuralBaseClass):
             seed=seed
         )
 
-        self._weight = stdp_model._weight
+        self._weight = stdp_model.weight
         _delay = stdp_model.delay
         if _delay is None:
             _delay = globals_variables.get_simulator().min_delay
