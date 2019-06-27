@@ -16,3 +16,4 @@ MANIFEST
 __pycache__
 *local/
 *.log
+JobDestroyedError.txt
