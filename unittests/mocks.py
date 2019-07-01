@@ -1,6 +1,7 @@
 import configparser
 import numpy
 from spinn_front_end_common.utilities import globals_variables
+from spynnaker8 import RandomDistribution
 
 
 class MockPopulation(object):
@@ -55,7 +56,10 @@ class MockSimulator(object):
         return isinstance(values, MockRNG)
 
     def get_pynn_NumpyRNG(self):
-        return MockRNG()
+        return MockRNG
+
+    def get_random_distribution(self):
+        return RandomDistribution
 
     def add_population(self, pop):
         pass
