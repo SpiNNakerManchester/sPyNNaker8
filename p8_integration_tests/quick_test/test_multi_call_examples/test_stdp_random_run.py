@@ -34,7 +34,7 @@ class TestSTDPRandomRun(BaseTestCase):
         sim.run(100)
         weights_2_1 = proj.get("weight", "list")
         weights_2_2 = proj_2.get("weight", "list")
-        spikes_2 = pop.get_data("spikes").segments[0].spiketrains
+        spikes_2 = pop.get_data("spikes").segments[1].spiketrains
         sim.end()
 
         assert(numpy.array_equal(weights_1_1, weights_2_1))
