@@ -72,6 +72,10 @@ pop_exc = p.Population(grid_row * grid_col,
 # Create view
 view_exc = p.PopulationView(pop_exc, np.array([0, 1, 2, 3]))
 
+# Randomly sample cells from population
+# view_exc_all = p.PopulationView(pop_exc, np.array([]))
+# view_exc_random = view_exc_all.sample(4, rng=rng)
+
 # Create recurrent connections
 loopConnections = list()
 for i in range(0, grid_row*grid_col):
@@ -96,9 +100,10 @@ proj_exc = p.Projection(
     label="inhibitory connections")
 
 pop_exc.record("all")
-# p.run(runtime)
+p.run(runtime)
 
 exc_data = view_exc.get_data()
+# exc_data = view_exc.get_data()
 # exc_data = pop_exc.get_data()
 firing_rate = pop_exc.mean_spike_count(gather=True) * (1000/runtime)
 print("Mean spike count=" + str(pop_exc.mean_spike_count(gather=True)))
@@ -130,7 +135,7 @@ plt.show()
 p.end()
 
 # print(pop_exc.describe(template='population_default.txt', engine='default'))
-print(util.get_neuron_connections(0, loopConnections))
+print("Connections for id=0" + str(util.get_neuron_connections(0, loopConnections)))
 print("Firing rate=" + str(firing_rate) + "Hz")
 print("i_offset=" + str(neuron_params['i_offset']) + "nA")
 print("tau_refrac=" + str(neuron_params['tau_refrac']) + "ms")
