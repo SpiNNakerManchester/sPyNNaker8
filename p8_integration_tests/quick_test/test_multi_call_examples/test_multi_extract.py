@@ -8,7 +8,7 @@ neurons_per_core = n_neurons / 2
 simtime = 1000
 
 
-class TestMulty(BaseTestCase):
+class TestMultiExtract(BaseTestCase):
 
     def check_data(self, pop, expected_spikes, simtime, early_neo):
         neo = pop.get_data("all")
