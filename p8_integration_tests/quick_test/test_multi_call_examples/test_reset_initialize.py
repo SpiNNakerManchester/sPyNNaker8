@@ -1,6 +1,5 @@
 import spynnaker8 as sim
 from p8_integration_tests.base_test_case import BaseTestCase
-import numpy
 
 
 class TestResetInitialize(BaseTestCase):
