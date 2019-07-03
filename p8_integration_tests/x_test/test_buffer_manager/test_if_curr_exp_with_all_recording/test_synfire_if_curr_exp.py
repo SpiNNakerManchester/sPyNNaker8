@@ -20,7 +20,7 @@ class SynfireIfCurrExp(BaseTestCase):
         spikes = synfire_run.get_output_pop_spikes_numpy()
 
         spike_checker.synfire_spike_checker(spikes, n_neurons)
-        self.assertEquals(263, len(spikes))
+        self.assertEqual(263, len(spikes))
 
 
 if __name__ == '__main__':

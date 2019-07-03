@@ -21,7 +21,7 @@ class Synfire6300n10pop30pc18chipsNoDelaysSpikeRrecording(BaseTestCase):
                                           neurons_per_core=neurons_per_core,
                                           runtime=runtime)
         spikes = results
-        self.assertEquals(1666, len(spikes))
+        self.assertEqual(1666, len(spikes))
         spike_checker.synfire_spike_checker(spikes, nNeurons * n_pops)
 
 
