@@ -1,33 +1,33 @@
 from operator import add
 
-speed = 0
-head_dir = []
-positions = []
 
+# Assume 1 step is equivalent to 1 metre
+class StraightWalk:
 
-def __init__(speed, direction):
-    speed = speed
-    head_dir = direction
-    positions = [[0, 0]]
+    def __init__(self, speed, direction):
+        self.speed = speed
+        self.head_dir = direction
+        self.positions = [[0, 0]]
 
+    def next_step(self):
+        position = [0, 0]
+        if self.head_dir == [0, 1]:
+            position = map(add, self.positions[-1], [0, 1 * self.speed])
+        elif self.head_dir == [0, -1]:
+            position = map(add, self.positions[-1], [0, -1 * self.speed])
+        elif self.head_dir == [1, 0]:
+            position = map(add, self.positions[-1], [1 * self.speed, 0])
+        elif self.head_dir == [-1, 0]:
+            position = map(add, self.positions[-1], [-1 * self.speed, 0])
+        self.positions.append(position)
 
-def next_step():
-    position = [0, 0]
-    if(head_dir == [0, 1]):
-        position = map(add, positions[-1], [0, 1])
-    elif(head_dir == [0, -1]):
-        position = map(add, positions[-1], [0, -1])
-    elif (head_dir == [1, 0]):
-        position = map(add, positions[-1], [1, 0])
-    elif (head_dir == [-1, 0]):
-        position = map(add, positions[-1], [-1, 0])
-    positions.append(position)
-    return position
+    def get_velocity(self):
+        self.next_step()
+        return [self.speed, self.head_dir]
 
+    def get_positions(self, timestep):
+        trajectory = [None] * len(self.positions)
+        for i in range(len(self.positions)):
+            trajectory[i] = [[i * timestep, self.positions[i]]]
+        return trajectory
 
-def get_velocity():
-    return [speed, next_step()]
-
-
-def get_positions():
-    return positions
