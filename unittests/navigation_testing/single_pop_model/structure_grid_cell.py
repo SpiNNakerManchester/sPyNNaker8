@@ -1,11 +1,18 @@
-import spynnaker8 as p
+# Standard library imports
 import matplotlib.pyplot as plt
-from pyNN.utility.plotting import Figure, Panel
-from pyNN.space import Grid2D
-from pyNN.random import RandomDistribution, NumpyRNG
-import utilities as util
 import numpy as np
 
+# Third party imports
+import spynnaker8 as p
+from pyNN.random import RandomDistribution, NumpyRNG
+from pyNN.space import Grid2D
+from pyNN.utility.plotting import Figure, Panel
+
+# Local application imports
+# from ..tools import utilities as util
+# from ..agent_simulations import straight_walk as sim_straight_walk
+import utilities as util
+import straight_walk as sim_straight_walk
 
 '''
 Paper Model Parameters
@@ -26,7 +33,7 @@ syn_delay = 5*rand()
 '''
 
 p.setup(1)  # simulation timestep (ms)
-runtime = 500
+runtime = 500  # ms
 
 grid_row = 4
 grid_col = 4
@@ -63,7 +70,7 @@ pop_exc = p.Population(grid_row * grid_col,
                        )
 
 # Create view
-view_exc = p.PopulationView(pop_exc, np.array([0,1,2,3]))
+view_exc = p.PopulationView(pop_exc, np.array([0, 1, 2, 3]))
 
 # Create recurrent connections
 loopConnections = list()
@@ -81,6 +88,7 @@ for i in range(0, grid_row*grid_col):
                 singleConnection = (j, i, synaptic_weight, euc_dist)
                 loopConnections.append(singleConnection)
 
+# Create inhibitory connections
 proj_exc = p.Projection(
     pop_exc, pop_exc, p.FromListConnector(loopConnections),
     p.StaticSynapse(),
@@ -88,7 +96,7 @@ proj_exc = p.Projection(
     label="inhibitory connections")
 
 pop_exc.record("all")
-p.run(runtime)
+# p.run(runtime)
 
 exc_data = view_exc.get_data()
 # exc_data = pop_exc.get_data()
@@ -104,12 +112,12 @@ F = Figure(
           data_labels=[pop_exc.label], yticks=True, xticks=True, xlim=(0, runtime)
           ),
     Panel(exc_data.segments[0].filter(name='gsyn_exc')[0],
-          ylabel="gsyn excitatory (mV)",
+          ylabel="excitatory synaptic conduction (uS)",
           xlabel="Time (ms)",
           data_labels=[pop_exc.label], yticks=True, xticks=True, xlim=(0, runtime)
           ),
     Panel(exc_data.segments[0].filter(name='gsyn_inh')[0],
-          ylabel="gsyn inhibitory (mV)",
+          ylabel="inhibitory synaptic conduction (uS)",
           xlabel="Time (ms)",
           data_labels=[pop_exc.label], yticks=True, xticks=True, xlim=(0, runtime)
           ),
@@ -122,7 +130,7 @@ plt.show()
 p.end()
 
 # print(pop_exc.describe(template='population_default.txt', engine='default'))
-print(loopConnections)
+print(util.get_neuron_connections(0, loopConnections))
 print("Firing rate=" + str(firing_rate) + "Hz")
 print("i_offset=" + str(neuron_params['i_offset']) + "nA")
 print("tau_refrac=" + str(neuron_params['tau_refrac']) + "ms")
