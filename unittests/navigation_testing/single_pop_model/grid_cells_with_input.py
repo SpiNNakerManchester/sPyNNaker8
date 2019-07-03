@@ -96,18 +96,21 @@ proj_exc = p.Projection(
     label="inhibitory connections")
 
 pop_exc.record("all")
-p.run(runtime)
+# p.run(runtime)
 
-# Simulate agent movement1
-# speed = 2  # m/s
-# head_dir = [0, 1]
-# sim_straight_walk.__init__(speed, head_dir)
-#
-# for i in range(0, runtime, 50):
-#     speed, head_dir = sim_straight_walk.get_velocity()  # get agent's velocity
-#     print("Agent speed=" + str(speed)+ " m/s")
-#     print("Agent head direction=" + str(head_dir))
-#     p.run(50)
+# Simulate agent movement
+agent_straight_walk = sim_straight_walk.StraightWalk(2.5, [0, 1])
+
+run_step = 50
+for i in range(0, runtime, run_step):
+    speed, head_dir = agent_straight_walk.get_velocity()
+    print("[DEBUG] Agent speed=" + str(speed)+ "m/s")
+    print("[DEBUG] Agent head direction=" + str(head_dir))
+    p.run(run_step)
+
+# Get trajectory
+trajectory = agent_straight_walk.get_positions(run_step)
+print("[DEBUG] Agent trajectory: " + str(trajectory))
 
 exc_data = view_exc.get_data()
 # exc_data = pop_exc.get_data()
@@ -123,17 +126,17 @@ F = Figure(
           data_labels=[pop_exc.label], yticks=True, xticks=True, xlim=(0, runtime)
           ),
     Panel(exc_data.segments[0].filter(name='gsyn_exc')[0],
-          ylabel="excitatory synaptic conduction (uS)",
+          ylabel="Excitatory synaptic conduction (uS)",
           xlabel="Time (ms)",
           data_labels=[pop_exc.label], yticks=True, xticks=True, xlim=(0, runtime)
           ),
     Panel(exc_data.segments[0].filter(name='gsyn_inh')[0],
-          ylabel="inhibitory synaptic conduction (uS)",
+          ylabel="Inhibitory synaptic conduction (uS)",
           xlabel="Time (ms)",
           data_labels=[pop_exc.label], yticks=True, xticks=True, xlim=(0, runtime)
           ),
     Panel(exc_data.segments[0].spiketrains,
-          yticks=True, xticks=True, markersize=2, xlim=(0, runtime)
+          yticks=True, xticks=True, xlabel="Time (ms)", markersize=2, xlim=(0, runtime)
           ),
 )
 
