@@ -29,7 +29,11 @@ class TestResetInitialize(BaseTestCase):
         pop.set(i_offset=2.0)
         sim.run(runtime)
 
-        pop.initialize(v=initial4)  # this should do nothing
+        try:
+            pop.initialize(v=initial4)  # this should throw an exception
+        except Exception as ex:
+            pass
+
         pop.set(i_offset=2.5)
         sim.run(runtime)
 
