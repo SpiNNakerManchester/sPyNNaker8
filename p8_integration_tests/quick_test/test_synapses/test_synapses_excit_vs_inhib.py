@@ -28,6 +28,7 @@ class TestSynapsesExcitVsInhib(BaseTestCase):
         # setup recorder
         if_pop.record(["v"])
         p.run(100)
+        p.reset()
         if_pop.initialize(v=-65)
         p.run(100)
         # read out voltage and plot
