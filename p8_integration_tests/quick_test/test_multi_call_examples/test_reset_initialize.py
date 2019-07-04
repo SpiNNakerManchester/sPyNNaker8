@@ -31,7 +31,7 @@ class TestResetInitialize(BaseTestCase):
 
         try:
             pop.initialize(v=initial4)  # this should throw an exception
-        except Exception as ex:
+        except Exception:
             pass
 
         pop.set(i_offset=2.5)
