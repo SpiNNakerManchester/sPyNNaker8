@@ -3,6 +3,8 @@
 
 Tools for simulating neural models generated using PyNN 0.9 on the SpiNNaker platform
 
+_This branch is just for testing the Fast Data Transfer protocols._
+
 Documentation
 =============
 [sPyNNaker8 python documentation](http://spynnaker8.readthedocs.io/en/latest/)
