@@ -66,12 +66,8 @@ class TestSetTOffset(BaseTestCase):
         n_cores = 3
         neo = do_run(n_neurons, n_cores, 1, 2)
         spiketrains = neo.segments[0].spiketrains
-        try:
-            for spiketrain in spiketrains:
-                assert numpy.array_equal(spiketrain.magnitude, self.expected)
-        except AssertionError:
-            self.known_issue(
-                "https://github.com/SpiNNakerManchester/sPyNNaker/issues/603")
+        for spiketrain in spiketrains:
+            assert numpy.array_equal(spiketrain.magnitude, self.expected)
 
     def test_three_cores(self):
         self.runsafe(self.three_cores)

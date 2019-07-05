@@ -50,12 +50,8 @@ class TestNoChange(BaseTestCase):
         sim.reset()
         sim.run(5)
         v2 = pop.spinnaker_get_data('v')
-        try:
-            self.check_from_65(v2)
-        except AssertionError:
-            self.known_issue(
-                "https://github.com/SpiNNakerManchester/sPyNNaker/issues/599")
         sim.end()
+        self.check_from_65(v2)
 
     def test_change_pre_reset(self):
         self.runsafe(self.change_pre_reset)
@@ -92,17 +88,12 @@ class TestNoChange(BaseTestCase):
         sim.run(3)
         v1 = pop.spinnaker_get_data('v')
         self.check_from_65(v1)
-
         sim.reset()
         pop.set(tau_syn_E=1)
         sim.run(5)
         v2 = pop.spinnaker_get_data('v')
-        try:
-            self.check_from_65(v2)
-        except AssertionError:
-            self.known_issue(
-                "https://github.com/SpiNNakerManchester/sPyNNaker/issues/599")
         sim.end()
+        self.check_from_65(v2)
 
     def test_run_set_run_reset_set(self):
         self.runsafe(self.run_set_run_reset_set)
@@ -242,12 +233,8 @@ class TestNoChange(BaseTestCase):
         inp.set(spike_times=[100])
         sim.run(5)
         v2 = pop.spinnaker_get_data('v')
-        try:
-            self.check_from_65(v2)
-        except AssertionError:
-            self.known_issue(
-                "https://github.com/SpiNNakerManchester/sPyNNaker/issues/599")
         sim.end()
+        self.check_from_65(v2)
 
     def test_reset_set_with_v_set(self):
         self.runsafe(self.reset_set_with_v_set)
@@ -262,12 +249,8 @@ class TestNoChange(BaseTestCase):
         pop.set(tau_syn_E=1)
         sim.run(2)
         v1 = pop.spinnaker_get_data('v')
-        try:
-            self.check_from_65(v1)
-        except AssertionError:
-            self.known_issue(
-                "https://github.com/SpiNNakerManchester/sPyNNaker/issues/603")
         sim.end()
+        self.check_from_65(v1)
 
     def test_multi_core(self):
         self.runsafe(self.multi_core)
