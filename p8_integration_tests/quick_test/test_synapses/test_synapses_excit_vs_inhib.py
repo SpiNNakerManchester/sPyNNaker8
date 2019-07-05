@@ -21,7 +21,7 @@ class TestSynapsesExcitVsInhib(BaseTestCase):
         exc_pop = p.Population(1, p.SpikeSourceArray,
                                {'spike_times': spike_times})
         inh_pop = p.Population(1, p.SpikeSourceArray,
-                               {'spike_times': []})
+                               {'spike_times': [120, 140, 160]})
         # setup excitatory and inhibitory connections
         listcon = p.FromListConnector([(0, 0, 0.05, 1.0)])
         p.Projection(exc_pop, if_pop, listcon, receptor_type='excitatory')
