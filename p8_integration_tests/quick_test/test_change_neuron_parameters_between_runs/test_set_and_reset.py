@@ -6,11 +6,11 @@ class TestNoChange(BaseTestCase):
 
     def check_from_65(self, v):
         for i in range(0, len(v), 5):
-            assert -65. == v[i*5+0][2]
-            assert -64.024658203125 == v[i*5+1][2]
-            assert -63.09686279296875 == v[i*5+2][2]
-            assert -62.214324951171875 == v[i*5+3][2]
-            assert -61.37481689453125 == v[i*5+4][2]
+            assert -65. == v[i+0][2]
+            assert -64.024658203125 == v[i+1][2]
+            assert -63.09686279296875 == v[i+2][2]
+            assert -62.214324951171875 == v[i+3][2]
+            assert -61.37481689453125 == v[i+4][2]
 
     def check_from_60(self, v):
         assert -60. == v[0][2]
