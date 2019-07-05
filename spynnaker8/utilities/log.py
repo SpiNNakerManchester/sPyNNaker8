@@ -11,18 +11,22 @@ levels = {
 
 
 class ConfiguredFilter(object):
+    __slots__ = [
+        "__default_level",
+        "__levels"]
+
     def __init__(self, conf):
-        self._levels = ConfiguredFormatter.construct_logging_parents(conf)
-        self._default_level = levels[conf.get("Logging", "default")]
+        self.__levels = ConfiguredFormatter.construct_logging_parents(conf)
+        self.__default_level = levels[conf.get("Logging", "default")]
 
     def filter(self, record):
         """ Get the level for the deepest parent, and filter appropriately.
         """
         level = ConfiguredFormatter.level_of_deepest_parent(
-            self._levels, record.name)
+            self.__levels, record.name)
 
         if level is None:
-            return record.levelno >= self._default_level
+            return record.levelno >= self.__default_level
 
         return record.levelno >= level
 
