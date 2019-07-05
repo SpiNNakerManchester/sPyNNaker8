@@ -195,11 +195,7 @@ class TestNoChange(BaseTestCase):
         pop.record(["v"])
         sim.run(5)
         v1 = pop.spinnaker_get_data('v')
-        try:
-            self.check_from_60(v1)
-            raise AssertionError("Unexpected after 60 voltage")
-        except AssertionError:
-            pass  # That should have failed
+        self.check_from_60(v1)
         sim.reset()
         inp.set(spike_times=[100])
         sim.run(5)
@@ -223,18 +219,14 @@ class TestNoChange(BaseTestCase):
         pop.record(["v"])
         sim.run(5)
         v1 = pop.spinnaker_get_data('v')
-        try:
-            self.check_from_60(v1)
-            raise AssertionError("Unexpected after 60 voltage")
-        except AssertionError:
-            pass  # That should have failed
+        self.check_from_60(v1)
         pop.set(tau_syn_E=1)
         sim.reset()
         inp.set(spike_times=[100])
         sim.run(5)
         v2 = pop.spinnaker_get_data('v')
         sim.end()
-        self.check_from_65(v2)
+        self.check_from_60(v2)
 
     def test_reset_set_with_v_set(self):
         self.runsafe(self.reset_set_with_v_set)
