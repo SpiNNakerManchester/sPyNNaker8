@@ -32,11 +32,13 @@ syn_weight = -0.6mV
 syn_delay = 5*rand()
 '''
 
+DEBUG = True
+
 p.setup(1)  # simulation timestep (ms)
 runtime = 500  # ms
 
-grid_row = 4
-grid_col = 4
+grid_row = 10
+grid_col = 10
 p.set_number_of_neurons_per_core(p.IF_curr_exp, grid_row*grid_col)
 
 is_auto_receptor = False
@@ -99,43 +101,53 @@ pop_exc.record("all")
 # p.run(runtime)
 
 # Simulate agent movement
-agent_straight_walk = sim_straight_walk.StraightWalk(2.5, [0, 1])
+dir = [-1, 0]
+agent_straight_walk = sim_straight_walk.StraightWalk(2.5, dir)
 
-run_step = 50
+run_step = 100
 for i in range(0, runtime, run_step):
     speed, head_dir = agent_straight_walk.get_velocity()
-    print("[DEBUG] Agent speed=" + str(speed)+ "m/s")
-    print("[DEBUG] Agent head direction=" + str(head_dir))
+    if DEBUG:
+        print("[DEBUG] Agent speed=" + str(speed)+ "m/s")
+        print("[DEBUG] Agent head direction=" + str(head_dir))
     p.run(run_step)
+
+    # Plot firing rate across manifold
+    # util.plot_population_firing_rate(pop_exc.get_data().segments[0].spiketrains, pop_exc.positions, (i + 1) * run_step,
+    #                                  grid_row, grid_col)
 
 # Get trajectory
 trajectory = agent_straight_walk.get_positions(run_step)
-print("[DEBUG] Agent trajectory: " + str(trajectory))
+if DEBUG:
+    print("[DEBUG] Agent trajectory: " + str(trajectory))
 
-exc_data = view_exc.get_data()
-# exc_data = pop_exc.get_data()
+exc_data_pop = pop_exc.get_data()
+exc_data_view = view_exc.get_data()
 firing_rate = pop_exc.mean_spike_count(gather=True) * (1000/runtime)
 print("Mean spike count=" + str(pop_exc.mean_spike_count(gather=True)))
+
+# Plot activity
+spike_trains = exc_data_pop.segments[0].spiketrains
 
 # Plot
 F = Figure(
     # plot data for postsynaptic neuron
-    Panel(exc_data.segments[0].filter(name='v')[0],
+    Panel(exc_data_view.segments[0].filter(name='v')[0],
           ylabel="Membrane potential (mV)",
           xlabel="Time (ms)",
           data_labels=[pop_exc.label], yticks=True, xticks=True, xlim=(0, runtime)
           ),
-    Panel(exc_data.segments[0].filter(name='gsyn_exc')[0],
+    Panel(exc_data_view.segments[0].filter(name='gsyn_exc')[0],
           ylabel="Excitatory synaptic conduction (uS)",
           xlabel="Time (ms)",
           data_labels=[pop_exc.label], yticks=True, xticks=True, xlim=(0, runtime)
           ),
-    Panel(exc_data.segments[0].filter(name='gsyn_inh')[0],
+    Panel(exc_data_view.segments[0].filter(name='gsyn_inh')[0],
           ylabel="Inhibitory synaptic conduction (uS)",
           xlabel="Time (ms)",
           data_labels=[pop_exc.label], yticks=True, xticks=True, xlim=(0, runtime)
           ),
-    Panel(exc_data.segments[0].spiketrains,
+    Panel(spike_trains,
           yticks=True, xticks=True, xlabel="Time (ms)", markersize=2, xlim=(0, runtime)
           ),
 )
@@ -143,9 +155,14 @@ F = Figure(
 plt.show()
 p.end()
 
+util.plot_trajectory_infinite_1d(trajectory, dir, runtime, False)
+# util.plot_population_spike_activity(grid_row, grid_col, spike_trains, pop_exc.positions, [381, 400])
+
+
 # print(pop_exc.describe(template='population_default.txt', engine='default'))
-print(util.get_neuron_connections(0, loopConnections))
-print("Firing rate=" + str(firing_rate) + "Hz")
-print("i_offset=" + str(neuron_params['i_offset']) + "nA")
-print("tau_refrac=" + str(neuron_params['tau_refrac']) + "ms")
-print("tau_m=" + str(neuron_params['tau_m']) + "ms")
+if DEBUG:
+    print(util.get_neuron_connections(0, loopConnections))
+    print("Firing rate=" + str(firing_rate) + "Hz")
+    print("i_offset=" + str(neuron_params['i_offset']) + "nA")
+    print("tau_refrac=" + str(neuron_params['tau_refrac']) + "ms")
+    print("tau_m=" + str(neuron_params['tau_m']) + "ms")
