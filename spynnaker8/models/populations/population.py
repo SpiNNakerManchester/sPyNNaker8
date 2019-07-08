@@ -12,8 +12,7 @@ from .idmixin import IDMixin
 from .population_base import PopulationBase
 from .population_view import PopulationView
 from spynnaker8.models.recorder import Recorder
-from spinnak_ear.spinnak_ear_application_vertex.spinnakear_application_vertex\
-    import SpiNNakEarApplicationVertex
+
 logger = logging.getLogger(__name__)
 
 
@@ -253,15 +252,12 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         :type annotations: dict
         :rtype: neo.Block
         """
-        if isinstance(self._vertex, SpiNNakEarApplicationVertex):
-            return self._vertex.get_data(variables)
-        else:
-            if not gather:
-                logger.warning(
-                    "sPyNNaker only supports gather=True. We will run as if "
-                    "gather was set to True.")
+        if not gather:
+            logger.warning(
+                "sPyNNaker only supports gather=True. We will run as if "
+                "gather was set to True.")
 
-            return self._extract_neo_block(variables, None, clear, annotations)
+        return self._extract_neo_block(variables, None, clear, annotations)
 
     def get_data_by_indexes(
             self, variables, indexes, clear=False, annotations=None):
