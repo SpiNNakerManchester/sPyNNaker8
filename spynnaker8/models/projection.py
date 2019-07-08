@@ -23,7 +23,8 @@ class Projection(PyNNProjectionCommon):
     """
     # pylint: disable=redefined-builtin
     __slots__ = [
-        "__simulator"]
+        "__simulator",
+        "__label"]
 
     _static_synapse_class = SynapseDynamicsStatic
 
@@ -46,6 +47,15 @@ class Projection(PyNNProjectionCommon):
 
         # set the simulator object correctly.
         self.__simulator = globals_variables.get_simulator()
+
+        # set label
+        self.__label = label
+        if label is None:
+            # set the projection's label here, but allow the edge label
+            # to be set lower down if necessary
+            self.__label = "from pre {} to post {} with connector {}".format(
+                pre_synaptic_population.label, post_synaptic_population.label,
+                connector)
 
         if synapse_type is None:
             synapse_type = SynapseDynamicsStatic()
@@ -256,7 +266,7 @@ class Projection(PyNNProjectionCommon):
 
     @property
     def label(self):
-        return self._projection_edge.label
+        return self.__label
 
     def __repr__(self):
-        return "projection {}".format(self._projection_edge.label)
+        return "projection {}".format(self.__label)
