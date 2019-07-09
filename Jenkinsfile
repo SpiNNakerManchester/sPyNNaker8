@@ -96,6 +96,7 @@ pipeline {
                 sh 'echo "[Java]" >> ~/.spynnaker.cfg'
                 sh 'echo "use_java = True" >> ~/.spynnaker.cfg'
                 sh 'echo "java_call=/usr/bin/java" >> ~/.spynnaker.cfg'
+                sh 'echo "java_properties=-Dspinnaker.parallel_tasks=10" >> ~/.spynnaker.cfg'
                 sh 'printf "java_spinnaker_path=" >> ~/.spynnaker.cfg'
                 sh 'pwd >> ~/.spynnaker.cfg'
                 // Prepare coverage
@@ -128,7 +129,7 @@ pipeline {
         }
         stage('Reports') {
             steps {
-                sh 'if [ -d reports ]; then find reports/* -type f -print -exec cat {}  \\; ; fi'
+                sh 'find . -maxdepth 3 -type f -wholename "*/reports/*" -print -exec cat \\{\\}  \\;'
             }
         }
         stage('Check Destroyed') {

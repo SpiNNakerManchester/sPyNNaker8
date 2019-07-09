@@ -112,8 +112,8 @@ class ArrayConnectorTest(BaseTestCase):
         # any checks go here
         spikes_test = neo_convertor.convert_spikes(spikes)
         spikes_test2 = neo_convertor.convert_spikes(spikes2)
-        self.assertEquals(263, len(spikes_test))
-        self.assertEquals(263, len(spikes_test2))
+        self.assertEqual(263, len(spikes_test))
+        self.assertEqual(263, len(spikes_test2))
 
     def test_a_run(self):
         self.runsafe(self.a_run)

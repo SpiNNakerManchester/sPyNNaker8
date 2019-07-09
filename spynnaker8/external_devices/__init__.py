@@ -107,6 +107,13 @@ def run_forever():
     AbstractSpiNNakerCommon.run(globals_variables.get_simulator(), None)
 
 
+def request_stop():
+    """ Request a stop in the simulation without a complete stop.  Will stop\
+        after the next auto-pause-and-resume cycle
+    """
+    globals_variables.get_simulator().stop_run()
+
+
 def register_database_notification_request(hostname, notify_port, ack_port):
     """ Adds a socket system which is registered with the notification protocol
 
