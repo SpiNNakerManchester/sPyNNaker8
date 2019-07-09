@@ -7,7 +7,6 @@ from pyNN.space import Space as PyNNSpace
 from spinn_front_end_common.utilities import globals_variables
 from spinn_front_end_common.utilities.exceptions import ConfigurationException
 from spynnaker.pyNN.exceptions import InvalidParameterType
-from spynnaker.pyNN.models.neuron import ConnectionHolder
 from spynnaker8.models.connectors import FromListConnector
 from spynnaker8.models.synapse_dynamics import SynapseDynamicsStatic
 # This line has to come in this order as it otherwise causes a circular
