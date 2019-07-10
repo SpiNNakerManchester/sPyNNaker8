@@ -124,7 +124,7 @@ class SmallWorldConnectorTest(BaseTestCase):
         # any checks go here
         v_test = neo_convertor.convert_data(v, name='v')
         spikes_test = neo_convertor.convert_data(spikes, name='spikes')
-        self.assertEquals(25000, len(v_test))
+        self.assertEqual(25000, len(v_test))
         # Not sure checking spike len is telling us much
         self.assertLess(7750, len(spikes_test))
         self.assertGreater(8250, len(spikes_test))
