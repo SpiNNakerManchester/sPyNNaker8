@@ -50,8 +50,6 @@ class TestKernelConnector(BaseTestCase):
 
         weightsdelays = sorted(c2.get(['weight', 'delay'], 'list'),
                                key=lambda x: x[1])
-        print(weightsdelays)
-        print('there are', len(weightsdelays), 'connections')
 
         # Get data
         spikes = pop.spinnaker_get_data('spikes')
