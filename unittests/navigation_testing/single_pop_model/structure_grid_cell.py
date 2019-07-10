@@ -33,15 +33,15 @@ syn_delay = 5*rand()
 '''
 
 p.setup(1)  # simulation timestep (ms)
-runtime = 500  # ms
+runtime = 1000  # ms
 
-grid_row = 4
-grid_col = 4
+grid_row = 10
+grid_col = 10
 p.set_number_of_neurons_per_core(p.IF_curr_exp, grid_row*grid_col)
 
 is_auto_receptor = False
 
-synaptic_weight = -0.6
+synaptic_weight = 0.6
 # synaptic_delay = RandomDistribution('uniform', low=0, high=1, rng=rng)
 synaptic_radius = 1
 orientation_pref_shift = 1
@@ -82,13 +82,13 @@ for i in range(0, grid_row*grid_col):
     for j in range(0, grid_row*grid_col):
         # If different neurons
         if (i != j or is_auto_receptor):
-            postsyn_pos = (pop_exc.positions[i])[:2]
-            presyn_pos = (pop_exc.positions[j])[:2]
+            postsyn_pos = (pop_exc.positions[i])
+            presyn_pos = (pop_exc.positions[j])
             euc_dist = util.get_neuron_distance_periodic(grid_col, grid_row, postsyn_pos, presyn_pos)
             dir_pref = np.array(util.get_dir_pref(presyn_pos))
 
             # Establish connection
-            if(np.all(abs(euc_dist - (orientation_pref_shift * dir_pref) <= synaptic_radius))):
+            if np.all(abs(euc_dist - (orientation_pref_shift * dir_pref)) <= synaptic_radius):
                 singleConnection = (j, i, synaptic_weight, euc_dist)
                 loopConnections.append(singleConnection)
 
@@ -126,7 +126,7 @@ F = Figure(
           xlabel="Time (ms)",
           data_labels=[pop_exc.label], yticks=True, xticks=True, xlim=(0, runtime)
           ),
-    Panel(exc_data.segments[0].spiketrains,
+    Panel(pop_exc.get_data().segments[0].spiketrains,
           yticks=True, xticks=True, markersize=2, xlim=(0, runtime)
           ),
 )
