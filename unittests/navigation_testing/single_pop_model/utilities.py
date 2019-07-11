@@ -134,9 +134,9 @@ def plot_population_firing_rate(spike_trains, neuron_positions, times, grid_row,
                            c=norm_firing_rate, cmap=cmap, norm=plt.Normalize(0, 1))
     # plt.colorbar(cmap)
     fig.tight_layout()
-    plt.show()
     if filename:
         plt.savefig("plots/" +  filename + '.png', facecolor=fig.get_facecolor(), bbox_inches='tight')
+    plt.show()
 
 
 # Plot spike train activity at a given time
@@ -160,9 +160,9 @@ def plot_population_spike_activity(spike_trains, neuron_positions, times, grid_r
                 ax.scatter(pos[0], pos[1], color="White")
 
     fig.tight_layout()
-    plt.show()
     if filename:
         plt.savefig("plots/" + filename + '.png', facecolor=fig.get_facecolor(), bbox_inches='tight')
+    plt.show()
 
 
 # Plot membrane potential activity at a given time
@@ -188,6 +188,6 @@ def plot_population_membrane_potential_activity(membrane_potentials, neuron_posi
                        s=10, c=norm, cmap=cmap, norm=plt.Normalize(0, 1))
     # plt.colorbar(cmap)
     fig.tight_layout()
-    plt.show()
     if filename:
         plt.savefig("plots/" + filename + '.png', facecolor=fig.get_facecolor(), bbox_inches='tight')
+    plt.show()
