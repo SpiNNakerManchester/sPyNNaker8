@@ -148,15 +148,9 @@ class MyTestCase(BaseTestCase):
         self.runsafe(self.recording_poisson_spikes_rate_fast)
 
     def recording_poisson_spikes_rate_slow(self):
-        try:
-            self.check_rates(
-                [0, 0.01, 0.02, 0.04, 0.08, 0.16, 0.32,
-                 0.64, 1.28, 2.56, 5.12],
-                100)
-        except AssertionError:
-            sim.end()
-            self.known_issue(
-                "https://github.com/SpiNNakerManchester/sPyNNaker/issues/629")
+        self.check_rates(
+            [0, 0.01, 0.02, 0.04, 0.08, 0.16, 0.32, 0.64, 1.28, 2.56, 5.12],
+            100)
 
     def test_recording_poisson_spikes_rate_slow(self):
         self.runsafe(self.recording_poisson_spikes_rate_slow)
