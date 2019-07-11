@@ -15,7 +15,7 @@ from pyNN.utility.plotting import Figure, Panel
 DEBUG = True
 
 p.setup(1)  # simulation timestep (ms)
-runtime = 1000  # ms
+runtime = 2000  # ms
 
 n_row = 50
 n_col = 50
@@ -24,7 +24,7 @@ p.set_number_of_neurons_per_core(p.IF_curr_exp, 255)
 is_auto_receptor = False
 
 rng = NumpyRNG(seed=77364, parallel_safe=True)
-synaptic_weight = 0.6
+synaptic_weight = 1.0
 synaptic_radius = 10
 orientation_pref_shift = 1
 
@@ -126,12 +126,11 @@ F = Figure(
           ),
 )
 
-plt.show()
-
 # Custom plots
-filename = str(n_col) + '_' + str(n_row) + '_' + str(neuron_params['i_offset']) + "nA"\
+filename = str(runtime) + 'ms_' + str(n_col) + '_' + str(n_row) + '_' + str(neuron_params['i_offset']) + "nA"\
            + time.strftime("%Y-%m-%d_%H-%M-%S")
 plt.savefig("plots/" + filename + '.png', bbox_inches='tight')
+plt.show()
 
 util.plot_population_firing_rate(pop_spike_trains, pop_exc.positions, [0, 150, 500, runtime], n_row, n_col,
                                  filename + "_pop_firing_rate")
