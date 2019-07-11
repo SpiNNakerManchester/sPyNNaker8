@@ -256,6 +256,8 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
             logger.warning("sPyNNaker only supports gather=True. We will run "
                            "as if gather was set to True.")
 
+        if variables == 'synapse':
+            return self._extract_non_neo_block(variables, None, clear, annotations)
         return self._extract_neo_block(variables, None, clear, annotations)
 
     def get_data_by_indexes(

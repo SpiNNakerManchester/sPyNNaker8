@@ -13,10 +13,10 @@ from spinn_utilities.ordered_set import OrderedSet
 from spinn_utilities.log import FormatAdapter
 from spinn_front_end_common.utilities.globals_variables import get_simulator
 from spynnaker.pyNN.models.common import (
-    AbstractNeuronRecordable, AbstractSpikeRecordable)
+    AbstractNeuronRecordable, AbstractSpikeRecordable, AbstractSynapseRecordable)
 from spynnaker.pyNN.models.recording_common import RecordingCommon
 from spynnaker.pyNN.utilities.constants import (
-    SPIKES, MEMBRANE_POTENTIAL, GSYN_EXCIT, GSYN_INHIB)
+    SPIKES, MEMBRANE_POTENTIAL, GSYN_EXCIT, GSYN_INHIB, SYNAPSE)
 from spynnaker.pyNN.exceptions import InvalidParameterType
 from .data_cache import DataCache
 from spynnaker8.utilities.version_util import pynn8_syntax
@@ -37,6 +37,28 @@ class Recorder(RecordingCommon):
         super(Recorder, self).__init__(population)
         self._recording_start_time = get_simulator().t
         self._data_cache = {}
+        self._synapse_data_cache = {}
+
+    def _extract_non_neo_block(self, variables, view_indexes, clear, annotations):
+        """ Extracts block from synapse vertices and returns it
+
+        :param variables: the variables to extract
+        :param view_indexes: the indexes to be included in the view
+        :param clear: if the variables should be cleared after reading
+        :param annotations: annotations to put on the Neo block
+        :return: The block
+        """
+
+        block = dict()
+
+        for previous in range(0, get_simulator().segment_counter):
+            self._append_previous_synapse_segment(
+                block, previous, variables, view_indexes)
+
+        # add to the segments the new block
+        self._append_current_synapse_segment(block, variables, clear)
+
+        return block
 
     def _extract_neo_block(self, variables, view_indexes, clear, annotations):
         """ Extracts block from the vertices and puts them into a Neo block
@@ -113,6 +135,40 @@ class Recorder(RecordingCommon):
                     units=self._get_units(variable),
                     sampling_interval=sampling_interval)
             self._data_cache[segment_number] = data_cache
+
+    def cache_synapse_data(self):
+        """ Store data for later extraction
+        """
+
+        if isinstance(self._population._vertex, Iterable):
+            vertex = self._population._vertex[0]
+        else:
+            vertex = self._population._vertex
+
+        if isinstance(vertex,
+                      AbstractSynapseRecordable) and \
+                vertex.is_recording_synapses(SYNAPSE):
+
+            variable = SYNAPSE
+
+            segment_number = get_simulator().segment_counter
+            logger.info("Caching data for segment {:d}", segment_number)
+
+            data_cache = DataCache(
+                label=self._population.label,
+                description=self._population.describe(),
+                segment_number=segment_number,
+                recording_start_time=self._recording_start_time,
+                t=get_simulator().t)
+
+            (data, indexes, sampling_interval) = \
+                self._get_recorded_synapse_matrix(variable)
+            data_cache.save_data(
+                variable=variable, data=data, indexes=indexes,
+                n_neurons=1,
+                units=None,
+                sampling_interval=sampling_interval)
+        self._synapse_data_cache[segment_number] = data_cache
 
     def _filter_recorded(self, filter_ids):
         record_ids = list()
@@ -191,6 +247,25 @@ class Recorder(RecordingCommon):
         if clear:
             self._clear_recording(variables)
 
+    def _append_current_synapse_segment(self, block, variables, clear):
+
+        # sort out variables for using
+        variables = self._clean_variables(variables)
+
+        if isinstance(self._population._vertex, Iterable):
+            vertex = self._population._vertex[0]
+        else:
+            vertex = self._population._vertex
+
+        for variable in variables:
+            (data, data_indexes, sampling_interval) = \
+                self._get_recorded_synapse_matrix(variable)
+
+        block.update(data)
+
+        if clear:
+            self._clear_recording(variables)
+
     def _append_previous_segment(
             self, block, segment_number, variables, view_indexes):
         if segment_number not in self._data_cache:
@@ -243,6 +318,12 @@ class Recorder(RecordingCommon):
 
         block.segments.append(segment)
 
+    def _append_previous_synapse_segment(
+            self, block, segment_number, variables, view_indexes):
+
+        # Called when simulation is reset. Not used by us for the moment
+        return NotImplementedError
+
     def _get_all_possible_recordable_variables(self):
         variables = OrderedSet()
 
@@ -256,6 +337,7 @@ class Recorder(RecordingCommon):
         if isinstance(vertex, AbstractNeuronRecordable):
             variables.update(
                 vertex.get_recordable_variables())
+
         return variables
 
     def _get_all_recording_variables(self):
@@ -277,6 +359,7 @@ class Recorder(RecordingCommon):
                             AbstractNeuronRecordable) and \
                     vertex.is_recording(possible):
                 variables.add(possible)
+
         return variables
 
     def _metadata(self):
@@ -322,6 +405,12 @@ class Recorder(RecordingCommon):
                     get_simulator().buffer_manager,
                     get_simulator().placements,
                     get_simulator().graph_mapper)
+            elif variable == SYNAPSE:
+                vertex.clear_synapse_recording(
+                    get_simulator().buffer_manager,
+                    get_simulator().placements,
+                    get_simulator().graph_mapper)
+
             else:
                 raise InvalidParameterType(
                     "The variable {} is not a recordable value".format(
