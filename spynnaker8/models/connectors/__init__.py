@@ -12,10 +12,11 @@ from .index_based_probability_connector import IndexBasedProbabilityConnector
 from .multapse_connector import MultapseConnector as FixedTotalNumberConnector
 from .one_to_one_connector import OneToOneConnector
 from .small_world_connector import SmallWorldConnector
+from .kernel_connector import KernelConnector
 
 __all__ = ["AllToAllConnector", "ArrayConnector", "CSAConnector",
            "DistanceDependentProbabilityConnector", "FixedNumberPostConnector",
            "FixedNumberPreConnector", "FixedProbabilityConnector",
            "FromFileConnector", "FromListConnector",
            "IndexBasedProbabilityConnector", "FixedTotalNumberConnector",
-           "OneToOneConnector", "SmallWorldConnector"]
+           "OneToOneConnector", "SmallWorldConnector", "KernelConnector"]
