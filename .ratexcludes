@@ -3,3 +3,4 @@
 **/application_generated_data_files/**
 **/*.spikes
 **/*.data
+**/*.csv
