@@ -8,3 +8,4 @@
 **/PyNN8Examples/**
 **/large.connections
 **/*.log
+**/*.pkl
