@@ -4,3 +4,7 @@
 **/*.spikes
 **/*.data
 **/*.csv
+**/IntroLab/**
+**/PyNN8Examples/**
+**/large.connections
+**/*.log
