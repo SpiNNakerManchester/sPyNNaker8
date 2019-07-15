@@ -60,11 +60,7 @@ class TestOneToOneConnector(BaseTestCase):
         conn = sim.Projection(input, pop, sim.OneToOneConnector(),
                               sim.StaticSynapse(weight=[0.7, 0.3],
                                                 delay=[3, 33]))
-        try:
-            sim.run(1)
-        except Exception:
-            self.known_issue(
-                "https://github.com/SpiNNakerManchester/sPyNNaker/issues/618")
+        sim.run(1)
         weights = conn.get(['weight', 'delay'], 'list')
         sim.end()
         target = [(0, 0, 0.7, 3), (1, 1, 0.3, 33)]
