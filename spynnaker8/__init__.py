@@ -54,6 +54,9 @@ from spynnaker8.models.connectors.one_to_one_connector import \
 # noinspection PyUnresolvedReferences
 from spynnaker8.models.connectors.small_world_connector import \
     SmallWorldConnector
+# noinspection PyUnresolvedReferences
+from spynnaker8.models.connectors.kernel_connector import \
+    KernelConnector
 
 # synapse structures
 from spynnaker8.models.synapse_dynamics.synapse_dynamics_static import \
@@ -131,6 +134,7 @@ __all__ = [
     'FixedNumberPreConnector', 'FixedProbabilityConnector',
     'FromFileConnector', 'FromListConnector', 'IndexBasedProbabilityConnector',
     'FixedTotalNumberConnector', 'OneToOneConnector', 'SmallWorldConnector',
+    'KernelConnector',
     # synapse structures
     'StaticSynapse',
     # plastic stuff
@@ -228,6 +232,12 @@ class RandomDistribution(_PynnRandomDistribution):
           - ``mu``, ``kappa``
           -
     """
+
+    def __str__(self):
+        return super(RandomDistribution, self).__str__()
+
+    def __repr__(self):
+        return self.__str__()
 
 
 # Patch the bugs in the PyNN documentation... Ugh!
@@ -533,11 +543,11 @@ def get_max_delay():
 def get_time_step():
     """ The integration time step
 
-    :return: get the time step of the simulation
+    :return: get the time step of the simulation (in ms)
     """
     if not globals_variables.has_simulator():
         raise ConfigurationException(FAILED_STATE_MSG)
-    return __pynn["get_time_step"]()
+    return float(__pynn["get_time_step"]()) / 1000.0
 
 
 def initialize(cells, **initial_values):
