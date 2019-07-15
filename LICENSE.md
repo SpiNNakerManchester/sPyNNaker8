@@ -15,7 +15,7 @@ See: [here](http://spinnakermanchester.github.io/common_pages/4.0.0/LicenseAgree
 
 # Contributors
 
-For up to date information on Contributors see the graphs/contributors pages on each project.
+For up to date information on contributors see the graphs/contributors pages on each project.
 
 For example [https://github.com/SpiNNakerManchester/sPyNNaker8/graphs/contributors](https://github.com/SpiNNakerManchester/sPyNNaker8/graphs/contributors)
 
