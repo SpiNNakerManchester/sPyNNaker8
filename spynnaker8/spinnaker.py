@@ -324,7 +324,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
         return isinstance(thing, RandomDistribution)
 
     def get_pynn_NumpyRNG(self):
-        return NumpyRNG()
+        return NumpyRNG
 
 
 # Defined in this file to prevent an import loop

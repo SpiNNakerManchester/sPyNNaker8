@@ -6,11 +6,11 @@ class TestNoChange(BaseTestCase):
 
     def check_from_65(self, v):
         for i in range(0, len(v), 5):
-            assert -65. == v[i*5+0][2]
-            assert -64.024658203125 == v[i*5+1][2]
-            assert -63.09686279296875 == v[i*5+2][2]
-            assert -62.214324951171875 == v[i*5+3][2]
-            assert -61.37481689453125 == v[i*5+4][2]
+            assert -65. == v[i+0][2]
+            assert -64.024658203125 == v[i+1][2]
+            assert -63.09686279296875 == v[i+2][2]
+            assert -62.214324951171875 == v[i+3][2]
+            assert -61.37481689453125 == v[i+4][2]
 
     def check_from_60(self, v):
         assert -60. == v[0][2]
@@ -50,12 +50,8 @@ class TestNoChange(BaseTestCase):
         sim.reset()
         sim.run(5)
         v2 = pop.spinnaker_get_data('v')
-        try:
-            self.check_from_65(v2)
-        except AssertionError:
-            self.known_issue(
-                "https://github.com/SpiNNakerManchester/sPyNNaker/issues/599")
         sim.end()
+        self.check_from_65(v2)
 
     def test_change_pre_reset(self):
         self.runsafe(self.change_pre_reset)
@@ -92,17 +88,12 @@ class TestNoChange(BaseTestCase):
         sim.run(3)
         v1 = pop.spinnaker_get_data('v')
         self.check_from_65(v1)
-
         sim.reset()
         pop.set(tau_syn_E=1)
         sim.run(5)
         v2 = pop.spinnaker_get_data('v')
-        try:
-            self.check_from_65(v2)
-        except AssertionError:
-            self.known_issue(
-                "https://github.com/SpiNNakerManchester/sPyNNaker/issues/599")
         sim.end()
+        self.check_from_65(v2)
 
     def test_run_set_run_reset_set(self):
         self.runsafe(self.run_set_run_reset_set)
@@ -158,8 +149,8 @@ class TestNoChange(BaseTestCase):
         pop.set(tau_syn_E=1)
         pop.record(["v"])
         sim.run(5)
-        pop.initialize(v=-65)
         sim.reset()
+        pop.initialize(v=-65)
         inp.set(spike_times=[100])
         sim.run(5)
         v2 = pop.spinnaker_get_data('v')
@@ -203,12 +194,6 @@ class TestNoChange(BaseTestCase):
         pop.initialize(v=-60)
         pop.record(["v"])
         sim.run(5)
-        v1 = pop.spinnaker_get_data('v')
-        try:
-            self.check_from_60(v1)
-            raise AssertionError("Unexpected after 60 voltage")
-        except AssertionError:
-            pass  # That should have failed
         sim.reset()
         inp.set(spike_times=[100])
         sim.run(5)
@@ -231,23 +216,13 @@ class TestNoChange(BaseTestCase):
         pop.initialize(v=-60)
         pop.record(["v"])
         sim.run(5)
-        v1 = pop.spinnaker_get_data('v')
-        try:
-            self.check_from_60(v1)
-            raise AssertionError("Unexpected after 60 voltage")
-        except AssertionError:
-            pass  # That should have failed
         pop.set(tau_syn_E=1)
         sim.reset()
         inp.set(spike_times=[100])
         sim.run(5)
         v2 = pop.spinnaker_get_data('v')
-        try:
-            self.check_from_65(v2)
-        except AssertionError:
-            self.known_issue(
-                "https://github.com/SpiNNakerManchester/sPyNNaker/issues/599")
         sim.end()
+        self.check_from_60(v2)
 
     def test_reset_set_with_v_set(self):
         self.runsafe(self.reset_set_with_v_set)
@@ -262,12 +237,8 @@ class TestNoChange(BaseTestCase):
         pop.set(tau_syn_E=1)
         sim.run(2)
         v1 = pop.spinnaker_get_data('v')
-        try:
-            self.check_from_65(v1)
-        except AssertionError:
-            self.known_issue(
-                "https://github.com/SpiNNakerManchester/sPyNNaker/issues/603")
         sim.end()
+        self.check_from_65(v1)
 
     def test_multi_core(self):
         self.runsafe(self.multi_core)

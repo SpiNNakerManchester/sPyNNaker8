@@ -3,6 +3,7 @@ import neo
 import inspect
 from six import iteritems, string_types
 from pyNN import descriptions
+import spinn_utilities.logger_utils as logger_utils
 from spinn_front_end_common.utilities import globals_variables
 from spinn_front_end_common.utilities.exceptions import ConfigurationException
 from spynnaker.pyNN.exceptions import InvalidParameterType
@@ -37,7 +38,7 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
             else:
                 model = cellclass(**cellparams)
         else:
-            if cellparams is not None:
+            if cellparams:
                 raise ConfigurationException(
                     "cellclass is an instance which includes params so "
                     "cellparams must be None")
@@ -108,9 +109,9 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
             multiple of the simulation timestep.
         """
         if indexes is not None:
-            logger.warn(
-                "record indexes parameter is non-standard PyNN, so may not "
-                "be portable to other simulators. "
+            logger_utils.warn_once(
+                logger, "record indexes parameter is non-standard PyNN, "
+                "so may not be portable to other simulators. "
                 "It is now deprecated and replaced with views")
         self._record_with_indexes(
             variables, to_file, sampling_interval, indexes)
@@ -129,7 +130,8 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
                     "variables=None turns off recording,"
                     "while sampling_interval!=None implies turn on recording")
             if indexes is not None:
-                logger.warning(
+                logger_utils.warn_once(
+                    logger,
                     "View.record with variable None is non-standard PyNN. "
                     "Only the neurons in the view have their record turned "
                     "off. Other neurons already set to record will remain "
@@ -141,9 +143,9 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         elif isinstance(variables, string_types):
             # handle special case of 'all'
             if variables == "all":
-                logger.warning(
-                    'record("all") is non-standard PyNN, and therefore may '
-                    'not be portable to other simulators.')
+                logger_utils.warn_once(
+                    logger, 'record("all") is non-standard PyNN, and '
+                    'therefore may not be portable to other simulators.')
 
                 # get all possible recordings for this vertex
                 variables = self._get_all_possible_recordable_variables()
@@ -179,8 +181,9 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         """
         # pylint: disable=too-many-arguments
         if not gather:
-            logger.warning("sPyNNaker only supports gather=True. We will run "
-                           "as if gather was set to True.")
+            logger_utils.warn_once(
+                logger, "sPyNNaker only supports gather=True. We will run "
+                "as if gather was set to True.")
 
         if isinstance(io, string_types):
             io = neo.get_io(io)
@@ -253,8 +256,9 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         :rtype: neo.Block
         """
         if not gather:
-            logger.warning("sPyNNaker only supports gather=True. We will run "
-                           "as if gather was set to True.")
+            logger_utils.warn_once(
+                logger, "sPyNNaker only supports gather=True. We will run "
+                "as if gather was set to True.")
 
         return self._extract_neo_block(variables, None, clear, annotations)
 
@@ -289,10 +293,10 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
             Exception will be raised.
         :return: numpy array of the data
         """
-        logger.warning(
-            "This call is non-standard PyNN and therefore may not be "
-            "portable to other simulators. Nor do we guarantee that this "
-            "function will exist in future releases.")
+        logger_utils.warn_once(
+            logger, "spinnaker_get_data is non-standard PyNN and therefore "
+            "may not be portable to other simulators. Nor do we guarantee "
+            "that this function will exist in future releases.")
         if isinstance(variable, list):
             if len(variable) == 1:
                 variable = variable[0]
@@ -377,7 +381,8 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
 
     def get(self, parameter_names, gather=False, simplify=True):
         if simplify is not True:
-            logger.warn("The simplify value is ignored if not set to true")
+            logger_utils.warn_once(
+                logger, "The simplify value is ignored if not set to true")
         return PyNNPopulationCommon.get(self, parameter_names, gather)
 
     @property

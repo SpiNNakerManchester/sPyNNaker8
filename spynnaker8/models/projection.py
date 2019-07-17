@@ -23,7 +23,8 @@ class Projection(PyNNProjectionCommon):
     """
     # pylint: disable=redefined-builtin
     __slots__ = [
-        "__simulator"]
+        "__simulator",
+        "__label"]
 
     _static_synapse_class = SynapseDynamicsStatic
 
@@ -46,6 +47,15 @@ class Projection(PyNNProjectionCommon):
 
         # set the simulator object correctly.
         self.__simulator = globals_variables.get_simulator()
+
+        # set label
+        self.__label = label
+        if label is None:
+            # set the projection's label here, but allow the edge label
+            # to be set lower down if necessary
+            self.__label = "from pre {} to post {} with connector {}".format(
+                pre_synaptic_population.label, post_synaptic_population.label,
+                connector)
 
         if synapse_type is None:
             synapse_type = SynapseDynamicsStatic()
@@ -214,13 +224,14 @@ class Projection(PyNNProjectionCommon):
     def __save_callback(
             self, save_file, format,  # @ReservedAssignment
             metadata, data):
+        # Convert structured array to normal numpy array
+        if hasattr(data, "dtype") and hasattr(data.dtype, "names"):
+            dtype = [(name, "<f8") for name in data.dtype.names]
+            data = data.astype(dtype)
         data_file = save_file
         if isinstance(data_file, string_types):
             data_file = recording.files.StandardTextFile(save_file, mode='wb')
-        if format == 'array':
-            data = [
-                numpy.where(numpy.isnan(values), 0.0, values)
-                for values in data]
+        data = numpy.nan_to_num(data)
         data_file.write(data, metadata)
         data_file.close()
 
@@ -233,6 +244,8 @@ class Projection(PyNNProjectionCommon):
             millivolts, nanoamps, milliseconds, microsiemens, nanofarads, \
             event per second).
         """
+        if isinstance(attribute_names, string_types):
+            attribute_names = [attribute_names]
         # pylint: disable=too-many-arguments
         if attribute_names in ('all', 'connections'):
             attribute_names = \
@@ -256,7 +269,7 @@ class Projection(PyNNProjectionCommon):
 
     @property
     def label(self):
-        return self._projection_edge.label
+        return self.__label
 
     def __repr__(self):
-        return "projection {}".format(self._projection_edge.label)
+        return "projection {}".format(self.__label)

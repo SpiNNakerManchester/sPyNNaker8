@@ -7,7 +7,7 @@ neurons_per_core = n_neurons / 2
 simtime = 1000
 
 
-class TestMulty(BaseTestCase):
+class TestMultiRun(BaseTestCase):
 
     def do_run(self):
         sim.setup(timestep=1.0)
