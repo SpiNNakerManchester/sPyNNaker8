@@ -15,16 +15,16 @@ from pyNN.utility.plotting import Figure, Panel
 DEBUG = True
 
 p.setup(1)  # simulation timestep (ms)
-runtime = 2000  # ms
+runtime = 3000  # ms
 
-n_row = 50
-n_col = 50
+n_row = 80
+n_col = 80
 p.set_number_of_neurons_per_core(p.IF_curr_exp, 255)
 
 is_auto_receptor = False
 
 rng = NumpyRNG(seed=77364, parallel_safe=True)
-synaptic_weight = 1.0
+synaptic_weight = 0.6
 synaptic_radius = 10
 orientation_pref_shift = 1
 
@@ -80,17 +80,6 @@ proj_exc = p.Projection(
     receptor_type='inhibitory',
     label="Excitatory grid cells inhibitory connections")
 
-# Stimulate direction
-# Input pop with 4 neurons for each dir. Make connections with appropriate neurons in grid pop.
-# dir_to_stimulate = [0, 1]
-# dir_neurons = list()
-# for i, neuron_pos in enumerate(pop_exc.positions):
-#     if util.get_dir_pref(neuron_pos) == dir_to_stimulate:
-#         dir_neurons.append(i)
-#
-# dir_view = p.PopulationView(pop_exc, dir_neurons)
-# dir_view.set(i_offset=1.0)
-
 pop_exc.record("all")
 p.run(runtime)
 
@@ -127,15 +116,15 @@ F = Figure(
 )
 
 # Custom plots
-filename = str(runtime) + 'ms_' + str(n_col) + '_' + str(n_row) + '_' + str(neuron_params['i_offset']) + "nA"\
+filename = str(n_col) + 'x' + str(n_row) + '_' + str(neuron_params['i_offset']) + "nA"\
            + time.strftime("%Y-%m-%d_%H-%M-%S")
 plt.savefig("plots/" + filename + '.png', bbox_inches='tight')
 plt.show()
 
-util.plot_population_firing_rate(pop_spike_trains, pop_exc.positions, [0, 150, 500, runtime], n_row, n_col,
+util.plot_population_firing_rate(pop_spike_trains, pop_exc.positions, [50, 1000, 2000, runtime], n_row, n_col,
                                  filename + "_pop_firing_rate")
 util.plot_population_membrane_potential_activity(exc_data_pop.segments[0].filter(name='v')[0], pop_exc.positions,
-                                                 -50, [0, 150, 500, runtime-1], n_row, n_col, filename + "_pop_v")
+                                                 -50, [50, 1000, 2000, runtime-1], n_row, n_col, filename + "_pop_v")
 # util.plot_population_spike_activity(pop_spike_trains, pop_exc.positions, [0, 150, 500, runtime], n_row, n_col,
 #                                     filename + "_pop_spike_activity")
 
