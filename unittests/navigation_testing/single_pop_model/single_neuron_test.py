@@ -36,7 +36,7 @@ neuron_params = {
 }
 
 rng = NumpyRNG(seed=41, parallel_safe=True)
-v_init = RandomDistribution('uniform', (-65, -50), rng)
+v_init = RandomDistribution('uniform', (-65, -55), rng)
 pop_exc = p.Population(1,
                        p.extra_models.GridCell(**neuron_params),
                        cellparams=None,
