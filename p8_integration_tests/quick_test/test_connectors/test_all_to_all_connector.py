@@ -55,13 +55,8 @@ class TestAllToAllConnector(BaseTestCase):
             synapse_type=synapse_type)
         weights = projection.get(["weight"], "list")
         sim.run(0)
-        try:
-            length = len(weights)
-            self.assertEqual(3, length)
-        except Exception:
-            sim.end()
-            self.known_issue(
-                "https://github.com/SpiNNakerManchester/sPyNNaker/issues/613")
+        length = len(weights)
+        self.assertEqual(3, length)
         sim.end()
 
     def test_get_before_run(self):
