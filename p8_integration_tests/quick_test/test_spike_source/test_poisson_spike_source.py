@@ -16,9 +16,10 @@
 from __future__ import division
 from p8_integration_tests.base_test_case import BaseTestCase
 import spynnaker8 as sim
+import math
 
 
-class MyTestCase(BaseTestCase):
+class TestPoissonSpikeSource(BaseTestCase):
 
     def check_spikes(self, input, expected):
         neo = input.get_data("spikes")
@@ -26,8 +27,9 @@ class MyTestCase(BaseTestCase):
         count = 0
         for a_spikes in spikes:
             count += len(a_spikes)
-        self.assertAlmostEqual(expected, count/len(spikes), delta=expected/10,
-                               msg="Errror on {}".format(input.label))
+        tolerance = math.sqrt(expected)
+        self.assertAlmostEqual(expected, count/len(spikes), delta=tolerance,
+                               msg="Error on {}".format(input.label))
 
     def recording_poisson_spikes(self, run_zero):
         sim.setup(timestep=1.0, min_delay=1.0, max_delay=144.0)
