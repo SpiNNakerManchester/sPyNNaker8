@@ -9,3 +9,8 @@
 **/large.connections
 **/*.log
 **/*.pkl
+**/*.png
+**/*.npy
+**/*.jpg
+**/*.elf
+**/*.aplx
