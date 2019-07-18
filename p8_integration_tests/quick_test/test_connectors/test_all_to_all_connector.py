@@ -56,7 +56,7 @@ class TestAllToAllConnector(BaseTestCase):
         weights = projection.get(["weight"], "list")
         sim.run(0)
         length = len(weights)
-        self.assertEqual(3, length)
+        self.assertEqual(9, length)
         sim.end()
 
     def test_get_before_run(self):
