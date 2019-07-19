@@ -157,24 +157,28 @@ except OSError as exc:
         raise
 
 # Excitatory population
-with open(data_dir + "pop_exc.pkl", 'wb') as f:
-    f.write(pickle.dumps(pop_exc))
+with open(data_dir + "pop_exc_data.pkl", 'wb') as f:
+    f.write(pickle.dumps(pop_exc.get_data()))
+with open(data_dir + "pop_exc_positions.pkl", 'wb') as f:
+    f.write(pickle.dumps(pop_exc.positions))
 with open(data_dir + "pop_exc_parameters.pkl", 'wb') as f:
     f.write(pickle.dumps(neuron_params))
 
 # Excitatory population (direction views)
-with open(data_dir + "pop_exc_north.pkl", 'wb') as f:
-    f.write(pickle.dumps(view_exc_north))
-with open(data_dir + "pop_exc_east.pkl", 'wb') as f:
-    f.write(pickle.dumps(view_exc_east))
-with open(data_dir + "pop_exc_west.pkl", 'wb') as f:
-    f.write(pickle.dumps(view_exc_west))
-with open(data_dir + "pop_exc_south.pkl", 'wb') as f:
-    f.write(pickle.dumps(view_exc_south))
+with open(data_dir + "pop_exc_north_data.pkl", 'wb') as f:
+    f.write(pickle.dumps(view_exc_north.get_data()))
+with open(data_dir + "pop_exc_east_data.pkl", 'wb') as f:
+    f.write(pickle.dumps(view_exc_east.get_data()))
+with open(data_dir + "pop_exc_west_data.pkl", 'wb') as f:
+    f.write(pickle.dumps(view_exc_west.get_data()))
+with open(data_dir + "pop_exc_south_data.pkl", 'wb') as f:
+    f.write(pickle.dumps(view_exc_south.get_data()))
 
 # Input population
-with open(data_dir + "pop_input.pkl", 'wb') as f:
-    f.write(pickle.dumps(pop_input))
+with open(data_dir + "pop_input_data.pkl", 'wb') as f:
+    f.write(pickle.dumps(pop_input.get_data()))
+with open(data_dir + "pop_input_label.pkl", 'wb') as f:
+    f.write(pickle.dumps(pop_input.label))
 
 print(data_dir)
 

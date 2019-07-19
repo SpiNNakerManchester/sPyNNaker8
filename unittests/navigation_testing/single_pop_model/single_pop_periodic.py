@@ -18,17 +18,17 @@ from pyNN.space import Grid2D, Line
 SETUP
 """
 p.setup(1)  # simulation timestep (ms)
-runtime = 1000  # ms
+runtime = 3000  # ms
 
-n_row = 10
-n_col = 10
+n_row = 128
+n_col = 128
 p.set_number_of_neurons_per_core(p.IF_curr_exp, 255)
 
 is_auto_receptor = False  # allow self-connections in recurrent grid cell network
 
 rng = NumpyRNG(seed=77364, parallel_safe=True)
 synaptic_weight = 0.6  # synaptic weight for inhibitory connections
-synaptic_radius = 1  # inhibitory connection radius
+synaptic_radius = 10  # inhibitory connection radius
 orientation_pref_shift = 1  # number of neurons to shift centre of connectivity by
 
 # Grid cell (excitatory) population
@@ -51,9 +51,6 @@ pop_exc = p.Population(n_row * n_col,
                        structure=exc_grid,
                        label="Excitatory grid cells"
                        )
-
-# Create view
-# view_exc = p.PopulationView(pop_exc, np.array([0, 1, n_col, n_col + 1]))
 
 # Create recurrent inhibitory connections
 loopConnections = list()
@@ -103,7 +100,11 @@ except OSError as exc:
 
 # Excitatory population
 with open(data_dir + "pop_exc_data.pkl", 'wb') as f:
-    f.write(pickle.dumps(pop_exc))
+    f.write(pickle.dumps(pop_exc.get_data()))
+with open(data_dir + "pop_exc_label.pkl", 'wb') as f:
+    f.write(pickle.dumps(pop_exc.label))
+with open(data_dir + "pop_exc_positions.pkl", 'wb') as f:
+    f.write(pickle.dumps(pop_exc.positions))
 with open(data_dir + "pop_exc_parameters.pkl", 'wb') as f:
     f.write(pickle.dumps(neuron_params))
 
