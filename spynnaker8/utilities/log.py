@@ -1,3 +1,18 @@
+# Copyright (c) 2017-2019 The University of Manchester
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import logging
 import re
 
@@ -11,18 +26,22 @@ levels = {
 
 
 class ConfiguredFilter(object):
+    __slots__ = [
+        "__default_level",
+        "__levels"]
+
     def __init__(self, conf):
-        self._levels = ConfiguredFormatter.construct_logging_parents(conf)
-        self._default_level = levels[conf.get("Logging", "default")]
+        self.__levels = ConfiguredFormatter.construct_logging_parents(conf)
+        self.__default_level = levels[conf.get("Logging", "default")]
 
     def filter(self, record):
         """ Get the level for the deepest parent, and filter appropriately.
         """
         level = ConfiguredFormatter.level_of_deepest_parent(
-            self._levels, record.name)
+            self.__levels, record.name)
 
         if level is None:
-            return record.levelno >= self._default_level
+            return record.levelno >= self.__default_level
 
         return record.levelno >= level
 

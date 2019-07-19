@@ -1,3 +1,18 @@
+# Copyright (c) 2017-2019 The University of Manchester
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 from pyNN.random import RandomDistribution, NumpyRNG
 import spynnaker8 as p
 from p8_integration_tests.base_test_case import BaseTestCase
@@ -44,14 +59,14 @@ class ParamsSetAsList(BaseTestCase):
         pop_1.set(v_reset=v_reset, v_rest=v_rest)
         p.run(1)
 
-        self.assertEquals(cm, pop_1.get("cm"))
-        self.assertEquals(i_off, pop_1.get("i_offset"))
-        self.assertEquals(tau_m, pop_1.get("tau_m"))
-        self.assertEquals(tau_re, pop_1.get("tau_refrac"))
-        self.assertEquals(tau_syn_e, pop_1.get("tau_syn_E"))
-        self.assertEquals(tau_syn_i, pop_1.get("tau_syn_I"))
-        self.assertEquals(v_reset, pop_1.get("v_reset"))
-        self.assertEquals(v_rest, pop_1.get("v_rest"))
+        self.assertEqual(cm, pop_1.get("cm"))
+        self.assertEqual(i_off, pop_1.get("i_offset"))
+        self.assertEqual(tau_m, pop_1.get("tau_m"))
+        self.assertEqual(tau_re, pop_1.get("tau_refrac"))
+        self.assertEqual(tau_syn_e, pop_1.get("tau_syn_E"))
+        self.assertEqual(tau_syn_i, pop_1.get("tau_syn_I"))
+        self.assertEqual(v_reset, pop_1.get("v_reset"))
+        self.assertEqual(v_rest, pop_1.get("v_rest"))
         self.assertGreater(len(set(pop_1.get("v_thresh"))), nNeurons/2)
         p.end()
 

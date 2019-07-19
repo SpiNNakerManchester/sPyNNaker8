@@ -1,3 +1,18 @@
+# Copyright (c) 2017-2019 The University of Manchester
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import logging
 import math
 from lazyarray import __version__ as lazyarray_version
@@ -51,8 +66,8 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
         self._projections = list()
 
         # pynn demanded objects
-        self._segment_counter = 0
-        self._recorders = set([])
+        self.__segment_counter = 0
+        self.__recorders = set([])
 
         # main pynn interface inheritance
         pynn_control.BaseState.__init__(self)
@@ -114,8 +129,8 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
         """ Clear the current recordings and reset the simulation
         """
         self.recorders = set([])
-        self._id_counter = 0
-        self._segment_counter = -1
+        self.id_counter = 0
+        self.__segment_counter = -1
         self.reset()
 
         # Stop any currently running SpiNNaker application
@@ -127,7 +142,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
         for population in self._populations:
             population.cache_data()
 
-        self._segment_counter += 1
+        self.__segment_counter += 1
 
         AbstractSpiNNakerCommon.reset(self)
 
@@ -230,7 +245,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 
         :return: the segment counter
         """
-        return self._segment_counter
+        return self.__segment_counter
 
     @segment_counter.setter
     def segment_counter(self, new_value):
@@ -238,7 +253,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 
         :param new_value: new value for the segment counter
         """
-        self._segment_counter = new_value
+        self.__segment_counter = new_value
 
     @property
     def running(self):
@@ -293,7 +308,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 
         :return: the internal recorders object
         """
-        return self._recorders
+        return self.__recorders
 
     @recorders.setter
     def recorders(self, new_value):
@@ -301,7 +316,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 
         :param new_value: the new value for the recorder
         """
-        self._recorders = new_value
+        self.__recorders = new_value
 
     def get_distribution_to_stats(self):
         return {
@@ -324,7 +339,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
         return isinstance(thing, RandomDistribution)
 
     def get_pynn_NumpyRNG(self):
-        return NumpyRNG()
+        return NumpyRNG
 
 
 # Defined in this file to prevent an import loop
