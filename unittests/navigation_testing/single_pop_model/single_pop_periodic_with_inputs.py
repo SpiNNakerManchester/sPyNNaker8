@@ -1,7 +1,10 @@
 # Standard library imports
-import matplotlib.pyplot as plt
-import numpy as np
+import cPickle as pickle
 import time
+import numpy as np
+from neo.io import NixIO
+import os
+import errno
 
 # Third party imports
 import spynnaker8 as p
@@ -10,35 +13,34 @@ import spynnaker8 as p
 import utilities as util
 from pyNN.random import RandomDistribution, NumpyRNG
 from pyNN.space import Grid2D, Line
-from pyNN.utility.plotting import Figure, Panel
 
-DEBUG = True
-
+"""
+SETUP
+"""
 p.setup(1)  # simulation timestep (ms)
-runtime = 1000  # ms
+runtime = 5000  # ms
 
-n_row = 50
-n_col = 50
+n_row = 128
+n_col = 128
 p.set_number_of_neurons_per_core(p.IF_curr_exp, 255)
 
-is_auto_receptor = False
+is_auto_receptor = False  # allow self-connections in recurrent grid cell network
 
 rng = NumpyRNG(seed=77364, parallel_safe=True)
-synaptic_weight = 0.4
-synaptic_radius = 1
-orientation_pref_shift = 1
+synaptic_weight = 0.6  # synaptic weight for inhibitory connections
+synaptic_radius = 10  # inhibitory connection radius
+orientation_pref_shift = 1  # number of neurons to shift centre of connectivity by
 
-# Post-synapse population
+# Grid cell (excitatory) population
 neuron_params = {
     "v_thresh": -50,
     "v_reset": -65,
     "v_rest": -65,
-    "i_offset": 0.8,  # DC input
-    "tau_m": 20,  # membrane time constant
+    "i_offset": 0.8,
+    "tau_m": 20,
     "tau_refrac": 1,
 }
 
-# Define excitatory population
 exc_grid = Grid2D(aspect_ratio=1.0, dx=1.0, dy=1.0, x0=0, y0=0, z=0, fill_order='sequential')
 # exc_space = p.Space(axes='xy', periodic_boundaries=((-n_col / 2, n_col / 2), (-n_row / 2, n_row / 2)))
 v_init = RandomDistribution('uniform', low=-65, high=-55, rng=rng)
@@ -50,8 +52,12 @@ pop_exc = p.Population(n_row * n_col,
                        label="Excitatory grid cells"
                        )
 
-# Create view
-view_exc = p.PopulationView(pop_exc, np.array([0, 1, n_col, n_col + 1]))
+# Create views
+# view_exc = p.PopulationView(pop_exc, np.array([0, 1, n_col, n_col + 1]))  # view of 4 neurons
+index_north_cells = list()
+index_east_cells = list()
+index_west_cells = list()
+index_south_cells = list()
 
 # Create recurrent inhibitory connections
 loop_connections = list()
@@ -72,7 +78,6 @@ for pre_syn in range(0, n_row * n_col):
                 single_connection = (pre_syn, post_syn, synaptic_weight, util.normalise(dist, 0, max(n_row, n_col)))
                 loop_connections.append(single_connection)
 
-
 # Create inhibitory connections
 proj_exc = p.Projection(
     pop_exc, pop_exc, p.FromListConnector(loop_connections, ('weight', 'delay')),
@@ -89,7 +94,7 @@ input_neuron_params = {
     "v_thresh": -50,
     "v_reset": -65,
     "v_rest": -65,
-    "i_offset": 0,
+    "i_offset": [0.0, 0.8, 0, 0],
     "tau_m": 20,
     "tau_refrac": 1,
 }
@@ -101,93 +106,76 @@ pop_input = p.Population(4,
                          label="Input head direction and speed cells")
 
 # Connect input neuron to grid cells of appropriate direction
-for i in range(0, n_row * n_col):
-    neuron_pref_dir = util.get_dir_pref(pop_exc.positions[i])
+# TODO: change weight and delay
+for i, neuron_pos in enumerate(pop_exc.positions):
+    neuron_pref_dir = util.get_dir_pref(neuron_pos)
     if np.all(neuron_pref_dir == [0, 1]):
-        single_connection =(0, i, 0.0, 0.0)
+        single_connection = (0, i, 1.0, 0.0)
+        index_north_cells.append(i)
     elif np.all(neuron_pref_dir == [0, -1]):
-        single_connection =(3, i, 0.0, 0.0)
+        single_connection = (3, i, 1.0, 0.0)
+        index_south_cells.append(i)
     elif np.all(neuron_pref_dir == [1, 0]):
-        single_connection =(1, i, 0.0, 0.0)
+        single_connection = (1, i, 1.0, 0.0)
+        index_east_cells.append(i)
     elif np.all(neuron_pref_dir == [-1, 0]):
-        single_connection =(2, i, 0.0, 0.0)
+        single_connection = (2, i, 1.0, 0.0)
+        index_west_cells.append(i)
     input_loop_connections.append(single_connection)
 
-proj_input = p.Projection(
+view_exc_north = p.PopulationView(pop_exc, index_north_cells)
+view_exc_east = p.PopulationView(pop_exc, index_east_cells)
+view_exc_west = p.PopulationView(pop_exc, index_west_cells)
+view_exc_south = p.PopulationView(pop_exc, index_south_cells)
+
+proj_dir_input = p.Projection(
     pop_input, pop_exc, p.FromListConnector(input_loop_connections, ('weight', 'delay')),
     p.StaticSynapse(),
     receptor_type="excitatory",
-    label="Input cells excitatory connections to appropriate grid cells"
+    label="Direction input cells excitatory connections to appropriate grid cells"
 )
 
-# Stimulate direction
-# Input pop with 4 neurons for each dir. Make connections with appropriate neurons in grid pop.
-# dir_to_stimulate = [0, 1]
-# dir_neurons = list()
-# for i, neuron_pos in enumerate(pop_exc.positions):
-#     if util.get_dir_pref(neuron_pos) == dir_to_stimulate:
-#         dir_neurons.append(i)
-#
-# dir_view = p.PopulationView(pop_exc, dir_neurons)
-# dir_view.set(i_offset=1.0)
+"""
+RUN
+"""
 
 pop_exc.record("all")
 p.run(runtime)
 
-exc_data_pop = pop_exc.get_data()
-exc_data_view = view_exc.get_data()
+"""
+WRITE DATA
+"""
 
-# Plot activity
-pop_spike_trains = exc_data_pop.segments[0].spiketrains
+# Write data to files
+data_dir = "data/" + time.strftime("%Y-%m-%d_%H-%M-%S") + "/"
 
-# Plot
-F = Figure(
-    # plot data for postsynaptic neuron
-    Panel(exc_data_view.segments[0].filter(name='v')[0],
-          ylabel="Membrane potential (mV)",
-          xlabel="Time (ms)",
-          data_labels=[pop_exc.label], yticks=True, xticks=True, xlim=(0, runtime)
-          ),
-    Panel(exc_data_view.segments[0].filter(name='gsyn_exc')[0],
-          ylabel="Excitatory synaptic conduction (uS)",
-          xlabel="Time (ms)",
-          data_labels=[pop_exc.label], yticks=True, xticks=True, xlim=(0, runtime)
-          ),
-    Panel(exc_data_view.segments[0].filter(name='gsyn_inh')[0],
-          ylabel="Inhibitory synaptic conduction (uS)",
-          xlabel="Time (ms)",
-          data_labels=[pop_exc.label], yticks=True, xticks=True, xlim=(0, runtime)
-          ),
-    Panel(exc_data_view.segments[0].spiketrains,
-          yticks=True, xticks=True, xlabel="Time (ms)", markersize=2, xlim=(0, runtime)
-          ),
-    Panel(pop_spike_trains,
-          yticks=True, xticks=True, xlabel="Time (ms)", markersize=2, xlim=(0, runtime)
-          ),
-)
+# Create directory
+try :
+    os.makedirs(os.path.dirname(data_dir))
+except OSError as exc:
+    if exc.errno != errno.EEXIST:
+        raise
 
-plt.show()
+# Excitatory population
+with open(data_dir + "pop_exc.pkl", 'wb') as f:
+    f.write(pickle.dumps(pop_exc))
+with open(data_dir + "pop_exc_parameters.pkl", 'wb') as f:
+    f.write(pickle.dumps(neuron_params))
 
-# Custom plots
-filename = str(runtime) + 'ms_' + str(n_col) + '_' + str(n_row) + '_' + str(neuron_params['i_offset']) + "nA"\
-           + time.strftime("%Y-%m-%d_%H-%M-%S")
-plt.savefig("plots/" + filename + '.png', bbox_inches='tight')
+# Excitatory population (direction views)
+with open(data_dir + "pop_exc_north.pkl", 'wb') as f:
+    f.write(pickle.dumps(view_exc_north))
+with open(data_dir + "pop_exc_east.pkl", 'wb') as f:
+    f.write(pickle.dumps(view_exc_east))
+with open(data_dir + "pop_exc_west.pkl", 'wb') as f:
+    f.write(pickle.dumps(view_exc_west))
+with open(data_dir + "pop_exc_south.pkl", 'wb') as f:
+    f.write(pickle.dumps(view_exc_south))
 
-util.plot_population_firing_rate(pop_spike_trains, pop_exc.positions, [0, 150, 500, runtime], n_row, n_col,
-                                 filename + "_pop_firing_rate")
-util.plot_population_membrane_potential_activity(exc_data_pop.segments[0].filter(name='v')[0], pop_exc.positions,
-                                                 -50, [0, 150, 500, runtime-1], n_row, n_col, filename + "_pop_v")
-# util.plot_population_spike_activity(pop_spike_trains, pop_exc.positions, [0, 150, 500, runtime], n_row, n_col,
-#                                     filename + "_pop_spike_activity")
+# Input population
+with open(data_dir + "pop_input.pkl", 'wb') as f:
+    f.write(pickle.dumps(pop_input))
 
-# print(pop_exc.describe(template='population_default.txt', engine='default'))
-firing_rate = pop_exc.mean_spike_count(gather=True) * (1000 / runtime)
-
-if DEBUG:
-    # print(util.get_neuron_connections(0, loopConnections))
-    print("Firing rate=" + str(firing_rate) + "Hz")
-    print("i_offset=" + str(neuron_params['i_offset']) + "nA")
-    print("tau_refrac=" + str(neuron_params['tau_refrac']) + "ms")
-    print("tau_m=" + str(neuron_params['tau_m']) + "ms")
+print(data_dir)
 
 p.end()
