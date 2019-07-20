@@ -107,7 +107,7 @@ def compute_firing_rates_from_spike_trains(spike_trains, t, num_neurons):
 
 
 # Plot the firing rate of a population at a given time
-def plot_population_firing_rate(spike_trains, neuron_positions, times, grid_row, grid_col, filename):
+def plot_population_firing_rate(spike_trains, neuron_positions, times, grid_row, grid_col, filepath):
     # plt.style.use('dark_background')
     num_times = len(times)
     fig, axs = plt.subplots(ncols=num_times)
@@ -134,13 +134,13 @@ def plot_population_firing_rate(spike_trains, neuron_positions, times, grid_row,
                            c=norm_firing_rate, cmap=cmap, norm=plt.Normalize(0, 1))
     # plt.colorbar(cmap)
     fig.tight_layout()
-    if filename:
-        plt.savefig("plots/" +  filename + '.png', facecolor=fig.get_facecolor(), bbox_inches='tight')
+    if filepath:
+        plt.savefig(filepath + '.png', facecolor=fig.get_facecolor(), bbox_inches='tight')
     plt.show()
 
 
 # Plot spike train activity at a given time
-def plot_population_spike_activity(spike_trains, neuron_positions, times, grid_row, grid_col, filename):
+def plot_population_spike_activity(spike_trains, neuron_positions, times, grid_row, grid_col, filepath):
     num_times = len(times)
     fig, axs = plt.subplots(ncols=num_times)
     fig.suptitle('Spike train population activity')
@@ -151,8 +151,8 @@ def plot_population_spike_activity(spike_trains, neuron_positions, times, grid_r
         ax.set_ylim(0, grid_row - 1)
         ax.set_title(str(t) + 'ms')
         ax.set_facecolor('k')
-        # ax.get_xaxis().set_ticks([])
-        # ax.get_yaxis().set_ticks([])
+        ax.get_xaxis().set_ticks([0, grid_col])
+        ax.get_yaxis().set_ticks([0, grid_row])
         ax.set_aspect('equal')
         for neuron_id in range(0, len(spike_trains)):
             if t in spike_trains[neuron_id]:
@@ -160,13 +160,14 @@ def plot_population_spike_activity(spike_trains, neuron_positions, times, grid_r
                 ax.scatter(pos[0], pos[1], color="White")
 
     fig.tight_layout()
-    if filename:
-        plt.savefig("plots/" + filename + '.png', facecolor=fig.get_facecolor(), bbox_inches='tight')
+    if filepath:
+        plt.savefig(filepath, facecolor=fig.get_facecolor(), bbox_inches='tight', dpi=150)
     plt.show()
 
 
 # Plot membrane potential activity at a given time
-def plot_population_membrane_potential_activity(membrane_potentials, neuron_positions, thresh_v, times, grid_row, grid_col, filename ):
+def plot_population_membrane_potential_activity(membrane_potentials, neuron_positions, thresh_v, times,
+                                                grid_row, grid_col, filepath):
     num_times = len(times)
     fig, axs = plt.subplots(ncols=num_times)
     fig.suptitle('Population membrane potential activity')
@@ -188,6 +189,6 @@ def plot_population_membrane_potential_activity(membrane_potentials, neuron_posi
                        s=10, c=norm, cmap=cmap, norm=plt.Normalize(0, 1))
     # plt.colorbar(cmap)
     fig.tight_layout()
-    if filename:
-        plt.savefig("plots/" + filename + '.png', facecolor=fig.get_facecolor(), bbox_inches='tight')
+    if filepath:
+        plt.savefig(filepath, facecolor=fig.get_facecolor(), bbox_inches='tight')
     plt.show()

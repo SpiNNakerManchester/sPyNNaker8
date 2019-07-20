@@ -18,10 +18,10 @@ from pyNN.space import Grid2D, Line
 SETUP
 """
 p.setup(1)  # simulation timestep (ms)
-runtime = 5000  # ms
+runtime = 2000  # ms
 
-n_row = 128
-n_col = 128
+n_row = 50
+n_col = 50
 p.set_number_of_neurons_per_core(p.IF_curr_exp, 255)
 
 is_auto_receptor = False  # allow self-connections in recurrent grid cell network
@@ -106,7 +106,6 @@ pop_input = p.Population(4,
                          label="Input head direction and speed cells")
 
 # Connect input neuron to grid cells of appropriate direction
-# TODO: change weight and delay
 for i, neuron_pos in enumerate(pop_exc.positions):
     neuron_pref_dir = util.get_dir_pref(neuron_pos)
     if np.all(neuron_pref_dir == [0, 1]):
@@ -157,29 +156,43 @@ except OSError as exc:
         raise
 
 # Excitatory population
-with open(data_dir + "pop_exc_data.pkl", 'wb') as f:
-    f.write(pickle.dumps(pop_exc.get_data()))
-with open(data_dir + "pop_exc_positions.pkl", 'wb') as f:
-    f.write(pickle.dumps(pop_exc.positions))
-with open(data_dir + "pop_exc_parameters.pkl", 'wb') as f:
-    f.write(pickle.dumps(neuron_params))
+# pickle.dump(pop_exc.get_data().segments[0].filter(name='v')[0],
+#             open(data_dir + "pop_exc_v.pkl", 'wb'),
+#             protocol=pickle.HIGHEST_PROTOCOL)
+# pickle.dump(pop_exc.get_data().segments[0].filter(name='gsyn_exc')[0],
+#             open(data_dir + "pop_exc_gsyn_exc.pkl", 'wb'),
+#             protocol=pickle.HIGHEST_PROTOCOL)
+# pickle.dump(pop_exc.get_data().segments[0].filter(name='gsyn_inh')[0],
+#             open(data_dir + "pop_exc_gsyn_inh.pkl", 'wb'),
+#             protocol=pickle.HIGHEST_PROTOCOL)
+pickle.dump(pop_exc.get_data().segments[0].spiketrains,
+            open(data_dir + "pop_exc_spiketrains.pkl", 'wb'),
+            protocol=pickle.HIGHEST_PROTOCOL)
+pickle.dump(pop_exc.label, open(data_dir + "pop_exc_label.pkl", 'wb'),
+            protocol=pickle.HIGHEST_PROTOCOL)
+pickle.dump(pop_exc.positions, open(data_dir + "pop_exc_positions.pkl", 'wb'),
+            protocol=pickle.HIGHEST_PROTOCOL)
+pickle.dump(neuron_params, open(data_dir + "pop_exc_parameters.pkl", 'wb'),
+            protocol=pickle.HIGHEST_PROTOCOL)
 
 # Excitatory population (direction views)
-with open(data_dir + "pop_exc_north_data.pkl", 'wb') as f:
-    f.write(pickle.dumps(view_exc_north.get_data()))
-with open(data_dir + "pop_exc_east_data.pkl", 'wb') as f:
-    f.write(pickle.dumps(view_exc_east.get_data()))
-with open(data_dir + "pop_exc_west_data.pkl", 'wb') as f:
-    f.write(pickle.dumps(view_exc_west.get_data()))
-with open(data_dir + "pop_exc_south_data.pkl", 'wb') as f:
-    f.write(pickle.dumps(view_exc_south.get_data()))
+pickle.dump(view_exc_north.get_data().segments[0].spiketrains, open(data_dir + "pop_exc_north_spike_train.pkl", 'wb'),
+            protocol=pickle.HIGHEST_PROTOCOL)
+pickle.dump(view_exc_east.get_data().segments[0].spiketrains, open(data_dir + "pop_exc_east_spike_train.pkl", 'wb'),
+            protocol=pickle.HIGHEST_PROTOCOL)
+pickle.dump(view_exc_west.get_data().segments[0].spiketrains, open(data_dir + "pop_exc_west_spike_train.pkl", 'wb'),
+            protocol=pickle.HIGHEST_PROTOCOL)
+pickle.dump(view_exc_south.get_data().segments[0].spiketrains, open(data_dir + "pop_exc_south_spike_train.pkl", 'wb'),
+            protocol=pickle.HIGHEST_PROTOCOL)
 
 # Input population
-with open(data_dir + "pop_input_data.pkl", 'wb') as f:
-    f.write(pickle.dumps(pop_input.get_data()))
-with open(data_dir + "pop_input_label.pkl", 'wb') as f:
-    f.write(pickle.dumps(pop_input.label))
-
-print(data_dir)
+pickle.dump(pop_input.get_data().segments[0].spiketrains, open(data_dir + "pop_input_spike_trains.pkl", 'wb'),
+            protocol=pickle.HIGHEST_PROTOCOL)
+# pickle.dump(pop_input.get_data().segments[0].filter(name='v'), open(data_dir + "pop_input_v.pkl", 'wb'),
+#             protocol=pickle.HIGHEST_PROTOCOL)
+pickle.dump(pop_input.label, open(data_dir + "pop_input_label.pkl", 'wb'),
+            protocol=pickle.HIGHEST_PROTOCOL)
 
 p.end()
+print(data_dir)
+
