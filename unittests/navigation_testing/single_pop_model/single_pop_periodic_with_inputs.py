@@ -94,7 +94,7 @@ input_neuron_params = {
     "v_thresh": -50,
     "v_reset": -65,
     "v_rest": -65,
-    "i_offset": [0.0, 0.8, 0, 0],
+    "i_offset": [0.8, 0.0, 0, 0],
     "tau_m": 20,
     "tau_refrac": 1,
 }
@@ -109,16 +109,16 @@ pop_input = p.Population(4,
 for i, neuron_pos in enumerate(pop_exc.positions):
     neuron_pref_dir = util.get_dir_pref(neuron_pos)
     if np.all(neuron_pref_dir == [0, 1]):
-        single_connection = (0, i, 1.0, 0.0)
+        single_connection = (0, i, 1.0, 1.0)
         index_north_cells.append(i)
     elif np.all(neuron_pref_dir == [0, -1]):
-        single_connection = (3, i, 1.0, 0.0)
+        single_connection = (3, i, 1.0, 1.0)
         index_south_cells.append(i)
     elif np.all(neuron_pref_dir == [1, 0]):
-        single_connection = (1, i, 1.0, 0.0)
+        single_connection = (1, i, 1.0, 1.0)
         index_east_cells.append(i)
     elif np.all(neuron_pref_dir == [-1, 0]):
-        single_connection = (2, i, 1.0, 0.0)
+        single_connection = (2, i, 1.0, 1.0)
         index_west_cells.append(i)
     input_loop_connections.append(single_connection)
 
@@ -138,12 +138,15 @@ proj_dir_input = p.Projection(
 RUN
 """
 
-pop_exc.record("all")
+pop_exc.record(["spikes"])
+pop_input.record(["spikes", "v"])
 p.run(runtime)
 
 """
 WRITE DATA
 """
+
+util.check_connection_dir_prefs(53, pop_exc.positions, loop_connections)
 
 # Write data to files
 data_dir = "data/" + time.strftime("%Y-%m-%d_%H-%M-%S") + "/"
@@ -188,10 +191,22 @@ pickle.dump(view_exc_south.get_data().segments[0].spiketrains, open(data_dir + "
 # Input population
 pickle.dump(pop_input.get_data().segments[0].spiketrains, open(data_dir + "pop_input_spike_trains.pkl", 'wb'),
             protocol=pickle.HIGHEST_PROTOCOL)
-# pickle.dump(pop_input.get_data().segments[0].filter(name='v'), open(data_dir + "pop_input_v.pkl", 'wb'),
-#             protocol=pickle.HIGHEST_PROTOCOL)
+pickle.dump(pop_input.get_data().segments[0].filter(name='v'), open(data_dir + "pop_input_v.pkl", 'wb'),
+            protocol=pickle.HIGHEST_PROTOCOL)
 pickle.dump(pop_input.label, open(data_dir + "pop_input_label.pkl", 'wb'),
             protocol=pickle.HIGHEST_PROTOCOL)
+
+f = open(data_dir + "params.txt", "w")
+f.write("Single population grid cell model with velocity input")
+f.write("\npop_exc=" + str(neuron_params))
+f.write("\nruntime=" + str(runtime))
+f.write("\nn_row=" + str(n_row))
+f.write("\nn_col=" + str(n_col))
+f.write("\nsyn_weight=" + str(synaptic_weight))
+f.write("\nsyn_radius=" + str(synaptic_radius))
+f.write("\norientation_pref_shift=" + str(orientation_pref_shift) + "\n")
+f.write("pop_input=" + str(input_neuron_params))
+f.close()
 
 p.end()
 print(data_dir)
