@@ -10,6 +10,31 @@ cmap = mcolors.LinearSegmentedColormap.from_list("",
                                                   (1, "red")], N=256)
 # cmap=plt.get_cmap('YlOrRd')
 
+
+def check_connection_dir_prefs(neuron_id, neuron_positions, connection_list):
+    connections = get_neuron_connections(neuron_id, connection_list, False)
+    counter_n = 0
+    counter_e = 0
+    counter_w = 0
+    counter_s = 0
+    for connection in connections:
+        dir = get_dir_pref(neuron_positions[connection[1]])
+        if dir == [0, 1]:
+            counter_n += 1
+        elif dir == [0, -1]:
+            counter_s += 1
+        elif dir == [1, 0]:
+            counter_e += 1
+        elif dir == [-1, 0]:
+            counter_w += 1
+
+    print "Neuron " + str(neuron_id) + "(" + str(get_dir_pref(neuron_positions[neuron_id])) + ")"
+    print "N: " + str(counter_n)
+    print "E: " + str(counter_e)
+    print "W: " + str(counter_w)
+    print "S: " + str(counter_s)
+
+
 # Initialise neuron directional preference
 def get_dir_pref(pos):
     x, y, _ = pos.T
@@ -34,10 +59,10 @@ def get_neuron_distance_periodic(grid_w, grid_h, pre_pos, post_pos):
 
 
 # Get the synapses for a given neuron
-def get_neuron_connections(neuron_id, connections):
+def get_neuron_connections(neuron_id, connections, bidirectional):
     neuron_connections = list()
     for connection in connections:
-        if connection[0] == neuron_id or connection[1] == neuron_id or id == -1:
+        if connection[0] == neuron_id or (bidirectional and connection[1] == neuron_id or id == -1):
             neuron_connections.append(connection)
     return neuron_connections
 
