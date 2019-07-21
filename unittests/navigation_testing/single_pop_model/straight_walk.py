@@ -1,12 +1,16 @@
 from operator import add
+import math
+
+# Walk in given direction at a constant speed
 
 
-# Assume 1 step is equivalent to 1 metre
+# Direction: direction vector
+# Speed: magnitude
 class StraightWalk:
 
-    def __init__(self, speed, direction):
+    def __init__(self, speed, dir_degrees):
         self.speed = speed
-        self.head_dir = direction
+        self.dir_radians = math.radians(dir_degrees)
         self.positions = [[0, 0]]
 
     def next_step(self):
