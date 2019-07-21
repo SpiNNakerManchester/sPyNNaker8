@@ -18,3 +18,4 @@ __pycache__
 *.log
 /unittests/navigation_testing/**/*.png
 /unittests/navigation_testing/single_pop_model/test.py
+/unittests/navigation_testing/**/data/
