@@ -119,13 +119,13 @@ pickle.dump(neuron_params, open(data_dir + "pop_exc_parameters.pkl", 'wb'),
 
 f = open(data_dir + "params.txt", "w")
 f.write("Single population grid cell model")
-f.write("\npop_exc=" + neuron_params)
 f.write("\nruntime=" + str(runtime))
 f.write("\nn_row=" + str(n_row))
 f.write("\nn_col=" + str(n_col))
 f.write("\nsyn_weight=" + str(synaptic_weight))
 f.write("\nsyn_radius=" + str(synaptic_radius))
 f.write("\norientation_pref_shift=" + str(orientation_pref_shift))
+f.write("\npop_exc=" + str(pop_exc.describe()))
 f.close()
 
 p.end()
