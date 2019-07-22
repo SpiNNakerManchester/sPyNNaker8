@@ -90,43 +90,43 @@ proj_exc = p.Projection(
 # 1: E
 # 2: W
 # 3: S
-# input_neuron_params = {
-#     "v_thresh": -50,
-#     "v_reset": -65,
-#     "v_rest": -65,
-#     "i_offset": [0.8, 0.0, 0, 0],
-#     "tau_m": 20,
-#     "tau_refrac": 1,
-# }
-# input_structure = Line(dx=1.0, x0=0.0, y=0.0, z=0.0)
-# input_loop_connections = list()
-# pop_input = p.Population(4,
-#                          p.IF_curr_exp(**input_neuron_params),
-#                          structure=input_structure,
-#                          label="Input head direction and speed cells")
-
+input_neuron_params = {
+    "v_thresh": -50,
+    "v_reset": -65,
+    "v_rest": -65,
+    "i_offset": [0.8, 0, 0, 0],
+    "tau_m": 20,
+    "tau_refrac": 1,
+}
 input_structure = Line(dx=1.0, x0=0.0, y=0.0, z=0.0)
 input_loop_connections = list()
 pop_input = p.Population(4,
-                         p.SpikeSourcePoisson(
-                             rate=10.0, start=0.0, duration=runtime),
+                         p.IF_curr_exp(**input_neuron_params),
                          structure=input_structure,
-                         label="Poisson input velocity cells")
+                         label="Input head direction and speed cells")
+
+# input_structure = Line(dx=1.0, x0=0.0, y=0.0, z=0.0)
+# input_loop_connections = list()
+# pop_input = p.Population(4,
+#                          p.SpikeSourcePoisson(
+#                              rate=10.0, start=0.0, duration=runtime),
+#                          structure=input_structure,
+#                          label="Poisson input velocity cells")
 
 # Connect input neuron to grid cells of appropriate direction
 for i, neuron_pos in enumerate(pop_exc.positions):
     neuron_pref_dir = util.get_dir_pref(neuron_pos)
     if np.all(neuron_pref_dir == [0, 1]):
-        single_connection = (0, i, 1.0, 1.0)
+        single_connection = (0, i, 0.6, 1.0)
         index_north_cells.append(i)
     elif np.all(neuron_pref_dir == [0, -1]):
-        single_connection = (3, i, 0.0, 1.0)
+        single_connection = (3, i, 0.6, 1.0)
         index_south_cells.append(i)
     elif np.all(neuron_pref_dir == [1, 0]):
-        single_connection = (1, i, 0.0, 1.0)
+        single_connection = (1, i, 0.6, 1.0)
         index_east_cells.append(i)
     elif np.all(neuron_pref_dir == [-1, 0]):
-        single_connection = (2, i, 0.0, 1.0)
+        single_connection = (2, i, 0.6, 1.0)
         index_west_cells.append(i)
     input_loop_connections.append(single_connection)
 
@@ -141,13 +141,6 @@ proj_input = p.Projection(
     synapse_type=p.StaticSynapse(),
     label="Velocity input cells excitatory connections to appropriate grid cells"
 )
-
-# proj_dir_input = p.Projection(
-#     pop_input, pop_exc, p.FromListConnector(input_loop_connections, ('weight', 'delay')),
-#     p.StaticSynapse(),
-#     receptor_type="excitatory",
-#     label="Direction input cells excitatory connections to appropriate grid cells"
-# )
 
 """
 RUN
@@ -211,7 +204,6 @@ pickle.dump(pop_input.label, open(data_dir + "pop_input_label.pkl", 'wb'),
 
 f = open(data_dir + "params.txt", "w")
 f.write("Single population grid cell model with velocity input")
-f.write("\npop_exc=" + str(neuron_params))
 f.write("\nruntime=" + str(runtime))
 f.write("\nn_row=" + str(n_row))
 f.write("\nn_col=" + str(n_col))
@@ -219,6 +211,7 @@ f.write("\nsyn_weight=" + str(synaptic_weight))
 f.write("\nsyn_radius=" + str(synaptic_radius))
 f.write("\norientation_pref_shift=" + str(orientation_pref_shift) + "\n")
 f.write("pop_input=" + str(pop_input.describe()))
+f.write("\npop_exc=" + str(pop_exc.describe()))
 f.close()
 
 p.end()
