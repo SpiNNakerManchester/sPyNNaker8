@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 import sys
+import argparse
 
 # Third party imports
 from pyNN.utility.plotting import Figure, Panel
@@ -69,14 +70,14 @@ def main(input_cells, exc_dir_view):
     with open(DIR + "pop_exc_parameters.pkl", 'rb') as f:
         pop_exc_parameters = pickle.load(f)
 
-    times = [50, 150, 200, 1000, 1200, int(RUNTIME)-1]
+    times = [50, 150, 200, 1000, 1100, int(RUNTIME)-1]
     grid_cell_plots(times, pop_exc_label, pop_exc_spiketrains,
                     pop_exc_pos)
     plot_population_firing_rate(times, pop_exc_label, pop_exc_spiketrains, pop_exc_pos)
 
 
 def input_cell_plots(pop_input_label, pop_input_spike_trains, pop_input_v):
-    Figure(
+    fig = Figure(
         # Panel(pop_input_v,
         #       ylabel="Membrane potential (mV)",
         #       xlabel="Time (ms)",
@@ -91,12 +92,15 @@ def input_cell_plots(pop_input_label, pop_input_spike_trains, pop_input_v):
         settings=DEFAULT_FIG_SETTINGS,
         title="Input cells",
         annotations="0=N, 1=E, 2=W, 3=S"
-    ).save(DIR + "input_cells.png")
+    )
+    fig.save(DIR + "input_cells.png")
+    plt.clf()
+
 
 
 def grid_cell_dir_plots(pop_exc_north_spike_train, pop_exc_east_spike_train,
                         pop_exc_west_spike_train, pop_exc_south_spike_train):
-    Figure(
+    fig = Figure(
         Panel(pop_exc_north_spike_train,
               yticks=True, xticks=True, xlabel="Time (ms) (N)", markersize=1, xlim=(0, RUNTIME)
               ),
@@ -111,12 +115,15 @@ def grid_cell_dir_plots(pop_exc_north_spike_train, pop_exc_east_spike_train,
               ),
         settings=DEFAULT_FIG_SETTINGS,
         title="Excitatory grid cells for each direction",
-    ).save(DIR + "exc_grid_cells_dir.png")
+        annotations=""
+    )
+    fig.save(DIR + "exc_grid_cells_dir.png")
+    plt.clf()
 
 
 def grid_cell_plots(times, pop_exc_label, pop_exc_spiketrains,
                     pop_exc_pos):
-    Figure(
+    fig = Figure(
         # Panel(pop_exc_v,
         #       ylabel="Membrane potential (mV)",
         #       xlabel="Time (ms)",
@@ -137,7 +144,10 @@ def grid_cell_plots(times, pop_exc_label, pop_exc_spiketrains,
               ),
         settings=DEFAULT_FIG_SETTINGS,
         title=pop_exc_label,
-    ).save(DIR + "exc_grid_cells_pop.png")
+        annotations=""
+    )
+    fig.save(DIR + "exc_grid_cells_pop.png")
+    plt.clf()
 
 
 # Plot the firing rate of a population at a given time
@@ -145,7 +155,7 @@ def plot_population_firing_rate(times, label, spiketrains, pos):
     # plt.style.use('dark_background')
     num_times = len(times)
     fig, axs = plt.subplots(ncols=num_times)
-    fig.suptitle(label + 'firing rates')
+    fig.suptitle(label + ' firing rates')
     num_neurons = N_ROW * N_COL
 
     for i, ax in enumerate(axs):
@@ -169,12 +179,32 @@ def plot_population_firing_rate(times, label, spiketrains, pos):
     # plt.colorbar(cmap)
     fig.tight_layout()
     plt.savefig(DIR + 'pop_exc_gc_firing_rate.png', facecolor=fig.get_facecolor(), bbox_inches='tight', dpi=200)
+    plt.clf()
 
 
 if __name__ == "__main__":
-    DIR = sys.argv[1]
-    RUNTIME = int(sys.argv[2])
-    N_ROW = int(sys.argv[3])
-    N_COL = int(sys.argv[4])
-    # main(False, False)
-    main(True, True)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--dir", "-d", help="set output directory")
+    parser.add_argument("--runtime", "-r", help="set runtime")
+    parser.add_argument("--row", "-row", help="set pop_exc grid row")
+    parser.add_argument("--col", "-col", help="set pop_exc grid col")
+    parser.add_argument("--inputs", "-i", help="set flag for input plots")
+    parser.add_argument("--dir_views", "-dv", help="set flag for gc dir view plots")
+
+    args = parser.parse_args()
+    DIR = args.dir
+    RUNTIME = int(args.runtime)
+    N_ROW = int(args.row)
+    N_COL = int(args.col)
+
+    if args.inputs == 'True':
+        inputs = True
+    else:
+        inputs = False
+
+    if args.dir_views == 'True':
+        dir_views = True
+    else:
+        dir_views = False
+
+    main(inputs, dir_views)
