@@ -1,3 +1,18 @@
+# Copyright (c) 2017-2019 The University of Manchester
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import spynnaker8 as p
 from p8_integration_tests.base_test_case import BaseTestCase
 from pyNN.utility.plotting import Figure, Panel
@@ -124,7 +139,7 @@ class SmallWorldConnectorTest(BaseTestCase):
         # any checks go here
         v_test = neo_convertor.convert_data(v, name='v')
         spikes_test = neo_convertor.convert_data(spikes, name='spikes')
-        self.assertEquals(25000, len(v_test))
+        self.assertEqual(25000, len(v_test))
         # Not sure checking spike len is telling us much
         self.assertLess(7750, len(spikes_test))
         self.assertGreater(8250, len(spikes_test))
