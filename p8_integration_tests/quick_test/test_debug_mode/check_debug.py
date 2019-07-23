@@ -1,18 +1,3 @@
-# Copyright (c) 2017-2019 The University of Manchester
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 import os
 import pacman.operations.algorithm_reports.reports as reports_names
 from pacman.operations.algorithm_reports.network_specification import \
@@ -23,7 +8,8 @@ from spinn_front_end_common.utilities.report_functions.\
     routing_tables_from_machine_report
 from spinn_front_end_common.utilities.report_functions.board_chip_report \
     import BoardChipReport
-from spinn_front_end_common.utility_models import \
+from spinn_front_end_common.utility_models.\
+     data_speed_up_packet_gatherer_machine_vertex import \
      DataSpeedUpPacketGatherMachineVertex
 from p8_integration_tests.base_test_case import BaseTestCase
 import spynnaker8 as sim
@@ -34,7 +20,6 @@ class CheckDebug(BaseTestCase):
     that it does not crash in debug mode. All reports on.
     """
     def debug(self, run_zero):
-        # pylint: disable=protected-access
         reports = [
             # write_energy_report
             "Detailed_energy_report.rpt",
@@ -82,9 +67,7 @@ class CheckDebug(BaseTestCase):
         if (configs.getboolean("Machine", "enable_advanced_monitor_support")
                 and not configs.getboolean("Java", "use_java")):
             # write_data_speed_up_report
-            reports.append(
-                DataSpeedUpPacketGatherMachineVertex.OUT_REPORT_NAME)
-            reports.append(DataSpeedUpPacketGatherMachineVertex.IN_REPORT_NAME)
+            reports.append(DataSpeedUpPacketGatherMachineVertex.REPORT_NAME)
         pop = sim.Population(100, sim.IF_curr_exp, {}, label="pop")
         pop.record("v")
         inp = sim.Population(1, sim.SpikeSourceArray(

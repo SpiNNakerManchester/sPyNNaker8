@@ -1,22 +1,6 @@
-# Copyright (c) 2017-2019 The University of Manchester
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 import numpy
 import spynnaker8 as p
 from p8_integration_tests.base_test_case import BaseTestCase
-import os
 
 sources = 1000  # number of neurons in each population
 targets = 2000
@@ -69,7 +53,6 @@ def do_run():
                                             format="array")
     post_weights_list = projections[0].get(attribute_names=["weight"],
                                            format="list")
-    projections[0].save("weight", "test_file.txt")
 
     p.end()
 
@@ -81,20 +64,9 @@ def do_run():
 class LargePopWeightDelayRetrival(BaseTestCase):
 
     def compare_before_and_after(self):
-        if os.path.exists("test_file.txt"):
-            os.remove("test_file.txt")
         (pre_delays_array, pre_delays_list, pre_weights_array,
             pre_weights_list, post_delays_array, post_delays_list,
             post_weights_array, post_weights_list) = do_run()
-        assert(os.path.isfile("test_file.txt"))
-        with open("test_file.txt") as f:
-            file_weights = numpy.loadtxt(f)
-        np_weights = post_weights_list.astype(
-            [('source', '<f8'), ('target', '<f8'), ('weight', '<f8')]).view(
-                "float64").reshape((-1, 3))
-        self.assertTrue(numpy.allclose(file_weights, np_weights))
-        os.remove("test_file.txt")
-
         self.assertEqual((sources, targets), pre_delays_array.shape)
         self.assertEqual((sources, targets), pre_weights_array.shape)
         self.assertEqual((sources, targets), post_delays_array.shape)
@@ -148,5 +120,3 @@ if __name__ == '__main__':
     print("list")
     print(post_weights_list.shape)
     print(post_weights_list[0])
-    with open("test_file.txt") as f:
-        print(numpy.loadtxt(f))
