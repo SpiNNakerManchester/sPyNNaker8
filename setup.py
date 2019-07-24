@@ -1,6 +1,24 @@
+# Copyright (c) 2017-2019 The University of Manchester
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import os
 from setuptools import setup
-from collections import defaultdict
+try:
+    from collections.abc import defaultdict
+except ImportError:
+    from collections import defaultdict
 
 __version__ = None
 exec(open("spynnaker8/_version.py").read())
@@ -26,6 +44,25 @@ for dirname, dirnames, filenames in os.walk(main_package_dir):
             package = "{}{}".format(
                 main_package, dirname[start:].replace(os.sep, '.'))
             package_data[package].append(filename)
+
+install_requires = [
+    'SpiNNUtilities >= 1!4.0.1, < 1!5.0.0',
+    'SpiNNStorageHandlers >= 1!4.0.1, < 1!5.0.0',
+    'SpiNNMachine >= 1!4.0.1, < 1!5.0.0',
+    'SpiNNMan >= 1!4.0.1, < 1!5.0.0',
+    'SpiNNaker_PACMAN >= 1!4.0.1, < 1!5.0.0',
+    'SpiNNaker_DataSpecification >= 1!4.0.1, < 1!5.0.0',
+    'spalloc >= 1.0.1, < 2.0.0',
+    'SpiNNFrontEndCommon >= 1!4.0.1, < 1!5.0.0',
+    'sPyNNaker >= 1!4.0.1, < 1!5.0.0',
+    'quantities >= 0.12.1',
+    'pynn >= 0.9.1, < 0.10.0 ',
+    'lazyarray >= 0.2.9, <= 0.4.0',
+    'appdirs >= 1.4.2 , < 2.0.0',
+    'neo >= 0.5.2, < 0.7.0']
+if os.environ.get('READTHEDOCS', None) != 'True':
+    install_requires.append('scipy')
+    install_requires.append('csa')
 
 setup(
     name="sPyNNaker8",
@@ -53,19 +90,7 @@ setup(
     url="https://github.com/SpiNNakerManchester/SpyNNaker8",
     packages=packages,
     package_data=package_data,
-    install_requires=[
-        'SpiNNUtilities >= 1!4.0.1, < 1!5.0.0',
-        'SpiNNStorageHandlers >= 1!4.0.1, < 1!5.0.0',
-        'SpiNNMachine >= 1!4.0.1, < 1!5.0.0',
-        'SpiNNMan >= 1!4.0.1, < 1!5.0.0',
-        'SpiNNaker_PACMAN >= 1!4.0.1, < 1!5.0.0',
-        'SpiNNaker_DataSpecification >= 1!4.0.1, < 1!5.0.0',
-        'spalloc >= 1.0.1, < 2.0.0',
-        'SpiNNFrontEndCommon >= 1!4.0.1, < 1!5.0.0',
-        'sPyNNaker >= 1!4.0.1, < 1!5.0.0',
-        'quantities >= 0.12.1',
-        'pynn >= 0.9.1, < 0.10.0 ',
-        'lazyarray >= 0.2.9, <= 0.2.9',
-        'appdirs >= 1.4.2 , < 2.0.0',
-        'neo >= 0.5.2, < 0.6.0']
+    install_requires=install_requires,
+    maintainer="SpiNNakerTeam",
+    maintainer_email="spinnakerusers@googlegroups.com"
 )

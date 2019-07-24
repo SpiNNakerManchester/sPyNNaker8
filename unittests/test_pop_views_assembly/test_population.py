@@ -1,9 +1,23 @@
-import pytest
-from unittest import SkipTest
+# Copyright (c) 2017-2019 The University of Manchester
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from p8_integration_tests.base_test_case import BaseTestCase
-import spynnaker8 as sim
+from unittest import SkipTest
+import pytest
 from pyNN.space import Sphere, RandomStructure
+import spynnaker8 as sim
+from p8_integration_tests.base_test_case import BaseTestCase
 
 
 class TestPopulation(BaseTestCase):
@@ -13,9 +27,9 @@ class TestPopulation(BaseTestCase):
         label = "pop_1"
         sim.setup(timestep=1.0)
         pop_1 = sim.Population(n_neurons, sim.IF_curr_exp(), label=label)
-        self.assertEquals(n_neurons, pop_1.size)
-        self.assertEquals(label, pop_1.label)
-        self.assertEquals(sim.IF_curr_exp, type(pop_1.celltype))
+        self.assertEqual(n_neurons, pop_1.size)
+        self.assertEqual(label, pop_1.label)
+        self.assertEqual(sim.IF_curr_exp, type(pop_1.celltype))
         v_init = -60
         pop_1.initialize(v=v_init)
         initial_values = pop_1.initial_values
@@ -30,7 +44,7 @@ class TestPopulation(BaseTestCase):
         pop_1.all_cells
         pop_1.local_cells
 
-        self.assertEquals(n_neurons, pop_1.local_size)
+        self.assertEqual(n_neurons, pop_1.local_size)
 
         pop_1.structure
         sim.end()
@@ -67,7 +81,7 @@ class TestPopulation(BaseTestCase):
         values = pop_1.get("tau_m")
         self.assertEqual([2, 2, 2, 2, 2], values)
         values = pop_1.get_by_selector(slice(1, 3), "tau_m")
-        self.assertEquals([2, 2], values)
+        self.assertEqual([2, 2], values)
         pop_1.set_by_selector(slice(1, 3), "tau_m", 3)
         values = pop_1.get("tau_m")
         self.assertEqual([2, 3, 3, 2, 2], values)

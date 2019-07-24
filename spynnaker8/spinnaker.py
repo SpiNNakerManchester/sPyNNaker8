@@ -1,41 +1,44 @@
-# pynn imports
+# Copyright (c) 2017-2019 The University of Manchester
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+import logging
+import math
+from lazyarray import __version__ as lazyarray_version
+from quantities import __version__ as quantities_version
+from neo import __version__ as neo_version
 from pyNN.common import control as pynn_control
 from pyNN.random import RandomDistribution, NumpyRNG
 from pyNN import __version__ as pynn_version
-
+from spinn_utilities.log import FormatAdapter
 from spinn_front_end_common.utilities import globals_variables
 from spinn_front_end_common.utilities.exceptions import ConfigurationException
 from spinn_front_end_common.utilities.failed_state import FAILED_STATE_MSG
 from spynnaker.pyNN.abstract_spinnaker_common import AbstractSpiNNakerCommon
-from spinn_utilities.log import FormatAdapter
-from spynnaker.pyNN.utilities.spynnaker_failed_state \
-    import SpynnakerFailedState
-
+from spynnaker.pyNN.utilities.spynnaker_failed_state import (
+    SpynnakerFailedState)
 from spynnaker8 import _version
-from spynnaker8.spynnaker8_simulator_interface \
-    import Spynnaker8SimulatorInterface
-from spynnaker8.utilities.random_stats import RandomStatsExponentialImpl
-from spynnaker8.utilities.random_stats import RandomStatsGammaImpl
-from spynnaker8.utilities.random_stats import RandomStatsLogNormalImpl
-from spynnaker8.utilities.random_stats import RandomStatsNormalClippedImpl
-from spynnaker8.utilities.random_stats import RandomStatsNormalImpl
-from spynnaker8.utilities.random_stats import RandomStatsPoissonImpl
-from spynnaker8.utilities.random_stats import RandomStatsRandIntImpl
-from spynnaker8.utilities.random_stats import RandomStatsUniformImpl
-from spynnaker8.utilities.random_stats import RandomStatsVonmisesImpl
-from spynnaker8.utilities.random_stats import RandomStatsBinomialImpl
+from spynnaker8.spynnaker8_simulator_interface import (
+    Spynnaker8SimulatorInterface)
+from spynnaker8.utilities.random_stats import (
+    RandomStatsExponentialImpl, RandomStatsGammaImpl, RandomStatsLogNormalImpl,
+    RandomStatsNormalClippedImpl, RandomStatsNormalImpl,
+    RandomStatsPoissonImpl, RandomStatsRandIntImpl, RandomStatsUniformImpl,
+    RandomStatsVonmisesImpl, RandomStatsBinomialImpl)
 from ._version import __version__ as version
 
-import logging
-import math
-
-from quantities import __version__ as quantities_version
-from neo import __version__ as neo_version
-from lazyarray import __version__ as lazyarray_version
-
-
 log = FormatAdapter(logging.getLogger(__name__))
-
 NAME = "SpiNNaker_under_version({}-{})".format(
     _version.__version__, _version.__version_name__)
 
@@ -63,8 +66,8 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
         self._projections = list()
 
         # pynn demanded objects
-        self._segment_counter = 0
-        self._recorders = set([])
+        self.__segment_counter = 0
+        self.__recorders = set([])
 
         # main pynn interface inheritance
         pynn_control.BaseState.__init__(self)
@@ -126,8 +129,8 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
         """ Clear the current recordings and reset the simulation
         """
         self.recorders = set([])
-        self._id_counter = 0
-        self._segment_counter = -1
+        self.id_counter = 0
+        self.__segment_counter = -1
         self.reset()
 
         # Stop any currently running SpiNNaker application
@@ -139,7 +142,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
         for population in self._populations:
             population.cache_data()
 
-        self._segment_counter += 1
+        self.__segment_counter += 1
 
         AbstractSpiNNakerCommon.reset(self)
 
@@ -242,7 +245,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 
         :return: the segment counter
         """
-        return self._segment_counter
+        return self.__segment_counter
 
     @segment_counter.setter
     def segment_counter(self, new_value):
@@ -250,7 +253,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 
         :param new_value: new value for the segment counter
         """
-        self._segment_counter = new_value
+        self.__segment_counter = new_value
 
     @property
     def running(self):
@@ -305,7 +308,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 
         :return: the internal recorders object
         """
-        return self._recorders
+        return self.__recorders
 
     @recorders.setter
     def recorders(self, new_value):
@@ -313,7 +316,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 
         :param new_value: the new value for the recorder
         """
-        self._recorders = new_value
+        self.__recorders = new_value
 
     def get_distribution_to_stats(self):
         return {
@@ -336,13 +339,16 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
         return isinstance(thing, RandomDistribution)
 
     def get_pynn_NumpyRNG(self):
-        return NumpyRNG()
+        return NumpyRNG
 
 
 # Defined in this file to prevent an import loop
 class Spynnaker8FailedState(SpynnakerFailedState,
                             Spynnaker8SimulatorInterface):
-    __slots__ = ()
+    __slots__ = ("write_on_end")
+
+    def __init__(self):
+        self.write_on_end = []
 
     @property
     def dt(self):
@@ -371,6 +377,10 @@ class Spynnaker8FailedState(SpynnakerFailedState,
     @property
     def t(self):
         raise ConfigurationException(FAILED_STATE_MSG)
+
+    @staticmethod
+    def get_generated_output(output):
+        return globals_variables.get_generated_output(output)
 
 
 # At import time change the default FailedState

@@ -1,9 +1,24 @@
+# Copyright (c) 2017-2019 The University of Manchester
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import pytest
 from pyNN.random import RandomDistribution, NumpyRNG
-from p8_integration_tests.base_test_case import BaseTestCase
 from spinn_front_end_common.utilities.exceptions import ConfigurationException
 import spynnaker8 as sim
-from spynnaker8.models.populations.population_view import PopulationView
+from spynnaker8.models.populations import PopulationView
+from p8_integration_tests.base_test_case import BaseTestCase
 
 
 class Test_IDMixin(BaseTestCase):
@@ -87,7 +102,7 @@ class Test_IDMixin(BaseTestCase):
         view1 = PopulationView(pop_1, [1, 3, 5, 7, 9], label="Odds")
         view2 = PopulationView(view1, [1, 3], label="AlternativeOdds")
         # Not a normal way to access but good to test
-        self.assertEqual([3, 7], view2._indexes)
+        self.assertEqual((3, 7), view2._indexes)
         self.assertEqual(view2.parent, view1)
         self.assertEqual(view1.grandparent, pop_1)
         self.assertEqual(view2.grandparent, pop_1)
@@ -98,7 +113,7 @@ class Test_IDMixin(BaseTestCase):
         self.assertEqual([3, 0], view1.id_to_index([7, 1]))
         self.assertEqual(1, view2.id_to_index(7))
         view3 = view1[1:3]
-        self.assertEqual([3, 5], view3._indexes)
+        self.assertEqual((3, 5), view3._indexes)
         view4 = view1.sample(2)
         self.assertEqual(2, len(view4._indexes))
         sim.end()
