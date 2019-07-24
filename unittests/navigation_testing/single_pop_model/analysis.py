@@ -32,7 +32,7 @@ DEFAULT_FIG_SETTINGS = {
 }
 
 
-def main(input_cells, exc_dir_view):
+def main(input_cells, exc_dir_view, times):
 
     if input_cells:
         with open(DIR + "pop_input_spike_trains.pkl", 'rb') as f:
@@ -70,14 +70,13 @@ def main(input_cells, exc_dir_view):
     with open(DIR + "pop_exc_parameters.pkl", 'rb') as f:
         pop_exc_parameters = pickle.load(f)
 
-    times = [50, 150, 200, 1000, 1100, int(RUNTIME)-1]
     grid_cell_plots(times, pop_exc_label, pop_exc_spiketrains,
                     pop_exc_pos)
     plot_population_firing_rate(times, pop_exc_label, pop_exc_spiketrains, pop_exc_pos)
 
 
 def input_cell_plots(pop_input_label, pop_input_spike_trains, pop_input_v):
-    fig = Figure(
+    Figure(
         # Panel(pop_input_v,
         #       ylabel="Membrane potential (mV)",
         #       xlabel="Time (ms)",
@@ -93,9 +92,8 @@ def input_cell_plots(pop_input_label, pop_input_spike_trains, pop_input_v):
         title="Input cells",
         annotations="0=N, 1=E, 2=W, 3=S"
     )
-    fig.save(DIR + "input_cells.png")
+    plt.savefig(DIR + "input_cells.png", dpi=150, bbox_inches='tight')
     plt.clf()
-
 
 
 def grid_cell_dir_plots(pop_exc_north_spike_train, pop_exc_east_spike_train,
@@ -117,7 +115,7 @@ def grid_cell_dir_plots(pop_exc_north_spike_train, pop_exc_east_spike_train,
         title="Excitatory grid cells for each direction",
         annotations=""
     )
-    fig.save(DIR + "exc_grid_cells_dir.png")
+    plt.savefig(DIR + "exc_grid_cells_dir.png", dpi=150, bbox_inches='tight')
     plt.clf()
 
 
@@ -146,7 +144,7 @@ def grid_cell_plots(times, pop_exc_label, pop_exc_spiketrains,
         title=pop_exc_label,
         annotations=""
     )
-    fig.save(DIR + "exc_grid_cells_pop.png")
+    plt.savefig(DIR + "exc_grid_cells_pop.png", dpi=150, bbox_inches='tight')
     plt.clf()
 
 
@@ -154,8 +152,8 @@ def grid_cell_plots(times, pop_exc_label, pop_exc_spiketrains,
 def plot_population_firing_rate(times, label, spiketrains, pos):
     # plt.style.use('dark_background')
     num_times = len(times)
-    fig, axs = plt.subplots(ncols=num_times)
-    fig.suptitle(label + ' firing rates')
+    fig, axs = plt.subplots(ncols=num_times, figsize=(6, 3))
+    # fig.suptitle(label + ' firing rates')
     num_neurons = N_ROW * N_COL
 
     for i, ax in enumerate(axs):
@@ -178,7 +176,7 @@ def plot_population_firing_rate(times, label, spiketrains, pos):
                            c=norm_firing_rate, cmap=cmap, norm=plt.Normalize(0, 1))
     # plt.colorbar(cmap)
     fig.tight_layout()
-    plt.savefig(DIR + 'pop_exc_gc_firing_rate.png', facecolor=fig.get_facecolor(), bbox_inches='tight', dpi=200)
+    plt.savefig(DIR + 'pop_exc_gc_firing_rate.png', facecolor=fig.get_facecolor(), bbox_inches='tight', dpi=150)
     plt.clf()
 
 
@@ -190,13 +188,14 @@ if __name__ == "__main__":
     parser.add_argument("--col", "-col", help="set pop_exc grid col")
     parser.add_argument("--inputs", "-i", help="set flag for input plots")
     parser.add_argument("--dir_views", "-dv", help="set flag for gc dir view plots")
+    parser.add_argument("--times", "-t", help="set timestamps for plots")
 
     args = parser.parse_args()
     DIR = args.dir
     RUNTIME = int(args.runtime)
     N_ROW = int(args.row)
     N_COL = int(args.col)
-
+    times = map(int, args.times.strip('[]').split(','))
     if args.inputs == 'True':
         inputs = True
     else:
@@ -207,4 +206,4 @@ if __name__ == "__main__":
     else:
         dir_views = False
 
-    main(inputs, dir_views)
+    main(inputs, dir_views, times)
