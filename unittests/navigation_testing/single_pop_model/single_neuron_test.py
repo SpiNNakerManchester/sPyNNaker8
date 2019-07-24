@@ -29,8 +29,7 @@ neuron_params = {
     "v_thresh": -50,
     "v_reset": -65,
     "v_rest": -65,
-    "i_offset": 1,  # DC input
-    "i_vel_drive": 0,
+    "i_offset": 0.7,  # DC input
     "tau_m": 20,  # membrane time constant
     "tau_refrac": 1,
 }
@@ -38,7 +37,7 @@ neuron_params = {
 rng = NumpyRNG(seed=41, parallel_safe=True)
 v_init = RandomDistribution('uniform', (-65, -55), rng)
 pop_exc = p.Population(1,
-                       p.extra_models.GridCell(**neuron_params),
+                       p.IF_curr_exp(**neuron_params),
                        cellparams=None,
                        initial_values={'v': v_init},
                        structure=None,

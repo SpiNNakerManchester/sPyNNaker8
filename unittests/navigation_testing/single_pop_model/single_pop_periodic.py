@@ -19,16 +19,16 @@ SETUP
 p.setup(1)  # simulation timestep (ms)
 runtime = 2000  # ms
 
-n_row = 50
-n_col = 50
+n_row = 5
+n_col = 5
 p.set_number_of_neurons_per_core(p.IF_curr_exp, 255)
 
 is_auto_receptor = False  # allow self-connections in recurrent grid cell network
 
 rng = NumpyRNG(seed=77364, parallel_safe=True)
-synaptic_weight = 0.6  # synaptic weight for inhibitory connections
+synaptic_weight = 0.1  # synaptic weight for inhibitory connections
 synaptic_radius = 10  # inhibitory connection radius
-orientation_pref_shift = 1  # number of neurons to shift centre of connectivity by
+orientation_pref_shift = 10  # number of neurons to shift centre of connectivity by
 
 # Grid cell (excitatory) population
 neuron_params = {
@@ -52,9 +52,9 @@ pop_exc = p.Population(n_row * n_col,
                        )
 
 # Create recurrent inhibitory connections
-loopConnections = list()
+loop_connections = list()
 for pre_syn in range(0, n_row * n_col):
-    presyn_pos = (pop_exc.positions[pre_syn])
+    presyn_pos = (pop_exc.positions[pre_syn])[:2]
     dir_pref = np.array(util.get_dir_pref(presyn_pos))
 
     # Shift centre of connectivity in appropriate direction
@@ -62,17 +62,18 @@ for pre_syn in range(0, n_row * n_col):
     for post_syn in range(0, n_row * n_col):
         # If different neurons
         if pre_syn != post_syn or is_auto_receptor:
-            postsyn_pos = (pop_exc.positions[post_syn])
+            postsyn_pos = (pop_exc.positions[post_syn])[:2]
             dist = util.get_neuron_distance_periodic(n_col, n_row, shifted_centre, postsyn_pos)
 
             # Establish connection
             if np.all(dist <= synaptic_radius):
-                singleConnection = (pre_syn, post_syn, synaptic_weight, util.normalise(dist, 0, max(n_row, n_col)))
-                loopConnections.append(singleConnection)
+                # singleConnection = (pre_syn, post_syn, synaptic_weight, util.normalise(dist, 0, max(n_row, n_col)))
+                singleConnection = (pre_syn, post_syn, synaptic_weight, 1.0)
+                loop_connections.append(singleConnection)
 
 # Create inhibitory connections
 proj_exc = p.Projection(
-    pop_exc, pop_exc, p.FromListConnector(loopConnections, ('weight', 'delay')),
+    pop_exc, pop_exc, p.FromListConnector(loop_connections, ('weight', 'delay')),
     p.StaticSynapse(),
     receptor_type='inhibitory',
     label="Excitatory grid cells inhibitory connections")
@@ -80,7 +81,7 @@ proj_exc = p.Projection(
 """
 RUN
 """
-pop_exc.record("all") # change variable
+pop_exc.record("spikes")
 p.run(runtime)
 
 """
@@ -128,5 +129,7 @@ f.write("\norientation_pref_shift=" + str(orientation_pref_shift))
 f.write("\npop_exc=" + str(pop_exc.describe()))
 f.close()
 
+# util.plot_connections([625, 640, 700, 812], pop_exc.positions, loop_connections, n_col, n_row, data_dir)
+# util.plot_neurons(pop_exc.positions, data_dir)
 p.end()
 print(data_dir)

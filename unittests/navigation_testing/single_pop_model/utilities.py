@@ -11,48 +11,55 @@ cmap = mcolors.LinearSegmentedColormap.from_list("",
 # cmap=plt.get_cmap('YlOrRd')
 
 
-def check_connection_dir_prefs(neuron_ids, neuron_positions, connection_list):
-    for neuron_id in neuron_ids:
-        connections = get_neuron_connections(neuron_id, connection_list, False)
-        counter_n = 0
-        counter_e = 0
-        counter_w = 0
-        counter_s = 0
-        for connection in connections:
-            dir = get_dir_pref(neuron_positions[connection[1]])
-            if dir == [0, 1]:
-                counter_n += 1
-            elif dir == [0, -1]:
-                counter_s += 1
-            elif dir == [1, 0]:
-                counter_e += 1
-            elif dir == [-1, 0]:
-                counter_w += 1
+def plot_neurons(neuron_positions, directory):
+    for i, pos in enumerate(neuron_positions):
+        plt.scatter(pos[0], pos[1], c=i, norm=plt.Normalize(0,25), cmap="Greys")
+    plt.savefig(directory + 'neuron_order.png', bbox_inches='tight', dpi=150)
+    plt.clf()
 
-        print "Neuron " + str(neuron_id) + "(" + str(get_dir_pref(neuron_positions[neuron_id])) + ")"
-        print "N: " + str(counter_n)
-        print "E: " + str(counter_e)
-        print "W: " + str(counter_w)
-        print "S: " + str(counter_s)
+
+def plot_connections(neuron_ids, neuron_positions, connection_list, grid_w, grid_h, directory):
+    fig, axs = plt.subplots(ncols=len(neuron_ids), figsize=(6, 6))
+    fig.suptitle('Neuron Connectivity')
+
+    for i, ax in enumerate(axs):
+        _id = neuron_ids[i]
+        connections = get_neuron_connections(_id, connection_list, False)
+        ax.set_xlim(0, grid_w - 1)
+        ax.set_ylim(0, grid_h - 1)
+        ax.set_title("Neuron " + str(_id) + str(get_dir_pref(neuron_positions[_id])))
+        ax.get_xaxis().set_ticks([0, grid_w])
+        ax.get_yaxis().set_ticks([0, grid_h])
+        ax.set_aspect('equal')
+
+        ax.scatter((neuron_positions[_id])[0],
+                   (neuron_positions[_id])[1], s=2, marker="x", c="r")
+
+        for connection in connections:
+            ax.scatter((neuron_positions[connection[1]])[0],
+                       (neuron_positions[connection[1]])[1], s=0.1, c="k")
+    fig.tight_layout()
+    plt.savefig(directory + 'neuron_connections.png', facecolor=fig.get_facecolor(), bbox_inches='tight', dpi=150)
+    plt.clf()
 
 
 # Initialise neuron directional preference
 def get_dir_pref(pos):
-    x, y, _ = pos.T
+    x, y = pos
     if x % 2 == 0 and y % 2 == 0:
-        return [0, 1]  # N
-    elif x % 2 != 0 and y % 2 != 0:
-        return [0, -1]  # S
-    elif x % 2 != 0 and y % 2 == 0:
         return [-1, 0]  # W
-    elif x % 2 == 0 and y % 2 != 0:
+    elif x % 2 != 0 and y % 2 != 0:
         return [1, 0]  # E
+    elif x % 2 != 0 and y % 2 == 0:
+        return [0, -1]  # S
+    elif x % 2 == 0 and y % 2 != 0:
+        return [0, 1]  # N
 
 
 # Compute Euclidean distance of two neurons lying on periodic network grid
 def get_neuron_distance_periodic(grid_w, grid_h, pre_pos, post_pos):
-    x1, y1, _ = pre_pos.T
-    x2, y2, _ = post_pos.T
+    x1, y1 = pre_pos
+    x2, y2 = post_pos
     delta_x = abs(x1 - x2)
     delta_y = abs(y1 - y2)
     return math.sqrt(math.pow(min(delta_x, grid_w - delta_x), 2) +
@@ -75,11 +82,11 @@ def normalise(val, minimum, maximum):
 
 # Shift centre of connectivity in appropriate direction
 def shift_centre_connectivity(presyn_pos, dir, shift_param, n_row, n_col):
-    centre = np.copy(presyn_pos[:3])
+    centre = np.copy(presyn_pos)
 
     # If N or S
     if np.all(dir == [0, 1]) or np.all(dir == [0, -1]):
-        centre[1] -= dir[1] * shift_param
+        centre[1] += dir[1] * shift_param
         # Check if within network boundary
         if centre[1] < 0:
             centre[1] += n_row
