@@ -20,16 +20,16 @@ SETUP
 p.setup(1)  # simulation timestep (ms)
 runtime = 2000  # ms
 
-n_row = 50
-n_col = 50
+n_row = 128
+n_col = 128
 p.set_number_of_neurons_per_core(p.IF_curr_exp, 255)
 
 is_auto_receptor = False  # allow self-connections in recurrent grid cell network
 
 rng = NumpyRNG(seed=77364, parallel_safe=True)
-synaptic_weight = 0.6  # synaptic weight for inhibitory connections
+synaptic_weight = 0.1  # synaptic weight for inhibitory connections
 synaptic_radius = 10  # inhibitory connection radius
-orientation_pref_shift = 4  # number of neurons to shift centre of connectivity by
+orientation_pref_shift = 0  # number of neurons to shift centre of connectivity by
 
 # Grid cell (excitatory) population
 neuron_params = {
@@ -100,7 +100,7 @@ pop_input = p.Population(4,
                          label="Poisson input velocity cells")
 
 # Connect input neuron to grid cells of appropriate direction
-input_syn_weight = 0.05
+input_syn_weight = 0.0005
 for i, neuron_pos in enumerate(pop_exc.positions):
     neuron_pos = neuron_pos[:2]
     neuron_pref_dir = util.get_dir_pref(neuron_pos)

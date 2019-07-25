@@ -27,7 +27,7 @@ def plot_connections(neuron_ids, neuron_positions, connection_list, grid_w, grid
         connections = get_neuron_connections(_id, connection_list, False)
         ax.set_xlim(0, grid_w - 1)
         ax.set_ylim(0, grid_h - 1)
-        ax.set_title("Neuron " + str(_id) + str(get_dir_pref(neuron_positions[_id])))
+        ax.set_title("Neuron " + str(_id) + str(get_dir_pref((neuron_positions[_id])[:2])))
         ax.get_xaxis().set_ticks([0, grid_w])
         ax.get_yaxis().set_ticks([0, grid_h])
         ax.set_aspect('equal')

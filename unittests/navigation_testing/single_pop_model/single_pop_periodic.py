@@ -19,8 +19,8 @@ SETUP
 p.setup(1)  # simulation timestep (ms)
 runtime = 2000  # ms
 
-n_row = 5
-n_col = 5
+n_row = 128
+n_col = 128
 p.set_number_of_neurons_per_core(p.IF_curr_exp, 255)
 
 is_auto_receptor = False  # allow self-connections in recurrent grid cell network
@@ -28,7 +28,7 @@ is_auto_receptor = False  # allow self-connections in recurrent grid cell networ
 rng = NumpyRNG(seed=77364, parallel_safe=True)
 synaptic_weight = 0.1  # synaptic weight for inhibitory connections
 synaptic_radius = 10  # inhibitory connection radius
-orientation_pref_shift = 10  # number of neurons to shift centre of connectivity by
+orientation_pref_shift = 0  # number of neurons to shift centre of connectivity by
 
 # Grid cell (excitatory) population
 neuron_params = {
@@ -119,7 +119,7 @@ pickle.dump(neuron_params, open(data_dir + "pop_exc_parameters.pkl", 'wb'),
             protocol=pickle.HIGHEST_PROTOCOL)
 
 f = open(data_dir + "params.txt", "w")
-f.write("Single population grid cell model")
+f.write("Single population grid cell (periodic) model")
 f.write("\nruntime=" + str(runtime))
 f.write("\nn_row=" + str(n_row))
 f.write("\nn_col=" + str(n_col))
@@ -129,7 +129,7 @@ f.write("\norientation_pref_shift=" + str(orientation_pref_shift))
 f.write("\npop_exc=" + str(pop_exc.describe()))
 f.close()
 
-# util.plot_connections([625, 640, 700, 812], pop_exc.positions, loop_connections, n_col, n_row, data_dir)
-# util.plot_neurons(pop_exc.positions, data_dir)
+util.plot_connections([14232, 15000, 12854, 812], pop_exc.positions, loop_connections, n_col, n_row, data_dir)
+util.plot_neurons(pop_exc.positions, data_dir)
 p.end()
 print(data_dir)
