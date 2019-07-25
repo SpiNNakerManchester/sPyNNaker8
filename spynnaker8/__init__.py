@@ -93,6 +93,14 @@ from spynnaker8.models.synapse_dynamics.weight_dependence\
 from spynnaker8.models.synapse_dynamics.timing_dependence\
     .timing_dependence_spike_pair import TimingDependenceSpikePair as \
     SpikePairRule
+from spynnaker.pyNN.models.neuron.structural_plasticity.synaptogenesis\
+    .partner_selection import LastNeuronSelection
+from spynnaker.pyNN.models.neuron.structural_plasticity.synaptogenesis\
+    .partner_selection import RandomSelection
+from spynnaker.pyNN.models.neuron.structural_plasticity.synaptogenesis\
+    .formation import DistanceDependentFormation
+from spynnaker.pyNN.models.neuron.structural_plasticity.synaptogenesis\
+    .elimination import RandomByWeightElimination
 
 # neuron stuff
 # noinspection PyUnresolvedReferences
@@ -157,6 +165,8 @@ __all__ = [
     'MultiplicativeWeightDependence', 'SpikePairRule',
     # Structural plasticity by Petrut Bogdan
     'StructuralMechanismStatic', 'StructuralMechanismSTDP',
+    'LastNeuronSelection', 'RandomSelection',
+    'DistanceDependentFormation', 'RandomByWeightElimination',
     # neuron stuff
     'IF_cond_exp', 'IF_curr_exp', "IF_curr_alpha",
     'Izhikevich', 'SpikeSourceArray', 'SpikeSourcePoisson',
