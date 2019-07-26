@@ -27,8 +27,8 @@ class TestPoissonSpikeSource(BaseTestCase):
         count = 0
         for a_spikes in spikes:
             count += len(a_spikes)
-        tol = math.sqrt(expected)
-        self.assertAlmostEqual(expected, count/len(spikes), delta=tol,
+        tolerance = math.sqrt(expected)
+        self.assertAlmostEqual(expected, count/len(spikes), delta=tolerance,
                                msg="Error on {}".format(input.label))
 
     def recording_poisson_spikes(self, run_zero):
