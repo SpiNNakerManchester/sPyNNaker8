@@ -31,7 +31,7 @@ from spynnaker.pyNN.external_devices_models import (
     AbstractEthernetController, AbstractEthernetSensor,
     ArbitraryFPGADevice, ExternalCochleaDevice, ExternalFPGARetinaDevice,
     MunichMotorDevice, MunichRetinaDevice)
-from spynnaker.pyNN.models.utility_models import (
+from spynnaker.pyNN.models.utility_models.spike_injector import (
     SpikeInjector as
     ExternalDeviceSpikeInjector)
 from spynnaker.pyNN import model_binaries
