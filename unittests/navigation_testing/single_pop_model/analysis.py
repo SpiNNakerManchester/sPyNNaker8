@@ -73,6 +73,7 @@ def main(input_cells, exc_dir_view, times):
     grid_cell_plots(times, pop_exc_label, pop_exc_spiketrains,
                     pop_exc_pos)
     plot_population_firing_rate(times, pop_exc_label, pop_exc_spiketrains, pop_exc_pos)
+    get_active_neuron_counts(pop_exc_spiketrains, pop_exc_pos, times[-1])
 
 
 def input_cell_plots(pop_input_label, pop_input_spike_trains, pop_input_v):
@@ -180,6 +181,33 @@ def plot_population_firing_rate(times, label, spiketrains, pos):
     plt.savefig(DIR + 'pop_exc_gc_firing_rate.eps', format='eps',
                 facecolor=fig.get_facecolor(), bbox_inches='tight', dpi=600)
     plt.clf()
+
+
+def get_active_neuron_counts(spike_trains, neuron_positions, time):
+    count_n = 0
+    count_e = 0
+    count_w = 0
+    count_s = 0
+
+    for neuron_id, spike_train in enumerate(spike_trains):
+        if time in spike_train:
+            dir = util.get_dir_pref((neuron_positions[neuron_id])[:2])
+            if dir == [0, 1]:
+                count_n += 1
+            elif dir == [0, -1]:
+                count_s += 1
+            elif dir == [1, 0]:
+                count_w += 1
+            elif dir == [-1, 0]:
+                count_e += 1
+
+    f = open(DIR + "active_neurons.txt", "w")
+    f.write("Active neurons at " + str(time) + "ms")
+    f.write("\nN: " + str(count_n))
+    f.write("\nE: " + str(count_e))
+    f.write("\nW: " + str(count_w))
+    f.write("\nS: " + str(count_s))
+    f.close()
 
 
 if __name__ == "__main__":
