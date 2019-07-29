@@ -19,7 +19,7 @@ def plot_neurons(neuron_positions, directory):
 
 
 def plot_connections(neuron_ids, neuron_positions, connection_list, grid_w, grid_h, directory):
-    fig, axs = plt.subplots(ncols=len(neuron_ids), figsize=(6, 6))
+    fig, axs = plt.subplots(ncols=len(neuron_ids))
     fig.suptitle('Neuron Connectivity')
 
     for i, ax in enumerate(axs):
@@ -33,11 +33,11 @@ def plot_connections(neuron_ids, neuron_positions, connection_list, grid_w, grid
         ax.set_aspect('equal')
 
         ax.scatter((neuron_positions[_id])[0],
-                   (neuron_positions[_id])[1], s=2, marker="x", c="r")
+                   (neuron_positions[_id])[1], s=2, marker='x', c="r")
 
         for connection in connections:
             ax.scatter((neuron_positions[connection[1]])[0],
-                       (neuron_positions[connection[1]])[1], s=0.1, c="k")
+                       (neuron_positions[connection[1]])[1], marker='x', s=0.5, c="k")
     fig.tight_layout()
     plt.savefig(directory + 'neuron_connections.png', facecolor=fig.get_facecolor(), bbox_inches='tight', dpi=150)
     plt.clf()
