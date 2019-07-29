@@ -28,7 +28,7 @@ DEFAULT_FIG_SETTINGS = {
     'axes.labelsize': 'small',
     'legend.fontsize': 'small',
     'font.size': 9,
-    'savefig.dpi': 200,
+    'savefig.dpi': 600,
 }
 
 
@@ -86,13 +86,13 @@ def input_cell_plots(pop_input_label, pop_input_spike_trains, pop_input_v):
         Panel(pop_input_spike_trains,
               xlabel="Time (ms)",
               ylabel="Neuron index",
-              yticks=True, xticks=True,  markersize=0.2, xlim=(0, RUNTIME)
+              yticks=True, xticks=True, marker='o', markersize=1, xlim=(0, RUNTIME)
               ),
         settings=DEFAULT_FIG_SETTINGS,
         title="Input cells",
         annotations="0=N, 1=E, 2=W, 3=S"
     )
-    plt.savefig(DIR + "input_cells.png", dpi=150, bbox_inches='tight')
+    plt.savefig(DIR + "input_cells.eps", format='eps', bbox_inches='tight')
     plt.clf()
 
 
@@ -100,22 +100,22 @@ def grid_cell_dir_plots(pop_exc_north_spike_train, pop_exc_east_spike_train,
                         pop_exc_west_spike_train, pop_exc_south_spike_train):
     fig = Figure(
         Panel(pop_exc_north_spike_train,
-              yticks=True, xticks=True, xlabel="Time (ms) (N)", markersize=0.2, xlim=(0, RUNTIME)
+              yticks=True, xticks=True, xlabel="Time (ms) (N)", marker='o', markersize=1, xlim=(0, RUNTIME)
               ),
         Panel(pop_exc_east_spike_train,
-              yticks=True, xticks=True, xlabel="Time (ms) (E)", markersize=0.2, xlim=(0, RUNTIME)
+              yticks=True, xticks=True, xlabel="Time (ms) (E)", marker='o', markersize=1, xlim=(0, RUNTIME)
               ),
         Panel(pop_exc_west_spike_train,
-              yticks=True, xticks=True, xlabel="Time (ms) (W)", markersize=0.2, xlim=(0, RUNTIME)
+              yticks=True, xticks=True, xlabel="Time (ms) (W)", marker='o', markersize=1, xlim=(0, RUNTIME)
               ),
         Panel(pop_exc_south_spike_train,
-              yticks=True, xticks=True, xlabel="Time (ms) (S)", markersize=0.2, xlim=(0, RUNTIME)
+              yticks=True, xticks=True, xlabel="Time (ms) (S)", marker='o', markersize=1, xlim=(0, RUNTIME)
               ),
         settings=DEFAULT_FIG_SETTINGS,
         title="Excitatory grid cells for each direction",
         annotations=""
     )
-    plt.savefig(DIR + "exc_grid_cells_dir.png", dpi=150, bbox_inches='tight')
+    plt.savefig(DIR + "exc_grid_cells_dir.eps", format='eps')
     plt.clf()
 
 
@@ -138,13 +138,13 @@ def grid_cell_plots(times, pop_exc_label, pop_exc_spiketrains,
         #       data_labels=[pop_exc_label], yticks=True, xticks=True, xlim=(0, RUNTIME)
         #       ),
         Panel(pop_exc_spiketrains,
-              yticks=True, xticks=True, xlabel="Time (ms)", markersize=0.2, xlim=(0, RUNTIME)
+              yticks=True, xticks=True, xlabel="Time (ms)", marker='o', markersize=1, xlim=(0, RUNTIME)
               ),
         settings=DEFAULT_FIG_SETTINGS,
         title=pop_exc_label,
         annotations=""
     )
-    plt.savefig(DIR + "exc_grid_cells_pop.png", dpi=150, bbox_inches='tight')
+    plt.savefig(DIR + "exc_grid_cells_pop.eps", format='eps', bbox_inches='tight')
     plt.clf()
 
 
@@ -152,7 +152,8 @@ def grid_cell_plots(times, pop_exc_label, pop_exc_spiketrains,
 def plot_population_firing_rate(times, label, spiketrains, pos):
     # plt.style.use('dark_background')
     num_times = len(times)
-    fig, axs = plt.subplots(ncols=num_times, figsize=(6, 3))
+    # fig, axs = plt.subplots(ncols=num_times, figsize=(6, 3))
+    fig, axs = plt.subplots(ncols=num_times)
     # fig.suptitle(label + ' firing rates')
     num_neurons = N_ROW * N_COL
 
@@ -176,7 +177,8 @@ def plot_population_firing_rate(times, label, spiketrains, pos):
                            c=norm_firing_rate, cmap=cmap, norm=plt.Normalize(0, 1))
     # plt.colorbar(cmap)
     fig.tight_layout()
-    plt.savefig(DIR + 'pop_exc_gc_firing_rate.png', facecolor=fig.get_facecolor(), bbox_inches='tight', dpi=150)
+    plt.savefig(DIR + 'pop_exc_gc_firing_rate.eps', format='eps',
+                facecolor=fig.get_facecolor(), bbox_inches='tight', dpi=600)
     plt.clf()
 
 
