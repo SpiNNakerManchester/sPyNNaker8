@@ -86,7 +86,7 @@ def input_cell_plots(pop_input_label, pop_input_spike_trains, pop_input_v):
         Panel(pop_input_spike_trains,
               xlabel="Time (ms)",
               ylabel="Neuron index",
-              yticks=True, xticks=True,  markersize=1, xlim=(0, RUNTIME)
+              yticks=True, xticks=True,  markersize=0.2, xlim=(0, RUNTIME)
               ),
         settings=DEFAULT_FIG_SETTINGS,
         title="Input cells",
@@ -100,16 +100,16 @@ def grid_cell_dir_plots(pop_exc_north_spike_train, pop_exc_east_spike_train,
                         pop_exc_west_spike_train, pop_exc_south_spike_train):
     fig = Figure(
         Panel(pop_exc_north_spike_train,
-              yticks=True, xticks=True, xlabel="Time (ms) (N)", markersize=1, xlim=(0, RUNTIME)
+              yticks=True, xticks=True, xlabel="Time (ms) (N)", markersize=0.2, xlim=(0, RUNTIME)
               ),
         Panel(pop_exc_east_spike_train,
-              yticks=True, xticks=True, xlabel="Time (ms) (E)", markersize=1, xlim=(0, RUNTIME)
+              yticks=True, xticks=True, xlabel="Time (ms) (E)", markersize=0.2, xlim=(0, RUNTIME)
               ),
         Panel(pop_exc_west_spike_train,
-              yticks=True, xticks=True, xlabel="Time (ms) (W)", markersize=1, xlim=(0, RUNTIME)
+              yticks=True, xticks=True, xlabel="Time (ms) (W)", markersize=0.2, xlim=(0, RUNTIME)
               ),
         Panel(pop_exc_south_spike_train,
-              yticks=True, xticks=True, xlabel="Time (ms) (S)", markersize=1, xlim=(0, RUNTIME)
+              yticks=True, xticks=True, xlabel="Time (ms) (S)", markersize=0.2, xlim=(0, RUNTIME)
               ),
         settings=DEFAULT_FIG_SETTINGS,
         title="Excitatory grid cells for each direction",
@@ -138,7 +138,7 @@ def grid_cell_plots(times, pop_exc_label, pop_exc_spiketrains,
         #       data_labels=[pop_exc_label], yticks=True, xticks=True, xlim=(0, RUNTIME)
         #       ),
         Panel(pop_exc_spiketrains,
-              yticks=True, xticks=True, xlabel="Time (ms)", markersize=1, xlim=(0, RUNTIME)
+              yticks=True, xticks=True, xlabel="Time (ms)", markersize=0.2, xlim=(0, RUNTIME)
               ),
         settings=DEFAULT_FIG_SETTINGS,
         title=pop_exc_label,
