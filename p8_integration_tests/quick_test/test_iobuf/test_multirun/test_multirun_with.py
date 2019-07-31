@@ -21,9 +21,11 @@ from p8_integration_tests.base_test_case import BaseTestCase
 
 class TestIobuffMultirun(BaseTestCase):
 
-    def check_size(self, prov_path):
+    def check_size(self, prov_path, vertex_placement):
         iofile = os.path.join(
-            prov_path, "iobuf_for_chip_0_0_processor_id_3.txt")
+            prov_path,
+            "iobuf_for_chip_{}_{}_processor_id_{}.txt".format(
+                vertex_placement.x, vertex_placement.y, vertex_placement.p))
         return os.path.getsize(iofile)
 
     def do_run(self):
@@ -31,21 +33,26 @@ class TestIobuffMultirun(BaseTestCase):
         prov_path = globals_variables.get_simulator()._app_provenance_file_path
         sim.Population(10, sim.IF_curr_exp(), label='pop_1')
         sim.run(50)
-        size1 = self.check_size(prov_path)
+        placements = globals_variables.get_simulator()._placements
+        vertex_placement = None
+        for placement in placements:
+            if placement.vertex.label == "pop_1:0:9":
+                vertex_placement = placement
+        size1 = self.check_size(prov_path, vertex_placement)
         sim.run(50)
-        size2 = self.check_size(prov_path)
+        size2 = self.check_size(prov_path, vertex_placement)
         self.assertGreater(size2, size1)
         sim.run(50)
-        size3 = self.check_size(prov_path)
+        size3 = self.check_size(prov_path, vertex_placement)
         self.assertGreater(size3, size2)
 
         # Soft reset so same provenance
         sim.reset()
         sim.run(50)
-        size4 = self.check_size(prov_path)
+        size4 = self.check_size(prov_path, vertex_placement)
         self.assertGreater(size4, size3)
         sim.run(50)
-        size5 = self.check_size(prov_path)
+        size5 = self.check_size(prov_path, vertex_placement)
         self.assertGreater(size5, size4)
 
         # hard reset so new provenance
@@ -55,15 +62,15 @@ class TestIobuffMultirun(BaseTestCase):
         prov_patha = \
             globals_variables.get_simulator()._app_provenance_file_path
         self.assertNotEqual(prov_path, prov_patha)
-        size6 = self.check_size(prov_patha)
+        size6 = self.check_size(prov_patha, vertex_placement)
         # Should write the same thing again
         self.assertEqual(size1, size6)
         sim.end()
 
         # Should not add anything on end.
-        size7 = self.check_size(prov_path)
+        size7 = self.check_size(prov_path, vertex_placement)
         self.assertEqual(size5, size7)
-        size8 = self.check_size(prov_patha)
+        size8 = self.check_size(prov_patha, vertex_placement)
         self.assertEqual(size8, size6)
 
     def test_do_run(self):
