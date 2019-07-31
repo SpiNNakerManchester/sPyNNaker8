@@ -38,7 +38,7 @@ class TestNoIobufDuringRun(BaseTestCase):
         sim.setup(timestep=1.0, min_delay=1.0, max_delay=144.0)
         sim.Population(10, sim.IF_curr_exp(), label='pop_1')
         sim.run(500)
-        prov_path = globals_variables.get_simulator()._provenance_file_path
+        prov_path = globals_variables.get_simulator()._
 
         self.assertFalse(self.check_for_oibufs(prov_path))
         sim.end()
