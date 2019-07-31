@@ -448,3 +448,6 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         :return: A New Population
         """
         return Population(size=n, cellclass=cellclass, cellparams=cellparams)
+
+    def add_poisson_source(self, poisson_source):
+        super(Population, self).add_poisson_source(poisson_source._vertex[0])
