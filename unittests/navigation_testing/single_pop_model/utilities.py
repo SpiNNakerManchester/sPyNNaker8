@@ -4,36 +4,44 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 import math
 
-cmap = mcolors.LinearSegmentedColormap.from_list("",
+cmap_byr = mcolors.LinearSegmentedColormap.from_list("",
                                                  [(0, "black"),
                                                   (0.5, "yellow"),
                                                   (1, "red")], N=256)
-# cmap=plt.get_cmap('YlOrRd')
+
+cmap_bcgyor = mcolors.LinearSegmentedColormap.from_list("",
+                                                 [(0, "#001aff"),  # blue
+                                                  (0.2, "#00ffea"),  # cyan
+                                                  (0.4, "#00ff2f"),  # green
+                                                  (0.6, "#fff700"),  # yellow
+                                                  (0.8, "#ff8000"),  # orange
+                                                  (1, "#ff0000")], N=256)  # red
 
 
-def plot_neurons(neuron_positions, directory):
+def plot_neuron_init_order(neuron_positions, directory):
     for i, pos in enumerate(neuron_positions):
-        plt.scatter(pos[0], pos[1], c=i, norm=plt.Normalize(0,25), cmap="Greys")
+        plt.scatter(pos[0], pos[1],
+                    c=i, norm=plt.Normalize(0, 25), cmap="Greys")
     plt.savefig(directory + 'neuron_order.png', bbox_inches='tight', dpi=150)
     plt.clf()
 
 
-def plot_connections(neuron_ids, neuron_positions, connection_list, grid_w, grid_h, directory):
+def plot_gc_inh_connections(neuron_ids, neuron_positions, connection_list, n_col, n_row, directory):
     fig, axs = plt.subplots(ncols=len(neuron_ids))
-    fig.suptitle('Neuron Connectivity')
+    fig.suptitle('Grid Cell Synapses')
 
     for i, ax in enumerate(axs):
-        _id = neuron_ids[i]
-        connections = get_neuron_connections(_id, connection_list, False)
-        ax.set_xlim(0, grid_w - 1)
-        ax.set_ylim(0, grid_h - 1)
-        ax.set_title("Neuron " + str(_id) + str(get_dir_pref((neuron_positions[_id])[:2])))
-        ax.get_xaxis().set_ticks([0, grid_w])
-        ax.get_yaxis().set_ticks([0, grid_h])
+        neuron_id = neuron_ids[i]
+        connections = get_neuron_connections(neuron_id, connection_list, False)
+        ax.set_xlim(0, n_col - 1)
+        ax.set_ylim(0, n_row - 1)
+        ax.set_title("Neuron " + str(neuron_id) + str(get_dir_pref((neuron_positions[neuron_id])[:2])))
+        ax.get_xaxis().set_ticks([0, n_col])
+        ax.get_yaxis().set_ticks([0, n_row])
         ax.set_aspect('equal')
 
-        ax.scatter((neuron_positions[_id])[0],
-                   (neuron_positions[_id])[1], s=2, marker='x', c="r")
+        ax.scatter((neuron_positions[neuron_id])[0],
+                   (neuron_positions[neuron_id])[1], s=2, marker='x', c="r")
 
         for connection in connections:
             ax.scatter((neuron_positions[connection[1]])[0],
@@ -128,48 +136,16 @@ def plot_trajectory_infinite_1d(trajectory, dir, runtime, save):
 
 
 # Compute the firing rate from spike trains
-def compute_firing_rates_from_spike_trains(spike_trains, t, num_neurons):
-    firing_rates = [None] * num_neurons
+def compute_firing_rates_from_spike_trains(spike_trains, end_t, time_window):
+    firing_rates = [None] * len(spike_trains)
+    start_t = max(0, end_t - time_window)
     for i, spike_train in enumerate(spike_trains):
-        spike_train = [x for x in spike_train if x <= t]
-        if len(spike_train) == 0:
+        spikes = [x for x in spike_train if start_t <= x <= end_t]
+        if len(spikes) == 0:
             firing_rates[i] = 0
         else:
-            firing_rates[i] = len(spike_train) * (1000.0 / t)
+            firing_rates[i] = len(spikes) * (1000.0 / (end_t - start_t))
     return firing_rates
-
-
-# Plot the firing rate of a population at a given time
-def plot_population_firing_rate(spike_trains, neuron_positions, times, grid_row, grid_col, filepath):
-    # plt.style.use('dark_background')
-    num_times = len(times)
-    fig, axs = plt.subplots(ncols=num_times)
-    fig.suptitle('Population firing rates')
-    num_neurons = grid_col * grid_row
-
-    for i, ax in enumerate(axs):
-        t = times[i]
-        ax.set_xlim(0, grid_col - 1)
-        ax.set_ylim(0, grid_row - 1)
-        ax.set_title(str(t) + 'ms')
-        ax.set_facecolor('k')
-        # ax.get_xaxis().set_ticks([])
-        # ax.get_yaxis().set_ticks([])
-
-        ax.set_aspect('equal')
-        firing_rates = compute_firing_rates_from_spike_trains(spike_trains, t, num_neurons)
-        firing_rate_max = max(firing_rates)
-
-        if firing_rate_max != 0:
-            for j, val in enumerate(firing_rates):
-                norm_firing_rate = normalise(val, 0, firing_rate_max)
-                ax.scatter(neuron_positions[j][0], neuron_positions[j][1], s=10,
-                           c=norm_firing_rate, cmap=cmap, norm=plt.Normalize(0, 1))
-    # plt.colorbar(cmap)
-    fig.tight_layout()
-    if filepath:
-        plt.savefig(filepath + '.png', facecolor=fig.get_facecolor(), bbox_inches='tight')
-    plt.show()
 
 
 # Plot spike train activity at a given time
@@ -219,7 +195,7 @@ def plot_population_membrane_potential_activity(membrane_potentials, neuron_posi
         for j, val in enumerate(pop_v):
             norm = normalise(float(val), min_v, thresh_v)
             ax.scatter(x=neuron_positions[j][0], y=neuron_positions[j][1],
-                       s=10, c=norm, cmap=cmap, norm=plt.Normalize(0, 1))
+                       s=10, c=norm, cmap=cmap_byr, norm=plt.Normalize(0, 1))
     # plt.colorbar(cmap)
     fig.tight_layout()
     if filepath:
