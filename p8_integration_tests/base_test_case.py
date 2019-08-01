@@ -93,7 +93,7 @@ class BaseTestCase(unittest.TestCase):
             report_file.write(message)
 
     def get_provenance(self, main_name, detail_name):
-        provenance_file_path = globals_variables.get_simulator()\
+        provenance_file_path = globals_variables.get_simulator() \
             ._provenance_file_path
         xml_path = os.path.join(provenance_file_path, "pacman.xml")
         xml_root = etree.parse(xml_path)
