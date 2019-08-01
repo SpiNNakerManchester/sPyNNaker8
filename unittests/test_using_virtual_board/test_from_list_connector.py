@@ -21,7 +21,7 @@ WEIGHT = 5
 DELAY = 2
 
 
-class TestOneToOneConnector(BaseTestCase):
+class TestFromListConnector(BaseTestCase):
 
     def check_weights(
             self, projection, aslist, w_index, d_index, sources, destinations):

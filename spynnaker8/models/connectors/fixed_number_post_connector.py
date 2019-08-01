@@ -35,7 +35,7 @@ class FixedNumberPostConnector(CommonFixedNumberPostConnector,
         """
 
         :param n: \
-            number of random post-synaptic neurons connected to output
+            number of random post-synaptic neurons connected to pre-neurons
         :type n: int
         :param allow_self_connections: \
             if the connector is used to connect a Population to itself, this\
