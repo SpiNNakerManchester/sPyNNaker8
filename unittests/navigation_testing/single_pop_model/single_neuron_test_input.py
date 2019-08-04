@@ -26,12 +26,12 @@ runtime = 500
 
 # Post-synapse population
 neuron_params = {
-    "v_thresh": -50.0,
-    "v_reset": -65.0,
-    "v_rest": -65.0,
-    "i_offset": 0.76,  # DC input
+    "v_thresh": -50,
+    "v_reset": -65,
+    "v_rest": -65,
+    "i_offset": 0.8,  # DC input
     "tau_m": 20,  # membrane time constant
-    "tau_refrac": 1.0,
+    "tau_refrac": 1,
 }
 
 rng = NumpyRNG(seed=41, parallel_safe=True)
@@ -43,6 +43,19 @@ pop_exc = p.Population(1,
                        structure=None,
                        label="Grid cell"
                        )
+
+pop_input = p.Population(1,
+                         p.SpikeSourcePoisson(
+                             rate=80, start=0, duration=runtime),
+                         label="Poisson input velocity cells")
+
+input_loop_connections = [(0, 0, 0.1, 1.0)]
+proj_input = p.Projection(
+    pop_input, pop_exc, p.FromListConnector(input_loop_connections, ('weight', 'delay')),
+    receptor_type="excitatory",
+    synapse_type=p.StaticSynapse(),
+    label="Velocity input cells excitatory connections to appropriate grid cells"
+)
 
 pop_exc.record("all")
 p.run(runtime)
