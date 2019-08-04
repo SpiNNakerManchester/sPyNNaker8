@@ -134,11 +134,20 @@ def plot_trajectory_infinite_1d(trajectory, dir, runtime, save):
     if save:
         plt.savefig('trajectory.png', bbox_inches='tight')
 
+def compute_max_firing_rate(spiketrains, runtime):
+    rates = list()
+    for spiketrain in spiketrains:
+        rates.append(len(spiketrain) * (1000/runtime))
+    return max(rates)
+
 
 # Compute the firing rate from spike trains
 def compute_firing_rates_from_spike_trains(spike_trains, end_t, time_window):
+    if time_window is None:
+        start_t = 0
+    else:
+        start_t = max(0, end_t - time_window)
     firing_rates = [None] * len(spike_trains)
-    start_t = max(0, end_t - time_window)
     for i, spike_train in enumerate(spike_trains):
         spikes = [x for x in spike_train if start_t <= x <= end_t]
         if len(spikes) == 0:
