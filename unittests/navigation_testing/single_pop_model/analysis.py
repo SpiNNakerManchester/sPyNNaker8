@@ -22,6 +22,14 @@ cmap = mcolors.LinearSegmentedColormap.from_list("",
                                                   (0.5, "yellow"),
                                                   (1, "red")], N=256)
 
+cmap_rainbow = mcolors.LinearSegmentedColormap.from_list("",
+                                                 [(0, "#001aff"),  # blue
+                                                  (0.2, "#00ffea"),  # cyan
+                                                  (0.4, "#00ff2f"),  # green
+                                                  (0.6, "#fff700"),  # yellow
+                                                  (0.8, "#ff8000"),  # orange
+                                                  (1, "#ff0000")], N=256)  # red
+
 DEFAULT_FIG_SETTINGS = {
     'lines.linewidth': 0.5,
     'axes.linewidth': 0.5,
@@ -70,10 +78,11 @@ def main(input_cells, exc_dir_view, times):
     with open(DIR + "pop_exc_parameters.pkl", 'rb') as f:
         pop_exc_parameters = pickle.load(f)
 
-    grid_cell_plots(times, pop_exc_label, pop_exc_spiketrains,
-                    pop_exc_pos)
-    plot_population_firing_rate(times, pop_exc_label, pop_exc_spiketrains, pop_exc_pos)
-    get_active_neuron_counts(pop_exc_spiketrains, pop_exc_pos, times[-1])
+    # grid_cell_plots(times, pop_exc_label, pop_exc_spiketrains,
+    #                 pop_exc_pos)
+    time_window = 1000  # time window for firing rate plots
+    plot_population_firing_rate(times, pop_exc_label, pop_exc_spiketrains, pop_exc_pos, time_window)
+    # get_active_neuron_counts(pop_exc_spiketrains, pop_exc_pos, times[-1])
 
 
 def input_cell_plots(pop_input_label, pop_input_spike_trains, pop_input_v):
@@ -87,7 +96,7 @@ def input_cell_plots(pop_input_label, pop_input_spike_trains, pop_input_v):
         Panel(pop_input_spike_trains,
               xlabel="Time (ms)",
               ylabel="Neuron index",
-              yticks=True, xticks=True, marker='o', markersize=1, xlim=(0, RUNTIME)
+              yticks=True, xticks=True, marker='o', markersize=0.2, xlim=(0, RUNTIME)
               ),
         settings=DEFAULT_FIG_SETTINGS,
         title="Input cells",
@@ -99,18 +108,18 @@ def input_cell_plots(pop_input_label, pop_input_spike_trains, pop_input_v):
 
 def grid_cell_dir_plots(pop_exc_north_spike_train, pop_exc_east_spike_train,
                         pop_exc_west_spike_train, pop_exc_south_spike_train):
-    fig = Figure(
+    Figure(
         Panel(pop_exc_north_spike_train,
-              yticks=True, xticks=True, xlabel="Time (ms) (N)", marker='o', markersize=1, xlim=(0, RUNTIME)
+              yticks=True, xticks=True, xlabel="Time (ms) (N)", marker='o', markersize=0.2, xlim=(0, RUNTIME)
               ),
         Panel(pop_exc_east_spike_train,
-              yticks=True, xticks=True, xlabel="Time (ms) (E)", marker='o', markersize=1, xlim=(0, RUNTIME)
+              yticks=True, xticks=True, xlabel="Time (ms) (E)", marker='o', markersize=0.2, xlim=(0, RUNTIME)
               ),
         Panel(pop_exc_west_spike_train,
-              yticks=True, xticks=True, xlabel="Time (ms) (W)", marker='o', markersize=1, xlim=(0, RUNTIME)
+              yticks=True, xticks=True, xlabel="Time (ms) (W)", marker='o', markersize=0.2, xlim=(0, RUNTIME)
               ),
         Panel(pop_exc_south_spike_train,
-              yticks=True, xticks=True, xlabel="Time (ms) (S)", marker='o', markersize=1, xlim=(0, RUNTIME)
+              yticks=True, xticks=True, xlabel="Time (ms) (S)", marker='o', markersize=0.2, xlim=(0, RUNTIME)
               ),
         settings=DEFAULT_FIG_SETTINGS,
         title="Excitatory grid cells for each direction",
@@ -122,7 +131,7 @@ def grid_cell_dir_plots(pop_exc_north_spike_train, pop_exc_east_spike_train,
 
 def grid_cell_plots(times, pop_exc_label, pop_exc_spiketrains,
                     pop_exc_pos):
-    fig = Figure(
+    Figure(
         # Panel(pop_exc_v,
         #       ylabel="Membrane potential (mV)",
         #       xlabel="Time (ms)",
@@ -139,7 +148,7 @@ def grid_cell_plots(times, pop_exc_label, pop_exc_spiketrains,
         #       data_labels=[pop_exc_label], yticks=True, xticks=True, xlim=(0, RUNTIME)
         #       ),
         Panel(pop_exc_spiketrains,
-              yticks=True, xticks=True, xlabel="Time (ms)", marker='o', markersize=1, xlim=(0, RUNTIME)
+              yticks=True, xticks=True, xlabel="Time (ms)", marker='o', markersize=0.2, xlim=(0, RUNTIME)
               ),
         settings=DEFAULT_FIG_SETTINGS,
         title=pop_exc_label,
@@ -150,13 +159,12 @@ def grid_cell_plots(times, pop_exc_label, pop_exc_spiketrains,
 
 
 # Plot the firing rate of a population at a given time
-def plot_population_firing_rate(times, label, spiketrains, pos):
+def plot_population_firing_rate(times, label, spiketrains, pos, time_window):
     # plt.style.use('dark_background')
     num_times = len(times)
     # fig, axs = plt.subplots(ncols=num_times, figsize=(6, 3))
     fig, axs = plt.subplots(ncols=num_times)
     # fig.suptitle(label + ' firing rates')
-    num_neurons = N_ROW * N_COL
 
     for i, ax in enumerate(axs):
         t = times[i]
@@ -168,7 +176,7 @@ def plot_population_firing_rate(times, label, spiketrains, pos):
         ax.get_yaxis().set_ticks([0, N_ROW])
 
         ax.set_aspect('equal')
-        firing_rates = util.compute_firing_rates_from_spike_trains(spiketrains, t, num_neurons)
+        firing_rates = util.compute_firing_rates_from_spike_trains(spiketrains, t, time_window)
         firing_rate_max = max(firing_rates)
 
         if firing_rate_max != 0:
@@ -176,7 +184,8 @@ def plot_population_firing_rate(times, label, spiketrains, pos):
                 norm_firing_rate = util.normalise(val, 0, firing_rate_max)
                 ax.scatter(pos[j][0], pos[j][1], s=10,
                            c=norm_firing_rate, cmap=cmap, norm=plt.Normalize(0, 1))
-    # plt.colorbar(cmap)
+    # plt.annotate("Firing rate computed over time window of " + str(time_window) + "ms up until timestamp")
+    # fig.colorbar(cmap)
     fig.tight_layout()
     plt.savefig(DIR + 'pop_exc_gc_firing_rate.eps', format='eps',
                 facecolor=fig.get_facecolor(), bbox_inches='tight', dpi=600)
