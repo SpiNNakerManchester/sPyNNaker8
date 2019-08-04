@@ -2,9 +2,10 @@
 import cPickle as pickle
 import time
 import numpy as np
-from neo.io import NixIO
 import os
 import errno
+import matplotlib.pyplot as plt
+import random
 
 # Third party imports
 import spynnaker8 as p
@@ -13,15 +14,16 @@ import spynnaker8 as p
 import utilities as util
 from pyNN.random import RandomDistribution, NumpyRNG
 from pyNN.space import Grid2D, Line
+from pyNN.utility.plotting import Figure, Panel
 
 """
 SETUP
 """
 p.setup(1)  # simulation timestep (ms)
-runtime = 2000  # ms
+runtime = 10000  # ms
 
-n_row = 128
-n_col = 128
+n_row = 50
+n_col = 50
 p.set_number_of_neurons_per_core(p.IF_curr_exp, 255)
 
 is_auto_receptor = False  # allow self-connections in recurrent grid cell network
@@ -29,16 +31,16 @@ is_auto_receptor = False  # allow self-connections in recurrent grid cell networ
 rng = NumpyRNG(seed=77364, parallel_safe=True)
 synaptic_weight = 0.1  # synaptic weight for inhibitory connections
 synaptic_radius = 10  # inhibitory connection radius
-orientation_pref_shift = 0  # number of neurons to shift centre of connectivity by
+orientation_pref_shift = 2  # number of neurons to shift centre of connectivity by
 
 # Grid cell (excitatory) population
 neuron_params = {
-    "v_thresh": -50,
-    "v_reset": -65,
-    "v_rest": -65,
-    "i_offset": 0.8,
-    "tau_m": 20,
-    "tau_refrac": 1,
+    "v_thresh": -50.0,
+    "v_reset": -65.0,
+    "v_rest": -65.0,
+    "i_offset": 0.8,  # DC input
+    "tau_m": 20,  # membrane time constant
+    "tau_refrac": 1.0,
 }
 
 exc_grid = Grid2D(aspect_ratio=1.0, dx=1.0, dy=1.0, x0=0, y0=0, z=0, fill_order='sequential')
@@ -79,6 +81,7 @@ for pre_syn in range(0, n_row * n_col):
                 # single_connection = (pre_syn, post_syn, synaptic_weight, 1.0)
                 loop_connections.append(single_connection)
 
+
 # Create inhibitory connections
 proj_exc = p.Projection(
     pop_exc, pop_exc, p.FromListConnector(loop_connections, ('weight', 'delay')),
@@ -95,12 +98,13 @@ input_structure = Line(dx=1.0, x0=0.0, y=0.0, z=0.0)
 input_loop_connections = list()
 pop_input = p.Population(4,
                          p.SpikeSourcePoisson(
-                             rate=[100.0, 0, 0, 0], start=0, duration=runtime),
+                             # rate=[100, 100, 0, 0], start=[0, runtime/2, 0, 0], duration=[runtime/2, runtime, 0, 0]),
+                             rate=[100, 0, 0, 0], start=0, duration=runtime),
                          structure=input_structure,
                          label="Poisson input velocity cells")
 
 # Connect input neuron to grid cells of appropriate direction
-input_syn_weight = 0.0005
+input_syn_weight = 0.05
 for i, neuron_pos in enumerate(pop_exc.positions):
     neuron_pos = neuron_pos[:2]
     neuron_pref_dir = util.get_dir_pref(neuron_pos)
@@ -134,7 +138,7 @@ proj_input = p.Projection(
 RUN
 """
 
-pop_exc.record(["spikes"])
+pop_exc.record(['v', 'gsyn_inh', 'gsyn_exc', 'spikes'])
 pop_input.record(["spikes"])
 p.run(runtime)
 
@@ -151,6 +155,35 @@ try :
 except OSError as exc:
     if exc.errno != errno.EEXIST:
         raise
+
+rand_neurons = random.sample(range(0,n_col*n_row), 4)
+neuron_sample = p.PopulationView(pop_exc, rand_neurons)
+
+# Plot
+F = Figure(
+    Panel(neuron_sample.get_data().segments[0].filter(name='v')[0],
+          ylabel="Membrane potential (mV)",
+          xlabel="Time (ms)",
+          data_labels=[neuron_sample.label], yticks=True, xticks=True, xlim=(0, runtime)
+          ),
+    Panel(neuron_sample.get_data().segments[0].filter(name='gsyn_inh')[0],
+          ylabel="inhibitory synaptic conduction (uS)",
+          xlabel="Time (ms)",
+          data_labels=[neuron_sample.label], yticks=True, xticks=True, xlim=(0, runtime)
+          ),
+    Panel(neuron_sample.get_data().segments[0].filter(name='gsyn_exc')[0],
+          ylabel="excitatory synaptic conduction (uS)",
+          xlabel="Time (ms)",
+          data_labels=[neuron_sample.label], yticks=True, xticks=True, xlim=(0, runtime)
+          ),
+    Panel(neuron_sample.get_data().segments[0].spiketrains,
+          yticks=True, xticks=True, markersize=2, xlim=(0, runtime)
+          ),
+)
+rand_neurons.append(n_row*n_col)
+plt.yticks(rand_neurons)
+plt.savefig(data_dir + "sample_plot.eps", format='eps', bbox_inches='tight')
+plt.show()
 
 # Excitatory population
 # pickle.dump(pop_exc.get_data().segments[0].filter(name='v')[0],
@@ -203,6 +236,8 @@ f.write("\nexc_syn_weight=" + str(input_syn_weight))
 f.write("\npop_exc=" + str(pop_exc.describe()))
 f.close()
 
+print("Mean spike count: " + str(pop_exc.mean_spike_count(gather=True)))
+print("Max firing rate: " + str(util.compute_max_firing_rate(pop_exc.get_data().segments[0].spiketrains, runtime)))
 p.end()
 print(data_dir)
 
