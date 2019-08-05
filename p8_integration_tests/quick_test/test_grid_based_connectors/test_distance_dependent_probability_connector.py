@@ -1,3 +1,18 @@
+# Copyright (c) 2017-2019 The University of Manchester
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 from __future__ import division
 import spynnaker8 as p
 from p8_integration_tests.base_test_case import BaseTestCase
@@ -124,7 +139,7 @@ class DistanceDependentProbabilityConnectorTest(BaseTestCase):
     def do_run(self):
         v, spikes, pre_weights, post_weights = do_run(plot=False)
         spikes_test = neo_convertor.convert_spikes(spikes)
-        self.assertEquals(4970, len(spikes_test))
+        self.assertEqual(4970, len(spikes_test))
         self.check_weights(pre_weights[1], 2.1)
         self.check_weights(pre_weights[2], 1.1)
 

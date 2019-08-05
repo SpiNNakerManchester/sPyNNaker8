@@ -1,3 +1,18 @@
+# Copyright (c) 2017-2019 The University of Manchester
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import spynnaker8 as p
 from p8_integration_tests.base_test_case import BaseTestCase
 
@@ -32,11 +47,11 @@ class ReuseConnectorTest(BaseTestCase):
         test_1_list.append((0, 0, 2.0, 2.0))
         test_2_list = []
         test_2_list.append((0, 0, 1.0, 1.0))
-        self.assertEquals(1, len(proj_1_list))
-        self.assertEquals(1, len(proj_2_list))
+        self.assertEqual(1, len(proj_1_list))
+        self.assertEqual(1, len(proj_2_list))
         for i in range(4):
-            self.assertEquals(test_1_list[0][i], proj_1_list[0][i])
-            self.assertEquals(test_2_list[0][i], proj_2_list[0][i])
+            self.assertEqual(test_1_list[0][i], proj_1_list[0][i])
+            self.assertEqual(test_2_list[0][i], proj_2_list[0][i])
 
     def test_run(self):
         self.runsafe(self.check_run)

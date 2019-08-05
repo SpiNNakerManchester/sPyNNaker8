@@ -1,7 +1,23 @@
+#!/usr/bin/python
+
+# Copyright (c) 2017-2019 The University of Manchester
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 """
 Synfirechain-like example
 """
-# !/usr/bin/python
 from unittest import SkipTest
 import spynnaker.plot_utils as plot_utils
 import spynnaker8 as p
@@ -36,7 +52,7 @@ class BigManySpikes(BaseTestCase):
         neo = do_run(nNeurons, 68)
         try:
             spike_count = neo_convertor.count_spikes(neo)
-            self.assertEquals(spike_count, 7200)
+            self.assertEqual(spike_count, 7200)
         except Exception as ex:
             # Just in case the range failed
             raise SkipTest(ex)
@@ -46,7 +62,7 @@ class BigManySpikes(BaseTestCase):
         neo = do_run(nNeurons, 69)
         try:
             spike_count = neo_convertor.count_spikes(neo)
-            self.assertEquals(spike_count, 7200)
+            self.assertEqual(spike_count, 7200)
         except Exception as ex:
             # Just in case the range failed
             raise SkipTest(ex)

@@ -1,9 +1,25 @@
+# Copyright (c) 2017-2019 The University of Manchester
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 from __future__ import division
 from p8_integration_tests.base_test_case import BaseTestCase
 import spynnaker8 as sim
+import math
 
 
-class MyTestCase(BaseTestCase):
+class TestPoissonSpikeSource(BaseTestCase):
 
     def check_spikes(self, input, expected):
         neo = input.get_data("spikes")
@@ -11,8 +27,9 @@ class MyTestCase(BaseTestCase):
         count = 0
         for a_spikes in spikes:
             count += len(a_spikes)
-        self.assertAlmostEqual(expected, count/len(spikes), delta=expected/10,
-                               msg="Errror on {}".format(input.label))
+        tolerance = math.sqrt(expected)
+        self.assertAlmostEqual(expected, count/len(spikes), delta=tolerance,
+                               msg="Error on {}".format(input.label))
 
     def recording_poisson_spikes(self, run_zero):
         sim.setup(timestep=1.0, min_delay=1.0, max_delay=144.0)
@@ -148,15 +165,9 @@ class MyTestCase(BaseTestCase):
         self.runsafe(self.recording_poisson_spikes_rate_fast)
 
     def recording_poisson_spikes_rate_slow(self):
-        try:
-            self.check_rates(
-                [0, 0.01, 0.02, 0.04, 0.08, 0.16, 0.32,
-                 0.64, 1.28, 2.56, 5.12],
-                100)
-        except AssertionError:
-            sim.end()
-            self.known_issue(
-                "https://github.com/SpiNNakerManchester/sPyNNaker/issues/629")
+        self.check_rates(
+            [0, 0.01, 0.02, 0.04, 0.08, 0.16, 0.32, 0.64, 1.28, 2.56, 5.12],
+            100)
 
     def test_recording_poisson_spikes_rate_slow(self):
         self.runsafe(self.recording_poisson_spikes_rate_slow)
