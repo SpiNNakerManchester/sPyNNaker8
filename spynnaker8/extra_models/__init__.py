@@ -30,12 +30,12 @@ from spynnaker.pyNN.models.neuron.builds import (
     IF_curr_dual_exp, IzkCondExpBase as
     Izhikevich_cond, IFCurrExpSEMDBase as
     IF_curr_exp_sEMD, IFCurrExpERBP, PoissonNeuron, ReadoutPoissonNeuron,
-    ErrorNeuron, ReadoutPoissonNeuronNonSpike)
+    ErrorNeuron, ReadoutPoissonNeuronNonSpike, IFCurrDeltaGrazAdaptive)
 
 # plastic weight spynnaker 8
-from spynnaker8.models.synapse_dynamics.weight_dependence \
-    import WeightDependenceAdditiveTriplet
-    IF_curr_exp_sEMD, IFCurrDeltaGrazAdaptive)
+# from spynnaker8.models.synapse_dynamics.weight_dependence \
+#     import (WeightDependenceAdditiveTriplet,
+#     IF_curr_exp_sEMD, IFCurrDeltaGrazAdaptive)
 
 __all__ = [
     # sPyNNaker 8 models

@@ -4,6 +4,7 @@ import math
 import unittest
 from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt
+import numpy as np
 
 batches = 40
 num_repeats = 3  # in a batch
@@ -24,9 +25,17 @@ erbp_neuron_params = {
 #     "tau_refrac": 50
     }
 
+
+offset = 0.25
+rate = 1.024/32.
+scale = 3
+target_sine_function = lambda x: scale * (np.sin(rate * x)) + offset
+target_sine_wave = [target_sine_function(t) for t in range(cycle_time+1)]
+
 readout_neuron_params = {
     "v": 0,
     "v_thresh": 30, # controls firing rate of error neurons
+    "target_data": target_sine_wave
     }
 
 tau_err = 20
