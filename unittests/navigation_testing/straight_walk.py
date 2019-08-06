@@ -8,9 +8,9 @@ import math
 # Speed: magnitude
 class StraightWalk:
 
-    def __init__(self, speed, dir_degrees):
+    def __init__(self, speed, init_dir):
         self.speed = speed
-        self.dir_radians = math.radians(dir_degrees)
+        self.dir = init_dir
         self.positions = [[0, 0]]
 
     def next_step(self):

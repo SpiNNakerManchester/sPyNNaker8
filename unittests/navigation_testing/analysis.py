@@ -110,13 +110,13 @@ def grid_cell_dir_plots(pop_exc_north_spike_train, pop_exc_east_spike_train,
                         pop_exc_west_spike_train, pop_exc_south_spike_train):
     Figure(
         Panel(pop_exc_north_spike_train,
-              yticks=True, xticks=True, xlabel="Time (ms) (N)", marker='o', markersize=0.2, xlim=(0, RUNTIME)
+              yticks=True, xticks=False, xlabel="Time (ms) (N)", marker='o', markersize=0.2, xlim=(0, RUNTIME)
               ),
         Panel(pop_exc_east_spike_train,
-              yticks=True, xticks=True, xlabel="Time (ms) (E)", marker='o', markersize=0.2, xlim=(0, RUNTIME)
+              yticks=True, xticks=False, xlabel="Time (ms) (E)", marker='o', markersize=0.2, xlim=(0, RUNTIME)
               ),
         Panel(pop_exc_west_spike_train,
-              yticks=True, xticks=True, xlabel="Time (ms) (W)", marker='o', markersize=0.2, xlim=(0, RUNTIME)
+              yticks=True, xticks=False, xlabel="Time (ms) (W)", marker='o', markersize=0.2, xlim=(0, RUNTIME)
               ),
         Panel(pop_exc_south_spike_train,
               yticks=True, xticks=True, xlabel="Time (ms) (S)", marker='o', markersize=0.2, xlim=(0, RUNTIME)
@@ -163,29 +163,37 @@ def plot_population_firing_rate(times, label, spiketrains, pos, time_window):
     # plt.style.use('dark_background')
     num_times = len(times)
     # fig, axs = plt.subplots(ncols=num_times, figsize=(6, 3))
-    fig, axs = plt.subplots(ncols=num_times)
+    # fig, axs = plt.subplots(ncols=num_times)
+    fig, axs = plt.subplots(int(len(times) / 5), 5,
+                            sharex='col', sharey='row', gridspec_kw={'wspace': 0.2, 'hspace': 0},
+                            figsize=(6, 3))
     # fig.suptitle(label + ' firing rates')
+    subplot_counter = 0
 
-    for i, ax in enumerate(axs):
-        t = times[i]
-        ax.set_xlim(0, N_COL - 1)
-        ax.set_ylim(0, N_ROW - 1)
-        ax.set_title(str(t) + 'ms')
-        ax.set_facecolor('k')
-        ax.get_xaxis().set_ticks([0, N_COL])
-        ax.get_yaxis().set_ticks([0, N_ROW])
+    for ax_row in axs:
+        for ax in ax_row:
+            t = times[subplot_counter]
+            subplot_counter += 1
+            ax.set_xlim(0, N_COL - 1)
+            ax.set_ylim(0, N_ROW - 1)
+            ax.set_title(str(t) + 'ms')
+            ax.set_facecolor('k')
+            ax.get_xaxis().set_ticks([0, N_COL])
+            ax.get_yaxis().set_ticks([0, N_ROW])
 
-        ax.set_aspect('equal')
-        firing_rates = util.compute_firing_rates_from_spike_trains(spiketrains, t, time_window)
-        firing_rate_max = max(firing_rates)
+            ax.set_aspect('equal')
+            firing_rates = util.compute_firing_rates_from_spike_trains(spiketrains, t, time_window)
+            firing_rate_max = max(firing_rates)
 
-        if firing_rate_max != 0:
-            for j, val in enumerate(firing_rates):
-                norm_firing_rate = util.normalise(val, 0, firing_rate_max)
-                ax.scatter(pos[j][0], pos[j][1], s=10,
-                           c=norm_firing_rate, cmap=cmap, norm=plt.Normalize(0, 1))
+            if firing_rate_max != 0:
+                for x, val in enumerate(firing_rates):
+                    norm_firing_rate = util.normalise(val, 0, firing_rate_max)
+                    ax.scatter(pos[x][0], pos[x][1], s=10,
+                               c=norm_firing_rate, cmap=cmap, norm=plt.Normalize(0, 1))
+            print("Plotting subplot " + str(t))
     # plt.annotate("Firing rate computed over time window of " + str(time_window) + "ms up until timestamp")
     # fig.colorbar(cmap)
+    # plt.subplots_adjust(wspace=0.5, hspace=0.5)
     fig.tight_layout()
     plt.savefig(DIR + 'pop_exc_gc_firing_rate.eps', format='eps',
                 facecolor=fig.get_facecolor(), bbox_inches='tight', dpi=600)

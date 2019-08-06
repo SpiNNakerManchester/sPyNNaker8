@@ -46,10 +46,10 @@ pop_exc = p.Population(1,
 
 pop_input = p.Population(1,
                          p.SpikeSourcePoisson(
-                             rate=80, start=0, duration=runtime),
+                             rate=100, start=0, duration=runtime),
                          label="Poisson input velocity cells")
 
-input_loop_connections = [(0, 0, 0.1, 1.0)]
+input_loop_connections = [(0, 0, 1, 1.0)]
 proj_input = p.Projection(
     pop_input, pop_exc, p.FromListConnector(input_loop_connections, ('weight', 'delay')),
     receptor_type="excitatory",
