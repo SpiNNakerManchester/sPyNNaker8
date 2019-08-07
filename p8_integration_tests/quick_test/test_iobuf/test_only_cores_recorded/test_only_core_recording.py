@@ -15,6 +15,7 @@
 
 import spynnaker8 as sim
 from p8_integration_tests.base_test_case import BaseTestCase
+from spinn_front_end_common.utilities import globals_variables
 
 
 class TestOnlyCoresRecording(BaseTestCase):
@@ -31,23 +32,14 @@ class TestOnlyCoresRecording(BaseTestCase):
         sim.run(500)
 
         provenance_files = self.get_provenance_files()
+        placements = globals_variables.get_simulator().placements
         sim.end()
 
         # extract_iobuf_from_cores = 0,0,1
-        self.assertIn(
-            "iobuf_for_chip_0_0_processor_id_1.txt", provenance_files)
-        self.assertNotIn(
-            "iobuf_for_chip_0_0_processor_id_2.txt", provenance_files)
-        self.assertIn(
-            "iobuf_for_chip_0_0_processor_id_3.txt", provenance_files)
-        self.assertNotIn(
-            "iobuf_for_chip_0_0_processor_id_4.txt", provenance_files)
-        self.assertNotIn(
-            "iobuf_for_chip_0_0_processor_id_5.txt", provenance_files)
-        self.assertNotIn(
-            "iobuf_for_chip_0_0_processor_id_6.txt", provenance_files)
-        self.assertIn(
-            "iobuf_for_chip_1_1_processor_id_1.txt", provenance_files)
+        for placement in placements.placements:
+            self.assertIn(
+                "iobuf_for_chip_{}_{}_processor_id_{}.txt".format(
+                    placement.x, placement.y, placement.p), provenance_files)
 
     def test_do_run(self):
         self.runsafe(self.do_run)
