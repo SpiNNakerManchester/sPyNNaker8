@@ -20,7 +20,14 @@ from spinn_front_end_common.utilities import globals_variables
 
 class TestOnlyCoresRecording(BaseTestCase):
 
+    def check_for_expected_iobuf(self, provenance_files, placements, x, y, p):
+        if placements.is_processor_occupied(x, y, p):
+            self.assertIn("iobuf_for_chip_{}_{}_processor_id_{}.txt".format(
+                x, y, p), provenance_files)
+
     def do_run(self):
+        # From the config file
+        requested_cores = [(0, 0, 1), (0, 0, 3), (1, 1, 1)]
         sim.setup(timestep=1.0)
         sim.set_number_of_neurons_per_core(sim.IF_curr_exp, 100)
 
@@ -35,11 +42,15 @@ class TestOnlyCoresRecording(BaseTestCase):
         placements = globals_variables.get_simulator().placements
         sim.end()
 
-        # extract_iobuf_from_cores = 0,0,1
         for placement in placements.placements:
-            self.assertIn(
-                "iobuf_for_chip_{}_{}_processor_id_{}.txt".format(
-                    placement.x, placement.y, placement.p), provenance_files)
+            x, y, p = placement.x, placement.y, placement.p
+            if (x, y, p) in requested_cores:
+                self.check_for_expected_iobuf(
+                    provenance_files, placements, x, y, p)
+            else:
+                self.assertNotIn(
+                    "iobuf_for_chip_{}_{}_processor_id_{}.txt".format(
+                        x, y, p), provenance_files)
 
     def test_do_run(self):
         self.runsafe(self.do_run)
