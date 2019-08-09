@@ -157,6 +157,12 @@ class BaseTestCase(unittest.TestCase):
                 last_error = ex
                 retries += 1
                 globals_variables.unset_simulator()
+            print("")
+            print("==========================================================")
+            print(" Will run {} again".format(method))
+            print("retry: {}".format(retries))
+            print("==========================================================")
+            print("")
         raise last_error
 
     def get_placements(self, label):
