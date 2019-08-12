@@ -46,15 +46,15 @@ for dirname, dirnames, filenames in os.walk(main_package_dir):
             package_data[package].append(filename)
 
 install_requires = [
-    'SpiNNUtilities >= 1!4.0.1, < 1!5.0.0',
-    'SpiNNStorageHandlers >= 1!4.0.1, < 1!5.0.0',
-    'SpiNNMachine >= 1!4.0.1, < 1!5.0.0',
-    'SpiNNMan >= 1!4.0.1, < 1!5.0.0',
-    'SpiNNaker_PACMAN >= 1!4.0.1, < 1!5.0.0',
-    'SpiNNaker_DataSpecification >= 1!4.0.1, < 1!5.0.0',
-    'spalloc >= 1.0.1, < 2.0.0',
-    'SpiNNFrontEndCommon >= 1!4.0.1, < 1!5.0.0',
-    'sPyNNaker >= 1!4.0.1, < 1!5.0.0',
+    'SpiNNUtilities >= 1!5.0.1, < 1!6.0.0',
+    'SpiNNStorageHandlers >= 1!5.0.1, < 1!6.0.0',
+    'SpiNNMachine >= 1!5.0.1, < 1!6.0.0',
+    'SpiNNMan >= 1!5.0.1, < 1!6.0.0',
+    'SpiNNaker_PACMAN >= 1!5.0.1, < 1!6.0.0',
+    'SpiNNaker_DataSpecification >= 1!5.0.1, < 1!6.0.0',
+    'spalloc >= 2.0.1, < 3.0.0',
+    'SpiNNFrontEndCommon >= 1!5.0.1, < 1!6.0.0',
+    'sPyNNaker >= 1!5.0.1, < 1!6.0.0',
     'quantities >= 0.12.1',
     'pynn >= 0.9.1, < 0.10.0 ',
     'lazyarray >= 0.2.9, <= 0.4.0',
@@ -73,18 +73,21 @@ setup(
     classifiers=[
         "Development Status :: 3 - Alpha",
 
+        "Intended Audience :: Developers",
         "Intended Audience :: Science/Research",
 
         "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
+
+        "Natural Language :: English",
 
         "Operating System :: POSIX :: Linux",
         "Operating System :: Microsoft :: Windows",
         "Operating System :: MacOS",
 
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 2.7",
-
-        "Topic :: Scientific/Engineering",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.5",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
     ],
     keywords="spinnaker pynn0.8 neural simulation",
     url="https://github.com/SpiNNakerManchester/SpyNNaker8",
