@@ -31,6 +31,9 @@ from spynnaker8.models.synapse_dynamics.timing_dependence\
 from spynnaker8.models.synapse_dynamics.weight_dependence\
     .weight_dependence_mfvn import \
     WeightDependenceMFVN as WeightDependenceMFVN
+from spynnaker8.models.synapse_dynamics.weight_dependence\
+    .weight_dependence_pfpc import \
+    WeightDependencePFPC as WeightDependencePFPC
 
 # plastic weight spynnaker 8
 from spynnaker8.models.synapse_dynamics.weight_dependence \
