@@ -15,13 +15,22 @@ runtime = num_repeats * cycle_time * batches
 
 # # Post-synapse population
 erbp_neuron_params = {
-    "v_thresh": 30,
     "v_reset": 0,
-    "v_rest": 0,
     "i_offset": 0, # DC input
     "v": 0,
-    "tau_err": 1000
+    "tau_err": 1000,
 #     "tau_refrac": 50
+#     "tau_refrac": 50
+    # "v_thresh": 30.0,  # do not change - hard-coded in C for now
+    'small_b': 0,
+    'v_rest': 0.0,
+    'tau_m': 20.0,
+    'cm': 20, # Updated to suit tau_m of 20 and make membrane resistance 1
+    'B': 0.0,
+    'small_b_0': 10,
+    'tau_a': 10,
+    'beta': 1.7,
+    'tau_refrac': 3
     }
 
 # Load data
@@ -296,7 +305,7 @@ pop_in = p.Population(100,
                       label='pop_in')
 
 pop_rec = p.Population(100,  # number of neurons
-                       p.extra_models.IFCurrExpERBP(**erbp_neuron_params),
+                       p.extra_models.IFCurrExpERBPad(**erbp_neuron_params),
                        label="pop_rec")
 
 # Output populations

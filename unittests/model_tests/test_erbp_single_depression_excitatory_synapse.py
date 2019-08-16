@@ -18,15 +18,23 @@ l_rate = 0.01
 
 # Hidden neuron population - i.e. postsynaptic population
 neuron_params = {
-    "v_thresh": 30.0,  # do not change - hard-coded in C for now
+    # "v_thresh": 30.0,  # do not change - hard-coded in C for now
     "v_reset": 0.0,
-    "v_rest": 0.0,
-    "v": 20,
-    "i_offset": 1
+    'small_b': 0,
+    'v_rest': 0.0,
+    'v': 0,
+    'tau_m': 20.0,
+    'cm': 20, # Updated to suit tau_m of 20 and make membrane resistance 1
+    'B': 10.0,
+    'small_b_0': 10,
+    'i_offset': 0,
+    'tau_a': 1200,
+    'beta': 1.7,
+    'tau_refrac':3
     }  # DC input - to enable interesting p_j
 
 pop_hidden = p.Population(1,  # number of neurons
-                          p.extra_models.IFCurrExpERBP(**neuron_params),
+                          p.extra_models.IFCurrExpERBPad(**neuron_params),
                           label="ERBP Neuron")
 
 # Input spike source (sends presynaptic spike)
@@ -86,15 +94,15 @@ weight = synapse_plastic.get('weight', 'list', with_address=False)[0]
 
 
 # Hand calculate weight update to check SpiNNajer operation
-p_j = gamma * ((neuron_params["v"] - neuron_params["v_rest"]) /
-               (neuron_params["v_thresh"] - neuron_params["v_rest"]))
-trace_at_err_spike = p_j * numpy.exp(-dt / tau_err)
-dw = trace_at_err_spike * w_err * l_rate
-hand_calc_weight = w_plastic - dw
+# p_j = gamma * ((neuron_params["v"] - neuron_params["v_rest"]) /
+#                (neuron_params["v_thresh"] - neuron_params["v_rest"]))
+# trace_at_err_spike = p_j * numpy.exp(-dt / tau_err)
+# dw = trace_at_err_spike * w_err * l_rate
+# hand_calc_weight = w_plastic - dw
 
 print "Original weight: {}".format(w_plastic)
 print "Updated SpiNNaker weight: {}".format(weight)
-print "Handcalculated updated weight: {}".format(hand_calc_weight)
+# print "Handcalculated updated weight: {}".format(hand_calc_weight)
 
 
 # Plot
@@ -110,6 +118,9 @@ F = Figure(
           ),
     Panel(hidden_neuron_data.segments[0].filter(name='gsyn_exc')[0],
           ylabel="gsyn excitatory (mV)",
+          data_labels=[pop_hidden.label], yticks=True, xlim=(0, runtime)),
+    Panel(hidden_neuron_data.segments[0].filter(name='gsyn_inh')[0],
+          ylabel="gsyn inhib (mV)",
           data_labels=[pop_hidden.label], yticks=True, xlim=(0, runtime)))
 
 plt.show()

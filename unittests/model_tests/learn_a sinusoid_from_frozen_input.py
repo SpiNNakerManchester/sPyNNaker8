@@ -16,15 +16,22 @@ runtime = num_repeats * cycle_time * batches
 
 # # Post-synapse population
 erbp_neuron_params = {
-    "v_thresh": 30,
-    "v_reset": 0,
-    "v_rest": 0,
-    "i_offset": 0, # DC input
-    "v": 0,
-    "tau_err": 1000
+    "tau_err": 1000,
 #     "tau_refrac": 50
+    # "v_thresh": 30.0,  # do not change - hard-coded in C for now
+    "v_reset": 0.0,
+    'small_b': 0,
+    'v_rest': 0.0,
+    'v': 0,
+    'tau_m': 20.0,
+    'cm': 20, # Updated to suit tau_m of 20 and make membrane resistance 1
+    'B': 10.0,
+    'small_b_0': 10,
+    'i_offset': 0,
+    'tau_a': 1200,
+    'beta': 1.7,
+    'tau_refrac':3
     }
-
 
 offset = 0.25
 rate = 1.024/32.
@@ -42,7 +49,7 @@ tau_err = 20
 
 init_weight = 0.2
 
-p.set_number_of_neurons_per_core(p.extra_models.IFCurrExpERBP, 32)
+p.set_number_of_neurons_per_core(p.extra_models.IFCurrExpERBPad, 32)
 p.set_number_of_neurons_per_core(p.SpikeSourceArray, 32)
 
 
