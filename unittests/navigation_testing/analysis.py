@@ -1,16 +1,14 @@
 # Standard library imports
-import cPickle as pickle
-import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib.colors as mcolors
-import sys
 import argparse
+import cPickle as pickle
+import math
 
-# Third party imports
-from pyNN.utility.plotting import Figure, Panel
-
+import matplotlib.colors as mcolors
+import matplotlib.pyplot as plt
 # Local application imports
 import utilities as util
+# Third party imports
+from pyNN.utility.plotting import Figure, Panel
 
 DIR = ''
 RUNTIME = ''
@@ -23,12 +21,12 @@ cmap = mcolors.LinearSegmentedColormap.from_list("",
                                                   (1, "red")], N=256)
 
 cmap_rainbow = mcolors.LinearSegmentedColormap.from_list("",
-                                                 [(0, "#001aff"),  # blue
-                                                  (0.2, "#00ffea"),  # cyan
-                                                  (0.4, "#00ff2f"),  # green
-                                                  (0.6, "#fff700"),  # yellow
-                                                  (0.8, "#ff8000"),  # orange
-                                                  (1, "#ff0000")], N=256)  # red
+                                                         [(0, "#001aff"),  # blue
+                                                          (0.2, "#00ffea"),  # cyan
+                                                          (0.4, "#00ff2f"),  # green
+                                                          (0.6, "#fff700"),  # yellow
+                                                          (0.8, "#ff8000"),  # orange
+                                                          (1, "#ff0000")], N=256)  # red
 
 DEFAULT_FIG_SETTINGS = {
     'lines.linewidth': 0.5,
@@ -41,7 +39,6 @@ DEFAULT_FIG_SETTINGS = {
 
 
 def main(input_cells, exc_dir_view, times):
-
     if input_cells:
         with open(DIR + "pop_input_spike_trains.pkl", 'rb') as f:
             pop_input_spike_trains = pickle.load(f)
@@ -69,17 +66,17 @@ def main(input_cells, exc_dir_view, times):
     #     pop_exc_gsyn_exc = pickle.load(f)
     # with open(DIR + "pop_exc_gsyn_inh.pkl", 'rb') as f:
     #     pop_exc_gsyn_inh = pickle.load(f)
-    with open(DIR + "pop_exc_spiketrains.pkl", 'rb') as f:
+    with open(DIR + "pop_exc_gc_spiketrains.pkl", 'rb') as f:
         pop_exc_spiketrains = pickle.load(f)
-    with open(DIR + "pop_exc_label.pkl", 'rb') as f:
+    with open(DIR + "pop_exc_gc_label.pkl", 'rb') as f:
         pop_exc_label = pickle.load(f)
-    with open(DIR + "pop_exc_positions.pkl", 'rb') as f:
+    with open(DIR + "pop_exc_gc_positions.pkl", 'rb') as f:
         pop_exc_pos = pickle.load(f)
-    with open(DIR + "pop_exc_parameters.pkl", 'rb') as f:
+    with open(DIR + "pop_exc_gc_parameters.pkl", 'rb') as f:
         pop_exc_parameters = pickle.load(f)
 
-    # grid_cell_plots(times, pop_exc_label, pop_exc_spiketrains,
-    #                 pop_exc_pos)
+    grid_cell_plots(times, pop_exc_label, pop_exc_spiketrains,
+                    pop_exc_pos)
     time_window = 1000  # time window for firing rate plots
     plot_population_firing_rate(times, pop_exc_label, pop_exc_spiketrains, pop_exc_pos, time_window)
     # get_active_neuron_counts(pop_exc_spiketrains, pop_exc_pos, times[-1])
@@ -158,7 +155,6 @@ def grid_cell_plots(times, pop_exc_label, pop_exc_spiketrains,
     plt.clf()
 
 
-# Plot the firing rate of a population at a given time
 def plot_population_firing_rate(times, label, spiketrains, pos, time_window):
     # plt.style.use('dark_background')
     num_times = len(times)
@@ -194,7 +190,7 @@ def plot_population_firing_rate(times, label, spiketrains, pos, time_window):
     # plt.annotate("Firing rate computed over time window of " + str(time_window) + "ms up until timestamp")
     # fig.colorbar(cmap)
     # plt.subplots_adjust(wspace=0.5, hspace=0.5)
-    fig.tight_layout()
+    # fig.tight_layout()
     plt.savefig(DIR + 'pop_exc_gc_firing_rate.eps', format='eps',
                 facecolor=fig.get_facecolor(), bbox_inches='tight', dpi=600)
     plt.clf()
