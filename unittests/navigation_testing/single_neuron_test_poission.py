@@ -39,14 +39,14 @@ v_init = RandomDistribution('uniform', (-65, -55), rng)
 pop_exc = p.Population(1,
                        p.IF_curr_exp(**neuron_params),
                        cellparams=None,
-                       initial_values={'v': v_init},
+                       initial_values={'v': -65},
                        structure=None,
                        label="Grid cell"
                        )
 
 pop_input = p.Population(1,
                          p.SpikeSourcePoisson(
-                             rate=10, start=0, duration=runtime),
+                             rate=100, start=0, duration=runtime),
                          label="Poisson input velocity cells")
 
 proj_input = p.Projection(pop_input, pop_exc,
@@ -57,11 +57,13 @@ proj_input = p.Projection(pop_input, pop_exc,
 )
 
 pop_exc.record("all")
+pop_input.record("all")
 p.run(runtime)
 
 exc_data = pop_exc.get_data()
-firing_rate = len(exc_data.segments[0].spiketrains[0]) * (1000/runtime)
-print("Mean spike count=" + str(pop_exc.mean_spike_count(gather=True)))
+print("Max v=" + str(max(exc_data.segments[0].filter(name='v')[0])))
+print("Max gsyn_exc=" + str(max(exc_data.segments[0].filter(name='gsyn_exc')[0])))
+print("Mean spike count=" + str(pop_exc.mean_spike_count(gather=True)) + "Hz")
 
 # Plot
 F = Figure(
@@ -72,16 +74,19 @@ F = Figure(
           data_labels=[pop_exc.label], yticks=True, xticks=True, xlim=(0, runtime)
           ),
     Panel(exc_data.segments[0].filter(name='gsyn_exc')[0],
-          ylabel="excitatory synaptic conduction (uS)",
+          ylabel="excitatory synaptic conduction (mV)",
           xlabel="Time (ms)",
           data_labels=[pop_exc.label], yticks=True, xticks=True, xlim=(0, runtime)
           ),
-    Panel(exc_data.segments[0].filter(name='gsyn_inh')[0],
-          ylabel="inhibitory synaptic conduction (uS)",
-          xlabel="Time (ms)",
-          data_labels=[pop_exc.label], yticks=True, xticks=True, xlim=(0, runtime)
-          ),
+    # Panel(exc_data.segments[0].filter(name='gsyn_inh')[0],
+    #       ylabel="inhibitory synaptic conduction (mV)",
+    #       xlabel="Time (ms)",
+    #       data_labels=[pop_exc.label], yticks=True, xticks=True, xlim=(0, runtime)
+    #       ),
     Panel(exc_data.segments[0].spiketrains,
+          yticks=True, xticks=True, markersize=2, xlim=(0, runtime)
+          ),
+    Panel(pop_input.get_data().segments[0].spiketrains,
           yticks=True, xticks=True, markersize=2, xlim=(0, runtime)
           ),
 )
@@ -89,7 +94,4 @@ F = Figure(
 plt.show()
 p.end()
 
-print("Firing rate=" + str(firing_rate) + "Hz")
 print("i_offset=" + str(neuron_params['i_offset']) + "nA")
-print("tau_refrac=" + str(neuron_params['tau_refrac']) + "ms")
-print("tau_m=" + str(neuron_params['tau_m']) + "ms")
