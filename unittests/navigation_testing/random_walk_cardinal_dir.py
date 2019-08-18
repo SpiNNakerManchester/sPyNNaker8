@@ -27,15 +27,17 @@ class RandomWalkCardinal:
     Simulate a random walk in any of the 4 cardinal directions
     """
 
-    def __init__(self, head_dir, speed, timestep):
+    def __init__(self, head_dir, speed, timestep, grid_x, grid_y):
         self.dirs = [[0, 1], [0, -1], [1, 0], [-1, 0]]
         self.head_dir = head_dir
         self.speed = speed / 10.0  # cm/ms
         self.timestep = timestep  # how often a new step is generated (ms)
         self.unit_in_cm = 1  # distance per unit change in coordinates
         self.step_size = (self.speed * timestep) * self.unit_in_cm  # how many units to move every timestep
-        self.positions = [[0, 0]] # initialise position to origin
+        self.positions = [[0, 0]]  # initialise position to origin
         self.step = None
+        self.max_x = (grid_x * 100)/2  # maximum/minimum x coordinate in cm
+        self.max_y = (grid_y * 100)/2  # maximum/minimum y coordinate in cm
 
     def next_step(self):
         """
@@ -44,19 +46,24 @@ class RandomWalkCardinal:
         Choose a random cardinal direction and move step_size units
         :return: [list] the change in x and y coordinates
         """
-        new_head_dir = random.choice(self.dirs)
-        self.head_dir = new_head_dir
+        while True:
+            new_head_dir = random.choice(self.dirs)
+            change_xy = np.multiply(
+                [self.step_size, self.step_size],
+                new_head_dir
+            )
+            position = np.add(self.positions[-1], change_xy)
 
-        change_xy = np.multiply(
-            [self.step_size, self.step_size],
-            new_head_dir
-        )
+            # Check if within boundaries
+            if self.within_boundary(position):
+                self.head_dir = new_head_dir
+                self.positions.append(list(position))
+                return change_xy
 
-        # Update position
-        position = np.add(self.positions[-1], change_xy)
-        self.positions.append(list(position))
-
-        return change_xy
+    def within_boundary(self, new_pos):
+        if abs(new_pos[0]) <= self.max_x and abs(new_pos[1]) <= self.max_y:
+            return True
+        return False
 
     def get_velocity(self):
         """
