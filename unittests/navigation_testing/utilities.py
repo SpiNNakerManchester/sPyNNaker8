@@ -1,21 +1,21 @@
-import numpy as np
-import matplotlib
-import matplotlib.pyplot as plt
-import matplotlib.colors as mcolors
 import math
 
+import matplotlib.colors as mcolors
+import matplotlib.pyplot as plt
+import numpy as np
+
 cmap_byr = mcolors.LinearSegmentedColormap.from_list("",
-                                                 [(0, "black"),
-                                                  (0.5, "yellow"),
-                                                  (1, "red")], N=256)
+                                                     [(0, "black"),
+                                                      (0.5, "yellow"),
+                                                      (1, "red")], N=256)
 
 cmap_bcgyor = mcolors.LinearSegmentedColormap.from_list("",
-                                                 [(0, "#001aff"),  # blue
-                                                  (0.2, "#00ffea"),  # cyan
-                                                  (0.4, "#00ff2f"),  # green
-                                                  (0.6, "#fff700"),  # yellow
-                                                  (0.8, "#ff8000"),  # orange
-                                                  (1, "#ff0000")], N=256)  # red
+                                                        [(0, "#001aff"),  # blue
+                                                         (0.2, "#00ffea"),  # cyan
+                                                         (0.4, "#00ff2f"),  # green
+                                                         (0.6, "#fff700"),  # yellow
+                                                         (0.8, "#ff8000"),  # orange
+                                                         (1, "#ff0000")], N=256)  # red
 
 
 def plot_neuron_init_order(neuron_positions, directory):
@@ -26,29 +26,63 @@ def plot_neuron_init_order(neuron_positions, directory):
     plt.clf()
 
 
-def plot_gc_inh_connections(neuron_ids, neuron_positions, connection_list, n_col, n_row, directory):
-    fig, axs = plt.subplots(ncols=len(neuron_ids))
-    fig.suptitle('Grid Cell Synapses')
+def plot_gc_inh_connections(neuron_ids, neuron_positions, max_weight, connection_list, n_col, n_row, rad, shift,
+                            directory):
+    for neuron_id in neuron_ids:
+        fig, ax = plt.subplots(ncols=1)
+        # fig.suptitle('Grid Cell Synapses')
 
-    for i, ax in enumerate(axs):
-        neuron_id = neuron_ids[i]
         connections = get_neuron_connections(neuron_id, connection_list, False)
         ax.set_xlim(0, n_col - 1)
         ax.set_ylim(0, n_row - 1)
-        ax.set_title("Neuron " + str(neuron_id) + str(get_dir_pref((neuron_positions[neuron_id])[:2])))
-        ax.get_xaxis().set_ticks([0, n_col])
-        ax.get_yaxis().set_ticks([0, n_row])
+        ax.set_title("Neuron " + str(neuron_id))
+        ax.get_xaxis().set_ticks([0, 10, 20, 30, 40, 50])
+        ax.get_yaxis().set_ticks([0, 10, 20, 30, 40, 50])
         ax.set_aspect('equal')
 
-        ax.scatter((neuron_positions[neuron_id])[0],
-                   (neuron_positions[neuron_id])[1], s=2, marker='x', c="r")
+        pos_x = (neuron_positions[neuron_id])[0]
+        pos_y = (neuron_positions[neuron_id])[1]
+
+        ax.scatter(pos_x, pos_y, s=50, marker='x', c="k")
+
+        circle_args = {
+            "edgecolor": 'k',
+            "facecolor": None,
+            "fill": False,
+            "linestyle": '--'
+        }
+        orig_radius = plt.Circle(
+            (pos_x, pos_y), rad, **circle_args
+        )
+        ax.add_patch(orig_radius)
+
+        circle_args = {
+            "edgecolor": 'r',
+            "facecolor": None,
+            "fill": False,
+            "linestyle": '--'
+        }
+        shift_by = np.multiply(get_dir_pref((pos_x, pos_y)), shift)
+        new_pos = [pos_x + shift_by[0], pos_y + shift_by[1]]
+        new_radius = plt.Circle(
+            (new_pos[0], new_pos[1]), rad, **circle_args
+        )
+        ax.add_patch(new_radius)
+
+        ax.scatter(new_pos[0], new_pos[1], s=50, marker='x', c="r")
 
         for connection in connections:
             ax.scatter((neuron_positions[connection[1]])[0],
-                       (neuron_positions[connection[1]])[1], marker='x', s=0.5, c="k")
-    fig.tight_layout()
-    plt.savefig(directory + 'neuron_connections.png', facecolor=fig.get_facecolor(), bbox_inches='tight', dpi=150)
-    plt.clf()
+                       (neuron_positions[connection[1]])[1], marker='o', s=4,
+                       c=normalise(float(connection[2]), 0, max_weight),
+                       cmap=cmap_byr, norm=plt.Normalize(0, 1))
+        fig.tight_layout()
+        # fig.colorbar(plt, ax=axs.ravel().tolist())
+        # scalebar = ScaleBar(0.29586, 'neurons', fixed_value=5)
+        # plt.gca().add_artist(scalebar)
+        plt.savefig(directory + str(neuron_id) + '_neuron_connections.png', facecolor=fig.get_facecolor(),
+                    bbox_inches='tight', dpi=150)
+        plt.clf()
 
 
 # Initialise neuron directional preference
@@ -110,6 +144,7 @@ def shift_centre_connectivity(presyn_pos, dir, shift_param, n_row, n_col):
             centre[0] -= n_col
     return centre
 
+
 # Plot the agent 1D trajectory
 def plot_trajectory_infinite_1d(trajectory, dir, runtime, save):
     fig, ax = plt.subplots()
@@ -134,10 +169,11 @@ def plot_trajectory_infinite_1d(trajectory, dir, runtime, save):
     if save:
         plt.savefig('trajectory.png', bbox_inches='tight')
 
+
 def compute_max_firing_rate(spiketrains, runtime):
     rates = list()
     for spiketrain in spiketrains:
-        rates.append(len(spiketrain) * (1000/runtime))
+        rates.append(len(spiketrain) * (1000 / runtime))
     return max(rates)
 
 
@@ -210,3 +246,29 @@ def plot_population_membrane_potential_activity(membrane_potentials, neuron_posi
     if filepath:
         plt.savefig(filepath, facecolor=fig.get_facecolor(), bbox_inches='tight')
     plt.show()
+
+
+def dog_weight_connectivity_kernel(x, alpha, gamma, beta):
+    return (alpha * math.exp(-gamma * np.square(abs(x)))) - (math.exp(-beta * np.square(abs(x))))
+
+
+def get_max_value_from_pop(neuron_data_array):
+    max_val = -1000000
+    for neuron_data in neuron_data_array:
+        if max(neuron_data) > max_val:
+            max_val = max(neuron_data)
+    return max_val
+
+
+def get_max_firing_rate(spiketrains):
+    if spiketrains is None or spiketrains == 0:
+        return 0
+
+    max_val = -1000000
+    for spiketrain in spiketrains:
+        if len(spiketrain) > max_val:
+            max_val = len(spiketrain)
+    return max_val
+
+# Returns the probability of creating an inhibitory connection between two grid cells
+# def connect_two_gc_neurons():
