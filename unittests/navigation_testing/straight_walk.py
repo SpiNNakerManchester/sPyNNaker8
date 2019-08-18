@@ -1,37 +1,32 @@
 from operator import add
 import math
+import numpy as np
+
 
 # Walk in given direction at a constant speed
-
-
-# Direction: direction vector
-# Speed: magnitude
 class StraightWalk:
 
-    def __init__(self, speed, init_dir):
-        self.speed = speed
-        self.dir = init_dir
+    def __init__(self, head_dir):
+        self.head_dir = head_dir
         self.positions = [[0, 0]]
+        self.step = None
 
     def next_step(self):
-        position = [0, 0]
-        if self.head_dir == [0, 1]:
-            position = map(add, self.positions[-1], [0, 1 * self.speed])
-        elif self.head_dir == [0, -1]:
-            position = map(add, self.positions[-1], [0, -1 * self.speed])
-        elif self.head_dir == [1, 0]:
-            position = map(add, self.positions[-1], [1 * self.speed, 0])
-        elif self.head_dir == [-1, 0]:
-            position = map(add, self.positions[-1], [-1 * self.speed, 0])
+        step = np.multiply(
+            [1, 1],
+            self.head_dir
+        )
+        position = np.add(self.positions[-1], step)
         self.positions.append(position)
 
-    def get_velocity(self):
-        self.next_step()
-        return [self.speed, self.head_dir]
+        return step
 
-    def get_positions(self, timestep):
-        trajectory = [None] * len(self.positions)
-        for i in range(len(self.positions)):
+    def get_velocity(self):
+        return [self.next_step(), self.head_dir]
+
+    def get_positions(self, time, timestep):
+        index = int(time / timestep)
+        trajectory = [None] * index
+        for i in range(index):
             trajectory[i] = [[i * timestep, self.positions[i]]]
         return trajectory
-
