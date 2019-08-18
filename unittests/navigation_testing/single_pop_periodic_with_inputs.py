@@ -31,14 +31,14 @@ is_auto_receptor = False  # allow self-connections in recurrent grid cell networ
 rng = NumpyRNG(seed=77364, parallel_safe=True)
 synaptic_weight = 0.05  # synaptic weight for inhibitory connections
 synaptic_radius = 10  # inhibitory connection radius
-orientation_pref_shift = 1  # number of neurons to shift centre of connectivity by
+orientation_pref_shift = 2  # number of neurons to shift centre of connectivity by
 
 # Grid cell (excitatory) population
 neuron_params = {
     "v_thresh": -50.0,
     "v_reset": -65.0,
     "v_rest": -65.0,
-    "i_offset": 0.76,  # DC input
+    "i_offset": 0.8,  # DC input
     "tau_m": 20,  # membrane time constant
     "tau_refrac": 1.0,
 }
