@@ -110,7 +110,7 @@ class BaseTestCase(unittest.TestCase):
 
     def get_provenance_files(self):
         provenance_file_path = globals_variables.get_simulator() \
-            ._provenance_file_path
+            ._app_provenance_file_path
         return os.listdir(provenance_file_path)
 
     def get_run_time_of_BufferExtractor(self):
