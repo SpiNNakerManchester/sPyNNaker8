@@ -21,6 +21,9 @@ from neo import __version__ as neo_version
 from pyNN.common import control as pynn_control
 from pyNN.random import RandomDistribution, NumpyRNG
 from pyNN import __version__ as pynn_version
+
+from spinn_front_end_common.utilities.constants import \
+    MICRO_TO_MILLISECOND_CONVERSION
 from spinn_utilities.log import FormatAdapter
 from spinn_front_end_common.utilities import globals_variables
 from spinn_front_end_common.utilities.exceptions import ConfigurationException
@@ -156,7 +159,8 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
         # Convert dt into microseconds and divide by
         # realtime proportion to get hardware timestep
         hardware_timestep_us = int(round(
-            (1000.0 * float(self.dt)) / float(self.timescale_factor)))
+            (MICRO_TO_MILLISECOND_CONVERSION * float(self.dt)) /
+            float(self.timescale_factor)))
 
         # Determine how long simulation is in timesteps
         duration_timesteps = int(math.ceil(
@@ -220,7 +224,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
         :return: the machine time step
         """
 
-        return self._machine_time_step
+        return self._default_machine_time_step
 
     @dt.setter
     def dt(self, new_value):
@@ -228,7 +232,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 
         :param new_value: new value for machine time step
         """
-        self._machine_time_step = new_value
+        self._default_machine_time_step = new_value
 
     @property
     def t(self):
@@ -237,7 +241,9 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
         :return: the current runtime already executed
         """
         return (
-            self._current_run_timesteps * (self._machine_time_step / 1000.0))
+            self._current_run_timesteps * (
+                self._default_machine_time_step /
+                MICRO_TO_MILLISECOND_CONVERSION))
 
     @property
     def segment_counter(self):
