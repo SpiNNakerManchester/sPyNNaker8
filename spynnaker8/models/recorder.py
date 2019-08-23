@@ -61,13 +61,16 @@ class Recorder(RecordingCommon):
         """
 
         block = neo.Block()
+        simulator = get_simulator()
 
-        for previous in range(0, get_simulator().segment_counter):
+        for previous in range(0, simulator.segment_counter):
             self._append_previous_segment(
                 block, previous, variables, view_indexes)
 
         # add to the segments the new block
-        self._append_current_segment(block, variables, view_indexes, clear)
+        self._append_current_segment(
+            block, variables, view_indexes, clear, simulator.graph_mapper,
+            simulator.local_timer_period_map)
 
         # add fluff to the neo block
         block.name = self._population.label
@@ -155,7 +158,9 @@ class Recorder(RecordingCommon):
             variables.update(self._get_all_recording_variables())
         return variables
 
-    def _append_current_segment(self, block, variables, view_indexes, clear):
+    def _append_current_segment(
+            self, block, variables, view_indexes, clear, graph_mapper,
+            local_time_period_map):
 
         # build segment for the current data to be gathered in
         segment = neo.Segment(
@@ -168,8 +173,9 @@ class Recorder(RecordingCommon):
 
         for variable in variables:
             if variable == SPIKES:
-                sampling_interval = self._population._vertex. \
-                    get_spikes_sampling_interval()
+                sampling_interval = (
+                    self._population._vertex.get_spikes_sampling_interval(
+                        graph_mapper, local_time_period_map))
                 self.read_in_spikes(
                     segment=segment,
                     spikes=self._get_spikes(),
@@ -180,8 +186,8 @@ class Recorder(RecordingCommon):
                     indexes=view_indexes,
                     label=self._population.label)
             else:
-                (data, data_indexes, sampling_interval) = \
-                    self._get_recorded_matrix(variable)
+                (data, data_indexes, sampling_interval) = (
+                    self._get_recorded_matrix(variable))
                 self.read_in_signal(
                     segment=segment,
                     block=block,
