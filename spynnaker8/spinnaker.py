@@ -228,7 +228,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 
         :param new_value: new value for machine time step
         """
-        self._config.set("Machine", "machine_time_step", new_value)
+        self.machine_time_step = new_value
 
     @property
     def t(self):
