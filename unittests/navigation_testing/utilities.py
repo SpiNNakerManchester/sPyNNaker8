@@ -74,7 +74,7 @@ def plot_gc_inh_connections(neuron_ids, neuron_positions, max_weight, connection
         for connection in connections:
             ax.scatter((neuron_positions[connection[1]])[0],
                        (neuron_positions[connection[1]])[1], marker='o', s=4,
-                       c=normalise(float(connection[2]), 0, max_weight),
+                       c=normalise_round(float(connection[2]), 0, max_weight),
                        cmap=cmap_byr, norm=plt.Normalize(0, 1))
         fig.tight_layout()
         # fig.colorbar(plt, ax=axs.ravel().tolist())
@@ -118,6 +118,10 @@ def get_neuron_connections(neuron_id, connections, bidirectional):
 
 
 # Normalise a value to min and max
+def normalise_round(val, minimum, maximum):
+    return round((val - minimum) / float(maximum - minimum))
+
+
 def normalise(val, minimum, maximum):
     return (val - minimum) / float(maximum - minimum)
 
@@ -168,6 +172,19 @@ def plot_trajectory_infinite_1d(trajectory, dir, runtime, save):
     plt.show()
     if save:
         plt.savefig('trajectory.png', bbox_inches='tight')
+
+
+def plot_trajectory_2d(trajectory, x_lim, y_lim, folderpath):
+    plt.xlabel('x (cm)')
+    plt.xlim(0, x_lim)
+    plt.ylim(0, y_lim)
+    plt.ylabel('y (cm)')
+
+    plt.scatter(trajectory[0, 0], trajectory[0, 1], s=50, marker='o', c="r")
+    plt.plot(trajectory[:, 0], trajectory[:, 1], linestyle='-', color='k', linewidth=1)
+
+    plt.tick_params(axis='both', labelsize=9)
+    plt.savefig(folderpath + 'trajectory.png', bbox_inches='tight')
 
 
 def compute_max_firing_rate(spiketrains, runtime):
@@ -238,7 +255,7 @@ def plot_population_membrane_potential_activity(membrane_potentials, neuron_posi
         pop_v = membrane_potentials[t]
         min_v = float(min(pop_v))
         for j, val in enumerate(pop_v):
-            norm = normalise(float(val), min_v, thresh_v)
+            norm = normalise_round(float(val), min_v, thresh_v)
             ax.scatter(x=neuron_positions[j][0], y=neuron_positions[j][1],
                        s=10, c=norm, cmap=cmap_byr, norm=plt.Normalize(0, 1))
     # plt.colorbar(cmap)
@@ -249,16 +266,36 @@ def plot_population_membrane_potential_activity(membrane_potentials, neuron_posi
 
 
 def dog_weight_connectivity_kernel(x, alpha, gamma, beta):
-    return (alpha * math.exp(-gamma * np.square(abs(x)))) - (math.exp(-beta * np.square(abs(x))))
+    mag_x = np.linalg.norm(x)
+    return (alpha * math.exp(-gamma * np.square(mag_x))) - (math.exp(-beta * np.square(mag_x)))
 
 
 def get_max_value_from_pop(neuron_data_array):
     max_val = -1000000
     for neuron_data in neuron_data_array:
+        neuron_data = map(float, neuron_data)
         if max(neuron_data) > max_val:
             max_val = max(neuron_data)
     return max_val
 
+
+def get_min_value_from_pop(neuron_data_array):
+    min_val = 1000000
+    for neuron_data in neuron_data_array:
+        neuron_data = map(float, neuron_data)
+        if min(neuron_data) < min_val:
+            min_val = min(neuron_data)
+    return min_val
+
+
+def get_avg_gsyn_from_pop(neuron_data_array):
+    avg = []
+    for neuron_data in neuron_data_array:
+        neuron_data = map(float, neuron_data)
+        filtered = filter(lambda a: a != 0, neuron_data)
+        if len(filtered) > 0:
+            avg.append(sum(filtered) / len(filtered))
+    return sum(avg) / len(avg)
 
 def get_max_firing_rate(spiketrains):
     if spiketrains is None or spiketrains == 0:

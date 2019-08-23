@@ -92,7 +92,7 @@ for pre_syn in range(0, neuron_count):
                 # Weight follows gaussian distribution. High inhibition to closer neighbours.
                 weight = (1 - (euc_dist / inh_synaptic_radius)) * max_inh_synaptic_weight
                 # Delay is between 1 and 5ms, based on distance
-                singleConnection = (pre_syn, post_syn, weight, util.normalise(euc_dist, 1, 5))
+                singleConnection = (pre_syn, post_syn, weight, util.normalise_round(euc_dist, 1, 5))
                 inh_loop_connections.append(singleConnection)
 
 proj_gc_inhib = p.Projection(pop_exc_gc, pop_exc_gc,

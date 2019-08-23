@@ -46,13 +46,13 @@ pop_exc = p.Population(1,
 
 pop_input = p.Population(1,
                          p.SpikeSourcePoisson(
-                             rate=100, start=0, duration=runtime),
+                             rate=50, start=0, duration=runtime),
                          label="Poisson input velocity cells")
 
 proj_input = p.Projection(pop_input, pop_exc,
                           p.OneToOneConnector(),
                           receptor_type="excitatory",
-                          synapse_type=p.StaticSynapse(weight=1.0, delay=1.0),
+                          synapse_type=p.StaticSynapse(weight=0.5, delay=1.0),
                           label="Velocity input cells excitatory connections to appropriate grid cells"
 )
 
@@ -62,7 +62,12 @@ p.run(runtime)
 
 exc_data = pop_exc.get_data()
 print("Max v=" + str(max(exc_data.segments[0].filter(name='v')[0])))
-print("Max gsyn_exc=" + str(max(exc_data.segments[0].filter(name='gsyn_exc')[0])))
+gsyn_exc = map(float, exc_data.segments[0].filter(name='gsyn_exc')[0])
+print("Max gsyn_exc=" + str(max(gsyn_exc)))
+
+gsyn_exc_filtered = filter(lambda a: a != 0, gsyn_exc)  # Remove 0s in gsyn_exc
+print("Avg gsyn_exc=" + str(sum(gsyn_exc_filtered) / len(gsyn_exc_filtered)))
+print("Avg gsyn_exc=" + str(sum(gsyn_exc) / len(gsyn_exc)))
 print("Mean spike count=" + str(pop_exc.mean_spike_count(gather=True)) + "Hz")
 
 # Plot
@@ -73,8 +78,39 @@ F = Figure(
           xlabel="Time (ms)",
           data_labels=[pop_exc.label], yticks=True, xticks=True, xlim=(0, runtime)
           ),
+)
+plt.show()
+
+F = Figure(
+    # plot data for postsynaptic neuron
     Panel(exc_data.segments[0].filter(name='gsyn_exc')[0],
-          ylabel="excitatory synaptic conduction (mV)",
+          ylabel="excitatory synaptic conduction (nA)",
+          xlabel="Time (ms)",
+          data_labels=[pop_exc.label], yticks=True, xticks=True, xlim=(0, runtime)
+          ),
+)
+plt.show()
+
+F = Figure(
+    # plot data for postsynaptic neuron
+    Panel(exc_data.segments[0].spiketrains,
+          yticks=True, xticks=True, markersize=2, xlim=(0, runtime)
+          ),
+    Panel(pop_input.get_data().segments[0].spiketrains,
+          yticks=True, xticks=True, markersize=2, xlim=(0, runtime)
+          ),
+)
+plt.show()
+
+F = Figure(
+    # plot data for postsynaptic neuron
+    Panel(exc_data.segments[0].filter(name='v')[0],
+          ylabel="Membrane potential (mV)",
+          xlabel="Time (ms)",
+          data_labels=[pop_exc.label], yticks=True, xticks=True, xlim=(0, runtime)
+          ),
+    Panel(exc_data.segments[0].filter(name='gsyn_exc')[0],
+          ylabel="excitatory synaptic conduction (nA)",
           xlabel="Time (ms)",
           data_labels=[pop_exc.label], yticks=True, xticks=True, xlim=(0, runtime)
           ),

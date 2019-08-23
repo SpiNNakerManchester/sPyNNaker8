@@ -11,14 +11,14 @@ neuron_params = {
     "v_thresh": -50.0,
     "v_reset": -65.0,
     "v_rest": -65.0,
-    "i_offset": 0.8,  # DC input
+    "i_offset": 0.758,  # DC input
     "tau_m": 20,  # membrane time constant
     "tau_refrac": 1.0,
 }
 
 rng = NumpyRNG(seed=41, parallel_safe=True)
 v_init = RandomDistribution('uniform', (-65, -55), rng)
-pop_exc = p.Population(1,
+pop_exc = p.Population(10,
                        p.IF_curr_exp(**neuron_params),
                        cellparams=None,
                        initial_values={'v': -65.0},
@@ -40,11 +40,6 @@ F = Figure(
           xlabel="Time (ms)",
           data_labels=[pop_exc.label], yticks=True, xticks=True, xlim=(0, runtime)
           ),
-    # Panel(exc_data.segments[0].filter(name='gsyn_exc')[0],
-    #       ylabel="excitatory synaptic conduction (uS)",
-    #       xlabel="Time (ms)",
-    #       data_labels=[pop_exc.label], yticks=True, xticks=True, xlim=(0, runtime)
-    #       ),
     # Panel(exc_data.segments[0].filter(name='gsyn_inh')[0],
     #       ylabel="inhibitory synaptic conduction (uS)",
     #       xlabel="Time (ms)",

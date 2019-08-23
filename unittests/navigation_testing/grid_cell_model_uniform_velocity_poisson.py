@@ -6,7 +6,6 @@ import os
 import errno
 import matplotlib.pyplot as plt
 import random
-import math
 
 # Third party imports
 import spynnaker8 as p
@@ -21,17 +20,17 @@ from pyNN.utility.plotting import Figure, Panel
 SETUP
 """
 p.setup(1)  # simulation timestep (ms)
-runtime = 2000  # ms
+runtime = 1000  # ms
 
 n_row = 50
 n_col = 50
 p.set_number_of_neurons_per_core(p.IF_curr_exp, 255)
 
-is_auto_receptor = True  # allow self-connections in recurrent grid cell network
+self_connections = False  # allow self-connections in recurrent grid cell network
 
 rng = NumpyRNG(seed=77364, parallel_safe=True)
-synaptic_weight = 1.0  # synaptic weight for inhibitory connections
-synaptic_radius = 10  # inhibitory connection radius
+synaptic_weight = 0.1  # synaptic weight for inhibitory connections
+synaptic_radius = 10.0  # inhibitory connection radius
 orientation_pref_shift = 5  # number of neurons to shift centre of connectivity by
 
 # Grid cell (excitatory) population
@@ -39,7 +38,7 @@ gc_neuron_params = {
     "v_thresh": -50.0,
     "v_reset": -65.0,
     "v_rest": -65.0,
-    "i_offset": 0.755,  # DC input
+    "i_offset": 0.758,  # DC input
     "tau_m": 20,  # membrane time constant
     "tau_refrac": 1.0,
 }
@@ -56,33 +55,45 @@ pop_exc_gc = p.Population(n_row * n_col,
                           )
 
 # Create recurrent inhibitory connections
-exc_loop_connections = list()
-inh_loop_connections = list()
-alpha = 1.0
-lambda_net = 13
-beta = 3/math.pow(lambda_net, 2)
-gamma = 1.05 * beta
+loop_connections = list()
+# for pre_syn in range(0, n_row * n_col):
+#     presyn_pos = (pop_exc_gc.positions[pre_syn])[:2]
+#     dir_pref = np.array(util.get_dir_pref(presyn_pos))
+#
+#     for post_syn in range(0, n_row * n_col):
+#         # If different neurons
+#         if pre_syn != post_syn or is_auto_receptor:
+#             postsyn_pos = (pop_exc_gc.positions[post_syn])[:2]
+#             connection_cond = np.subtract(np.subtract(postsyn_pos, presyn_pos),
+#                                           np.multiply(orientation_pref_shift, dir_pref))
+#
+#             # Establish connection
+#             if np.linalg.norm(connection_cond) <= synaptic_radius:
+#                 singleConnection = (pre_syn, post_syn, synaptic_weight, 1.0)
+#                 loop_connections.append(singleConnection)
 
 for pre_syn in range(0, n_row * n_col):
     presyn_pos = (pop_exc_gc.positions[pre_syn])[:2]
-    pre_syn_dir_pref = np.array(util.get_dir_pref(presyn_pos))
+    dir_pref = np.array(util.get_dir_pref(presyn_pos))
 
+    # Shift centre of connectivity in appropriate direction
+    shifted_centre = util.shift_centre_connectivity(presyn_pos, dir_pref, orientation_pref_shift, n_row, n_col)
     for post_syn in range(0, n_row * n_col):
         # If different neurons
-        if pre_syn != post_syn or is_auto_receptor:
+        if pre_syn != post_syn or self_connections:
             postsyn_pos = (pop_exc_gc.positions[post_syn])[:2]
+            dist = util.get_neuron_distance_periodic(n_col, n_row, shifted_centre, postsyn_pos)
 
-            weight = util.dog_weight_connectivity_kernel(
-                postsyn_pos - presyn_pos - (orientation_pref_shift * pre_syn_dir_pref),
-                alpha, gamma, beta
-            )
-
-            singleConnection = (pre_syn, post_syn, weight, 1.0)
-            inh_loop_connections.append(singleConnection)
+            # Establish connection
+            if np.all(dist <= synaptic_radius):
+                # delay = util.normalise(dist, 0, max(n_row, n_col))
+                delay = 1.0
+                singleConnection = (pre_syn, post_syn, synaptic_weight, delay)
+                loop_connections.append(singleConnection)
 
 # Create inhibitory connections
 proj_exc = p.Projection(
-    pop_exc_gc, pop_exc_gc, p.FromListConnector(inh_loop_connections, ('weight', 'delay')),
+    pop_exc_gc, pop_exc_gc, p.FromListConnector(loop_connections, ('weight', 'delay')),
     p.StaticSynapse(),
     receptor_type='inhibitory',
     label="Excitatory grid cells inhibitory connections")
@@ -159,21 +170,22 @@ F = Figure(
           ),
 )
 plt.yticks(rand_neurons)
-plt.savefig(data_dir + "sample_plot.eps", format='eps', bbox_inches='tight')
+plt.savefig(data_dir + "sample_plot.eps", format='eps')
 plt.show()
 
-util.plot_gc_inh_connections([1325, 1275, 1326, 1276],
-                             pop_exc_gc.positions,
-                             synaptic_weight,
-                             inh_loop_connections,
-                             n_col, n_row, synaptic_radius, data_dir)
+util.plot_gc_inh_connections([1325, 1275, 1326, 1276], pop_exc_gc.positions, synaptic_weight, loop_connections,
+                             n_col, n_row, synaptic_radius, orientation_pref_shift, data_dir)
+# util.plot_neuron_init_order(pop_exc_gc.positions, data_dir)
 
-# mean_spike_count = pop_exc_gc.mean_spike_count(gather=True)
-#
-# print("Mean spike count: " + str(pop_exc_gc.mean_spike_count(gather=True)))
-# print("Max spike count: " + str(util.get_max_firing_rate(pop_exc_gc.mean_spike_count(gather=True))))
+gsyn_inh = map(float, pop_exc_gc.get_data().segments[0].filter(name='gsyn_inh')[0])
+spike_count = pop_exc_gc.mean_spike_count(gather=True)
+print("Max gsyn_inh=" + str(util.get_max_value_from_pop(gsyn_inh)))
+print("Min gsyn_inh=" + str(util.get_min_value_from_pop(gsyn_inh)))
+print("Avg gsyn_inh=" + str(util.get_avg_gsyn_from_pop(gsyn_inh)))
+
+print("Mean spike count: " + str(spike_count))
+print("Max spike count: " + str(util.get_max_firing_rate(spike_count)))
 # print("Max v=" + str(util.get_max_value_from_pop(pop_exc_gc.segments[0].spiketrains)))
-# print("Max gsyn_inh=" + str(util.get_max_value_from_pop(pop_exc_gc.get_data().segments[0].filter(name='gsyn_inh')[0])))
 
 p.end()
 print(data_dir)

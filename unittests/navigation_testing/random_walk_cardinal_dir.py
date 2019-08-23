@@ -1,43 +1,35 @@
 import random
 import numpy as np
-
-
-class Step:
-    """
-    Represents a step taken by the agent.
-    Contains the change in x and y coordinates and head direction
-    """
-
-    def __init__(self, change_x, change_y, head_dir):
-        self.change_x = change_x
-        self.change_y = change_y
-        self.head_dir = head_dir
-
-    def print_step(self):
-        """
-        Print the current step's details to console
-        """
-        print "Change in x coordinate: " + str(self.change_x) + "m"
-        print "Change in y coordinate: " + str(self.change_y) + "m"
-        print "Head direction: " + str(self.head_dir)
-
+import random_walk_step as RandomWalkStep
+import utilities as util
 
 class RandomWalkCardinal:
     """
     Simulate a random walk in any of the 4 cardinal directions
     """
 
-    def __init__(self, head_dir, speed, timestep, grid_x, grid_y):
+    def __init__(self, speed, timestep, grid_x, grid_y):
         self.dirs = [[0, 1], [0, -1], [1, 0], [-1, 0]]
-        self.head_dir = head_dir
+        self.head_dir = self.update_head_dir(True)
         self.speed = speed / 10.0  # cm/ms
         self.timestep = timestep  # how often a new step is generated (ms)
         self.unit_in_cm = 1  # distance per unit change in coordinates
         self.step_size = (self.speed * timestep) * self.unit_in_cm  # how many units to move every timestep
-        self.positions = [[0, 0]]  # initialise position to origin
+        self.positions = [[random.randint(0, grid_x),
+                           random.randint(0, grid_y)]]  # initialise position to origin
         self.step = None
-        self.max_x = (grid_x * 100)/2  # maximum/minimum x coordinate in cm
-        self.max_y = (grid_y * 100)/2  # maximum/minimum y coordinate in cm
+        self.max_x = grid_x  # maximum x coordinate in cm
+        self.max_y = grid_y  # maximum y coordinate in cm
+
+    def update_head_dir(self, init):
+        # Randomly choose whether to keep head direction
+        if init:
+            self.head_dir = random.choice(self.dirs)
+        elif random.randint(0, 1) == 1:
+            other_dirs = list(self.dirs)
+            other_dirs.remove(self.head_dir)
+            self.head_dir = random.choice(other_dirs)
+        return self.head_dir
 
     def next_step(self):
         """
@@ -47,7 +39,7 @@ class RandomWalkCardinal:
         :return: [list] the change in x and y coordinates
         """
         while True:
-            new_head_dir = random.choice(self.dirs)
+            new_head_dir = self.update_head_dir(False)
             change_xy = np.multiply(
                 [self.step_size, self.step_size],
                 new_head_dir
@@ -61,7 +53,8 @@ class RandomWalkCardinal:
                 return change_xy
 
     def within_boundary(self, new_pos):
-        if abs(new_pos[0]) <= self.max_x and abs(new_pos[1]) <= self.max_y:
+        if (new_pos[0] <= self.max_x and new_pos[0] >= 0) and \
+                (new_pos[1] <= self.max_y and  new_pos[1] >= 0):
             return True
         return False
 
@@ -72,7 +65,7 @@ class RandomWalkCardinal:
         :return: Step object
         """
         next_step = self.next_step()
-        return Step(next_step[0], next_step[1], self.head_dir)
+        return RandomWalkStep.Step(next_step[0], next_step[1], self.head_dir)
 
     def get_trajectory(self, until_time):
         """
@@ -81,30 +74,34 @@ class RandomWalkCardinal:
         :param until_time: end time of trajectory
         :return: [nested list] containing timestamp and the position
         """
-        to_index = (until_time * 1000) / self.timestep
+        to_index = (until_time) / self.timestep
         trajectory = []
         for i in range(to_index + 1):
-            trajectory.append([i * timestep, self.positions[i]])
+            pos = self.positions[i]
+            trajectory.append([pos[0], pos[1]])
         return trajectory
 
 
 if __name__ == "__main__":
-    timestep = 1000  # ms
-    runtime = 6  # seconds
+    timestep = 50  # ms
+    runtime = 60000  # ms
+    x_lim = 200  # cm
+    y_lim = 200  # cm
 
     # Direction: North
     # Speed: 2m/s
     # Timestep: 1000ms (generating movement every Xms)
-    walk = RandomWalkCardinal([0, 1], 2, timestep)
+    walk = RandomWalkCardinal(2, timestep, x_lim, y_lim)
 
     # Simulate random walk
-    for i in range((runtime * 1000) / timestep):
+    for i in range(runtime / timestep):
         step = walk.get_velocity()
         step.print_step()
 
     # Output trajectory
     trajectory = walk.get_trajectory(runtime)
+    util.plot_trajectory_2d(np.array(trajectory), x_lim, y_lim, "/home/nickybu/Desktop/")
     print "\nTrajectory: "
-    for time, pos in trajectory:
-        print "Time=" + str(time) + ", pos=" + str(pos)
+    for index, pos in enumerate(trajectory):
+        print "Time=" + str(index * timestep) + ", pos=" + str(pos)
 

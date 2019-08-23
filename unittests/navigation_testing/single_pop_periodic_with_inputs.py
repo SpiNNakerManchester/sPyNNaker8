@@ -77,7 +77,7 @@ for pre_syn in range(0, n_row * n_col):
 
             # Establish connection
             if np.all(abs(dist) <= synaptic_radius):
-                single_connection = (pre_syn, post_syn, synaptic_weight, util.normalise(dist, 0, max(n_row, n_col)))
+                single_connection = (pre_syn, post_syn, synaptic_weight, util.normalise_round(dist, 0, max(n_row, n_col)))
                 # single_connection = (pre_syn, post_syn, synaptic_weight, 1.0)
                 loop_connections.append(single_connection)
 

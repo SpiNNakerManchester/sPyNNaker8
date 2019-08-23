@@ -1,7 +1,6 @@
 # Standard library imports
 import argparse
 import cPickle as pickle
-import math
 
 import matplotlib.colors as mcolors
 import matplotlib.pyplot as plt
@@ -38,15 +37,15 @@ DEFAULT_FIG_SETTINGS = {
 }
 
 
-def main(input_cells, exc_dir_view, times):
-    if input_cells:
-        with open(DIR + "pop_input_spike_trains.pkl", 'rb') as f:
+def main(vel_input_cells, trajectory, exc_dir_view, times):
+    if vel_input_cells:
+        with open(DIR + "pop_vel_input_spike_trains.pkl", 'rb') as f:
             pop_input_spike_trains = pickle.load(f)
-        with open(DIR + "pop_input_v.pkl", 'rb') as f:
-            pop_input_v = pickle.load(f)
-        with open(DIR + "pop_input_label.pkl", 'rb') as f:
+        # with open(DIR + "pop_input_v.pkl", 'rb') as f:
+        #     pop_input_v = pickle.load(f)
+        with open(DIR + "pop_vel_input_label.pkl", 'rb') as f:
             pop_input_label = pickle.load(f)
-        input_cell_plots(pop_input_label, pop_input_spike_trains, pop_input_v)
+        input_cell_plots(pop_input_label, pop_input_spike_trains)
 
     if exc_dir_view:
         with open(DIR + "pop_exc_north_spike_train.pkl", 'rb') as f:
@@ -77,12 +76,16 @@ def main(input_cells, exc_dir_view, times):
 
     grid_cell_plots(times, pop_exc_label, pop_exc_spiketrains,
                     pop_exc_pos)
+
+    # if trajectory:
+    #     # Single grid cell response
+
     time_window = 1000  # time window for firing rate plots
     plot_population_firing_rate(times, pop_exc_label, pop_exc_spiketrains, pop_exc_pos, time_window)
     # get_active_neuron_counts(pop_exc_spiketrains, pop_exc_pos, times[-1])
 
 
-def input_cell_plots(pop_input_label, pop_input_spike_trains, pop_input_v):
+def input_cell_plots(pop_input_label, pop_input_spike_trains):
     Figure(
         # Panel(pop_input_v,
         #       ylabel="Membrane potential (mV)",
@@ -99,8 +102,21 @@ def input_cell_plots(pop_input_label, pop_input_spike_trains, pop_input_v):
         title="Input cells",
         annotations="0=N, 1=E, 2=W, 3=S"
     )
-    plt.savefig(DIR + "input_cells.eps", format='eps', bbox_inches='tight')
+    plt.savefig(DIR + "input_cells.eps", format='eps')
     plt.clf()
+
+
+# def plot_trajectory_2d(trajectory, x_lim, y_lim, folderpath, spiketrains):
+#     plt.xlabel('x (cm)')
+#     plt.xlim(0, x_lim)
+#     plt.ylim(0, y_lim)
+#     plt.ylabel('y (cm)')
+#
+#     plt.scatter(trajectory[0, 0], trajectory[0, 1], s=50, marker='o', c="r")
+#     plt.plot(trajectory[:, 0], trajectory[:, 1], linestyle='-', color='k', linewidth=1)
+#
+#     plt.tick_params(axis='both', labelsize=9)
+#     plt.savefig(folderpath + 'trajectory.png', bbox_inches='tight')
 
 
 def grid_cell_dir_plots(pop_exc_north_spike_train, pop_exc_east_spike_train,
@@ -183,7 +199,7 @@ def plot_population_firing_rate(times, label, spiketrains, pos, time_window):
 
             if firing_rate_max != 0:
                 for x, val in enumerate(firing_rates):
-                    norm_firing_rate = util.normalise(val, 0, firing_rate_max)
+                    norm_firing_rate = util.normalise_round(val, 0, firing_rate_max)
                     ax.scatter(pos[x][0], pos[x][1], s=10,
                                c=norm_firing_rate, cmap=cmap, norm=plt.Normalize(0, 1))
             print("Plotting subplot " + str(t))
@@ -230,6 +246,7 @@ if __name__ == "__main__":
     parser.add_argument("--row", "-row", help="set pop_exc grid row")
     parser.add_argument("--col", "-col", help="set pop_exc grid col")
     parser.add_argument("--inputs", "-i", help="set flag for input plots")
+    parser.add_argument("--trajectory", "-traj", help="set flag for trajectory plots")
     parser.add_argument("--dir_views", "-dv", help="set flag for gc dir view plots")
     parser.add_argument("--times", "-t", help="set timestamps for plots")
 
@@ -244,9 +261,14 @@ if __name__ == "__main__":
     else:
         inputs = False
 
+    if args.trajectory == 'True':
+        trajectory = True
+    else:
+        trajectory = False
+
     if args.dir_views == 'True':
         dir_views = True
     else:
         dir_views = False
 
-    main(inputs, dir_views, times)
+    main(inputs, trajectory, dir_views, times)

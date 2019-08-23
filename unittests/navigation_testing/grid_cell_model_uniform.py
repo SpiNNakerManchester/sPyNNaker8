@@ -20,25 +20,26 @@ from pyNN.utility.plotting import Figure, Panel
 SETUP
 """
 p.setup(1)  # simulation timestep (ms)
-runtime = 10  # ms
+runtime = 10000  # ms
 
 n_row = 50
 n_col = 50
+n_neurons = n_row * n_row
 p.set_number_of_neurons_per_core(p.IF_curr_exp, 255)
 
-is_auto_receptor = False  # allow self-connections in recurrent grid cell network
+self_connections = False  # allow self-connections in recurrent grid cell network
 
 rng = NumpyRNG(seed=77364, parallel_safe=True)
-synaptic_weight = 1.0  # synaptic weight for inhibitory connections
-synaptic_radius = 10.0  # inhibitory connection radius
-orientation_pref_shift = 5  # number of neurons to shift centre of connectivity by
+synaptic_weight = 0.1  # synaptic weight for inhibitory connections
+synaptic_radius = 10  # inhibitory connection radius
+centre_shift = 2  # number of neurons to shift centre of connectivity by
 
 # Grid cell (excitatory) population
 gc_neuron_params = {
     "v_thresh": -50.0,
     "v_reset": -65.0,
     "v_rest": -65.0,
-    "i_offset": 0.755,  # DC input
+    "i_offset": 0.8,  # DC input
     "tau_m": 20,  # membrane time constant
     "tau_refrac": 1.0,
 }
@@ -46,7 +47,7 @@ gc_neuron_params = {
 exc_grid = Grid2D(aspect_ratio=1.0, dx=1.0, dy=1.0, x0=0, y0=0, z=0, fill_order='sequential')
 # exc_space = p.Space(axes='xy', periodic_boundaries=((-n_col / 2, n_col / 2), (-n_row / 2, n_row / 2)))
 v_init = RandomDistribution('uniform', low=-65, high=-55, rng=rng)
-pop_exc_gc = p.Population(n_row * n_col,
+pop_exc_gc = p.Population(n_neurons,
                           p.IF_curr_exp(**gc_neuron_params),
                           cellparams=None,
                           initial_values={'v': v_init},
@@ -56,23 +57,39 @@ pop_exc_gc = p.Population(n_row * n_col,
 
 # Create recurrent inhibitory connections
 loop_connections = list()
-for pre_syn in range(0, n_row * n_col):
+# for pre_syn in range(0, n_row * n_col):
+#     presyn_pos = (pop_exc_gc.positions[pre_syn])[:2]
+#     dir_pref = np.array(util.get_dir_pref(presyn_pos))
+#
+#     for post_syn in range(0, n_row * n_col):
+#         # If different neurons
+#         if pre_syn != post_syn or is_auto_receptor:
+#             postsyn_pos = (pop_exc_gc.positions[post_syn])[:2]
+#             connection_cond = np.subtract(np.subtract(postsyn_pos, presyn_pos),
+#                                           np.multiply(orientation_pref_shift, dir_pref))
+#
+#             # Establish connection
+#             if np.linalg.norm(connection_cond) <= synaptic_radius:
+#                 singleConnection = (pre_syn, post_syn, synaptic_weight, 1.0)
+#                 loop_connections.append(singleConnection)
+
+for pre_syn in range(0, n_neurons):
     presyn_pos = (pop_exc_gc.positions[pre_syn])[:2]
     dir_pref = np.array(util.get_dir_pref(presyn_pos))
 
     # Shift centre of connectivity in appropriate direction
-    shifted_centre = util.shift_centre_connectivity(presyn_pos, dir_pref, orientation_pref_shift, n_row, n_col)
-    for post_syn in range(0, n_row * n_col):
+    shifted_centre = util.shift_centre_connectivity(presyn_pos, dir_pref, centre_shift, n_row, n_col)
+    for post_syn in range(0, n_neurons):
         # If different neurons
-        if pre_syn != post_syn or is_auto_receptor:
+        if pre_syn != post_syn or self_connections:
             postsyn_pos = (pop_exc_gc.positions[post_syn])[:2]
             dist = util.get_neuron_distance_periodic(n_col, n_row, shifted_centre, postsyn_pos)
 
             # Establish connection
             if np.all(dist <= synaptic_radius):
-                # weight = (1 - (dist / synaptic_radius)) * synaptic_weight
-                # singleConnection = (pre_syn, post_syn, synaptic_weight, util.normalise(dist, 0, max(n_row, n_col)))
-                singleConnection = (pre_syn, post_syn, synaptic_weight, 1.0)
+                # delay = util.normalise(dist, 1, 5)
+                delay = 1.0
+                singleConnection = (pre_syn, post_syn, synaptic_weight, delay)
                 loop_connections.append(singleConnection)
 
 # Create inhibitory connections
@@ -129,11 +146,11 @@ f.write("\nn_row=" + str(n_row))
 f.write("\nn_col=" + str(n_col))
 f.write("\nsyn_weight=" + str(synaptic_weight))
 f.write("\nsyn_radius=" + str(synaptic_radius))
-f.write("\norientation_pref_shift=" + str(orientation_pref_shift))
+f.write("\norientation_pref_shift=" + str(centre_shift))
 f.write("\npop_exc=" + str(pop_exc_gc.describe()))
 f.close()
 
-rand_neurons = random.sample(range(0, n_col*n_row), 4)
+rand_neurons = random.sample(range(0, n_neurons), 4)
 neuron_sample = p.PopulationView(pop_exc_gc, rand_neurons)
 
 # Plot
@@ -144,27 +161,69 @@ F = Figure(
           xlabel="Time (ms)",
           data_labels=[neuron_sample.label], yticks=True, xticks=True, xlim=(0, runtime)
           ),
+    # Panel(neuron_sample.get_data().segments[0].filter(name='gsyn_inh')[0],
+    #       ylabel="inhibitory synaptic conduction (uS)",
+    #       xlabel="Time (ms)",
+    #       data_labels=[neuron_sample.label], yticks=True, xticks=True, xlim=(0, runtime)
+    #       ),
+    # Panel(neuron_sample.get_data().segments[0].spiketrains,
+    #       yticks=True, xticks=True, markersize=2, xlim=(0, runtime)
+    #       ),
+)
+plt.savefig(data_dir + "sample_v.eps", format='eps')
+plt.show()
+
+F = Figure(
+    # plot data for postsynaptic neuron
+    # Panel(neuron_sample.get_data().segments[0].filter(name='v')[0],
+    #       ylabel="Membrane potential (mV)",
+    #       xlabel="Time (ms)",
+    #       data_labels=[neuron_sample.label], yticks=True, xticks=True, xlim=(0, runtime)
+    #       ),
     Panel(neuron_sample.get_data().segments[0].filter(name='gsyn_inh')[0],
-          ylabel="inhibitory synaptic conduction (uS)",
+          ylabel="inhibitory synaptic conduction (nA)",
           xlabel="Time (ms)",
           data_labels=[neuron_sample.label], yticks=True, xticks=True, xlim=(0, runtime)
           ),
+    # Panel(neuron_sample.get_data().segments[0].spiketrains,
+    #       yticks=True, xticks=True, markersize=2, xlim=(0, runtime)
+    #       ),
+)
+plt.savefig(data_dir + "sample_gsyn_inh.eps", format='eps')
+plt.show()
+
+F = Figure(
+    # plot data for postsynaptic neuron
+    # Panel(neuron_sample.get_data().segments[0].filter(name='v')[0],
+    #       ylabel="Membrane potential (mV)",
+    #       xlabel="Time (ms)",
+    #       data_labels=[neuron_sample.label], yticks=True, xticks=True, xlim=(0, runtime)
+    #       ),
+    # Panel(neuron_sample.get_data().segments[0].filter(name='gsyn_inh')[0],
+    #       ylabel="inhibitory synaptic conduction (uS)",
+    #       xlabel="Time (ms)",
+    #       data_labels=[neuron_sample.label], yticks=True, xticks=True, xlim=(0, runtime)
+    #       ),
     Panel(neuron_sample.get_data().segments[0].spiketrains,
           yticks=True, xticks=True, markersize=2, xlim=(0, runtime)
           ),
 )
-plt.yticks(rand_neurons)
-plt.savefig(data_dir + "sample_plot.eps", format='eps')
+rand_neurons = map(str, rand_neurons)
+plt.yticks(np.arange(4), rand_neurons)
+plt.savefig(data_dir + "sample_spikes.eps", format='eps')
 plt.show()
 
-util.plot_gc_inh_connections([1325, 1275, 1326, 1276], pop_exc_gc.positions, synaptic_weight, loop_connections,
-                             n_col, n_row, synaptic_radius, orientation_pref_shift, data_dir)
+# util.plot_gc_inh_connections([1325, 1275, 1326, 1276], pop_exc_gc.positions, synaptic_weight, loop_connections,
+#                              n_col, n_row, synaptic_radius, orientation_pref_shift, data_dir)
 # util.plot_neuron_init_order(pop_exc_gc.positions, data_dir)
 
-# print("Mean spike count: " + str(pop_exc_gc.mean_spike_count(gather=True)))
-# print("Max spike count: " + str(util.get_max_firing_rate(pop_exc_gc.mean_spike_count(gather=True))))
-# print("Max v=" + str(util.get_max_value_from_pop(pop_exc_gc.segments[0].spiketrains)))
-# print("Max gsyn_inh=" + str(util.get_max_value_from_pop(pop_exc_gc.get_data().segments[0].filter(name='gsyn_inh')[0])))
+gsyn_inh = pop_exc_gc.get_data().segments[0].filter(name='gsyn_inh')[0]
+print("Max gsyn_inh=" + str(util.get_max_value_from_pop(gsyn_inh)))
+# print("Min gsyn_inh=" + str(util.get_min_value_from_pop(gsyn_inh)))
+print("Avg gsyn_inh=" + str(util.get_avg_gsyn_from_pop(gsyn_inh)))
+
+print("Mean spike count: " + str(pop_exc_gc.mean_spike_count(gather=True)))
+print("Max spike count: " + str(util.get_max_firing_rate(pop_exc_gc.get_data().segments[0].spiketrains)))
 
 p.end()
 print(data_dir)
