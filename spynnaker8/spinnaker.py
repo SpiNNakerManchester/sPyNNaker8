@@ -220,7 +220,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
         :return: the machine time step
         """
 
-        return self._machine_time_step
+        return self.machine_time_step
 
     @dt.setter
     def dt(self, new_value):
@@ -228,7 +228,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 
         :param new_value: new value for machine time step
         """
-        self._machine_time_step = new_value
+        self._config.set("Machine", "machine_time_step", new_value)
 
     @property
     def t(self):
@@ -237,7 +237,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
         :return: the current runtime already executed
         """
         return (
-            self._current_run_timesteps * (self._machine_time_step / 1000.0))
+            self._current_run_timesteps * (self.machine_time_step / 1000.0))
 
     @property
     def segment_counter(self):
