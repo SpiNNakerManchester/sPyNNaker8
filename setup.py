@@ -68,7 +68,7 @@ setup(
     name="sPyNNaker8",
     version=__version__,
     description="Tools for simulating neural models generated using "
-                "PyNN 0.8 on the SpiNNaker platform",
+                "PyNN 0.9 on the SpiNNaker platform",
     author="University of Manchester",
     classifiers=[
         "Development Status :: 3 - Alpha",
@@ -89,7 +89,7 @@ setup(
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
     ],
-    keywords="spinnaker pynn0.8 neural simulation",
+    keywords="spinnaker pynn0.9 neural simulation",
     url="https://github.com/SpiNNakerManchester/SpyNNaker8",
     packages=packages,
     package_data=package_data,
