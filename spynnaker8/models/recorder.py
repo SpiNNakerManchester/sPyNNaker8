@@ -290,27 +290,20 @@ class Recorder(RecordingCommon):
         return metadata
 
     def _clear_recording(self, variables):
+        sim = get_simulator()
         for variable in variables:
             if variable == SPIKES:
                 self._population._vertex.clear_spike_recording(
-                    get_simulator().buffer_manager,
-                    get_simulator().placements,
-                    get_simulator().graph_mapper)
+                    sim.buffer_manager, sim.placements)
             elif variable == MEMBRANE_POTENTIAL:
                 self._population._vertex.clear_v_recording(
-                    get_simulator().buffer_manager,
-                    get_simulator().placements,
-                    get_simulator().graph_mapper)
+                    sim.buffer_manager, sim.placements)
             elif variable == GSYN_EXCIT:
                 self._population._vertex.clear_gsyn_inhibitory_recording(
-                    get_simulator().buffer_manager,
-                    get_simulator().placements,
-                    get_simulator().graph_mapper)
+                    sim.buffer_manager, sim.placements)
             elif variable == GSYN_INHIB:
                 self._population._vertex.clear_gsyn_excitatory_recording(
-                    get_simulator().buffer_manager,
-                    get_simulator().placements,
-                    get_simulator().graph_mapper)
+                    sim.buffer_manager, sim.placements)
             else:
                 raise InvalidParameterType(
                     "The variable {} is not a recordable value".format(
