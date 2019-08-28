@@ -34,8 +34,7 @@ class ManyBoards(object):
         return pop
 
     def setup(self, n_boards, n_neurons, simtime):
-        n_chips_required = n_boards * CHIPS_PER_BOARD_EXCLUDING_SAFETY
-        sim.setup(timestep=1.0, n_chips_required=n_chips_required)
+        sim.setup(timestep=1.0, n_boards_required=n_boards)
         try:
             machine = sim.get_machine()
         except ConfigurationException as oops:
