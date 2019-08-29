@@ -29,12 +29,13 @@ from spynnaker.pyNN.models.neuron.builds import (
     IFCurDelta, IFCurrExpCa2Adaptive, IFCurrDualExpBase as
     IF_curr_dual_exp, IzkCondExpBase as
     Izhikevich_cond, IFCurrExpSEMDBase as
-    IF_curr_exp_sEMD)
+    IF_curr_exp_sEMD, IFCurrExpTwoComp)
 
 __all__ = [
     # sPyNNaker 8 models
     'IFCurDelta', 'IFCurrExpCa2Adaptive', 'IFCondExpStoc',
     'Izhikevich_cond', 'IF_curr_dual_exp', 'IF_curr_exp_sEMD',
+    'IFCurrExpTwoComp',
 
     # sPyNNaker 8 plastic stuff
     'WeightDependenceAdditiveTriplet',
