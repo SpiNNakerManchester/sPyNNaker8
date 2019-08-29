@@ -134,7 +134,7 @@ pipeline {
                 run_pytest('spalloc/tests', 1200, 'spalloc', '1')
                 run_pytest('SpiNNFrontEndCommon/unittests SpiNNFrontEndCommon/fec_integration_tests', 1200, 'SpiNNFrontEndCommon', 'auto')
                 run_pytest('sPyNNaker/unittests', 1200, 'sPyNNaker', 'auto')
-                run_pytest('sPyNNaker8/unittests', 1200, 'sPyNNaker8', 'auto')
+                run_pytest('sPyNNaker8/unittests', 1200, 'sPyNNaker8', '1')
             }
         }
         stage('Test') {
