@@ -1,3 +1,18 @@
+# Copyright (c) 2017-2019 The University of Manchester
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 """
 The :py:mod:`spynnaker.pyNN` package contains the front end specifications
 and implementation for the PyNN High-level API
@@ -16,7 +31,7 @@ from spynnaker.pyNN.external_devices_models import (
     AbstractEthernetController, AbstractEthernetSensor,
     ArbitraryFPGADevice, ExternalCochleaDevice, ExternalFPGARetinaDevice,
     MunichMotorDevice, MunichRetinaDevice)
-from spynnaker.pyNN.models.utility_models import (
+from spynnaker.pyNN.models.utility_models.spike_injector import (
     SpikeInjector as
     ExternalDeviceSpikeInjector)
 from spynnaker.pyNN import model_binaries
@@ -105,6 +120,13 @@ def run_forever():
         SpiNNaker platform.
     """
     AbstractSpiNNakerCommon.run(globals_variables.get_simulator(), None)
+
+
+def request_stop():
+    """ Request a stop in the simulation without a complete stop.  Will stop\
+        after the next auto-pause-and-resume cycle
+    """
+    globals_variables.get_simulator().stop_run()
 
 
 def register_database_notification_request(hostname, notify_port, ack_port):
