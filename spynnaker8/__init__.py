@@ -299,8 +299,15 @@ def setup(timestep=_pynn_control.DEFAULT_TIMESTEP,
         extra algorithms to use within the loading phase
     :param time_scale_factor: multiplicative factor to the machine time step\
         (does not affect the neuron models accuracy)
-    :param n_chips_required: The number of chips needed by the simulation
-    :param n_boards_required: The number of boards needed by the simulation
+    :param n_chips_required:\
+        Deprecated! Use n_boards_required instead.
+        Must be None if n_boards_required specified.
+    :type n_chips_required: int or None
+    :param n_boards_required:\
+        if you need to be allocated a machine (for spalloc) before building\
+        your graph, then fill this in with a general idea of the number of
+        boards you need so that the spalloc system can allocate you a machine\
+        big enough for your needs.
     :param extra_params: other stuff
     :return: rank thing
     :raises ConfigurationException if both n_chips_required and
