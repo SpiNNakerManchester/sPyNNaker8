@@ -132,7 +132,6 @@ pipeline {
                 run_pytest('SpiNNMan/unittests SpiNNMan/integration_tests', 1200, 'SpiNNMan', 'auto')
                 run_pytest('PACMAN/unittests', 1200, 'PACMAN', 'auto')
                 run_pytest('spalloc/tests', 1200, 'spalloc', '1')
-                run_pytest('DataSpecification/unittests DataSpecification/integration_tests', 1200, 'DataSpecification', 'auto')
                 run_pytest('SpiNNFrontEndCommon/unittests SpiNNFrontEndCommon/fec_integration_tests', 1200, 'SpiNNFrontEndCommon', 'auto')
                 run_pytest('sPyNNaker/unittests', 1200, 'sPyNNaker', 'auto')
                 run_pytest('sPyNNaker8/unittests', 1200, 'sPyNNaker8', 'auto')
