@@ -92,7 +92,7 @@ class RandomWalkAny:
         return self.step_size
 
 if __name__ == "__main__":
-    timestep = 100  # ms
+    timestep = 1  # ms
     runtime = 60000  # ms
     x_lim = 200  # cm
     y_lim = 200  # cm

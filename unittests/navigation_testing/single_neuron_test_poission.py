@@ -52,7 +52,7 @@ pop_input = p.Population(1,
 proj_input = p.Projection(pop_input, pop_exc,
                           p.OneToOneConnector(),
                           receptor_type="excitatory",
-                          synapse_type=p.StaticSynapse(weight=0.5, delay=1.0),
+                          synapse_type=p.StaticSynapse(weight=0.25, delay=1.0),
                           label="Velocity input cells excitatory connections to appropriate grid cells"
 )
 

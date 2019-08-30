@@ -4,6 +4,9 @@ import cPickle as pickle
 
 import matplotlib.colors as mcolors
 import matplotlib.pyplot as plt
+import numpy as np
+import random
+
 # Local application imports
 import utilities as util
 # Third party imports
@@ -74,8 +77,14 @@ def main(vel_input_cells, trajectory, exc_dir_view, times):
     with open(DIR + "pop_exc_gc_parameters.pkl", 'rb') as f:
         pop_exc_parameters = pickle.load(f)
 
+    if trajectory:
+        random_neuron = random.randint(0, N_ROW * N_COL)
+        # util.plot_trajectory_2d(np.array(trajectory), 200, 200, DIR)
+        util.plot_trajectory_2d_spikes(pop_exc_spiketrains[random_neuron], np.array(trajectory), 200, 200, DIR)
+
     grid_cell_plots(times, pop_exc_label, pop_exc_spiketrains,
                     pop_exc_pos)
+
 
     # if trajectory:
     #     # Single grid cell response
@@ -102,7 +111,7 @@ def input_cell_plots(pop_input_label, pop_input_spike_trains):
         title="Input cells",
         annotations="0=N, 1=E, 2=W, 3=S"
     )
-    plt.savefig(DIR + "input_cells.eps", format='eps')
+    plt.savefig(DIR + "input_cells.png", format='png')
     plt.clf()
 
 
@@ -123,22 +132,22 @@ def grid_cell_dir_plots(pop_exc_north_spike_train, pop_exc_east_spike_train,
                         pop_exc_west_spike_train, pop_exc_south_spike_train):
     Figure(
         Panel(pop_exc_north_spike_train,
-              yticks=True, xticks=False, xlabel="Time (ms) (N)", marker='o', markersize=0.2, xlim=(0, RUNTIME)
+              yticks=False, xticks=False, xlabel="Time (ms) (N)", marker='o', markersize=0.2, xlim=(0, RUNTIME)
               ),
         Panel(pop_exc_east_spike_train,
-              yticks=True, xticks=False, xlabel="Time (ms) (E)", marker='o', markersize=0.2, xlim=(0, RUNTIME)
+              yticks=False, xticks=False, xlabel="Time (ms) (E)", marker='o', markersize=0.2, xlim=(0, RUNTIME)
               ),
         Panel(pop_exc_west_spike_train,
-              yticks=True, xticks=False, xlabel="Time (ms) (W)", marker='o', markersize=0.2, xlim=(0, RUNTIME)
+              yticks=False, xticks=False, xlabel="Time (ms) (W)", marker='o', markersize=0.2, xlim=(0, RUNTIME)
               ),
         Panel(pop_exc_south_spike_train,
-              yticks=True, xticks=True, xlabel="Time (ms) (S)", marker='o', markersize=0.2, xlim=(0, RUNTIME)
+              yticks=False, xticks=True, xlabel="Time (ms) (S)", marker='o', markersize=0.2, xlim=(0, RUNTIME)
               ),
         settings=DEFAULT_FIG_SETTINGS,
-        title="Excitatory grid cells for each direction",
+        # title="Excitatory grid cells for each direction",
         annotations=""
     )
-    plt.savefig(DIR + "exc_grid_cells_dir.eps", format='eps')
+    plt.savefig(DIR + "exc_grid_cells_dir.png", format='png')
     plt.clf()
 
 
@@ -164,10 +173,10 @@ def grid_cell_plots(times, pop_exc_label, pop_exc_spiketrains,
               yticks=True, xticks=True, xlabel="Time (ms)", marker='o', markersize=0.2, xlim=(0, RUNTIME)
               ),
         settings=DEFAULT_FIG_SETTINGS,
-        title=pop_exc_label,
+        # title=pop_exc_label,
         annotations=""
     )
-    plt.savefig(DIR + "exc_grid_cells_pop.eps", format='eps', bbox_inches='tight')
+    plt.savefig(DIR + "exc_grid_cells_pop.png", format='png', bbox_inches='tight')
     plt.clf()
 
 
@@ -207,7 +216,7 @@ def plot_population_firing_rate(times, label, spiketrains, pos, time_window):
     # fig.colorbar(cmap)
     # plt.subplots_adjust(wspace=0.5, hspace=0.5)
     # fig.tight_layout()
-    plt.savefig(DIR + 'pop_exc_gc_firing_rate.eps', format='eps',
+    plt.savefig(DIR + 'pop_exc_gc_firing_rate.png', format='png',
                 facecolor=fig.get_facecolor(), bbox_inches='tight', dpi=600)
     plt.clf()
 

@@ -20,7 +20,7 @@ from pyNN.utility.plotting import Figure, Panel
 SETUP
 """
 p.setup(1)  # simulation timestep (ms)
-runtime = 10000  # ms
+runtime = 30000  # ms
 
 n_row = 50
 n_col = 50
@@ -30,7 +30,7 @@ p.set_number_of_neurons_per_core(p.IF_curr_exp, 255)
 self_connections = False  # allow self-connections in recurrent grid cell network
 
 rng = NumpyRNG(seed=77364, parallel_safe=True)
-synaptic_weight = 0.1  # synaptic weight for inhibitory connections
+synaptic_weight = 0.05  # synaptic weight for inhibitory connections
 synaptic_radius = 10  # inhibitory connection radius
 centre_shift = 2  # number of neurons to shift centre of connectivity by
 

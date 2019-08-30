@@ -31,7 +31,7 @@ p.set_number_of_neurons_per_core(p.IF_curr_exp, 255)
 self_connections = False  # allow self-connections in recurrent grid cell network
 
 rng = NumpyRNG(seed=77364, parallel_safe=True)
-synaptic_weight = 0.1  # synaptic weight for inhibitory connections
+synaptic_weight = 0.05  # synaptic weight for inhibitory connections
 synaptic_radius = 10.0  # inhibitory connection radius
 orientation_pref_shift = 2  # number of neurons to shift centre of connectivity by
 
@@ -96,16 +96,23 @@ proj_exc = p.Projection(
 # 1: E
 # 2: W
 # 3: S
-
+vel_neuron_params = {
+    "v_thresh": -50.0,
+    "v_reset": -65.0,
+    "v_rest": -65.0,
+    "i_offset": [0.75, 0, 0, 0],
+    "tau_m": 20,
+    "tau_refrac": 1.0,
+}
 input_structure = Line(dx=1.0, x0=0.0, y=0.0, z=0.0)
 input_loop_connections = list()
 pop_vel_input = p.Population(4,
-                             p.SpikeSourcePoisson(rate=[50, 0, 0, 0], start=0, duration=runtime),
+                             p.IF_curr_exp(**vel_neuron_params),
                              structure=input_structure,
                              label="Poisson input velocity cells")
 
 # Connect input neuron to grid cells of appropriate direction
-synaptic_weight_vel_input = 1.0
+synaptic_weight_vel_input = 0.25
 vel_input_delay = 1.0
 for i, neuron_pos in enumerate(pop_exc_gc.positions):
     neuron_pos = neuron_pos[:2]
@@ -231,7 +238,7 @@ F = Figure(
     #       yticks=True, xticks=True, markersize=2, xlim=(0, runtime)
     #       ),
 )
-plt.savefig(data_dir + "sample_v.eps", format='eps')
+plt.savefig(data_dir + "sample_v.png", format='png')
 plt.show()
 
 F = Figure(
@@ -250,7 +257,7 @@ F = Figure(
     #       yticks=True, xticks=True, markersize=2, xlim=(0, runtime)
     #       ),
 )
-plt.savefig(data_dir + "sample_gsyn_inh.eps", format='eps')
+plt.savefig(data_dir + "sample_gsyn_inh.png", format='png')
 plt.show()
 
 F = Figure(
@@ -269,7 +276,7 @@ F = Figure(
     #       yticks=True, xticks=True, markersize=2, xlim=(0, runtime)
     #       ),
 )
-plt.savefig(data_dir + "sample_gsyn_inh.eps", format='eps')
+plt.savefig(data_dir + "sample_gsyn_exc.png", format='png')
 plt.show()
 
 F = Figure(
@@ -290,15 +297,15 @@ F = Figure(
 )
 rand_neurons = map(str, rand_neurons)
 plt.yticks(np.arange(4), rand_neurons)
-plt.savefig(data_dir + "sample_spikes.eps", format='eps')
+plt.savefig(data_dir + "sample_spikes.png", format='png')
 plt.show()
 
 gsyn_inh = pop_exc_gc.get_data().segments[0].filter(name='gsyn_inh')[0]
 gsyn_exc = pop_exc_gc.get_data().segments[0].filter(name='gsyn_exc')[0]
-print("Max gsyn_inh=" + str(util.get_max_value_from_pop(gsyn_inh)))
-print("Avg gsyn_inh=" + str(util.get_avg_gsyn_from_pop(gsyn_inh)))
-print("Max gsyn_exc=" + str(util.get_max_value_from_pop(gsyn_exc)))
-print("Avg gsyn_exc=" + str(util.get_avg_gsyn_from_pop(gsyn_exc)))
+# print("Max gsyn_inh=" + str(util.get_max_value_from_pop(gsyn_inh)))
+# print("Avg gsyn_inh=" + str(util.get_avg_gsyn_from_pop(gsyn_inh)))
+# print("Max gsyn_exc=" + str(util.get_max_value_from_pop(gsyn_exc)))
+# print("Avg gsyn_exc=" + str(util.get_avg_gsyn_from_pop(gsyn_exc)))
 print("Mean spike count: " + str(pop_exc_gc.mean_spike_count(gather=True)))
 print("Max spike count: " + str(util.get_max_firing_rate(pop_exc_gc.get_data().segments[0].spiketrains)))
 

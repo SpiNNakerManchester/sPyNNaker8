@@ -96,19 +96,16 @@ proj_exc = p.Projection(
 # 1: E
 # 2: W
 # 3: S
+
 input_structure = Line(dx=1.0, x0=0.0, y=0.0, z=0.0)
 input_loop_connections = list()
 pop_vel_input = p.Population(4,
-                             p.SpikeSourcePoisson(rate=[0, 0, 0, 0], start=0, duration=runtime),
+                             p.SpikeSourcePoisson(rate=[100, 0, 0, 0], start=0, duration=runtime),
                              structure=input_structure,
                              label="Poisson input velocity cells")
-pop_vel_input_n = p.PopulationView(pop_vel_input, 0)
-pop_vel_input_s = p.PopulationView(pop_vel_input, 3)
-pop_vel_input_e = p.PopulationView(pop_vel_input, 1)
-pop_vel_input_w = p.PopulationView(pop_vel_input, 2)
 
 # Connect input neuron to grid cells of appropriate direction
-synaptic_weight_vel_input = 0.25
+synaptic_weight_vel_input = 0.05
 vel_input_delay = 1.0
 for i, neuron_pos in enumerate(pop_exc_gc.positions):
     neuron_pos = neuron_pos[:2]
@@ -145,31 +142,7 @@ RUN
 pop_exc_gc.record(['v', 'gsyn_inh', 'gsyn_exc', 'spikes'])
 pop_vel_input.record(["spikes"])
 
-vel_input_rate = 100
-agent_speed = 2  # m/s
-vel_timestep = 100  # ms
-env_size = 200  # cm
-random_walk = random_walk_any_dir.RandomWalkAny(agent_speed, vel_timestep, env_size, env_size)
-largest_change_xy = random_walk.get_stepsize()
-
-for i in range(runtime / vel_timestep):
-    step = random_walk.get_velocity()
-    ns_weight = abs(util.normalise(step.change_y, 0, largest_change_xy))
-    we_weight = abs(util.normalise(step.change_x, 0, largest_change_xy))
-
-    # Update velocity input rates
-    if step.head_dir[0] == [0, 1]:
-        pop_vel_input_n.set(rate=vel_input_rate*ns_weight)
-    elif step.head_dir[0] == [0, -1]:
-        pop_vel_input_s.set(rate=vel_input_rate*ns_weight)
-
-    if step.head_dir[1] == [1, 0]:
-        pop_vel_input_e.set(rate=vel_input_rate*we_weight)
-    elif step.head_dir[1] == [-1, 0]:
-        pop_vel_input_w.set(rate=vel_input_rate*we_weight)
-
-    p.run_until(i * vel_timestep)
-
+p.run(runtime)
 
 """
 WRITE DATA
@@ -235,6 +208,9 @@ f.write("\norientation_pref_shift=" + str(orientation_pref_shift))
 f.write("\npop_exc=" + str(pop_exc_gc.describe()))
 f.close()
 
+rand_neurons = random.sample(range(0, n_col*n_row), 4)
+neuron_sample = p.PopulationView(pop_exc_gc, rand_neurons)
+
 rand_neurons = random.sample(range(0, n_neurons), 4)
 neuron_sample = p.PopulationView(pop_exc_gc, rand_neurons)
 
@@ -255,7 +231,7 @@ F = Figure(
     #       yticks=True, xticks=True, markersize=2, xlim=(0, runtime)
     #       ),
 )
-plt.savefig(data_dir + "sample_v.eps", format='eps')
+plt.savefig(data_dir + "sample_v.png", format='png')
 plt.show()
 
 F = Figure(
@@ -274,7 +250,7 @@ F = Figure(
     #       yticks=True, xticks=True, markersize=2, xlim=(0, runtime)
     #       ),
 )
-plt.savefig(data_dir + "sample_gsyn_inh.eps", format='eps')
+plt.savefig(data_dir + "sample_gsyn_inh.png", format='png')
 plt.show()
 
 F = Figure(
@@ -293,9 +269,8 @@ F = Figure(
     #       yticks=True, xticks=True, markersize=2, xlim=(0, runtime)
     #       ),
 )
-plt.savefig(data_dir + "sample_gsyn_inh.eps", format='eps')
+plt.savefig(data_dir + "sample_gsyn_exc.png", format='png')
 plt.show()
-
 
 F = Figure(
     # plot data for postsynaptic neuron
@@ -315,21 +290,15 @@ F = Figure(
 )
 rand_neurons = map(str, rand_neurons)
 plt.yticks(np.arange(4), rand_neurons)
-plt.savefig(data_dir + "sample_spikes.eps", format='eps')
+plt.savefig(data_dir + "sample_spikes.png", format='png')
 plt.show()
-
-# Plot trajectory
-trajectory = random_walk.get_trajectory(runtime)
-pickle.dump(trajectory, open(data_dir + "trajectory.pkl", 'wb'),
-            protocol=pickle.HIGHEST_PROTOCOL)
-util.plot_trajectory_2d(np.array(trajectory), env_size, env_size, data_dir)
 
 gsyn_inh = pop_exc_gc.get_data().segments[0].filter(name='gsyn_inh')[0]
 gsyn_exc = pop_exc_gc.get_data().segments[0].filter(name='gsyn_exc')[0]
-# print("Max gsyn_inh=" + str(util.get_max_value_from_pop(gsyn_inh)))
-# print("Avg gsyn_inh=" + str(util.get_avg_gsyn_from_pop(gsyn_inh)))
-# print("Max gsyn_exc=" + str(util.get_max_value_from_pop(gsyn_exc)))
-# print("Avg gsyn_exc=" + str(util.get_avg_gsyn_from_pop(gsyn_exc)))
+print("Max gsyn_inh=" + str(util.get_max_value_from_pop(gsyn_inh)))
+print("Avg gsyn_inh=" + str(util.get_avg_gsyn_from_pop(gsyn_inh)))
+print("Max gsyn_exc=" + str(util.get_max_value_from_pop(gsyn_exc)))
+print("Avg gsyn_exc=" + str(util.get_avg_gsyn_from_pop(gsyn_exc)))
 print("Mean spike count: " + str(pop_exc_gc.mean_spike_count(gather=True)))
 print("Max spike count: " + str(util.get_max_firing_rate(pop_exc_gc.get_data().segments[0].spiketrains)))
 

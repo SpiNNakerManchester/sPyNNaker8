@@ -83,8 +83,8 @@ class RandomWalkCardinal:
 
 
 if __name__ == "__main__":
-    timestep = 50  # ms
-    runtime = 60000  # ms
+    timestep = 1  # ms
+    runtime = 1000  # ms
     x_lim = 200  # cm
     y_lim = 200  # cm
 

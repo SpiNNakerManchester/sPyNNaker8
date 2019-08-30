@@ -174,6 +174,19 @@ def plot_trajectory_infinite_1d(trajectory, dir, runtime, save):
         plt.savefig('trajectory.png', bbox_inches='tight')
 
 
+def plot_trajectory_2d_spikes(spiketrain, trajectory, x_lim, y_lim, folderpath):
+    plt.xlabel('x (cm)')
+    plt.xlim(0, x_lim)
+    plt.ylim(0, y_lim)
+    plt.ylabel('y (cm)')
+
+    plt.scatter(trajectory[-1, 0], trajectory[-1, 1], s=50, marker='o', c="b")
+    plt.plot(trajectory[:, 0], trajectory[:, 1], linestyle='-', color='k', linewidth=1)
+
+    plt.tick_params(axis='both', labelsize=9)
+    plt.savefig(folderpath + 'trajectory.png', bbox_inches='tight')
+
+
 def plot_trajectory_2d(trajectory, x_lim, y_lim, folderpath):
     plt.xlabel('x (cm)')
     plt.xlim(0, x_lim)
@@ -181,6 +194,7 @@ def plot_trajectory_2d(trajectory, x_lim, y_lim, folderpath):
     plt.ylabel('y (cm)')
 
     plt.scatter(trajectory[0, 0], trajectory[0, 1], s=50, marker='o', c="r")
+    plt.scatter(trajectory[-1, 0], trajectory[-1, 1], s=50, marker='o', c="b")
     plt.plot(trajectory[:, 0], trajectory[:, 1], linestyle='-', color='k', linewidth=1)
 
     plt.tick_params(axis='both', labelsize=9)
