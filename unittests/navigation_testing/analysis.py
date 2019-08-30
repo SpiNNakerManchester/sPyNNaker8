@@ -17,6 +17,7 @@ RUNTIME = ''
 N_ROW = 0
 N_COL = 0
 
+# c
 cmap = mcolors.LinearSegmentedColormap.from_list("",
                                                  [(0, "black"),
                                                   (0.5, "yellow"),
