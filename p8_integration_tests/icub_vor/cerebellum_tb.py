@@ -356,13 +356,11 @@ cf_pc_connections = sim.Projection(CF_population,
 #
 # out_pop.record(["spikes"])
 #
-<<<<<<< HEAD
 #
 #
 #sim.run(10)
 #
 #sim.end()
-=======
 
 MF_population.record(['spikes'])
 CF_population.record(['spikes'])
@@ -421,5 +419,5 @@ plt.show()
 
 sim.end()
 print "job done"
->>>>>>> branch 'icub_vor' of https://github.com/SpiNNakerManchester/sPyNNaker8.git
+
 
