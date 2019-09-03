@@ -50,7 +50,10 @@ class TestMultiBoardSpikeOutput(BaseTestCase):
             e.activate_live_output_for(pop)
             TestMultiBoardSpikeOutput.counts[label] = 0
 
-        live_output = e.SpynnakerLiveSpikesConnection(receive_labels=labels)
+        live_output = e.SpynnakerLiveSpikesConnection(
+            receive_labels=labels, local_port=None)
+        p.external_devices.add_database_socket_address(
+            live_output.local_ip_address, live_output.local_port, None)
         for label in labels:
             live_output.add_receive_callback(
                 label, TestMultiBoardSpikeOutput.spike_receiver)
