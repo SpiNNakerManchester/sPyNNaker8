@@ -1,7 +1,8 @@
-import spynnaker8 as p
 import matplotlib.pyplot as plt
-from pyNN.utility.plotting import Figure, Panel
 from pyNN.random import RandomDistribution, NumpyRNG
+from pyNN.utility.plotting import Figure, Panel
+
+import spynnaker8 as p
 
 p.setup(1)  # simulation timestep (ms)
 runtime = 1000
@@ -11,8 +12,8 @@ neuron_params = {
     "v_thresh": -50.0,
     "v_reset": -65.0,
     "v_rest": -65.0,
-    "i_offset": 0.758,  # DC input
-    "tau_m": 20,  # membrane time constant
+    "i_offset": 0.758,
+    "tau_m": 20,
     "tau_refrac": 1.0,
 }
 
@@ -34,41 +35,21 @@ print("Mean spike count=" + str(pop_exc.mean_spike_count(gather=True)) + "Hz")
 
 # Plot
 F = Figure(
-    # plot data for postsynaptic neuron
     Panel(exc_data.segments[0].filter(name='v')[0],
           ylabel="Membrane potential (mV)",
           xlabel="Time (ms)",
           data_labels=[pop_exc.label], yticks=True, xticks=True, xlim=(0, runtime)
           ),
-    # Panel(exc_data.segments[0].filter(name='gsyn_inh')[0],
-    #       ylabel="inhibitory synaptic conduction (uS)",
-    #       xlabel="Time (ms)",
-    #       data_labels=[pop_exc.label], yticks=True, xticks=True, xlim=(0, runtime)
-    #       ),
-    # Panel(exc_data.segments[0].spiketrains,
-    #       yticks=True, xticks=True, markersize=2, xlim=(0, runtime)
-    #       ),
-)
-
-plt.show()
-
-F = Figure(
-    # plot data for postsynaptic neuron
-    # Panel(exc_data.segments[0].filter(name='v')[0],
-    #       ylabel="Membrane potential (mV)",
-    #       xlabel="Time (ms)",
-    #       data_labels=[pop_exc.label], yticks=True, xticks=True, xlim=(0, runtime)
-    #       ),
-    # Panel(exc_data.segments[0].filter(name='gsyn_exc')[0],
-    #       ylabel="excitatory synaptic conduction (uS)",
-    #       xlabel="Time (ms)",
-    #       data_labels=[pop_exc.label], yticks=True, xticks=True, xlim=(0, runtime)
-    #       ),
-    # Panel(exc_data.segments[0].filter(name='gsyn_inh')[0],
-    #       ylabel="inhibitory synaptic conduction (uS)",
-    #       xlabel="Time (ms)",
-    #       data_labels=[pop_exc.label], yticks=True, xticks=True, xlim=(0, runtime)
-    #       ),
+    Panel(exc_data.segments[0].filter(name='gsyn_exc')[0],
+          ylabel="excitatory synaptic conduction (uS)",
+          xlabel="Time (ms)",
+          data_labels=[pop_exc.label], yticks=True, xticks=True, xlim=(0, runtime)
+          ),
+    Panel(exc_data.segments[0].filter(name='gsyn_inh')[0],
+          ylabel="inhibitory synaptic conduction (uS)",
+          xlabel="Time (ms)",
+          data_labels=[pop_exc.label], yticks=True, xticks=True, xlim=(0, runtime)
+          ),
     Panel(exc_data.segments[0].spiketrains,
           xlabel="Time (ms)",
           yticks=True, xticks=True, markersize=2, xlim=(0, runtime)
@@ -76,7 +57,6 @@ F = Figure(
 )
 
 plt.show()
-
 p.end()
 
 print("i_offset=" + str(neuron_params['i_offset']) + "nA")

@@ -1,3 +1,6 @@
+from builtins import print
+
+
 class Step:
     """
     Represents a step taken by the agent.

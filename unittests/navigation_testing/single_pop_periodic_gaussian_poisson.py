@@ -1,23 +1,22 @@
 # Standard library imports
-import cPickle as pickle
-import time
-import numpy as np
-import os
 import errno
-import matplotlib.pyplot as plt
+import os
 import random
-
-# Third party imports
-import spynnaker8 as p
-
-# Local application imports
+import time
+import cPickle as pickle
+import matplotlib.pyplot as plt
+import numpy as np
 import utilities as util
 from pyNN.random import RandomDistribution, NumpyRNG
-from pyNN.space import Grid2D, Line
+from pyNN.space import Grid2D
 from pyNN.utility.plotting import Figure, Panel
+import spynnaker8 as p
 
 """
-SETUP
+Grid cell model with periodic boundary constraints
+Connectivity: distance-dependent 
+Broad feedforward input: Poisson neuron
+Velocity input: none
 """
 p.setup(1)  # simulation timestep (ms)
 runtime = 10  # ms
@@ -33,7 +32,7 @@ p.set_number_of_neurons_per_core(p.IF_curr_exp, 255)
 self_connections = False  # allow self-connections in recurrent grid cell network
 max_inh_synaptic_weight = 1.0  # synaptic weight for inhibitory connections
 inh_synaptic_radius = 25  # inhibitory connection radius
-orientation_pref_shift = 10  # number of neurons to shift centre of connectivity by
+centre_shift = 10  # number of neurons to shift centre of connectivity by
 dc_input_rate = 100
 
 # Grid cell (excitatory) population
@@ -79,7 +78,7 @@ for pre_syn in range(0, neuron_count):
     dir_pref = np.array(util.get_dir_pref(presyn_pos))
 
     # Shift centre of connectivity in appropriate direction
-    shifted_centre = util.shift_centre_connectivity(presyn_pos, dir_pref, orientation_pref_shift, n_row, n_col)
+    shifted_centre = util.shift_centre_connectivity(presyn_pos, dir_pref, centre_shift, n_row, n_col)
 
     for post_syn in range(0, neuron_count):
         # If different neurons
@@ -154,7 +153,7 @@ f.write("Grid cell model")
 f.write("\nruntime=" + str(runtime))
 f.write("\nn_row=" + str(n_row))
 f.write("\nn_col=" + str(n_col))
-f.write("\norientation_pref_shift=" + str(orientation_pref_shift))
+f.write("\norientation_pref_shift=" + str(centre_shift))
 # f.write("\ninh_connections=" + str(inh_loop_connections))
 f.write("\nsyn_radius=" + str(inh_synaptic_radius))
 f.write("\npop_exc=" + str(pop_exc_gc.describe()))

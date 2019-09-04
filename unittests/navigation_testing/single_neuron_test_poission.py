@@ -1,25 +1,8 @@
-import spynnaker8 as p
 import matplotlib.pyplot as plt
-from pyNN.utility.plotting import Figure, Panel
 from pyNN.random import RandomDistribution, NumpyRNG
+from pyNN.utility.plotting import Figure, Panel
 
-'''
-Paper Model Parameters
-cell_rows = 132
-cell_cols = 112
-timestep = 1
-rest_pot = -65mV
-reset_pot = -67mV
-thres_pot = -63mV
-membrane_time_constant = 10ms
-membrane_resistance = 10 ohm
-refractory_period = 5ms
-input_curr = 2.4mA
-vel_curr = 0.175mA
-orientation_pref_shift = 2
-syn_weight = -0.6mV
-syn_delay = 5*rand()
-'''
+import spynnaker8 as p
 
 p.setup(1)  # simulation timestep (ms)
 runtime = 1000
@@ -54,7 +37,7 @@ proj_input = p.Projection(pop_input, pop_exc,
                           receptor_type="excitatory",
                           synapse_type=p.StaticSynapse(weight=0.25, delay=1.0),
                           label="Velocity input cells excitatory connections to appropriate grid cells"
-)
+                          )
 
 pop_exc.record("all")
 pop_input.record("all")

@@ -1,24 +1,24 @@
 # Standard library imports
-import cPickle as pickle
-import time
-import numpy as np
-import os
 import errno
-import matplotlib.pyplot as plt
+import os
 import random
-
-# Third party imports
-import spynnaker8 as p
-
-# Local application imports
+import time
+import cPickle as pickle
+import matplotlib.pyplot as plt
+import numpy as np
 import utilities as util
 from pyNN.random import RandomDistribution, NumpyRNG
-from pyNN.space import Grid2D, Line
+from pyNN.space import Grid2D
 from pyNN.utility.plotting import Figure, Panel
+import spynnaker8 as p
 
 """
-SETUP
+Grid cell model with periodic boundary constraints
+Connectivity: uniform 
+Broad feedforward input: i_offset
+Velocity input: none
 """
+
 p.setup(1)  # simulation timestep (ms)
 runtime = 30000  # ms
 
@@ -57,22 +57,6 @@ pop_exc_gc = p.Population(n_neurons,
 
 # Create recurrent inhibitory connections
 loop_connections = list()
-# for pre_syn in range(0, n_row * n_col):
-#     presyn_pos = (pop_exc_gc.positions[pre_syn])[:2]
-#     dir_pref = np.array(util.get_dir_pref(presyn_pos))
-#
-#     for post_syn in range(0, n_row * n_col):
-#         # If different neurons
-#         if pre_syn != post_syn or is_auto_receptor:
-#             postsyn_pos = (pop_exc_gc.positions[post_syn])[:2]
-#             connection_cond = np.subtract(np.subtract(postsyn_pos, presyn_pos),
-#                                           np.multiply(orientation_pref_shift, dir_pref))
-#
-#             # Establish connection
-#             if np.linalg.norm(connection_cond) <= synaptic_radius:
-#                 singleConnection = (pre_syn, post_syn, synaptic_weight, 1.0)
-#                 loop_connections.append(singleConnection)
-
 for pre_syn in range(0, n_neurons):
     presyn_pos = (pop_exc_gc.positions[pre_syn])[:2]
     dir_pref = np.array(util.get_dir_pref(presyn_pos))
@@ -161,49 +145,21 @@ F = Figure(
           xlabel="Time (ms)",
           data_labels=[neuron_sample.label], yticks=True, xticks=True, xlim=(0, runtime)
           ),
-    # Panel(neuron_sample.get_data().segments[0].filter(name='gsyn_inh')[0],
-    #       ylabel="inhibitory synaptic conduction (uS)",
-    #       xlabel="Time (ms)",
-    #       data_labels=[neuron_sample.label], yticks=True, xticks=True, xlim=(0, runtime)
-    #       ),
-    # Panel(neuron_sample.get_data().segments[0].spiketrains,
-    #       yticks=True, xticks=True, markersize=2, xlim=(0, runtime)
-    #       ),
 )
 plt.savefig(data_dir + "sample_v.eps", format='eps')
 plt.show()
 
 F = Figure(
-    # plot data for postsynaptic neuron
-    # Panel(neuron_sample.get_data().segments[0].filter(name='v')[0],
-    #       ylabel="Membrane potential (mV)",
-    #       xlabel="Time (ms)",
-    #       data_labels=[neuron_sample.label], yticks=True, xticks=True, xlim=(0, runtime)
-    #       ),
     Panel(neuron_sample.get_data().segments[0].filter(name='gsyn_inh')[0],
           ylabel="inhibitory synaptic conduction (nA)",
           xlabel="Time (ms)",
           data_labels=[neuron_sample.label], yticks=True, xticks=True, xlim=(0, runtime)
           ),
-    # Panel(neuron_sample.get_data().segments[0].spiketrains,
-    #       yticks=True, xticks=True, markersize=2, xlim=(0, runtime)
-    #       ),
 )
 plt.savefig(data_dir + "sample_gsyn_inh.eps", format='eps')
 plt.show()
 
 F = Figure(
-    # plot data for postsynaptic neuron
-    # Panel(neuron_sample.get_data().segments[0].filter(name='v')[0],
-    #       ylabel="Membrane potential (mV)",
-    #       xlabel="Time (ms)",
-    #       data_labels=[neuron_sample.label], yticks=True, xticks=True, xlim=(0, runtime)
-    #       ),
-    # Panel(neuron_sample.get_data().segments[0].filter(name='gsyn_inh')[0],
-    #       ylabel="inhibitory synaptic conduction (uS)",
-    #       xlabel="Time (ms)",
-    #       data_labels=[neuron_sample.label], yticks=True, xticks=True, xlim=(0, runtime)
-    #       ),
     Panel(neuron_sample.get_data().segments[0].spiketrains,
           yticks=True, xticks=True, markersize=2, xlim=(0, runtime)
           ),

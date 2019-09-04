@@ -1,25 +1,24 @@
 # Standard library imports
-import cPickle as pickle
-import time
-import numpy as np
-import os
 import errno
-import matplotlib.pyplot as plt
+import os
 import random
-
-# Third party imports
-import spynnaker8 as p
-
-# Local application imports
+import time
+import cPickle as pickle
+import matplotlib.pyplot as plt
+import numpy as np
 import utilities as util
 from pyNN.random import RandomDistribution, NumpyRNG
 from pyNN.space import Grid2D, Line
 from pyNN.utility.plotting import Figure, Panel
-import random_walk_any_dir
+import spynnaker8 as p
 
 """
-SETUP
+Grid cell model with periodic boundary constraints with agent moving along straight line
+Connectivity: uniform 
+Broad feedforward input: i_offset
+Velocity input: Poisson neuron
 """
+
 p.setup(1)  # simulation timestep (ms)
 runtime = 10000  # ms
 
@@ -33,7 +32,7 @@ self_connections = False  # allow self-connections in recurrent grid cell networ
 rng = NumpyRNG(seed=77364, parallel_safe=True)
 synaptic_weight = 0.1  # synaptic weight for inhibitory connections
 synaptic_radius = 10.0  # inhibitory connection radius
-orientation_pref_shift = 2  # number of neurons to shift centre of connectivity by
+centre_shift = 2  # number of neurons to shift centre of connectivity by
 
 # Grid cell (excitatory) population
 gc_neuron_params = {
@@ -70,7 +69,7 @@ for pre_syn in range(0, n_row * n_col):
     dir_pref = np.array(util.get_dir_pref(presyn_pos))
 
     # Shift centre of connectivity in appropriate direction
-    shifted_centre = util.shift_centre_connectivity(presyn_pos, dir_pref, orientation_pref_shift, n_row, n_col)
+    shifted_centre = util.shift_centre_connectivity(presyn_pos, dir_pref, centre_shift, n_row, n_col)
     for post_syn in range(0, n_row * n_col):
         # If different neurons
         if pre_syn != post_syn or self_connections:
@@ -204,11 +203,11 @@ f.write("\nn_row=" + str(n_row))
 f.write("\nn_col=" + str(n_col))
 f.write("\nsyn_weight=" + str(synaptic_weight))
 f.write("\nsyn_radius=" + str(synaptic_radius))
-f.write("\norientation_pref_shift=" + str(orientation_pref_shift))
+f.write("\norientation_pref_shift=" + str(centre_shift))
 f.write("\npop_exc=" + str(pop_exc_gc.describe()))
 f.close()
 
-rand_neurons = random.sample(range(0, n_col*n_row), 4)
+rand_neurons = random.sample(range(0, n_col * n_row), 4)
 neuron_sample = p.PopulationView(pop_exc_gc, rand_neurons)
 
 rand_neurons = random.sample(range(0, n_neurons), 4)

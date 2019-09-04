@@ -1,7 +1,9 @@
 import random
+
 import numpy as np
 import random_walk_step as RandomWalkStep
 import utilities as util
+
 
 class RandomWalkCardinal:
     """
@@ -22,7 +24,11 @@ class RandomWalkCardinal:
         self.max_y = grid_y  # maximum y coordinate in cm
 
     def update_head_dir(self, init):
-        # Randomly choose whether to keep head direction
+        """
+        Randomly choose whether to keep the head direction
+        :param init: flag for initial setup
+        :return: head direction vector
+        """
         if init:
             self.head_dir = random.choice(self.dirs)
         elif random.randint(0, 1) == 1:
@@ -53,8 +59,13 @@ class RandomWalkCardinal:
                 return change_xy
 
     def within_boundary(self, new_pos):
+        """
+        Check whether new position is within the boundaries
+        :param new_pos: position
+        :return: boolean
+        """
         if (new_pos[0] <= self.max_x and new_pos[0] >= 0) and \
-                (new_pos[1] <= self.max_y and  new_pos[1] >= 0):
+                (new_pos[1] <= self.max_y and new_pos[1] >= 0):
             return True
         return False
 
@@ -101,7 +112,8 @@ if __name__ == "__main__":
     # Output trajectory
     trajectory = walk.get_trajectory(runtime)
     util.plot_trajectory_2d(np.array(trajectory), x_lim, y_lim, "/home/nickybu/Desktop/")
-    print "\nTrajectory: "
+    print
+    "\nTrajectory: "
     for index, pos in enumerate(trajectory):
-        print "Time=" + str(index * timestep) + ", pos=" + str(pos)
-
+        print
+        "Time=" + str(index * timestep) + ", pos=" + str(pos)

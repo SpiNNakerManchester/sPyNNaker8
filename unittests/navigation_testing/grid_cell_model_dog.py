@@ -1,25 +1,24 @@
 # Standard library imports
-import cPickle as pickle
-import time
-import numpy as np
-import os
 import errno
-import matplotlib.pyplot as plt
+import os
 import random
-import math
-
-# Third party imports
-import spynnaker8 as p
-
-# Local application imports
+import time
+import cPickle as pickle
+import matplotlib.pyplot as plt
+import numpy as np
 import utilities as util
 from pyNN.random import RandomDistribution, NumpyRNG
-from pyNN.space import Grid2D, Line
+from pyNN.space import Grid2D
 from pyNN.utility.plotting import Figure, Panel
+import spynnaker8 as p
 
 """
-SETUP
+Grid cell model with periodic boundary constraints
+Connectivity: DoG 
+Broad feedforward input: i_offset
+Velocity input: none
 """
+
 p.setup(1)  # simulation timestep (ms)
 runtime = 10000  # ms
 
@@ -35,7 +34,7 @@ rng = NumpyRNG(seed=77364, parallel_safe=True)
 synaptic_weight = 0.1  # synaptic weight for inhibitory connections
 synaptic_radius_inh = 10  # inhibitory connection radius
 synaptic_radius_exc = 3  # inhibitory connection radius
-orientation_pref_shift = 2  # number of neurons to shift centre of connectivity by
+centre_shift = 2  # number of neurons to shift centre of connectivity by
 
 # Grid cell (excitatory) population
 gc_neuron_params = {
@@ -67,7 +66,7 @@ for pre_syn in range(0, n_neurons):
     dir_pref = np.array(util.get_dir_pref(presyn_pos))
 
     # Shift centre of connectivity in appropriate direction
-    shifted_centre = util.shift_centre_connectivity(presyn_pos, dir_pref, orientation_pref_shift, n_row, n_col)
+    shifted_centre = util.shift_centre_connectivity(presyn_pos, dir_pref, centre_shift, n_row, n_col)
 
     for post_syn in range(0, n_neurons):
         # If different neurons
@@ -84,7 +83,7 @@ for pre_syn in range(0, n_neurons):
                 exc_loop_connections.append(singleConnection)
             elif np.all(euc_dist <= synaptic_radius_inh):
                 # Weight follows gaussian distribution. High inhibition to closer neighbours.
-                weight = (1.0 + (1 - (euc_dist/(synaptic_radius_inh - synaptic_radius_exc)))) * synaptic_weight
+                weight = (1.0 + (1 - (euc_dist / (synaptic_radius_inh - synaptic_radius_exc)))) * synaptic_weight
                 # Delay is between 1 and 3ms, based on distance
                 delay = util.normalise_round(euc_dist, 1, 5)
                 # delay = 1.0
@@ -152,34 +151,14 @@ f.write("\nn_col=" + str(n_col))
 f.write("\nsyn_weight=" + str(synaptic_weight))
 f.write("\nsyn_radius_inh=" + str(synaptic_radius_inh))
 f.write("\nsyn_radius_exc=" + str(synaptic_radius_exc))
-f.write("\norientation_pref_shift=" + str(orientation_pref_shift))
+f.write("\norientation_pref_shift=" + str(centre_shift))
 f.write("\npop_exc=" + str(pop_exc_gc.describe()))
 f.close()
 
-rand_neurons = random.sample(range(0, n_col*n_row), 4)
+rand_neurons = random.sample(range(0, n_col * n_row), 4)
 neuron_sample = p.PopulationView(pop_exc_gc, rand_neurons)
 
 # Plot
-# F = Figure(
-#     # plot data for postsynaptic neuron
-#     Panel(neuron_sample.get_data().segments[0].filter(name='v')[0],
-#           ylabel="Membrane potential (mV)",
-#           xlabel="Time (ms)",
-#           data_labels=[neuron_sample.label], yticks=True, xticks=True, xlim=(0, runtime)
-#           ),
-#     Panel(neuron_sample.get_data().segments[0].filter(name='gsyn_inh')[0],
-#           ylabel="inhibitory synaptic conduction (uS)",
-#           xlabel="Time (ms)",
-#           data_labels=[neuron_sample.label], yticks=True, xticks=True, xlim=(0, runtime)
-#           ),
-#     Panel(neuron_sample.get_data().segments[0].spiketrains,
-#           yticks=True, xticks=True, markersize=2, xlim=(0, runtime)
-#           ),
-# )
-# plt.yticks(rand_neurons)
-# plt.savefig(data_dir + "sample_plot.eps", format='eps', bbox_inches='tight')
-# plt.show()
-
 F = Figure(
     # plot data for postsynaptic neuron
     Panel(neuron_sample.get_data().segments[0].filter(name='v')[0],

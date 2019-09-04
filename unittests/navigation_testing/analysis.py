@@ -1,35 +1,19 @@
-# Standard library imports
-import argparse
-import cPickle as pickle
+# Handles plotting of results after simulation has been run and data written to storage.
 
+import argparse
+import random
+import cPickle as pickle
 import matplotlib.colors as mcolors
 import matplotlib.pyplot as plt
 import numpy as np
-import random
-
-# Local application imports
 import utilities as util
-# Third party imports
 from pyNN.utility.plotting import Figure, Panel
 
+# Constants
 DIR = ''
 RUNTIME = ''
 N_ROW = 0
 N_COL = 0
-
-# c
-cmap = mcolors.LinearSegmentedColormap.from_list("",
-                                                 [(0, "black"),
-                                                  (0.5, "yellow"),
-                                                  (1, "red")], N=256)
-
-cmap_rainbow = mcolors.LinearSegmentedColormap.from_list("",
-                                                         [(0, "#001aff"),  # blue
-                                                          (0.2, "#00ffea"),  # cyan
-                                                          (0.4, "#00ff2f"),  # green
-                                                          (0.6, "#fff700"),  # yellow
-                                                          (0.8, "#ff8000"),  # orange
-                                                          (1, "#ff0000")], N=256)  # red
 
 DEFAULT_FIG_SETTINGS = {
     'lines.linewidth': 0.5,
@@ -40,13 +24,31 @@ DEFAULT_FIG_SETTINGS = {
     'savefig.dpi': 600,
 }
 
+# Colourmaps
+cmap = mcolors.LinearSegmentedColormap.from_list("",
+                                                 [(0, "black"),
+                                                  (0.5, "yellow"),
+                                                  (1, "red")], N=256)
+cmap_rainbow = mcolors.LinearSegmentedColormap.from_list("",
+                                                         [(0, "#001aff"),  # blue
+                                                          (0.2, "#00ffea"),  # cyan
+                                                          (0.4, "#00ff2f"),  # green
+                                                          (0.6, "#fff700"),  # yellow
+                                                          (0.8, "#ff8000"),  # orange
+                                                          (1, "#ff0000")], N=256)  # red
+
 
 def main(vel_input_cells, trajectory, exc_dir_view, times):
+    """
+    Handles calling the appropriate functions given the argument values
+    :param vel_input_cells: flag for presence of velocity input
+    :param trajectory: flag for presence of trajectory data
+    :param exc_dir_view: flag for presence of PopulationView containing neurons of a single directional preference
+    :param times: times at which to plot the data (ms)
+    """
     if vel_input_cells:
         with open(DIR + "pop_vel_input_spike_trains.pkl", 'rb') as f:
             pop_input_spike_trains = pickle.load(f)
-        # with open(DIR + "pop_input_v.pkl", 'rb') as f:
-        #     pop_input_v = pickle.load(f)
         with open(DIR + "pop_vel_input_label.pkl", 'rb') as f:
             pop_input_label = pickle.load(f)
         input_cell_plots(pop_input_label, pop_input_spike_trains)
@@ -63,12 +65,6 @@ def main(vel_input_cells, trajectory, exc_dir_view, times):
         grid_cell_dir_plots(pop_exc_north_spike_train, pop_exc_east_spike_train,
                             pop_exc_west_spike_train, pop_exc_south_spike_train)
 
-    # with open(DIR + "pop_exc_v.pkl", 'rb') as f:
-    #     pop_exc_v = pickle.load(f)
-    # with open(DIR + "pop_exc_gsyn_exc.pkl", 'rb') as f:
-    #     pop_exc_gsyn_exc = pickle.load(f)
-    # with open(DIR + "pop_exc_gsyn_inh.pkl", 'rb') as f:
-    #     pop_exc_gsyn_inh = pickle.load(f)
     with open(DIR + "pop_exc_gc_spiketrains.pkl", 'rb') as f:
         pop_exc_spiketrains = pickle.load(f)
     with open(DIR + "pop_exc_gc_label.pkl", 'rb') as f:
@@ -79,30 +75,24 @@ def main(vel_input_cells, trajectory, exc_dir_view, times):
         pop_exc_parameters = pickle.load(f)
 
     if trajectory:
-        random_neuron = random.randint(0, N_ROW * N_COL)
-        # util.plot_trajectory_2d(np.array(trajectory), 200, 200, DIR)
-        util.plot_trajectory_2d_spikes(pop_exc_spiketrains[random_neuron], np.array(trajectory), 200, 200, DIR)
+        util.plot_trajectory_2d(np.array(trajectory), 200, 200, DIR)
+        # random_neuron = random.randint(0, N_ROW * N_COL)
+        # util.plot_trajectory_2d_spikes(pop_exc_spiketrains[random_neuron], np.array(trajectory), 200, 200, DIR)
 
     grid_cell_plots(times, pop_exc_label, pop_exc_spiketrains,
                     pop_exc_pos)
-
-
-    # if trajectory:
-    #     # Single grid cell response
 
     time_window = 1000  # time window for firing rate plots
     plot_population_firing_rate(times, pop_exc_label, pop_exc_spiketrains, pop_exc_pos, time_window)
     # get_active_neuron_counts(pop_exc_spiketrains, pop_exc_pos, times[-1])
 
 
-def input_cell_plots(pop_input_label, pop_input_spike_trains):
+def input_cell_plots(pop_input_spike_trains):
+    """
+    Plot spike train of input broad feedforward population
+    :param pop_input_spike_trains: spike train of population
+    """
     Figure(
-        # Panel(pop_input_v,
-        #       ylabel="Membrane potential (mV)",
-        #       xlabel="Time (ms)",
-        #       data_labels=[pop_input_label],
-        #       yticks=True, xticks=True, xlim=(0, RUNTIME)
-        #       ),
         Panel(pop_input_spike_trains,
               xlabel="Time (ms)",
               ylabel="Neuron index",
@@ -116,21 +106,15 @@ def input_cell_plots(pop_input_label, pop_input_spike_trains):
     plt.clf()
 
 
-# def plot_trajectory_2d(trajectory, x_lim, y_lim, folderpath, spiketrains):
-#     plt.xlabel('x (cm)')
-#     plt.xlim(0, x_lim)
-#     plt.ylim(0, y_lim)
-#     plt.ylabel('y (cm)')
-#
-#     plt.scatter(trajectory[0, 0], trajectory[0, 1], s=50, marker='o', c="r")
-#     plt.plot(trajectory[:, 0], trajectory[:, 1], linestyle='-', color='k', linewidth=1)
-#
-#     plt.tick_params(axis='both', labelsize=9)
-#     plt.savefig(folderpath + 'trajectory.png', bbox_inches='tight')
-
-
 def grid_cell_dir_plots(pop_exc_north_spike_train, pop_exc_east_spike_train,
                         pop_exc_west_spike_train, pop_exc_south_spike_train):
+    """
+    Plot spike trains of PopulationVIews containing only neuron with a given directional preference
+    :param pop_exc_north_spike_train: north-preferred neurons
+    :param pop_exc_east_spike_train: east-preferred neurons
+    :param pop_exc_west_spike_train: west-preferred neruons
+    :param pop_exc_south_spike_train: south-preferred neurons
+    """
     Figure(
         Panel(pop_exc_north_spike_train,
               yticks=False, xticks=False, xlabel="Time (ms) (N)", marker='o', markersize=0.2, xlim=(0, RUNTIME)
@@ -145,7 +129,6 @@ def grid_cell_dir_plots(pop_exc_north_spike_train, pop_exc_east_spike_train,
               yticks=False, xticks=True, xlabel="Time (ms) (S)", marker='o', markersize=0.2, xlim=(0, RUNTIME)
               ),
         settings=DEFAULT_FIG_SETTINGS,
-        # title="Excitatory grid cells for each direction",
         annotations=""
     )
     plt.savefig(DIR + "exc_grid_cells_dir.png", format='png')
@@ -154,6 +137,13 @@ def grid_cell_dir_plots(pop_exc_north_spike_train, pop_exc_east_spike_train,
 
 def grid_cell_plots(times, pop_exc_label, pop_exc_spiketrains,
                     pop_exc_pos):
+    """
+    Plot data for grid cell population
+    :param times: times at which to plot the data (ms)
+    :param pop_exc_label: label of population
+    :param pop_exc_spiketrains: spike trains of population
+    :param pop_exc_pos: neuron positions on grid
+    """
     Figure(
         # Panel(pop_exc_v,
         #       ylabel="Membrane potential (mV)",
@@ -174,22 +164,24 @@ def grid_cell_plots(times, pop_exc_label, pop_exc_spiketrains,
               yticks=True, xticks=True, xlabel="Time (ms)", marker='o', markersize=0.2, xlim=(0, RUNTIME)
               ),
         settings=DEFAULT_FIG_SETTINGS,
-        # title=pop_exc_label,
         annotations=""
     )
     plt.savefig(DIR + "exc_grid_cells_pop.png", format='png', bbox_inches='tight')
     plt.clf()
 
 
-def plot_population_firing_rate(times, label, spiketrains, pos, time_window):
-    # plt.style.use('dark_background')
-    num_times = len(times)
-    # fig, axs = plt.subplots(ncols=num_times, figsize=(6, 3))
-    # fig, axs = plt.subplots(ncols=num_times)
+def plot_population_firing_rate(times, spiketrains, pos, time_window):
+    """
+    Plot population firing activity
+    :param times: times at which to plot the data (ms)
+    :param spiketrains: spike trains of neurons in population
+    :param pos: position of neurons on grid
+    :param time_window: time window to calculate current firing activity from
+    """
+
     fig, axs = plt.subplots(int(len(times) / 5), 5,
                             sharex='col', sharey='row', gridspec_kw={'wspace': 0.2, 'hspace': 0},
                             figsize=(6, 3))
-    # fig.suptitle(label + ' firing rates')
     subplot_counter = 0
 
     for ax_row in axs:
@@ -213,16 +205,18 @@ def plot_population_firing_rate(times, label, spiketrains, pos, time_window):
                     ax.scatter(pos[x][0], pos[x][1], s=10,
                                c=norm_firing_rate, cmap=cmap, norm=plt.Normalize(0, 1))
             print("Plotting subplot " + str(t))
-    # plt.annotate("Firing rate computed over time window of " + str(time_window) + "ms up until timestamp")
-    # fig.colorbar(cmap)
-    # plt.subplots_adjust(wspace=0.5, hspace=0.5)
-    # fig.tight_layout()
     plt.savefig(DIR + 'pop_exc_gc_firing_rate.png', format='png',
                 facecolor=fig.get_facecolor(), bbox_inches='tight', dpi=600)
     plt.clf()
 
 
 def get_active_neuron_counts(spike_trains, neuron_positions, time):
+    """
+    Get the number of active neurons for each cardinal directional preference at a given time
+    :param spike_trains: spike trains of neurons
+    :param neuron_positions: positions of neurons on grid
+    :param time: time to check neuron activity at (ms)
+    """
     count_n = 0
     count_e = 0
     count_w = 0
@@ -247,6 +241,18 @@ def get_active_neuron_counts(spike_trains, neuron_positions, time):
     f.write("\nW: " + str(count_w))
     f.write("\nS: " + str(count_s))
     f.close()
+
+# def plot_trajectory_2d(trajectory, x_lim, y_lim, folderpath, spiketrains):
+#     plt.xlabel('x (cm)')
+#     plt.xlim(0, x_lim)
+#     plt.ylim(0, y_lim)
+#     plt.ylabel('y (cm)')
+#
+#     plt.scatter(trajectory[0, 0], trajectory[0, 1], s=50, marker='o', c="r")
+#     plt.plot(trajectory[:, 0], trajectory[:, 1], linestyle='-', color='k', linewidth=1)
+#
+#     plt.tick_params(axis='both', labelsize=9)
+#     plt.savefig(folderpath + 'trajectory.png', bbox_inches='tight')
 
 
 if __name__ == "__main__":
@@ -282,3 +288,4 @@ if __name__ == "__main__":
         dir_views = False
 
     main(inputs, trajectory, dir_views, times)
+

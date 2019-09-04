@@ -1,24 +1,24 @@
 # Standard library imports
-import cPickle as pickle
-import time
-import numpy as np
-import os
 import errno
-import matplotlib.pyplot as plt
+import os
 import random
-
-# Third party imports
-import spynnaker8 as p
-
-# Local application imports
+import time
+import cPickle as pickle
+import matplotlib.pyplot as plt
+import numpy as np
 import utilities as util
 from pyNN.random import RandomDistribution, NumpyRNG
-from pyNN.space import Grid2D, Line
+from pyNN.space import Grid2D
 from pyNN.utility.plotting import Figure, Panel
+import spynnaker8 as p
 
 """
-SETUP
+Grid cell model with periodic boundary constraints
+Connectivity: distance-dependent 
+Broad feedforward input: i_offset
+Velocity input: none
 """
+
 p.setup(1)  # simulation timestep (ms)
 runtime = 10000  # ms
 
@@ -31,11 +31,10 @@ p.set_number_of_neurons_per_core(p.IF_curr_exp, 255)
 
 # Parameters
 self_connections = False  # allow self-connections in recurrent grid cell network
-max_inh_synaptic_weight = 0.1   # synaptic weight for inhibitory connections
+max_inh_synaptic_weight = 0.1  # synaptic weight for inhibitory connections
 inh_synaptic_radius = 10.0  # inhibitory connection radius
-orientation_pref_shift = 2  # number of neurons to shift centre of connectivity by
+centre_shift = 2  # number of neurons to shift centre of connectivity by
 
-# Grid cell (excitatory) population
 # Grid cell neuron parameters
 gc_neuron_params = {
     "v_thresh": -50.0,
@@ -58,8 +57,6 @@ pop_exc_gc = p.Population(n_neurons,
                           structure=neuron_grid,
                           label="Excitatory grid cells")
 
-# Connections
-
 # GC pop inhibitory recurrent connections
 inh_loop_connections = list()
 for pre_syn in range(0, n_neurons):
@@ -67,7 +64,7 @@ for pre_syn in range(0, n_neurons):
     dir_pref = np.array(util.get_dir_pref(presyn_pos))
 
     # Shift centre of connectivity in appropriate direction
-    shifted_centre = util.shift_centre_connectivity(presyn_pos, dir_pref, orientation_pref_shift, n_row, n_col)
+    shifted_centre = util.shift_centre_connectivity(presyn_pos, dir_pref, centre_shift, n_row, n_col)
 
     for post_syn in range(0, n_neurons):
         # If different neurons
@@ -137,7 +134,7 @@ f.write("Grid cell model")
 f.write("\nruntime=" + str(runtime))
 f.write("\nn_row=" + str(n_row))
 f.write("\nn_col=" + str(n_col))
-f.write("\norientation_pref_shift=" + str(orientation_pref_shift))
+f.write("\norientation_pref_shift=" + str(centre_shift))
 # f.write("\ninh_connections=" + str(inh_loop_connections))
 f.write("\nsyn_radius=" + str(inh_synaptic_radius))
 f.write("\npop_exc=" + str(pop_exc_gc.describe()))
@@ -147,31 +144,6 @@ rand_neurons = random.sample(range(0, n_neurons), 4)
 neuron_sample = p.PopulationView(pop_exc_gc, rand_neurons)
 
 # Plot
-# F = Figure(
-#     # plot data for postsynaptic neuron
-#     Panel(neuron_sample.get_data().segments[0].filter(name='v')[0],
-#           ylabel="Membrane potential (mV)",
-#           xlabel="Time (ms)",
-#           data_labels=[neuron_sample.label], yticks=True, xticks=True, xlim=(0, runtime)
-#           ),
-#     Panel(neuron_sample.get_data().segments[0].filter(name='gsyn_inh')[0],
-#           ylabel="Inhibitory synaptic conduction (mV)",
-#           xlabel="Time (ms)",
-#           data_labels=[neuron_sample.label], yticks=True, xticks=True, xlim=(0, runtime)
-#           ),
-#     Panel(neuron_sample.get_data().segments[0].filter(name='gsyn_exc')[0],
-#           ylabel="Excitatory synaptic conduction (mV)",
-#           xlabel="Time (ms)",
-#           data_labels=[neuron_sample.label], yticks=True, xticks=True, xlim=(0, runtime)
-#           ),
-#     Panel(neuron_sample.get_data().segments[0].spiketrains,
-#           yticks=True, xticks=rand_neurons, markersize=0.2, xlim=(0, runtime)
-#           ),
-# )
-# plt.yticks(rand_neurons)
-# plt.savefig(data_dir + "sample_plot.eps", format='eps', bbox_inches='tight')
-# plt.show()
-
 F = Figure(
     # plot data for postsynaptic neuron
     Panel(neuron_sample.get_data().segments[0].filter(name='v')[0],

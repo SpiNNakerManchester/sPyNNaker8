@@ -1,9 +1,14 @@
 import random
+
 import numpy as np
 import random_walk_step
 import utilities as util
 
+
 class RandomWalkAny:
+    """
+    Simulate a random walk in any direction represented as a weighting list of the 4 cardinal directions
+    """
 
     def __init__(self, speed, timestep, grid_x, grid_y):
         # Cardinal directions and their weights
@@ -25,6 +30,11 @@ class RandomWalkAny:
         self.max_y = grid_y  # maximum y coordinate in cm
 
     def update_head_dir(self, init):
+        """
+               Randomly choose whether to keep the head direction
+               :param init: flag for initial setup
+               :return: head direction vector
+               """
         # Randomly choose whether to keep head direction
         if random.randint(0, 1) == 1 or init:
             # Choose new direction
@@ -64,8 +74,13 @@ class RandomWalkAny:
                 return change_xy
 
     def within_boundary(self, new_pos):
+        """
+                Check whether new position is within the boundaries
+                :param new_pos: position
+                :return: boolean
+                """
         if (new_pos[0] <= self.max_x and new_pos[0] >= 0) and \
-                (new_pos[1] <= self.max_y and  new_pos[1] >= 0):
+                (new_pos[1] <= self.max_y and new_pos[1] >= 0):
             return True
         return False
 
@@ -91,6 +106,7 @@ class RandomWalkAny:
     def get_stepsize(self):
         return self.step_size
 
+
 if __name__ == "__main__":
     timestep = 1  # ms
     runtime = 60000  # ms
@@ -110,6 +126,8 @@ if __name__ == "__main__":
     # Output trajectory
     trajectory = walk.get_trajectory(runtime)
     util.plot_trajectory_2d(np.array(trajectory), x_lim, y_lim, "/home/nickybu/Desktop/")
-    print "\nTrajectory: "
+    print
+    "\nTrajectory: "
     for index, pos in enumerate(trajectory):
-        print "Time=" + str(index * timestep) + ", pos=" + str(pos)
+        print
+        "Time=" + str(index * timestep) + ", pos=" + str(pos)
