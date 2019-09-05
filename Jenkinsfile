@@ -1,3 +1,19 @@
+/*
+# Copyright (c) 2017-2019 The University of Manchester
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 pipeline {
     agent {
         docker { image 'python3.6' }
@@ -96,6 +112,7 @@ pipeline {
                 sh 'echo "[Java]" >> ~/.spynnaker.cfg'
                 sh 'echo "use_java = True" >> ~/.spynnaker.cfg'
                 sh 'echo "java_call=/usr/bin/java" >> ~/.spynnaker.cfg'
+                sh 'echo "java_properties=-Dspinnaker.parallel_tasks=10" >> ~/.spynnaker.cfg'
                 sh 'printf "java_spinnaker_path=" >> ~/.spynnaker.cfg'
                 sh 'pwd >> ~/.spynnaker.cfg'
                 // Prepare coverage
@@ -115,7 +132,6 @@ pipeline {
                 run_pytest('SpiNNMan/unittests SpiNNMan/integration_tests', 1200, 'SpiNNMan', 'auto')
                 run_pytest('PACMAN/unittests', 1200, 'PACMAN', 'auto')
                 run_pytest('spalloc/tests', 1200, 'spalloc', '1')
-                run_pytest('DataSpecification/unittests DataSpecification/integration_tests', 1200, 'DataSpecification', 'auto')
                 run_pytest('SpiNNFrontEndCommon/unittests SpiNNFrontEndCommon/fec_integration_tests', 1200, 'SpiNNFrontEndCommon', 'auto')
                 run_pytest('sPyNNaker/unittests', 1200, 'sPyNNaker', 'auto')
                 run_pytest('sPyNNaker8/unittests', 1200, 'sPyNNaker8', 'auto')
