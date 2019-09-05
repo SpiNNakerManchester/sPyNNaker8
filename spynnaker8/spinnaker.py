@@ -240,8 +240,9 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 
         :return: the current runtime already executed
         """
+
         return (
-            self._current_run_timesteps * (
+            self._default_current_run_time * (
                 self._default_machine_time_step /
                 MICRO_TO_MILLISECOND_CONVERSION))
 
