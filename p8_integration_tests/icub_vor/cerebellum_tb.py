@@ -3,6 +3,7 @@ import spynnaker8 as sim
 import numpy as np
 #import logging
 import matplotlib.pyplot as plt
+from __future__ import print function # for python3 printing in python2
 
 #from spynnaker8.utilities import DataHolder
 from pacman.model.constraints.key_allocator_constraints import FixedKeyAndMaskConstraint
@@ -418,6 +419,4 @@ plt.legend()
 plt.show()
 
 sim.end()
-print "job done"
-
-
+print("job done")

@@ -4,6 +4,7 @@ import math
 import unittest
 from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt
+from __future__ import print function
 
 p.setup(1) # simulation timestep (ms)
 runtime = 1000
@@ -71,7 +72,7 @@ vestibular_neuclei_data = vestibular_neuclei.get_data()
 
 # print weight history
 for i in mf_weights:
-    print i
+    print(i)
 
 # Plot
 F = Figure(
@@ -92,4 +93,4 @@ F = Figure(
 plt.show()
 p.end()
 
-print "Job Complete"
+print("Job Complete")

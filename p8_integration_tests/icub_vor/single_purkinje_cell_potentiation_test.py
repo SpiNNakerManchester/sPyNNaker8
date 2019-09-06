@@ -4,6 +4,7 @@ import math
 import unittest
 from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt
+from __future__ import print function
 
 p.setup(1) # simulation timestep (ms)
 runtime = 1000
@@ -70,8 +71,7 @@ granluar_cell_spikes = granular_cell.get_data('spikes')
 purkinje_data = purkinje_cell.get_data()
 
 for i in pf_weights:
-    print i
-
+    print(i)
 # Plot
 F = Figure(
     # plot data for postsynaptic neuron
@@ -91,5 +91,5 @@ F = Figure(
 plt.show()
 p.end()
 
-print "Job Complete"
+print("Job Complete")
 
