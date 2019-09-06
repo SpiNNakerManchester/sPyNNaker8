@@ -1,3 +1,4 @@
+from __future__ import print_function
 import spynnaker8 as p
 import numpy
 import math
@@ -77,7 +78,7 @@ climbing_fibre_spikes = climbing_fibre.get_data('spikes')
 purkinje_data = purkinje_cell.get_data()
 
 pf_weights = synapse_pfpc.get('weight', 'list', with_address=False)
-print pf_weights
+print(pf_weights)
 
 # Plot
 F = Figure(

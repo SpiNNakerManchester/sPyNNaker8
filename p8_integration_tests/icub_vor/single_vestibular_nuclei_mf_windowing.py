@@ -1,3 +1,4 @@
+from __future__ import print_function
 import spynnaker8 as p
 import numpy
 import math
@@ -83,7 +84,7 @@ purkinje_cell_src_spikes = purkinje_cell_src.get_data('spikes')
 vestibular_nuclei_data = vestibular_nuclei.get_data()
 
 mf_weights = synapse_mfvn.get('weight', 'list', with_address=False)
-print mf_weights
+print(mf_weights)
 
 # Plot
 F = Figure(
@@ -106,4 +107,4 @@ F = Figure(
 plt.show()
 p.end()
 
-print "Job Complete"
+print("Job Complete")
