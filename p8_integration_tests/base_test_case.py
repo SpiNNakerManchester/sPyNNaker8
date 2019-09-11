@@ -1,7 +1,23 @@
+# Copyright (c) 2017-2019 The University of Manchester
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 from lxml import etree
 import os
 import random
 import sys
+import time
 import unittest
 from unittest import SkipTest
 import spinn_utilities.conf_loader as conf_loader
@@ -115,13 +131,12 @@ class BaseTestCase(unittest.TestCase):
         test_dir = os.path.dirname(p8_integration_tests_directory)
         return os.path.join(test_dir, "JobDestroyedError.txt")
 
-    def runsafe(self, method):
+    def runsafe(self, method, retry_delay=3.0):
         retries = 0
-        last_error = None
-        while retries < 3:
+        while True:
             try:
                 method()
-                return
+                break
             except JobDestroyedError as ex:
                 class_file = sys.modules[self.__module__].__file__
                 with open(self.destory_path(), "a") as destroyed_file:
@@ -129,9 +144,10 @@ class BaseTestCase(unittest.TestCase):
                     destroyed_file.write("\n")
                     destroyed_file.write(str(ex))
                     destroyed_file.write("\n")
-                last_error = ex
                 retries += 1
                 globals_variables.unset_simulator()
+                if retries >= 3:
+                    raise ex
             except SpinnmanException as ex:
                 class_file = sys.modules[self.__module__].__file__
                 with open(self.spinnman_exception_path(), "a") as exc_file:
@@ -139,10 +155,18 @@ class BaseTestCase(unittest.TestCase):
                     exc_file.write("\n")
                     exc_file.write(str(ex))
                     exc_file.write("\n")
-                last_error = ex
                 retries += 1
                 globals_variables.unset_simulator()
-        raise last_error
+                if retries >= 3:
+                    raise ex
+            print("")
+            print("==========================================================")
+            print(" Will run {} again in {} seconds".format(
+                method, retry_delay))
+            print("retry: {}".format(retries))
+            print("==========================================================")
+            print("")
+            time.sleep(retry_delay)
 
     def get_placements(self, label):
         report_default_directory = globals_variables.get_simulator() \

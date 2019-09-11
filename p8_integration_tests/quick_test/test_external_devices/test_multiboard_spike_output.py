@@ -1,3 +1,18 @@
+# Copyright (c) 2017-2019 The University of Manchester
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import unittest
 from unittest import SkipTest
 from spynnaker.pyNN.exceptions import ConfigurationException
@@ -35,7 +50,10 @@ class TestMultiBoardSpikeOutput(BaseTestCase):
             e.activate_live_output_for(pop)
             TestMultiBoardSpikeOutput.counts[label] = 0
 
-        live_output = e.SpynnakerLiveSpikesConnection(receive_labels=labels)
+        live_output = e.SpynnakerLiveSpikesConnection(
+            receive_labels=labels, local_port=None)
+        p.external_devices.add_database_socket_address(
+            live_output.local_ip_address, live_output.local_port, None)
         for label in labels:
             live_output.add_receive_callback(
                 label, TestMultiBoardSpikeOutput.spike_receiver)

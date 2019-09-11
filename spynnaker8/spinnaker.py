@@ -1,3 +1,18 @@
+# Copyright (c) 2017-2019 The University of Manchester
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import logging
 import math
 from lazyarray import __version__ as lazyarray_version
@@ -39,7 +54,8 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
             extra_mapping_algorithms, extra_pre_run_algorithms,
             extra_post_run_algorithms, extra_load_algorithms,
             time_scale_factor, min_delay, max_delay, graph_label,
-            n_chips_required, timestep=0.1, hostname=None):
+            n_chips_required=None, n_boards_required=None, timestep=0.1,
+            hostname=None):
         # pylint: disable=too-many-arguments, too-many-locals
 
         # change min delay auto to be the min delay supported by simulator
@@ -88,6 +104,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
             extra_post_run_algorithms=extra_post_run_algorithms,
             extra_load_algorithms=built_in_extra_load_algorithms,
             graph_label=graph_label, n_chips_required=n_chips_required,
+            n_boards_required=n_boards_required,
             hostname=hostname, min_delay=min_delay,
             max_delay=max_delay, timestep=timestep,
             time_scale_factor=time_scale_factor,
