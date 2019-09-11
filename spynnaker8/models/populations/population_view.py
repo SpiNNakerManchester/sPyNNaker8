@@ -112,6 +112,12 @@ class PopulationView(PopulationBase):
         """
         return self.__mask
 
+#     @property
+#     def population(self):
+#         """  The population this view comes from
+#         """
+#         return self.__population
+
     @property
     def all_cells(self):
         """ An array containing the cell IDs of all neurons in the\
@@ -121,6 +127,10 @@ class PopulationView(PopulationBase):
     @property
     def _indexes(self):
         return tuple(self.__indexes)
+
+    @property
+    def _get_vertex(self):
+        return self.__population._get_vertex
 
     def __getitem__(self, index):
         """ Return either a single cell (ID object) from the Population,\
