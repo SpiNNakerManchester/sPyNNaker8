@@ -17,6 +17,7 @@ from __future__ import division
 from p8_integration_tests.base_test_case import BaseTestCase
 import spynnaker8 as sim
 import math
+import time
 
 
 class TestPoissonSpikeSource(BaseTestCase):
@@ -171,3 +172,40 @@ class TestPoissonSpikeSource(BaseTestCase):
 
     def test_recording_poisson_spikes_rate_slow(self):
         self.runsafe(self.recording_poisson_spikes_rate_slow)
+
+    def poisson_live_rates(self):
+
+        def set_rates(label, conn):
+            time.sleep(1.0)
+            conn.set_rates(label, [(i, 50) for i in range(50)])
+
+        n_neurons = 100
+        sim.setup(timestep=1.0)
+        sim.set_number_of_neurons_per_core(sim.SpikeSourcePoisson, 75)
+        pop = sim.Population(
+            n_neurons, sim.SpikeSourcePoisson(rate=0.0),
+            label="inputSpikes",
+            additional_parameters={"max_rate": 50.0})
+        pop.record("spikes")
+        conn = sim.external_devices.SpynnakerPoissonControlConnection(
+            poisson_labels=["inputSpikes"], local_port=None)
+        conn.add_start_resume_callback("inputSpikes", set_rates)
+        sim.external_devices.add_database_socket_address(
+            conn.local_ip_address, conn.local_port, None)
+        sim.external_devices.add_poisson_live_rate_control(pop)
+        sim.run(2000)
+        neo = pop.get_data("spikes")
+        spikes = neo.segments[0].spiketrains
+        sim.end()
+        count_0_49 = 0
+        for a_spikes in spikes[0:50]:
+            count_0_49 += len(a_spikes)
+        count_50_99 = 0
+        for a_spikes in spikes[50:100]:
+            count_50_99 += len(a_spikes)
+        tolerance = math.sqrt(50.0)
+        self.assertAlmostEqual(50.0, count_0_49 / 50.0, delta=tolerance)
+        self.assertEqual(count_50_99, 0.0)
+
+    def test_poisson_live_rates(self):
+        self.runsafe(self.poisson_live_rates)
