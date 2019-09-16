@@ -24,7 +24,6 @@ from spinn_utilities.socket_address import SocketAddress
 from spinnman.messages.eieio import EIEIOType
 from spinn_front_end_common.abstract_models import (
     AbstractSendMeMulticastCommandsVertex)
-from spinn_front_end_common.utility_models import LivePacketGather
 from spinn_front_end_common.utilities import globals_variables
 from spynnaker.pyNN.abstract_spinnaker_common import AbstractSpiNNakerCommon
 from spynnaker.pyNN.external_devices_models import (
