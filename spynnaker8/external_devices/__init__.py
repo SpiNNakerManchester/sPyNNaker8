@@ -190,16 +190,11 @@ def EthernetControlPopulation(
         add_database_socket_address(
             ethernet_command_connection.local_ip_address,
             ethernet_command_connection.local_port, database_ack_port_num)
-    live_packet_gather = LivePacketGather(
-        ethernet_control_connection.local_ip_address,
-        ethernet_control_connection.local_port,
+    Plugins.activate_live_output_for(
+        population, None, database_notify_port_num, database_ack_port_num,
         message_type=EIEIOType.KEY_PAYLOAD_32_BIT,
         payload_as_time_stamps=False, use_payload_prefix=False,
         label=live_packet_gather_label)
-    spynnaker_external_devices.add_application_vertex(live_packet_gather)
-    for partition_id in vertex.get_outgoing_partition_ids():
-        spynnaker_external_devices.add_edge(
-            vertex, live_packet_gather, partition_id)
     return population
 
 
