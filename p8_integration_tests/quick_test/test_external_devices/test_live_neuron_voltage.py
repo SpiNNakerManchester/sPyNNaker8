@@ -23,6 +23,8 @@ from data_specification.enums.data_type import DataType
 import decimal
 import numpy
 
+DEVICE_KEY = 0xF
+
 
 class Translator(AbstractEthernetTranslator):
 
@@ -30,6 +32,9 @@ class Translator(AbstractEthernetTranslator):
         self.voltages = list()
 
     def translate_control_packet(self, multicast_packet):
+        if multicast_packet.key != DEVICE_KEY:
+            raise Exception("Unknown key {} received".format(
+                multicast_packet.key))
         voltage = multicast_packet.payload
         self.voltages.append(
             (float)(decimal.Decimal(voltage) / DataType.S1615.scale))
@@ -39,7 +44,7 @@ class Device(AbstractMulticastControllableDevice):
 
     @property
     def device_control_key(self):
-        return 0
+        return DEVICE_KEY
 
     @property
     def device_control_max_value(self):
@@ -70,15 +75,25 @@ class Device(AbstractMulticastControllableDevice):
         return True
 
 
+def spike_receiver(label, time, spikes):
+    print("Received spikes {} from {} at time {}".format(spikes, time, label))
+
+
 def live_neuron_voltage():
     p.setup(1.0)
     run_time = 1000.0
     translator = Translator()
     devices = [Device()]
     create_edges = False
-    stim = p.Population(1, p.SpikeSourceArray(range(0, 1000, 100)))
+    conn = p.external_devices.SpynnakerLiveSpikesConnection(
+        receive_labels=["stim"], local_port=None)
+    conn.add_receive_callback("stim", spike_receiver)
+    stim = p.Population(1, p.SpikeSourceArray(range(0, 1000, 100)),
+                        label="stim")
     model = p.external_devices.ExternalDeviceLifControl(
         devices, create_edges, translator)
+    p.external_devices.activate_live_output_for(
+        stim, database_notify_port_num=conn.local_port)
     ext_pop = p.external_devices.EthernetControlPopulation(1, model)
     ext_pop.record(["v"])
     p.Projection(
