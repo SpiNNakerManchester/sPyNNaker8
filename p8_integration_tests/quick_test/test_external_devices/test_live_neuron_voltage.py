@@ -52,7 +52,7 @@ class Device(AbstractMulticastControllableDevice):
 
     @property
     def device_control_partition_id(self):
-        return "SPIKE"
+        return "DEVICE_CONTROL"
 
     @property
     def device_control_scaling_factor(self):
