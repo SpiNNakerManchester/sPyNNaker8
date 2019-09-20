@@ -1,87 +1,68 @@
+# Copyright (c) 2017-2019 The University of Manchester
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 """
 The :py:mod:`spynnaker.pyNN` package contains the front end specifications
 and implementation for the PyNN High-level API
 (http://neuralensemble.org/trac/PyNN)
 """
-
 import logging
 import os
-
-from spinn_front_end_common.abstract_models \
-    import AbstractSendMeMulticastCommandsVertex
-from spinn_front_end_common.utility_models import LivePacketGather
-from spinn_front_end_common.utilities import globals_variables
 from spinn_utilities.socket_address import SocketAddress
 from spinnman.messages.eieio import EIEIOType
-
-# main
+from spinn_front_end_common.abstract_models import (
+    AbstractSendMeMulticastCommandsVertex)
+from spinn_front_end_common.utility_models import LivePacketGather
+from spinn_front_end_common.utilities import globals_variables
 from spynnaker.pyNN.abstract_spinnaker_common import AbstractSpiNNakerCommon
-from spynnaker8.models.populations import Population
-
-# components
-from spynnaker.pyNN.external_devices_models import ArbitraryFPGADevice
-from spynnaker.pyNN.external_devices_models import ExternalCochleaDevice
-from spynnaker.pyNN.external_devices_models import ExternalFPGARetinaDevice
-from spynnaker.pyNN.external_devices_models import MunichMotorDevice
-from spynnaker.pyNN.external_devices_models import MunichRetinaDevice
-
-# injector for spynnaker 8
-from spynnaker.pyNN.models.utility_models \
-    import SpikeInjector as ExternalDeviceSpikeInjector
-
-# connections
+from spynnaker.pyNN.external_devices_models import (
+    AbstractEthernetController, AbstractEthernetSensor,
+    ArbitraryFPGADevice, ExternalCochleaDevice, ExternalFPGARetinaDevice,
+    MunichMotorDevice, MunichRetinaDevice)
+from spynnaker.pyNN.models.utility_models.spike_injector import (
+    SpikeInjector as
+    ExternalDeviceSpikeInjector)
 from spynnaker.pyNN import model_binaries
-from spynnaker.pyNN.connections \
-    import EthernetCommandConnection, EthernetControlConnection, \
-    SpynnakerLiveSpikesConnection, SpynnakerPoissonControlConnection
-
-# abstract
-from spynnaker.pyNN.external_devices_models \
-    import AbstractEthernetController, AbstractEthernetSensor
-
-# General LIF control
+from spynnaker.pyNN.connections import (
+    EthernetCommandConnection, EthernetControlConnection,
+    SpynnakerLiveSpikesConnection, SpynnakerPoissonControlConnection)
 from spynnaker.pyNN.external_devices_models import ExternalDeviceLifControl
-
-# PushBot Ethernet model control
 from spynnaker.pyNN.external_devices_models.push_bot.push_bot_control_modules \
-    import PushBotLifEthernet
-
-# PushBot SpiNNakerLink control
-from spynnaker.pyNN.external_devices_models.push_bot.push_bot_control_modules \
-    import PushBotLifSpinnakerLink
+    import (
+        PushBotLifEthernet, PushBotLifSpinnakerLink)
 from spynnaker.pyNN.external_devices_models.push_bot.push_bot_spinnaker_link \
-    import PushBotSpiNNakerLinkRetinaDevice
-
-# PushBot Ethernet components
+    import (
+        PushBotSpiNNakerLinkRetinaDevice)
 from spynnaker.pyNN.external_devices_models.push_bot.push_bot_ethernet \
-    import PushBotEthernetLaserDevice, PushBotEthernetLEDDevice
-from spynnaker.pyNN.external_devices_models.push_bot.push_bot_ethernet \
-    import PushBotEthernetMotorDevice, PushBotEthernetRetinaDevice
-from spynnaker.pyNN.external_devices_models.push_bot.push_bot_ethernet \
-    import PushBotEthernetSpeakerDevice
-
-# PushBot parameters
+    import (
+        PushBotEthernetLaserDevice, PushBotEthernetLEDDevice,
+        PushBotEthernetMotorDevice, PushBotEthernetRetinaDevice,
+        PushBotEthernetSpeakerDevice)
 from spynnaker.pyNN.external_devices_models.push_bot.push_bot_parameters \
-    import PushBotLaser, PushBotLED, PushBotMotor, PushBotRetinaResolution, \
-    PushBotSpeaker
-
-# PushBot retina viewer
-from spynnaker.pyNN.external_devices_models.push_bot.push_bot_parameters \
-    import PushBotRetinaViewer
-
-
-# PushBot spinnaker link devices
+    import (
+        PushBotLaser, PushBotLED, PushBotMotor, PushBotRetinaResolution,
+        PushBotSpeaker, PushBotRetinaViewer)
 from spynnaker.pyNN.external_devices_models.push_bot.push_bot_spinnaker_link \
-    import PushBotSpiNNakerLinkLaserDevice, PushBotSpiNNakerLinkLEDDevice
-from spynnaker.pyNN.external_devices_models.push_bot.push_bot_spinnaker_link \
-    import PushBotSpiNNakerLinkMotorDevice, PushBotSpiNNakerLinkSpeakerDevice
-
-# PushBot protocols
+    import (
+        PushBotSpiNNakerLinkLaserDevice, PushBotSpiNNakerLinkLEDDevice,
+        PushBotSpiNNakerLinkMotorDevice, PushBotSpiNNakerLinkSpeakerDevice)
 from spynnaker.pyNN.protocols import MunichIoSpiNNakerLinkProtocol
-
-# main thing
-from spynnaker.pyNN.spynnaker_external_device_plugin_manager \
-    import SpynnakerExternalDevicePluginManager as Plugins
+from spynnaker.pyNN.spynnaker_external_device_plugin_manager import (
+    SpynnakerExternalDevicePluginManager as
+    Plugins)
+from spynnaker8.models.populations import Population
 
 # useful functions
 add_database_socket_address = Plugins.add_database_socket_address
@@ -141,6 +122,13 @@ def run_forever():
     AbstractSpiNNakerCommon.run(globals_variables.get_simulator(), None)
 
 
+def request_stop():
+    """ Request a stop in the simulation without a complete stop.  Will stop\
+        after the next auto-pause-and-resume cycle
+    """
+    globals_variables.get_simulator().stop_run()
+
+
 def register_database_notification_request(hostname, notify_port, ack_port):
     """ Adds a socket system which is registered with the notification protocol
 
@@ -185,8 +173,13 @@ def EthernetControlPopulation(
         raise Exception(
             "Vertex must be an instance of AbstractEthernetController")
     translator = vertex.get_message_translator()
+    live_packet_gather_label = "EthernetControlReceiver"
     ethernet_control_connection = EthernetControlConnection(
-        translator, local_host, local_port)
+        translator, vertex.label, live_packet_gather_label, local_host,
+        local_port)
+    add_database_socket_address(
+        ethernet_control_connection.local_ip_address,
+        ethernet_control_connection.local_port, database_ack_port_num)
     devices_with_commands = [
         device for device in vertex.get_external_devices()
         if isinstance(device, AbstractSendMeMulticastCommandsVertex)]
@@ -201,7 +194,8 @@ def EthernetControlPopulation(
         ethernet_control_connection.local_ip_address,
         ethernet_control_connection.local_port,
         message_type=EIEIOType.KEY_PAYLOAD_32_BIT,
-        payload_as_time_stamps=False, use_payload_prefix=False)
+        payload_as_time_stamps=False, use_payload_prefix=False,
+        label=live_packet_gather_label)
     spynnaker_external_devices.add_application_vertex(live_packet_gather)
     for partition_id in vertex.get_outgoing_partition_ids():
         spynnaker_external_devices.add_edge(
@@ -232,11 +226,11 @@ def EthernetSensorPopulation(
     if not isinstance(device, AbstractEthernetSensor):
         raise Exception("Model must be an instance of AbstractEthernetSensor")
     injector_params = dict(device.get_injector_parameters())
-    injector_params['notify'] = False
 
     population = Population(
-        device.get_n_neurons(), SpikeInjector(**injector_params),
-        label=device.get_injector_label())
+        device.get_n_neurons(), SpikeInjector(notify=False),
+        label=device.get_injector_label(),
+        additional_parameters=injector_params)
     if isinstance(device, AbstractSendMeMulticastCommandsVertex):
         ethernet_command_connection = EthernetCommandConnection(
             device.get_translator(), [device], local_host,
@@ -253,19 +247,10 @@ def EthernetSensorPopulation(
 
 
 def SpikeInjector(
-        label=None, port=None, notify=True, virtual_key=None,
-        database_notify_host=None, database_notify_port_num=None,
+        notify=True, database_notify_host=None, database_notify_port_num=None,
         database_ack_port_num=None):
     """ Supports adding a spike injector to the application graph.
 
-    :param n_neurons: the number of neurons the spike injector will emulate
-    :type n_neurons: int
-    :param label: the label given to the population
-    :type label: str
-    :param port: the port number used to listen for injections of spikes
-    :type port: int
-    :param virtual_key: the virtual key used in the routing system
-    :type virtual_key: int
     :param database_notify_host: the hostname for the device which is\
         listening to the database notification.
     :type database_notify_host: str

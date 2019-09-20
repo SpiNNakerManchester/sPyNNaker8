@@ -1,17 +1,33 @@
+# Copyright (c) 2017-2019 The University of Manchester
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import logging
+import neo
+import inspect
 from six import iteritems, string_types
+from pyNN import descriptions
+import spinn_utilities.logger_utils as logger_utils
+from spinn_front_end_common.utilities import globals_variables
+from spinn_front_end_common.utilities.exceptions import ConfigurationException
 from spynnaker.pyNN.exceptions import InvalidParameterType
 from spynnaker.pyNN.models.pynn_population_common import PyNNPopulationCommon
 from spynnaker.pyNN.utilities.constants import SPIKES
-from spinn_front_end_common.utilities import globals_variables
-from spinn_front_end_common.utilities.exceptions import ConfigurationException
-
+from .idmixin import IDMixin
+from .population_base import PopulationBase
+from .population_view import PopulationView
 from spynnaker8.models.recorder import Recorder
-from spynnaker8.models.populations import IDMixin, PopulationBase
-from spynnaker8.models.populations.population_view import PopulationView
-
-from pyNN import descriptions
-import inspect
 
 logger = logging.getLogger(__name__)
 
@@ -36,6 +52,12 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
                 model = cellclass()
             else:
                 model = cellclass(**cellparams)
+        else:
+            if cellparams:
+                raise ConfigurationException(
+                    "cellclass is an instance which includes params so "
+                    "cellparams must be None")
+
         self._celltype = model
 
         # build our initial objects
@@ -102,9 +124,9 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
             multiple of the simulation timestep.
         """
         if indexes is not None:
-            logger.warn(
-                "record indexes parameter is non-standard PyNN, so may not "
-                "be portable to other simulators. "
+            logger_utils.warn_once(
+                logger, "record indexes parameter is non-standard PyNN, "
+                "so may not be portable to other simulators. "
                 "It is now deprecated and replaced with views")
         self._record_with_indexes(
             variables, to_file, sampling_interval, indexes)
@@ -123,7 +145,8 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
                     "variables=None turns off recording,"
                     "while sampling_interval!=None implies turn on recording")
             if indexes is not None:
-                logger.warning(
+                logger_utils.warn_once(
+                    logger,
                     "View.record with variable None is non-standard PyNN. "
                     "Only the neurons in the view have their record turned "
                     "off. Other neurons already set to record will remain "
@@ -135,9 +158,9 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         elif isinstance(variables, string_types):
             # handle special case of 'all'
             if variables == "all":
-                logger.warning(
-                    "This is non-standard PyNN, and therefore may not be "
-                    "portable to other simulators.")
+                logger_utils.warn_once(
+                    logger, 'record("all") is non-standard PyNN, and '
+                    'therefore may not be portable to other simulators.')
 
                 # get all possible recordings for this vertex
                 variables = self._get_all_possible_recordable_variables()
@@ -173,11 +196,12 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         """
         # pylint: disable=too-many-arguments
         if not gather:
-            logger.warning("sPyNNaker only supports gather=True. We will run "
-                           "as if gather was set to True.")
+            logger_utils.warn_once(
+                logger, "sPyNNaker only supports gather=True. We will run "
+                "as if gather was set to True.")
 
         if isinstance(io, string_types):
-            io = self._get_io(io)
+            io = neo.get_io(io)
 
         data = self._extract_neo_block(variables, None, clear, annotations)
         # write the neo block to the file
@@ -201,13 +225,13 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
             "structure": None,
             "size": self.size,
             "size_local": self.size,
-            "first_id": self._first_id,
-            "last_id": self._last_id,
+            "first_id": self.first_id,
+            "last_id": self.last_id,
         }
         context.update(self._annotations)
         if self.size > 0:
             context.update({
-                "local_first_id": self._first_id,
+                "local_first_id": self.first_id,
                 "cell_parameters": {}})
         if self._structure:
             context["structure"] = self._structure.describe(template=None)
@@ -247,8 +271,9 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         :rtype: neo.Block
         """
         if not gather:
-            logger.warning("sPyNNaker only supports gather=True. We will run "
-                           "as if gather was set to True.")
+            logger_utils.warn_once(
+                logger, "sPyNNaker only supports gather=True. We will run "
+                "as if gather was set to True.")
 
         return self._extract_neo_block(variables, None, clear, annotations)
 
@@ -283,10 +308,10 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
             Exception will be raised.
         :return: numpy array of the data
         """
-        logger.warning(
-            "This call is non-standard PyNN and therefore may not be "
-            "portable to other simulators. Nor do we guarantee that this "
-            "function will exist in future releases.")
+        logger_utils.warn_once(
+            logger, "spinnaker_get_data is non-standard PyNN and therefore "
+            "may not be portable to other simulators. Nor do we guarantee "
+            "that this function will exist in future releases.")
         if isinstance(variable, list):
             if len(variable) == 1:
                 variable = variable[0]
@@ -312,6 +337,15 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         return self._get_variable_unit(variable)
 
     def set(self, **kwargs):
+        for parameter, value in iteritems(kwargs):
+            try:
+                super(Population, self).set(parameter, value)
+            except InvalidParameterType:
+                super(Population, self)._initialize(parameter, value)
+
+    def tset(self, **kwargs):
+        logger.warn(
+            "This function is deprecated; call pop.set(...) instead")
         for parameter, value in iteritems(kwargs):
             try:
                 super(Population, self).set(parameter, value)
@@ -362,8 +396,30 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
 
     def get(self, parameter_names, gather=False, simplify=True):
         if simplify is not True:
-            logger.warning("The simplify value is ignored if not set to true")
-        return super(Population, self).get(parameter_names, gather)
+            logger_utils.warn_once(
+                logger, "The simplify value is ignored if not set to true")
+        return PyNNPopulationCommon.get(self, parameter_names, gather)
+
+    @property
+    def positions(self):
+        """ Return the position array for structured populations.
+        """
+        if self._positions is None:
+            if self._structure is None:
+                raise ValueError("attempted to retrieve positions "
+                                 "for an unstructured population")
+            self._positions = self._structure.generate_positions(
+                self._vertex.n_atoms)
+        return self._positions.T  # change of order in pyNN 0.8
+
+    @positions.setter
+    def positions(self, positions):
+        """ Sets all the positions in the population.
+        """
+        self._positions = positions
+
+        # state that something has changed in the population,
+        self._change_requires_mapping = True
 
     @property
     def all_cells(self):

@@ -1,6 +1,21 @@
-import spynnaker8 as pynn
+# Copyright (c) 2017-2019 The University of Manchester
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import numpy as np
 from pyNN.random import NumpyRNG, RandomDistribution
+import spynnaker8 as pynn
 
 
 def poisson_generator(rate, rng, t_start=0.0, t_stop=1000.0, array=True,
@@ -166,13 +181,13 @@ def do_run(Neurons, sim_time, record, seed=None):
             label="Poisson_pop_I", additional_parameters={"seed": seed+1})
 
     # Connectors
-    e_conn = pynn.FixedProbabilityConnector(epsilon)
-    i_conn = pynn.FixedProbabilityConnector(epsilon)
+    rng = NumpyRNG(seed=seed)
+    e_conn = pynn.FixedProbabilityConnector(epsilon, rng=rng)
+    i_conn = pynn.FixedProbabilityConnector(epsilon, rng=rng)
 
     # Use random delays for the external noise and
     # set the initial membrane voltage below the resting potential
     # to avoid the overshoot of activity in the beginning of the simulation
-    rng = NumpyRNG(seed=seed)
     delay_distr = RandomDistribution('uniform', [1.0, 16.0], rng=rng)
     ext_conn = pynn.OneToOneConnector()
 

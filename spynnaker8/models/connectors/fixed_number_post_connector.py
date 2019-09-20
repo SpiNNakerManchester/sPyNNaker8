@@ -1,9 +1,23 @@
-import logging
+# Copyright (c) 2017-2019 The University of Manchester
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from spynnaker.pyNN.models.neural_projections.connectors \
-    import FixedNumberPostConnector as CommonFixedNumberPostConnector
-from pyNN.connectors import FixedNumberPostConnector as \
-    PyNNFixedNumberPostConnector
+import logging
+from pyNN.connectors import (
+    FixedNumberPostConnector as PyNNFixedNumberPostConnector)
+from spynnaker.pyNN.models.neural_projections.connectors import (
+    FixedNumberPostConnector as CommonFixedNumberPostConnector)
 
 logger = logging.getLogger(__file__)
 
@@ -21,7 +35,7 @@ class FixedNumberPostConnector(CommonFixedNumberPostConnector,
         """
 
         :param n: \
-            number of random post-synaptic neurons connected to output
+            number of random post-synaptic neurons connected to pre-neurons
         :type n: int
         :param allow_self_connections: \
             if the connector is used to connect a Population to itself, this\
@@ -47,7 +61,5 @@ class FixedNumberPostConnector(CommonFixedNumberPostConnector,
         # pylint: disable=too-many-arguments
         super(FixedNumberPostConnector, self).__init__(
             n=n, allow_self_connections=allow_self_connections,
-            with_replacement=with_replacement, safe=safe, verbose=verbose)
-
-    def get_rng_parameters(self, n_post_neurons):
-        return {"low": 0, "high": n_post_neurons}
+            with_replacement=with_replacement, safe=safe, verbose=verbose,
+            rng=rng)

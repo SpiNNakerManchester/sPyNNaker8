@@ -1,0 +1,16 @@
+**/*.json
+**/reports/**
+**/application_generated_data_files/**
+**/*.spikes
+**/*.data
+**/*.csv
+**/IntroLab/**
+**/PyNN8Examples/**
+**/large.connections
+**/*.log
+**/*.pkl
+**/*.png
+**/*.npy
+**/*.jpg
+**/*.elf
+**/*.aplx
