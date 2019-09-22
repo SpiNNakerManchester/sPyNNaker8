@@ -516,7 +516,7 @@ def create(cellclass, cellparams=None, n=1):
     """
     if not globals_variables.has_simulator():
         raise ConfigurationException(FAILED_STATE_MSG)
-    __pynn["create"](cellclass, cellparams, n)
+    return __pynn["create"](cellclass, cellparams, n)
 
 
 def NativeRNG(seed_value):
