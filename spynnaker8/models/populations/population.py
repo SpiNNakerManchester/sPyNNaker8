@@ -14,10 +14,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
+import numpy
 import neo
 import inspect
 from six import iteritems, string_types
 from pyNN import descriptions
+from pyNN.random import NumpyRNG
 import spinn_utilities.logger_utils as logger_utils
 from spinn_front_end_common.utilities import globals_variables
 from spinn_front_end_common.utilities.exceptions import ConfigurationException
@@ -175,6 +177,18 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         else:  # list of variables, so just iterate though them
             for variable in variables:
                 self._record(variable, sampling_interval, to_file, indexes)
+
+    def sample(self, n, rng=None):
+        """ Randomly sample `n` cells from the Population, and return a\
+            PopulationView object.
+        """
+        if not rng:
+            rng = NumpyRNG()
+        indices = rng.permutation(
+            numpy.arange(len(self), dtype=numpy.int))[0:n]
+        return PopulationView(
+            self, indices,
+            label="Random sample size {} from {}".format(n, self.label))
 
     def write_data(self, io, variables='all', gather=True, clear=False,
                    annotations=None):
