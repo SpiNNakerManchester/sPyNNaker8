@@ -39,6 +39,25 @@ class TestSampling(BaseTestCase):
             v_rate=v_rate, v_rec_indexes=v_rec_indexes, is_view=False)
         sim.end()
 
+    def all(self):
+        ps = PatternSpiker()
+        sim.setup(timestep=1)
+        simtime = 100
+        spike_rate = 1
+        spike_rec_indexes = range(100)
+        v_rec_indexes = range(100)
+        v_rate = 1
+        pop = ps.create_population(
+            sim, n_neurons=32 * 2, label="test",
+            spike_rate=spike_rate, spike_rec_indexes=spike_rec_indexes,
+            v_rate=v_rate, v_rec_indexes=v_rec_indexes)
+        sim.run(simtime)
+        ps.check(
+            pop, simtime, spike_rate=spike_rate,
+            spike_rec_indexes=spike_rec_indexes,
+            v_rate=v_rate, v_rec_indexes=v_rec_indexes, is_view=False)
+        sim.end()
+
     def test_small(self):
         self.runsafe(self.small)
 
