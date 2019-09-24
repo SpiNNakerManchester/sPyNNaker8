@@ -22,7 +22,8 @@ from pyNN.space import Space as PyNNSpace
 from spinn_front_end_common.utilities import globals_variables
 from spinn_front_end_common.utilities.exceptions import ConfigurationException
 from spynnaker.pyNN.exceptions import InvalidParameterType
-from spynnaker8.models.connectors import FromListConnector, OneToOneConnector
+from spynnaker8.models.connectors import FromListConnector, OneToOneConnector, \
+    AllToAllConnector
 from spynnaker8.models.synapse_dynamics import SynapseDynamicsStatic
 # This line has to come in this order as it otherwise causes a circular
 # dependency
@@ -107,8 +108,10 @@ class Projection(PyNNProjectionCommon):
     def _check_population_param(self, param, connector):
         if isinstance(param, Population):
             return  # Good that is what we want
+        print('connector gen_on_machine', connector.generate_on_machine)
         if isinstance(param, PopulationView):
-            if isinstance(connector, OneToOneConnector):
+            if (isinstance(connector, OneToOneConnector) or
+                isinstance(connector, AllToAllConnector)):
                 return  # Testing
             else:
                 raise NotImplementedError(

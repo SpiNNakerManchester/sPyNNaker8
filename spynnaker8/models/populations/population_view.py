@@ -112,12 +112,6 @@ class PopulationView(PopulationBase):
         """
         return self.__mask
 
-#     @property
-#     def population(self):
-#         """  The population this view comes from
-#         """
-#         return self.__population
-
     @property
     def all_cells(self):
         """ An array containing the cell IDs of all neurons in the\
