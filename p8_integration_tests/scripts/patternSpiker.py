@@ -84,7 +84,8 @@ class PatternSpiker(object):
                         "Incorrect V for neuron {} at time {} in {}. "
                         "Found {} but expected {}".format(
                             neuron, t, label, v[t, i],
-                            self.V_PATTERN[(t + neuron) % self.V_COUNT]))
+                            self.V_PATTERN[
+                                (t * v_rate + neuron) % self.V_COUNT]))
 
     def check_spikes(
             self, spikes, simtime, label, spike_rate, spike_rec_indexes):
@@ -124,6 +125,7 @@ class PatternSpiker(object):
             neo = pop.get_data("all")
             spikes = neo.segments[0].spiketrains
             v = neo.segments[0].filter(name="v")[0]
+
         self.check_spikes(
             spikes, simtime, pop.label, spike_rate, spike_rec_indexes)
         self.check_v(v, pop.label, v_rate, v_rec_indexes, is_view, missing)
