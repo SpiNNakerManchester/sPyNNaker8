@@ -108,7 +108,6 @@ class Projection(PyNNProjectionCommon):
     def _check_population_param(self, param, connector):
         if isinstance(param, Population):
             return  # Good that is what we want
-        print('connector gen_on_machine', connector.generate_on_machine)
         if isinstance(param, PopulationView):
             if (isinstance(connector, OneToOneConnector) or
                 isinstance(connector, AllToAllConnector) or
