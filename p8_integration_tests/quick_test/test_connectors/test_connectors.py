@@ -17,6 +17,7 @@ import numpy
 import spynnaker8 as sim
 from spynnaker.pyNN.exceptions import SpynnakerException
 from p8_integration_tests.base_test_case import BaseTestCase
+from pyNN.random import NumpyRNG
 
 SOURCES = 5
 DESTINATIONS = 10
@@ -221,3 +222,36 @@ class ConnectorsTest(BaseTestCase):
 
     def test_multiple_connectors(self):
         self.runsafe(self.multiple_connectors)
+
+    def onetoone_population_views(self):
+        sim.setup(timestep=1.0)
+        input = sim.Population(4, sim.SpikeSourceArray([0]), label="input")
+        pop = sim.Population(4, sim.IF_curr_exp(), label="pop")
+        conn = sim.Projection(input[1:3], pop[2:4], sim.OneToOneConnector(),
+                              sim.StaticSynapse(weight=0.5, delay=2))
+        sim.run(1)
+        weights = conn.get(['weight', 'delay'], 'list')
+        sim.end()
+        target = [(1, 2, 0.5, 2.), (2, 3, 0.5, 2.)]
+        self.assertEqual(weights.tolist(), target)
+
+    def test_onetoone_population_views(self):
+        self.runsafe(self.onetoone_population_views)
+
+    def fixedprob_population_views(self):
+        sim.setup(timestep=1.0)
+        input = sim.Population(4, sim.SpikeSourceArray([0]), label="input")
+        pop = sim.Population(4, sim.IF_curr_exp(), label="pop")
+        rng = NumpyRNG(seed=1)
+        conn = sim.Projection(input[1:3], pop[2:4],
+                              sim.FixedProbabilityConnector(0.5),
+                              sim.StaticSynapse(weight=0.5, delay=2))
+        sim.run(1)
+        weights = conn.get(['weight', 'delay'], 'list')
+        sim.end()
+        # The fixed seed means this gives the same answer each time
+        target = [(1, 2, 0.5, 2.), (2, 2, 0.5, 2.)]
+        self.assertEqual(weights.tolist(), target)
+
+    def test_fixedprob_population_views(self):
+        self.runsafe(self.fixedprob_population_views)
