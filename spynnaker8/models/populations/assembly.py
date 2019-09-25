@@ -68,16 +68,31 @@ class Assembly(object):
             a2 = a1 + p
         """
         if isinstance(other, Population):
-            return self.__class__(*(self.populations + [other]))
+            return self.__class__(*(self.__populations + [other]))
         elif isinstance(other, Assembly):
-            return self.__class__(*(self.populations + other.populations))
+            return self.__class__(*(self.__populations + other.__populations))
         else:
             raise TypeError(
                 "can only add a Population or another Assembly to an Assembly")
 
+    def __repr__(self):
+        return "Assembly(*%r, label=%r)" % (self.populations, self.label)
+
+    def __len__(self):
+        """Return the total number of cells in the population (all nodes)."""
+        return self.size
+
+    @property
+    def size(self):
+        return sum(p.size for p in self.__populations)
+
     @property
     def populations(self):
         return self.__populations
+
+    @property
+    def label(self):
+        return self.__label
 
     def _insert(self, element):
         if isinstance(element, PopulationView):

@@ -24,8 +24,16 @@ class TestAssembly(BaseTestCase):
         sim.setup(timestep=1.0)
         p1 = sim.Population(1, sim.IF_curr_exp(), label="pop_1")
         p2 = sim.Population(1, sim.IF_curr_exp(), label="pop_2")
-        assembly = Assembly(p1, p2)
+        assembly = Assembly(p1, p2, label="simple")
         self.assertEqual(assembly.populations, [p1, p2])
+        self.assertEqual(2, len(assembly))
+        # Exact string not critical if it looks good
+        current_repr = \
+            "Assembly(*" \
+            "[Population(1, IFCurrExpBase, structure=None, label='pop_1'), " \
+            "Population(1, IFCurrExpBase, structure=None, label='pop_2')], " \
+            "label='simple')"
+        self.assertEqual(current_repr, str(assembly))
 
     def test___add__two(self, sim=sim):
         # adding two populations should give an Assembly

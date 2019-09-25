@@ -93,6 +93,10 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
             return PopulationView(
                 self, index_or_slice, label="view over {}".format(self.label))
 
+    def __repr__(self):
+        return "Population(%d, %r, structure=%r, label=%r)" % (
+            self.size, self.celltype, self.structure, self.label)
+
     def all(self):
         """ Iterator over cell IDs on all MPI nodes."""
         for _id in range(self._size):
