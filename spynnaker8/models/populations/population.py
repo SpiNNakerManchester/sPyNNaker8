@@ -73,6 +73,13 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         # annotations used by neo objects
         self._annotations = dict()
 
+    def __add__(self, other):
+        """ Merges populations
+        """
+        # Avoid circular import monster as Assembly uses Population
+        from .assembly import Assembly
+        return Assembly(self, other)
+
     def __iter__(self):
         """ Iterate over local cells
         """

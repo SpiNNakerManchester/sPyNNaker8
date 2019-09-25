@@ -18,15 +18,30 @@ from spynnaker8.models.populations import Assembly
 from p8_integration_tests.base_test_case import BaseTestCase
 
 
-class Test_Assembly(BaseTestCase):
+class TestAssembly(BaseTestCase):
 
     def test_simple(self):
         sim.setup(timestep=1.0)
-        pop_1 = sim.Population(1, sim.IF_curr_exp(), label="pop_1")
-        pop_2 = sim.Population(1, sim.IF_curr_exp(), label="pop_2")
-        pop_3 = sim.Population(1, sim.IF_curr_exp(), label="pop_3")
-        ass = Assembly(pop_1, pop_2)
-        self.assertEquals(2, len(ass))
-        ass =+ pop_3
-        self.assertEquals(3, len(ass))
+        p1 = sim.Population(1, sim.IF_curr_exp(), label="pop_1")
+        p2 = sim.Population(1, sim.IF_curr_exp(), label="pop_2")
+        assembly = Assembly(p1, p2)
+        self.assertEqual(assembly.populations, [p1, p2])
 
+    def test___add__two(self, sim=sim):
+        # adding two populations should give an Assembly
+        sim.setup(timestep=1.0)
+        p1 = sim.Population(6, sim.IF_curr_exp())
+        p2 = sim.Population(17, sim.IF_cond_exp())
+        assembly = p1 + p2
+        self.assertIsInstance(assembly, sim.Assembly)
+        self.assertEqual(assembly.populations, [p1, p2])
+
+    def test___add__three(self, sim=sim):
+        # adding three populations should give an Assembly
+        sim.setup(timestep=1.0)
+        p1 = sim.Population(6, sim.IF_curr_exp())
+        p2 = sim.Population(17, sim.IF_cond_exp())
+        p3 = sim.Population(9, sim.IF_cond_exp())
+        assembly = p1 + p2 + p3
+        self.assertIsInstance(assembly, sim.Assembly)
+        self.assertEqual(assembly.populations, [p1, p2, p3])

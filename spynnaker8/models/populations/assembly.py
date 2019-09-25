@@ -14,7 +14,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
-from pyNN import common as pynn_common
+try:
+    basestring
+except NameError:
+    basestring = str
+
 from spinn_front_end_common.utilities import globals_variables
 from .population_view import PopulationView
 from .population import Population
@@ -22,11 +26,58 @@ from .population import Population
 logger = logging.getLogger(__name__)
 
 
-class Assembly(pynn_common.Assembly):
+class Assembly(object):
+    """
+    A group of neurons, may be heterogeneous, in contrast to a Population where
+    all the neurons are of the same type.
+
+    Arguments:
+        populations:
+            Populations or PopulationViews
+        kwargs:
+            May contain a keyword argument 'label'
+    """
+
+    __slots__ = ("__label", "__populations")
+
+    __count = 0
+
+    #@property
+    #def _simulator(self):
+    #    return globals_variables.get_simulator()
+
+    def __init__(self, *populations, **kwargs):
+        """
+        Create an Assembly of Populations and/or PopulationViews.
+        """
+        if kwargs:
+            assert list(kwargs.keys()) == ['label']
+        self.__populations = []
+        for p in populations:
+            self._insert(p)
+        self.__label = kwargs.get('label', 'assembly%d' % Assembly.__count)
+        assert isinstance(self.__label, basestring), \
+            "label must be a string or unicode"
+        Assembly.__count += 1
+
+    def __add__(self, other):
+        """
+        An Assembly may be added to a Population, PopulationView or Assembly
+        with the '+' operator, returning a new Assembly, e.g.::
+
+            a2 = a1 + p
+        """
+        if isinstance(other, Population):
+            return self.__class__(*(self.populations + [other]))
+        elif isinstance(other, Assembly):
+            return self.__class__(*(self.populations + other.populations))
+        else:
+            raise TypeError(
+                "can only add a Population or another Assembly to an Assembly")
 
     @property
-    def _simulator(self):
-        return globals_variables.get_simulator()
+    def populations(self):
+        return self.__populations
 
     def _insert(self, element):
         if isinstance(element, PopulationView):
@@ -45,7 +96,7 @@ class Assembly(pynn_common.Assembly):
             raise NotImplementedError(
                 "Adding views to Assemblies not yet suppurted")
         if isinstance(element, Population):
-            if not element in self.populations:
-                self.populations.append(element)
+            if not element in self.__populations:
+                self.__populations.append(element)
             else:
                 logging.warning('Adding a Population twice in an Assembly is not possible')
