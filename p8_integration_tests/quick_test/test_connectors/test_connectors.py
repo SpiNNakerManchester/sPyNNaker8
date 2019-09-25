@@ -244,13 +244,13 @@ class ConnectorsTest(BaseTestCase):
         pop = sim.Population(4, sim.IF_curr_exp(), label="pop")
         rng = NumpyRNG(seed=1)
         conn = sim.Projection(input[1:3], pop[2:4],
-                              sim.FixedProbabilityConnector(0.5),
+                              sim.FixedProbabilityConnector(0.5, rng=rng),
                               sim.StaticSynapse(weight=0.5, delay=2))
         sim.run(1)
         weights = conn.get(['weight', 'delay'], 'list')
         sim.end()
         # The fixed seed means this gives the same answer each time
-        target = [(1, 2, 0.5, 2.), (2, 2, 0.5, 2.)]
+        target = [(1, 3, 0.5, 2.), (2, 2, 0.5, 2.)]
         self.assertEqual(weights.tolist(), target)
 
     def test_fixedprob_population_views(self):
