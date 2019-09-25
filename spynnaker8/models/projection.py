@@ -99,8 +99,10 @@ class Projection(PyNNProjectionCommon):
             target=receptor_type, spinnaker_control=self.__simulator,
             pre_synaptic_population=pre_synaptic_population,
             post_synaptic_population=post_synaptic_population,
-            prepop_view=isinstance(pre_synaptic_population, PopulationView),
-            postpop_view=isinstance(post_synaptic_population, PopulationView),
+            prepop_is_view=isinstance(pre_synaptic_population,
+                                      PopulationView),
+            postpop_is_view=isinstance(post_synaptic_population,
+                                       PopulationView),
             rng=rng, machine_time_step=self.__simulator.machine_time_step,
             user_max_delay=self.__simulator.max_delay, label=label,
             time_scale_factor=self.__simulator.time_scale_factor)
