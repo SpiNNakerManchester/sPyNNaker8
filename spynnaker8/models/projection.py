@@ -116,7 +116,7 @@ class Projection(PyNNProjectionCommon):
                     isinstance(connector, FixedProbabilityConnector)):
                 # Check whether the array is contiguous or not
                 inds = param._indexes
-                if (inds==tuple(range(inds[0], inds[-1]+1))):
+                if (inds==tuple(range(inds[0], inds[-1] + 1))):
                     return
                 else:
                     raise NotImplementedError(
