@@ -114,7 +114,14 @@ class Projection(PyNNProjectionCommon):
             if (isinstance(connector, OneToOneConnector) or
                     isinstance(connector, AllToAllConnector) or
                     isinstance(connector, FixedProbabilityConnector)):
-                return  # This scenario is also supported
+                # Check whether the array is contiguous or not
+                inds = param._indexes
+                if (inds==tuple(range(inds[0], inds[-1]+1))):
+                    return
+                else:
+                    raise NotImplementedError(
+                        "Projections over views only work on contiguous "
+                        "arrays, e.g. view = pop[n:m], not view = pop[n,m]")
             else:
                 raise NotImplementedError(
                     "Projections over views not currently supported with "
