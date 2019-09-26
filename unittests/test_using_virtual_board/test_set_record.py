@@ -14,6 +14,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import six
+
+from data_specification.enums import DataType
 from spynnaker.pyNN.models.common import NeuronRecorder
 import spynnaker8 as sim
 from p8_integration_tests.base_test_case import BaseTestCase
@@ -140,7 +142,17 @@ class TestSetRecord(BaseTestCase):
     # to do this
 
     def test_turn_off_some_indexes(self):
-        recorder = NeuronRecorder(["spikes", "v", "gsyn_exc", "gsyn_inh"], 5)
+        recorder = NeuronRecorder(
+            ["spikes", "v", "gsyn_exc", "gsyn_inh"],
+            {
+                "v": DataType.S1615,
+                "gsyn_exc": DataType.S1615,
+                "gsyn_inh": DataType.S1615},
+            {
+                "v": DataType.INT32,
+                "gsyn_exc": DataType.INT32,
+                "gsyn_inh": DataType.INT32
+            }, 5)
         recorder.set_recording("spikes", True)
         self.assertListEq(["spikes"], recorder.recording_variables)
         recorder.set_recording("spikes", False, indexes=[2, 4])
