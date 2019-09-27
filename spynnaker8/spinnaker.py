@@ -158,7 +158,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
         # Convert dt into microseconds and divide by
         # realtime proportion to get hardware timestep
         hardware_timestep_us = int(round(
-            (1000.0 * float(self.dt)) / float(self.timescale_factor)))
+            float(self._machine_time_step) / float(self.timescale_factor)))
 
         # Determine how long simulation is in timesteps
         duration_timesteps = int(math.ceil(
@@ -222,7 +222,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
         :return: the machine time step
         """
 
-        return self._machine_time_step
+        return self._machine_time_step / 1000.0
 
     @dt.setter
     def dt(self, new_value):
@@ -230,7 +230,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 
         :param new_value: new value for machine time step
         """
-        self._machine_time_step = new_value
+        self._machine_time_step = new_value * 1000.0
 
     @property
     def t(self):
