@@ -45,4 +45,5 @@ class SynapseDynamicsSTDP(_BaseClass):
         # instantiate common functionality.
         super(SynapseDynamicsSTDP, self).__init__(
             timing_dependence, weight_dependence, voltage_dependence,
-            dendritic_delay_fraction, weight, delay, delay_autapses)
+            dendritic_delay_fraction, weight, delay,
+            delay_autapses=delay_autapses)
