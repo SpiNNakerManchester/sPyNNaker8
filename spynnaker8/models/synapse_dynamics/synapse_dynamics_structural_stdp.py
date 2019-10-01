@@ -31,7 +31,8 @@ class SynapseDynamicsStructuralSTDP(STDPStructuralBaseClass):
             initial_weight=CommonSP.DEFAULT_INITIAL_WEIGHT,
             initial_delay=CommonSP.DEFAULT_INITIAL_DELAY,
             s_max=CommonSP.DEFAULT_S_MAX, seed=None,
-            weight=PyNNStaticSynapse.default_parameters['weight'], delay=None):
+            weight=PyNNStaticSynapse.default_parameters['weight'], delay=None,
+            delay_autapses=True):
 
         # move data from timing to weight dependence over as needed to reflect
         # standard structure underneath
@@ -49,4 +50,5 @@ class SynapseDynamicsStructuralSTDP(STDPStructuralBaseClass):
             voltage_dependence=voltage_dependence,
             dendritic_delay_fraction=dendritic_delay_fraction, f_rew=f_rew,
             initial_weight=initial_weight, initial_delay=initial_delay,
-            s_max=s_max, seed=seed, weight=weight, delay=delay)
+            s_max=s_max, seed=seed, weight=weight, delay=delay,
+            delay_autapses=delay_autapses)
