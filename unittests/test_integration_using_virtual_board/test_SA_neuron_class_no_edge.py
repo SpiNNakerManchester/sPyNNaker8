@@ -20,7 +20,7 @@ from p8_integration_tests.base_test_case import BaseTestCase
 class SSANeuronClassNoEdgeTest(BaseTestCase):
 
     def test_run(self):
-        sim.setup()
+        sim.setup(timestep=1, time_scale_factor=1)
 
         sim.Population(3, sim.SpikeSourceArray,
                        {"spike_times": [1.0, 2.0, 3.0]})
