@@ -17,6 +17,7 @@ import six
 from spynnaker.pyNN.models.common import NeuronRecorder
 import spynnaker8 as sim
 from p8_integration_tests.base_test_case import BaseTestCase
+from spinn_front_end_common.utilities.globals_variables import get_simulator
 
 
 class TestSetRecord(BaseTestCase):
@@ -86,10 +87,12 @@ class TestSetRecord(BaseTestCase):
         ssp = sim.Population(2, sim.SpikeSourcePoisson(rate=100.0),
                              additional_parameters={"seed": 1})
         if_curr.record("spikes", sampling_interval=2)
+        local_time_period_map = {"fake_vertex": 1000}
         ssa.record("spikes", sampling_interval=2)
         ssp.record("spikes", sampling_interval=2)
         self.assertListEq(["spikes"], if_curr._get_all_recording_variables())
-        assert recorder.get_neuron_sampling_interval("spikes") == 2
+        assert recorder.get_neuron_sampling_interval(
+            "spikes", "fake_vertex", local_time_period_map) == 2
 
     def test_set_spikes_interval2(self):
         sim.setup(timestep=0.5)
@@ -98,7 +101,9 @@ class TestSetRecord(BaseTestCase):
         self.assertListEq([], if_curr._get_all_recording_variables())
         if_curr.record("spikes", sampling_interval=2.5)
         self.assertListEq(["spikes"], if_curr._get_all_recording_variables())
-        assert recorder.get_neuron_sampling_interval("spikes") == 2.5
+        local_time_period_map = {"fake_vertex": 500}
+        assert recorder.get_neuron_sampling_interval(
+            "spikes", "fake_vertex", local_time_period_map) == 2.5
 
     def test_set_spikes_indexes(self):
         sim.setup(timestep=1)
@@ -141,7 +146,8 @@ class TestSetRecord(BaseTestCase):
 
     def test_turn_off_some_indexes(self):
         recorder = NeuronRecorder(["spikes", "v", "gsyn_exc", "gsyn_inh"], 5)
-        recorder.set_recording("spikes", True)
+        recorder.set_recording("spikes", None, None, "fake_vertex", 1000, True)
         self.assertListEq(["spikes"], recorder.recording_variables)
-        recorder.set_recording("spikes", False, indexes=[2, 4])
+        recorder.set_recording(
+            "spikes", None, [2, 4], "fake_vertex", 1000, False)
         self.assertListEq([0, 1, 3], recorder._indexes["spikes"])
