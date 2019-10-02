@@ -62,94 +62,6 @@ def trim_spikes(spikes, indexes):
 
 class TestGetting(BaseTestCase):
 
-    def test_simple_spikes(self):
-        sim.setup(timestep=1.0)
-        pop = sim.Population(4, sim.IF_curr_exp(), label="a label")
-        pop._get_spikes = mock_spikes
-        pop._get_recorded_matrix = mock_v_all
-        get_simulator().get_current_time = mock_time
-
-        neo = pop.getSpikes()
-        spikes = neo_convertor.convert_spikes(neo)
-        assert numpy.array_equal(spikes,  mock_spikes())
-        spiketrains = neo.segments[0].spiketrains
-        assert 4 == len(spiketrains)
-
-        #  gather False has not effect testing that here
-        neo = pop.get_data("spikes", gather=False)
-        spikes = neo_convertor.convert_spikes(neo)
-        assert numpy.array_equal(spikes,  mock_spikes())
-        spiketrains = neo.segments[0].spiketrains
-        assert 4 == len(spiketrains)
-
-        neo = pop.get_v()
-        v = neo.segments[0].filter(name='v')[0].magnitude
-        (target, _, _) = mock_v_all("any")
-        assert numpy.array_equal(v,  target)
-
-        neo = pop.get_gsyn()
-        exc = neo.segments[0].filter(name='gsyn_exc')[0].magnitude
-        assert numpy.array_equal(exc,  target)
-        inh = neo.segments[0].filter(name='gsyn_inh')[0].magnitude
-        assert numpy.array_equal(inh,  target)
-
-        sim.end()
-
-    def test_get_spikes_by_index(self):
-        sim.setup(timestep=1.0)
-        pop = sim.Population(4, sim.IF_curr_exp(), label="a label")
-        pop.record("spikes")
-
-        pop._get_spikes = mock_spikes
-        get_simulator().get_current_time = mock_time
-
-        neo = pop.get_data_by_indexes("spikes", [1, 2])
-        spikes = neo_convertor.convert_spikes(neo)
-        target = trim_spikes(mock_spikes(), [1, 2])
-        assert numpy.array_equal(spikes, target)
-        spiketrains = neo.segments[0].spiketrains
-        assert 2 == len(spiketrains)
-
-        sim.end()
-
-    def test_get_spikes_by_view(self):
-        sim.setup(timestep=1.0)
-        pop = sim.Population(4, sim.IF_curr_exp(), label="a label")
-        pop._get_spikes = mock_spikes
-        get_simulator().get_current_time = mock_time
-
-        view = pop[1:3]
-        view.record("spikes")
-        neo = view.get_data("spikes", gather=False)
-        spikes = neo_convertor.convert_spikes(neo)
-        target = trim_spikes(mock_spikes(), [1, 2])
-        assert numpy.array_equal(spikes, target)
-        spiketrains = neo.segments[0].spiketrains
-        assert 2 == len(spiketrains)
-
-        sim.end()
-
-    def test_get_spikes_view_missing(self):
-        sim.setup(timestep=1.0)
-        pop = sim.Population(4, sim.IF_curr_exp(), label="a label")
-        pop._get_spikes = mock_spikes
-        pop._get_recorded_matrix = mock_v_all
-        get_simulator().get_current_time = mock_time
-
-        view = pop[2:4]
-        neo = view.get_data("spikes")
-        spikes = neo_convertor.convert_spikes(neo)
-        target = trim_spikes(mock_spikes(), [2])
-        assert numpy.array_equal(spikes, target)
-        spiketrains = neo.segments[0].spiketrains
-        assert 2 == len(spiketrains)
-        assert 2 == len(spiketrains[0])
-        assert 2 == spiketrains[0].annotations['source_index']
-        assert 0 == len(spiketrains[1])
-        assert 3 == spiketrains[1].annotations['source_index']
-
-        sim.end()
-
     def test_get_v_view(self):
         sim.setup(timestep=1.0)
         pop = sim.Population(4, sim.IF_curr_exp(), label="a label")
@@ -188,63 +100,11 @@ class TestGetting(BaseTestCase):
         sim.setup(timestep=1.0)
         pop = sim.Population(4, sim.IF_curr_exp(), label="a label")
         pop.record("spikes")
-        pop._get_spikes = mock_spikes
-        get_simulator().get_current_time = mock_time
 
-        assert {0: 7, 1: 3, 2: 2, 3: 0} == pop.get_spike_counts()
+        assert {0: 0, 1: 0, 2: 0, 3: 0} == pop.get_spike_counts()
 
         view = pop[1:4]
-        assert {1: 3, 2: 2, 3: 0} == view.get_spike_counts()
-
-        assert 3 == pop.meanSpikeCount()
-        assert 5/3 == view.mean_spike_count()
-
-        sim.end()
-
-    def test_write(self):
-        sim.setup(timestep=1.0)
-        pop = sim.Population(4, sim.IF_curr_exp(), label="a label")
-        pop._get_spikes = mock_spikes
-        pop._get_recorded_matrix = mock_v_all
-        get_simulator().get_current_time = mock_time
-
-        # Note gather=False will be ignored just testing it can be
-        pop.write_data("spikes.pkl", "spikes", gather=False)
-        try:
-            with open("spikes.pkl") as pkl:
-                neo = pickle.load(pkl)
-                spikes = neo_convertor.convert_spikes(neo)
-                assert numpy.array_equal(spikes,  mock_spikes())
-        except UnicodeDecodeError:
-            raise SkipTest(
-                "https://github.com/NeuralEnsemble/python-neo/issues/529")
-
-        pop.printSpikes("spikes.pkl")
-        try:
-            with open("spikes.pkl") as pkl:
-                neo = pickle.load(pkl)
-                spikes = neo_convertor.convert_spikes(neo)
-                assert numpy.array_equal(spikes,  mock_spikes())
-        except UnicodeDecodeError:
-            raise SkipTest(
-                "https://github.com/NeuralEnsemble/python-neo/issues/529")
-
-        (target, _, _) = mock_v_all("any")
-
-        pop.print_v("v.pkl")
-        with open("v.pkl") as pkl:
-            neo = pickle.load(pkl)
-            v = neo.segments[0].filter(name='v')[0].magnitude
-            assert v.shape == target.shape
-            assert numpy.array_equal(v,  target)
-
-        pop.print_gsyn("gsyn.pkl")
-        with open("gsyn.pkl") as pkl:
-            neo = pickle.load(pkl)
-            exc = neo.segments[0].filter(name='gsyn_exc')[0].magnitude
-            assert numpy.array_equal(exc,  target)
-            inh = neo.segments[0].filter(name='gsyn_inh')[0].magnitude
-            assert numpy.array_equal(inh,  target)
+        assert {1: 0, 2: 0, 3: 0} == view.get_spike_counts()
 
         sim.end()
 

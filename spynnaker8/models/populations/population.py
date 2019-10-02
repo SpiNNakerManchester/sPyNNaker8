@@ -310,6 +310,7 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         :type annotations: dict
         :rtype: neo.Block
         """
+
         return self._extract_neo_block(variables, indexes, clear, annotations)
 
     def spinnaker_get_data(self, variable):

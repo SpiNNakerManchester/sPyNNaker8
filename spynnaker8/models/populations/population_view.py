@@ -21,6 +21,7 @@ from pyNN.random import NumpyRNG
 from spinn_utilities.ranged.abstract_sized import AbstractSized
 from .idmixin import IDMixin
 from .population_base import PopulationBase
+from spinn_front_end_common.utilities.globals_variables import get_simulator
 
 logger = logging.getLogger(__name__)
 
@@ -234,11 +235,15 @@ class PopulationView(PopulationBase):
         """
         logger.info("get_spike_counts is inefficient as it just counts the "
                     "results of get_datas('spikes')")
-        neo = self.get_data("spikes")
-        spiketrains = neo.segments[len(neo.segments) - 1].spiketrains
-        return {
-            idx: len(spiketrains[i])
-            for i, idx in enumerate(self.__indexes)}
+        if get_simulator().has_ran:
+            neo = self.get_data("spikes")
+            spiketrains = neo.segments[len(neo.segments) - 1].spiketrains
+            return {
+                idx: len(spiketrains[i])
+                for i, idx in enumerate(self.__indexes)}
+        else:
+            return {
+                idx: 0 for i, idx in enumerate(self.__indexes)}
 
     @property
     def grandparent(self):
