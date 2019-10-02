@@ -24,10 +24,10 @@ class TestOnlyCoresRecording(BaseTestCase):
         sim.setup(timestep=1.0)
         sim.set_number_of_neurons_per_core(sim.IF_curr_exp, 100)
 
-        input = sim.Population(1, sim.SpikeSourceArray(spike_times=[0]),
-                               label="input")
-        input2 = sim.Population(1, sim.SpikeSourceArray(spike_times=[0]),
-                               label="input")
+        input = sim.Population(
+            1, sim.SpikeSourceArray(spike_times=[0]), label="input")
+        input2 = sim.Population(
+            1, sim.SpikeSourceArray(spike_times=[0]), label="input")
         input.set_constraint(ChipAndCoreConstraint(0, 0, 1))
         input2.set_constraint(ChipAndCoreConstraint(0, 0, 3))
         pop_1 = sim.Population(100, sim.IF_curr_exp(), label="pop_1")
