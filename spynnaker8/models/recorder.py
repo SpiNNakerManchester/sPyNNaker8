@@ -101,33 +101,36 @@ class Recorder(RecordingCommon):
     def cache_data(self):
         """ Store data for later extraction
         """
-        variables = self._get_all_recording_variables()
-        if variables:
-            segment_number = get_simulator().segment_counter
-            logger.info("Caching data for segment {:d}", segment_number)
+        if get_simulator().has_ran:
+            variables = self._get_all_recording_variables()
+            graph_mapper = get_simulator().graph_mapper
+            local_time_period_map = get_simulator().local_time_period_map
+            if variables:
+                segment_number = get_simulator().segment_counter
+                logger.info("Caching data for segment {:d}", segment_number)
 
-            data_cache = DataCache(
-                label=self._population.label,
-                description=self._population.describe(),
-                segment_number=segment_number,
-                recording_start_time=self._recording_start_time,
-                t=get_simulator().t)
+                data_cache = DataCache(
+                    label=self._population.label,
+                    description=self._population.describe(),
+                    segment_number=segment_number,
+                    recording_start_time=self._recording_start_time,
+                    t=get_simulator().t)
 
-            for variable in variables:
-                if variable == SPIKES:
-                    data = self._get_spikes()
-                    sampling_interval = self._population._vertex. \
-                        get_spikes_sampling_interval()
-                    indexes = None
-                else:
-                    results = self._get_recorded_matrix(variable)
-                    (data, indexes, sampling_interval) = results
-                data_cache.save_data(
-                    variable=variable, data=data, indexes=indexes,
-                    n_neurons=self._population.size,
-                    units=self._get_units(variable),
-                    sampling_interval=sampling_interval)
-            self._data_cache[segment_number] = data_cache
+                for variable in variables:
+                    if variable == SPIKES:
+                        data = self._get_spikes()
+                        sampling_interval = self._population._vertex. \
+                            get_spikes_sampling_interval()
+                        indexes = None
+                    else:
+                        results = self._get_recorded_matrix(variable)
+                        (data, indexes, sampling_interval) = results
+                    data_cache.save_data(
+                        variable=variable, data=data, indexes=indexes,
+                        n_neurons=self._population.size,
+                        units=self._get_units(variable),
+                        sampling_interval=sampling_interval)
+                self._data_cache[segment_number] = data_cache
 
     def _filter_recorded(self, filter_ids):
         record_ids = list()
