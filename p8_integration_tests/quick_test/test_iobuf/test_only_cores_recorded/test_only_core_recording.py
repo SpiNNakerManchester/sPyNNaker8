@@ -15,6 +15,7 @@
 
 import spynnaker8 as sim
 from p8_integration_tests.base_test_case import BaseTestCase
+from pacman.model.constraints.placer_constraints import ChipAndCoreConstraint
 
 
 class TestOnlyCoresRecording(BaseTestCase):
@@ -25,12 +26,17 @@ class TestOnlyCoresRecording(BaseTestCase):
 
         input = sim.Population(1, sim.SpikeSourceArray(spike_times=[0]),
                                label="input")
-        pop_1 = sim.Population(200, sim.IF_curr_exp(), label="pop_1")
+        input2 = sim.Population(1, sim.SpikeSourceArray(spike_times=[0]),
+                               label="input")
+        input.set_constraint(ChipAndCoreConstraint(0, 0, 1))
+        input2.set_constraint(ChipAndCoreConstraint(0, 0, 3))
+        pop_1 = sim.Population(100, sim.IF_curr_exp(), label="pop_1")
+        pop_1.set_constraint(ChipAndCoreConstraint(1, 1, 1))
         sim.Projection(input, pop_1, sim.AllToAllConnector(),
                        synapse_type=sim.StaticSynapse(weight=5, delay=18))
         sim.run(500)
 
-        provenance_files = self.get_provenance_files()
+        provenance_files = self.get_app_iobuf_files()
         sim.end()
 
         # extract_iobuf_from_cores = 0,0,1
