@@ -104,7 +104,7 @@ class Recorder(RecordingCommon):
         if get_simulator().has_ran:
             variables = self._get_all_recording_variables()
             graph_mapper = get_simulator().graph_mapper
-            local_time_period_map = get_simulator().local_time_period_map
+            local_time_period_map = get_simulator().local_timer_period_map
             if variables:
                 segment_number = get_simulator().segment_counter
                 logger.info("Caching data for segment {:d}", segment_number)
@@ -119,8 +119,10 @@ class Recorder(RecordingCommon):
                 for variable in variables:
                     if variable == SPIKES:
                         data = self._get_spikes()
-                        sampling_interval = self._population._vertex. \
-                            get_spikes_sampling_interval()
+                        sampling_interval = (
+                            self._population._vertex.
+                            get_spikes_sampling_interval(
+                                graph_mapper, local_time_period_map))
                         indexes = None
                     else:
                         results = self._get_recorded_matrix(variable)
