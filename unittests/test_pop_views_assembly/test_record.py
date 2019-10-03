@@ -21,6 +21,24 @@ from p8_integration_tests.base_test_case import BaseTestCase
 
 class TestPopulation(BaseTestCase):
 
+    def test_get_spikes_without_run(self):
+        sim.setup(timestep=1.0)
+        pop = sim.Population(4, sim.IF_curr_exp())
+        pop.record(["spikes"])
+        data = pop.get_data("spikes")
+        for atom in data.segments[0].spiketrains:
+            assert atom.size == 0
+        sim.end()
+
+    def test_get_v_without_run(self):
+        sim.setup(timestep=1.0)
+        pop = sim.Population(4, sim.IF_curr_exp())
+        pop.record(["v"])
+        data = pop.get_data("v")
+        for atom in data.segments[0].filter(name='v'):
+            assert atom.size == 0
+        sim.end()
+
     def test_depricated(self):
         sim.setup(timestep=1.0)
         pop = sim.Population(4, sim.IF_curr_exp())
