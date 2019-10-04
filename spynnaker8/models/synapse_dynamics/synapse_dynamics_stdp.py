@@ -30,7 +30,7 @@ class SynapseDynamicsSTDP(_BaseClass):
             self, timing_dependence, weight_dependence,
             voltage_dependence=None, dendritic_delay_fraction=1.0,
             weight=PyNNStaticSynapse.default_parameters['weight'], delay=None,
-            delay_autapses=True):
+            no_backprop_delay=False):
         # pylint: disable=too-many-arguments
 
         # move data from timing to weight dependence over as needed to reflect
@@ -46,4 +46,4 @@ class SynapseDynamicsSTDP(_BaseClass):
         super(SynapseDynamicsSTDP, self).__init__(
             timing_dependence, weight_dependence, voltage_dependence,
             dendritic_delay_fraction, weight, delay,
-            delay_autapses=delay_autapses)
+            no_backprop_delay=no_backprop_delay)
