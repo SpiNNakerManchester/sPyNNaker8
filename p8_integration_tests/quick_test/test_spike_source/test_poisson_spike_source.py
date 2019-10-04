@@ -21,14 +21,13 @@ import math
 
 class TestPoissonSpikeSource(BaseTestCase):
 
-    def check_spikes(self, input, expected):
+    def check_spikes(self, n_neurons, input, expected):
         neo = input.get_data("spikes")
         spikes = neo.segments[0].spiketrains
-        count = 0
-        for a_spikes in spikes:
-            count += len(a_spikes)
+        count = sum(len(s) for s in spikes)
         tolerance = math.sqrt(expected)
-        self.assertAlmostEqual(expected, count/len(spikes), delta=tolerance,
+        self.assertAlmostEqual(expected, float(count) / float(n_neurons),
+                               delta=tolerance,
                                msg="Error on {}".format(input.label))
 
     def recording_poisson_spikes(self, run_zero):
@@ -59,7 +58,7 @@ class TestPoissonSpikeSource(BaseTestCase):
         if run_zero:
             sim.run(0)
         sim.run(5000)
-        self.check_spikes(input, 5)
+        self.check_spikes(n_neurons, input, 5)
 
         sim.end()
 
@@ -101,7 +100,7 @@ class TestPoissonSpikeSource(BaseTestCase):
         input.record("spikes")
 
         sim.run(5000)
-        self.check_spikes(input, 5)
+        self.check_spikes(n_neurons, input, 5)
 
         sim.end()
 
@@ -134,7 +133,7 @@ class TestPoissonSpikeSource(BaseTestCase):
         input.record("spikes")
 
         sim.run(5000)
-        self.check_spikes(input, 0)
+        self.check_spikes(n_neurons, input, 0)
 
         sim.end()
 
@@ -155,7 +154,7 @@ class TestPoissonSpikeSource(BaseTestCase):
             inputs[rate] = input
         sim.run(seconds * 1000)
         for rate in rates:
-            self.check_spikes(inputs[rate], rate*seconds)
+            self.check_spikes(n_neurons, inputs[rate], rate*seconds)
         sim.end()
 
     def recording_poisson_spikes_rate_fast(self):
