@@ -141,7 +141,7 @@ class TestPoissonSpikeSource(BaseTestCase):
     def test_recording_poisson_spikes_rate_0(self):
         self.runsafe(self.recording_poisson_spikes_rate_0)
 
-    def check_rates(self, rates, seconds):
+    def check_rates(self, rates, seconds, seed):
         n_neurons = 100
         sim.setup(timestep=1.0)
         inputs = {}
@@ -149,7 +149,8 @@ class TestPoissonSpikeSource(BaseTestCase):
             params = {"rate": rate}
             input = sim.Population(
                 n_neurons, sim.SpikeSourcePoisson, params,
-                label='inputSpikes_{}'.format(rate))
+                label='inputSpikes_{}'.format(rate),
+                additional_parameters={"seed": seed})
             input.record("spikes")
             inputs[rate] = input
         sim.run(seconds * 1000)
@@ -159,7 +160,8 @@ class TestPoissonSpikeSource(BaseTestCase):
 
     def recording_poisson_spikes_rate_fast(self):
         self.check_rates(
-            [10.24, 20.48, 40.96, 81.92, 163.84, 327.68, 655.36, 1310.72], 10)
+            [10.24, 20.48, 40.96, 81.92, 163.84, 327.68, 655.36, 1310.72], 10,
+            0)
 
     def test_recording_poisson_spikes_rate_fast(self):
         self.runsafe(self.recording_poisson_spikes_rate_fast)
@@ -167,7 +169,7 @@ class TestPoissonSpikeSource(BaseTestCase):
     def recording_poisson_spikes_rate_slow(self):
         self.check_rates(
             [0, 0.01, 0.02, 0.04, 0.08, 0.16, 0.32, 0.64, 1.28, 2.56, 5.12],
-            100)
+            100, 1)
 
     def test_recording_poisson_spikes_rate_slow(self):
         self.runsafe(self.recording_poisson_spikes_rate_slow)
