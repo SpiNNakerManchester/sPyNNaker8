@@ -26,6 +26,7 @@ class TestPoissonSpikeSource(BaseTestCase):
         spikes = neo.segments[0].spiketrains
         count = sum(len(s) for s in spikes)
         tolerance = math.sqrt(expected)
+        print(expected, float(count) / float(n_neurons))
         self.assertAlmostEqual(expected, float(count) / float(n_neurons),
                                delta=tolerance,
                                msg="Error on {}".format(input.label))
