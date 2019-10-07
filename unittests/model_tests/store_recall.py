@@ -1,4 +1,8 @@
 import spynnaker8 as p
+from spinn_front_end_common.utility_models import (
+ReverseIpTagMultiCastSource)
+from spynnaker.pyNN.spynnaker_external_device_plugin_manager import (SpynnakerExternalDevicePluginManager)
+from spynnaker.pyNN.utilities import constants
 import numpy
 import math
 import unittest
@@ -6,9 +10,16 @@ from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt
 import numpy as np
 
+# @staticmethod
+def add_poisson_live_rate_control(poisson_population, controller):
+    vertex = poisson_population._get_vertex
+    SpynnakerExternalDevicePluginManager.add_edge(
+        controller._get_vertex, vertex, constants.LIVE_POISSON_CONTROL_PARTITION_ID)
+
+
 batches = 40
-num_repeats = 3  # in a batch
-cycle_time = 1023
+num_repeats = 10  # in a batch
+cycle_time = 2047
 timestep = 1
 p.setup(timestep) # simulation timestep (ms)
 runtime = num_repeats * cycle_time * batches
@@ -42,13 +53,14 @@ input_pop_size = 25
 readout_neuron_params = {
     "v": 0,
     "v_thresh": 30, # controls firing rate of error neurons
+    "poisson_pop_size": input_pop_size,
     }
 
 tau_err = 20
 
 init_weight = 0.2
 
-p.set_number_of_neurons_per_core(p.extra_models.IFCurrExpERBPad, 32)
+p.set_number_of_neurons_per_core(p.extra_models.EPropAdaptive, 32)
 p.set_number_of_neurons_per_core(p.SpikeSourcePoisson, 32)
 
 w_in_rec_exc_dist = p.RandomDistribution(
@@ -79,7 +91,7 @@ w_out_out_dist = p.RandomDistribution(
 ###############################################################################
 
 # Input population
-pop_in = p.Population(100,
+pop_in = p.Population(4*input_pop_size,
                       p.SpikeSourcePoisson,
                       {'rate': rate_on},
                       label='pop_in')
@@ -88,7 +100,7 @@ pop_in = p.Population(100,
 pop_rec = p.Population(20,
                       p.extra_models.EPropAdaptive,
                       # {10 LIF, 10 adaptive},
-                      label='pop_in')
+                      label='pop_rec')
 
 # Output population
 pop_out = p.Population(3, # HARDCODED 3: One readout; one exc err, one inh err
@@ -101,6 +113,12 @@ pop_out = p.Population(3, # HARDCODED 3: One readout; one exc err, one inh err
 ###############################################################################
 # Build Projections
 ###############################################################################
+
+#######################################
+# readout to poisson sources
+#######################################
+
+add_poisson_live_rate_control(poisson_population=pop_in, controller=pop_out)
 
 # hidden_pop_timing_dependence=p.TimingDependenceERBP(
 #         tau_plus=tau_err, A_plus=0.01, A_minus=0.01)
@@ -134,7 +152,7 @@ inp_rec_exc = p.Projection(
     p.AllToAllConnector(),
 #     p.StaticSynapse(weight=w_in_rec_exc_dist, delay=timestep),
     synapse_type=learning_rule,
-    receptor_type="excitatory")
+    receptor_type="exc_err")
 
 # input to recurrent inhibitory
 # Define learning rule object
@@ -151,7 +169,7 @@ inp_rec_inh = p.Projection(
     p.AllToAllConnector(),
 #     p.StaticSynapse(weight=w_in_rec_inh_dist, delay=timestep),
     synapse_type=learning_rule,
-    receptor_type="inhibitory")
+    receptor_type="exc_err")
 
 
 #######################################
@@ -275,7 +293,7 @@ fb_out_out_inh = p.Projection(
 # Run Simulation
 ###############################################################################
 
-# pop_in.record('spikes')
+pop_in.record('spikes')
 pop_rec.record("spikes")
 pop_out.record("all")
 
@@ -291,15 +309,15 @@ for i in range(batches):
     print "run: {}".format(i)
     p.run(runtime/batches)
 
-#     in_spikes = pop_in.get_data('spikes')
+    in_spikes = pop_in.get_data('spikes')
     pop_rec_data = pop_rec.get_data('spikes')
     pop_out_data = pop_out.get_data()
 
     # Plot
     F = Figure(
 #         # plot data for postsynaptic neuron
-#         Panel(in_spikes.segments[0].spiketrains,
-#               yticks=True, markersize=2, xlim=(plot_start, plot_end)),
+        Panel(in_spikes.segments[0].spiketrains,
+              yticks=True, markersize=2, xlim=(plot_start, plot_end)),
         Panel(pop_rec_data.segments[0].spiketrains,
               yticks=True, markersize=2, xlim=(plot_start, plot_end)
               ),
