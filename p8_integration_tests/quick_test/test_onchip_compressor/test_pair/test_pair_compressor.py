@@ -13,7 +13,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import time
 from p8_integration_tests.base_test_case import BaseTestCase
 from p8_integration_tests.quick_test.test_onchip_compressor.many_routes \
     import do_run

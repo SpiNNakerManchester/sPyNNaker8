@@ -32,6 +32,7 @@ def find_good_chip(machine, n_target):
     raise SkipTest("No Chip found with You Need at least {} user processors"
                    .format(n_target))
 
+
 def do_run():
     n_source = 2000
     n_target = 16
