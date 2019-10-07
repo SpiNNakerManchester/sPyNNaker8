@@ -56,6 +56,7 @@ pipeline {
                 // scripts
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/IntroLab.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/PyNN8Examples.git'
+                sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/sPyNNaker8NewModelTemplate.git'
                 // Java dependencies
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/JavaSpiNNaker'
             }
@@ -74,6 +75,7 @@ pipeline {
                 sh 'make -C SpiNNFrontEndCommon/c_common'
                 sh 'make -C SpiNNFrontEndCommon/c_common install'
                 sh 'make -C sPyNNaker/neural_modelling'
+                sh 'make -c sPyNNaker8NewModelTemplate/c_models
                 // Python install
                 sh 'cd SpiNNMachine && python setup.py develop'
                 sh 'cd SpiNNStorageHandlers && python setup.py develop'
@@ -84,6 +86,7 @@ pipeline {
                 sh 'cd SpiNNFrontEndCommon && python setup.py develop'
                 sh 'cd sPyNNaker && python setup.py develop'
                 sh 'cd sPyNNaker8 && python ./setup.py develop'
+                sh 'cd sPyNNaker8NewModelTemplate && python ./setup.py develop'
                 sh 'python -m spynnaker8.setup_pynn'
                 // Test requirements
                 sh 'pip install -r SpiNNMachine/requirements-test.txt'
@@ -124,29 +127,34 @@ pipeline {
                 sh 'mkdir junit/'
             }
         }
-        stage('Unit Tests') {
+        //stage('Unit Tests') {
+        //    steps {
+        //        run_pytest('SpiNNUtils/unittests', 1200, 'SpiNNUtils', 'auto')
+        //        run_pytest('SpiNNStorageHandlers/tests', 1200, 'SpiNNStorageHandlers', 'auto')
+        //        run_pytest('SpiNNMachine/unittests', 1200, 'SpiNNMachine', 'auto')
+        //        run_pytest('SpiNNMan/unittests SpiNNMan/integration_tests', 1200, 'SpiNNMan', 'auto')
+        //        run_pytest('PACMAN/unittests', 1200, 'PACMAN', 'auto')
+        //        run_pytest('spalloc/tests', 1200, 'spalloc', '1')
+        //        run_pytest('SpiNNFrontEndCommon/unittests SpiNNFrontEndCommon/fec_integration_tests', 1200, 'SpiNNFrontEndCommon', 'auto')
+        //        run_pytest('sPyNNaker/unittests', 1200, 'sPyNNaker', 'auto')
+        //        run_pytest('sPyNNaker8/unittests', 1200, 'sPyNNaker8', 'auto')
+        //    }
+        //}
+        //stage('Test') {
+        //    steps {
+        //        run_pytest('sPyNNaker8/p8_integration_tests/quick_test/', 1200, 'sPyNNaker8_Integration', 'auto')
+        //    }
+        //}
+        stage('Run new Model Example') {
             steps {
-                run_pytest('SpiNNUtils/unittests', 1200, 'SpiNNUtils', 'auto')
-                run_pytest('SpiNNStorageHandlers/tests', 1200, 'SpiNNStorageHandlers', 'auto')
-                run_pytest('SpiNNMachine/unittests', 1200, 'SpiNNMachine', 'auto')
-                run_pytest('SpiNNMan/unittests SpiNNMan/integration_tests', 1200, 'SpiNNMan', 'auto')
-                run_pytest('PACMAN/unittests', 1200, 'PACMAN', 'auto')
-                run_pytest('spalloc/tests', 1200, 'spalloc', '1')
-                run_pytest('SpiNNFrontEndCommon/unittests SpiNNFrontEndCommon/fec_integration_tests', 1200, 'SpiNNFrontEndCommon', 'auto')
-                run_pytest('sPyNNaker/unittests', 1200, 'sPyNNaker', 'auto')
-                run_pytest('sPyNNaker8/unittests', 1200, 'sPyNNaker8', 'auto')
+                run_pytest('sPyNNaker8/p8_integration_tests/test_new_model_templates', 1200, 'new_model_example')
             }
         }
-        stage('Test') {
-            steps {
-                run_pytest('sPyNNaker8/p8_integration_tests/quick_test/', 1200, 'sPyNNaker8_Integration', 'auto')
-            }
-        }
-        stage('Reports') {
-            steps {
-                sh 'find . -maxdepth 3 -type f -wholename "*/reports/*" -print -exec cat \\{\\}  \\;'
-            }
-        }
+        //stage('Reports') {
+        //    steps {
+        //        sh 'find . -maxdepth 3 -type f -wholename "*/reports/*" -print -exec cat \\{\\}  \\;'
+        //    }
+        //}
         stage('Check Destroyed') {
             steps {
                 sh 'py.test sPyNNaker8/p8_integration_tests/destroyed_checker_test --forked --instafail --timeout 120'
