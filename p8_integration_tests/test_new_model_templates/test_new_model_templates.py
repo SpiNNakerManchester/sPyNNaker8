@@ -16,7 +16,6 @@
 from p8_integration_tests.scripts_test.script_checker import ScriptChecker
 import os
 import sys
-import stat
 
 
 class TestNewModelTemplates(ScriptChecker):
@@ -39,5 +38,4 @@ class TestNewModelTemplates(ScriptChecker):
         sys.path.append(template_dir)
         example_script = os.path.join(
             template_dir, "my_example.py")
-        #os.makedirs("results")
         self.check_script(example_script, False)
