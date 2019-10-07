@@ -14,12 +14,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import division
-import pickle
 import unittest
-from unittest import SkipTest
 import numpy
-import pytest
-from spinn_front_end_common.utilities.exceptions import ConfigurationException
 from spinn_front_end_common.utilities.globals_variables import get_simulator
 import spynnaker8 as sim
 from spynnaker8.utilities import neo_convertor
