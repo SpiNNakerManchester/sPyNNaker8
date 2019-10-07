@@ -75,7 +75,7 @@ pipeline {
                 sh 'make -C SpiNNFrontEndCommon/c_common'
                 sh 'make -C SpiNNFrontEndCommon/c_common install'
                 sh 'make -C sPyNNaker/neural_modelling'
-                sh 'make -c sPyNNaker8NewModelTemplate/c_models
+                sh 'make -c sPyNNaker8NewModelTemplate/c_models'
                 // Python install
                 sh 'cd SpiNNMachine && python setup.py develop'
                 sh 'cd SpiNNStorageHandlers && python setup.py develop'
