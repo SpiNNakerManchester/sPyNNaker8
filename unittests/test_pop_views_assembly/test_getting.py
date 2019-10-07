@@ -14,8 +14,15 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import division
+import pickle
+import unittest
+from unittest import SkipTest
 import numpy
+import pytest
+from spinn_front_end_common.utilities.exceptions import ConfigurationException
+from spinn_front_end_common.utilities.globals_variables import get_simulator
 import spynnaker8 as sim
+from spynnaker8.utilities import neo_convertor
 from p8_integration_tests.base_test_case import BaseTestCase
 
 
@@ -55,6 +62,140 @@ def trim_spikes(spikes, indexes):
 
 
 class TestGetting(BaseTestCase):
+
+    @unittest.skip(
+        "https://github.com/SpiNNakerManchester/sPyNNaker8/issues/278")
+    def test_simple_spikes(self):
+        sim.setup(timestep=1.0)
+        pop = sim.Population(4, sim.IF_curr_exp(), label="a label")
+        pop._get_spikes = mock_spikes
+        pop._get_recorded_matrix = mock_v_all
+        get_simulator().get_current_time = mock_time
+
+        neo = pop.getSpikes()
+        spikes = neo_convertor.convert_spikes(neo)
+        assert numpy.array_equal(spikes,  mock_spikes())
+        spiketrains = neo.segments[0].spiketrains
+        assert 4 == len(spiketrains)
+
+        #  gather False has not effect testing that here
+        neo = pop.get_data("spikes", gather=False)
+        spikes = neo_convertor.convert_spikes(neo)
+        assert numpy.array_equal(spikes,  mock_spikes())
+        spiketrains = neo.segments[0].spiketrains
+        assert 4 == len(spiketrains)
+
+        neo = pop.get_v()
+        v = neo.segments[0].filter(name='v')[0].magnitude
+        (target, _, _) = mock_v_all("any")
+        assert numpy.array_equal(v,  target)
+
+        neo = pop.get_gsyn()
+        exc = neo.segments[0].filter(name='gsyn_exc')[0].magnitude
+        assert numpy.array_equal(exc,  target)
+        inh = neo.segments[0].filter(name='gsyn_inh')[0].magnitude
+        assert numpy.array_equal(inh,  target)
+
+        sim.end()
+
+    @unittest.skip(
+        "https://github.com/SpiNNakerManchester/sPyNNaker8/issues/278")
+    def test_get_spikes_by_index(self):
+        sim.setup(timestep=1.0)
+        pop = sim.Population(4, sim.IF_curr_exp(), label="a label")
+        pop.record("spikes")
+
+        pop._get_spikes = mock_spikes
+        get_simulator().get_current_time = mock_time
+
+        neo = pop.get_data_by_indexes("spikes", [1, 2])
+        spikes = neo_convertor.convert_spikes(neo)
+        target = trim_spikes(mock_spikes(), [1, 2])
+        assert numpy.array_equal(spikes, target)
+        spiketrains = neo.segments[0].spiketrains
+        assert 2 == len(spiketrains)
+
+        sim.end()
+
+    @unittest.skip(
+        "https://github.com/SpiNNakerManchester/sPyNNaker8/issues/278")
+    def test_get_spikes_by_view(self):
+        sim.setup(timestep=1.0)
+        pop = sim.Population(4, sim.IF_curr_exp(), label="a label")
+        pop._get_spikes = mock_spikes
+        get_simulator().get_current_time = mock_time
+
+        view = pop[1:3]
+        view.record("spikes")
+        neo = view.get_data("spikes", gather=False)
+        spikes = neo_convertor.convert_spikes(neo)
+        target = trim_spikes(mock_spikes(), [1, 2])
+        assert numpy.array_equal(spikes, target)
+        spiketrains = neo.segments[0].spiketrains
+        assert 2 == len(spiketrains)
+
+        sim.end()
+
+    @unittest.skip(
+        "https://github.com/SpiNNakerManchester/sPyNNaker8/issues/278")
+    def test_get_spikes_view_missing(self):
+        sim.setup(timestep=1.0)
+        pop = sim.Population(4, sim.IF_curr_exp(), label="a label")
+        pop._get_spikes = mock_spikes
+        pop._get_recorded_matrix = mock_v_all
+        get_simulator().get_current_time = mock_time
+
+        view = pop[2:4]
+        neo = view.get_data("spikes")
+        spikes = neo_convertor.convert_spikes(neo)
+        target = trim_spikes(mock_spikes(), [2])
+        assert numpy.array_equal(spikes, target)
+        spiketrains = neo.segments[0].spiketrains
+        assert 2 == len(spiketrains)
+        assert 2 == len(spiketrains[0])
+        assert 2 == spiketrains[0].annotations['source_index']
+        assert 0 == len(spiketrains[1])
+        assert 3 == spiketrains[1].annotations['source_index']
+
+        sim.end()
+
+    @unittest.skip(
+        "https://github.com/SpiNNakerManchester/sPyNNaker8/issues/278")
+    def test_get_v_view(self):
+        sim.setup(timestep=1.0)
+        pop = sim.Population(4, sim.IF_curr_exp(), label="a label")
+        pop.record("spikes")
+        pop._get_spikes = mock_spikes
+        pop._get_recorded_matrix = mock_v_all
+        get_simulator().get_current_time = mock_time
+
+        view = pop[1:3]
+        neo = view.get_data("v")
+        v = neo.segments[0].filter(name='v')[0].magnitude
+        (target, _, _) = mock_v_one_two("v")
+        assert v.shape == target.shape
+        assert numpy.array_equal(v,  target)
+
+        sim.end()
+
+    @unittest.skip(
+        "https://github.com/SpiNNakerManchester/sPyNNaker8/issues/278")
+    def test_get_v_missing(self):
+        sim.setup(timestep=1.0)
+        pop = sim.Population(4, sim.IF_curr_exp(), label="a label")
+        pop._get_recorded_matrix = mock_v_one_two
+        get_simulator().get_current_time = mock_time
+
+        view = pop[0:3]
+        neo = view.get_data("v")
+        v = neo.segments[0].filter(name='v')[0].magnitude
+        (target, _, _) = mock_v_one_two("v")
+        assert numpy.array_equal(
+            [1, 2], neo.segments[0].filter(name='v')[0].channel_index.index)
+        assert v.shape == target.shape
+        assert numpy.array_equal(v,  target)
+
+        sim.end()
 
     def test_get_spike_counts(self):
         sim.setup(timestep=1.0)
