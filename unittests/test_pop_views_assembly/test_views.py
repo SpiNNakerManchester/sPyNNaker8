@@ -33,8 +33,12 @@ class Test_IDMixin(BaseTestCase):
         self.assertEqual(2, view.size)
         self.assertEqual(2, view.local_size)
 
+        random_view = pop_1.sample(3)
+        self.assertEqual(3, random_view.size)
+
         self.assertEqual(label, view.label)
         self.assertEqual(pop_1.celltype, view.celltype)
+        self.assertEqual(pop_1.celltype, random_view.celltype)
 
         view_initial_values = view.initial_values
         pop_initial_values = pop_1.initial_values
