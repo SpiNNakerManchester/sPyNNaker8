@@ -24,9 +24,48 @@ import spinn_utilities.conf_loader as conf_loader
 from spinnman.exceptions import SpinnmanException
 from spalloc.job import JobDestroyedError
 from spinn_front_end_common.utilities import globals_variables
+import numpy
 
 p8_integration_factor = float(os.environ.get('P8_INTEGRATION_FACTOR', "1"))
 random.seed(os.environ.get('P8_INTEGRATION_SEED', None))
+
+
+def calculate_stdp_times(
+        pre_spikes, post_spikes, initial_weight, plastic_delay):
+    # If no post spikes, the weight stays the same
+    if len(post_spikes) == 0:
+        return initial_weight
+
+    # Get the spikes and time differences that will be considered by
+    # the simulation (as the last pre-spike will be considered differently)
+    last_pre_spike_delayed = pre_spikes[-1] - plastic_delay
+    considered_post_spikes = post_spikes[post_spikes < last_pre_spike_delayed]
+    if len(considered_post_spikes) == 0:
+        return initial_weight
+    potentiation_time_diff = numpy.ravel(numpy.subtract.outer(
+        considered_post_spikes + plastic_delay, pre_spikes[:-1]))
+    potentiation_times = (
+        potentiation_time_diff[potentiation_time_diff > 0] * -1)
+    depression_time_diff = numpy.ravel(numpy.subtract.outer(
+        considered_post_spikes + plastic_delay, pre_spikes))
+    depression_times = depression_time_diff[depression_time_diff < 0]
+    return potentiation_times, depression_times
+
+
+def calculate_spike_pair_additive_stdp_weight(
+        pre_spikes, post_spikes, initial_weight, plastic_delay, max_weight,
+        a_plus, a_minus, tau_plus, tau_minus):
+    """ Calculates the expected stdp weight for SpikePair Additive STDP
+    """
+    potentiation_times, depression_times = calculate_stdp_times(
+        pre_spikes, post_spikes, initial_weight, plastic_delay)
+
+    # Work out the weight according to the rules
+    potentiations = max_weight * a_plus * numpy.exp(
+        (potentiation_times / tau_plus))
+    depressions = max_weight * a_minus * numpy.exp(
+        (depression_times / tau_minus))
+    return initial_weight + numpy.sum(potentiations) - numpy.sum(depressions)
 
 
 class BaseTestCase(unittest.TestCase):

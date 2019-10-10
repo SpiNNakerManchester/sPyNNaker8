@@ -24,7 +24,9 @@ def array(value):
     return numpy.array(value).reshape(-1)
 
 
-def do_run():
+def variable_rate_options():
+    """ Test the various options that can be passed to a variable rate Poisson
+    """
     p.setup(1.0)
     n_neurons = 2
     run_time = 20000
@@ -175,11 +177,47 @@ def do_run():
                 assert(n_spikes <= (expected + tolerance))
 
 
+def variable_rate_reset():
+    """ Test the ways of changing rates and ensure that they don't change the\
+        results
+    """
+    p.setup(1.0)
+    pop = p.Population(100, p.extra_models.SpikeSourcePoissonVariable(
+        rates=[1, 10, 100], starts=[0, 1000, 2000]),
+        additional_parameters={"seed": 0})
+    pop_2 = p.Population(100, p.SpikeSourcePoisson(rate=1),
+                         additional_parameters={"seed": 0, "max_rate": 100})
+    pop.record("spikes")
+    pop_2.record("spikes")
+
+    p.run(1000)
+    pop_2.set(rate=10)
+    p.run(1000)
+    pop_2.set(rate=100)
+    p.run(1000)
+    p.reset()
+    p.run(3000)
+    spikes_pop = pop.get_data("spikes")
+    spikes_pop_2 = pop_2.get_data("spikes")
+    p.end()
+
+    spikes_1 = [s.magnitude for s in spikes_pop.segments[0].spiketrains]
+    spikes_2 = [s.magnitude for s in spikes_pop.segments[1].spiketrains]
+    spikes_p_2 = [s.magnitude for s in spikes_pop_2.segments[0].spiketrains]
+
+    assert(numpy.array_equal(spikes_1, spikes_2))
+    assert(numpy.array_equal(spikes_2, spikes_p_2))
+
+
 class TestCreatePoissons(BaseTestCase):
 
-    def test_run(self):
-        do_run()
+    def test_variable_rate_options(self):
+        self.runsafe(variable_rate_options)
+
+    def test_rate_reset(self):
+        self.runsafe(variable_rate_reset)
 
 
 if __name__ == '__main__':
-    do_run()
+    variable_rate_options()
+    variable_rate_reset()
