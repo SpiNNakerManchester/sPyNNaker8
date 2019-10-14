@@ -30,18 +30,17 @@ p8_integration_factor = float(os.environ.get('P8_INTEGRATION_FACTOR', "1"))
 random.seed(os.environ.get('P8_INTEGRATION_SEED', None))
 
 
-def calculate_stdp_times(
-        pre_spikes, post_spikes, initial_weight, plastic_delay):
-    # If no post spikes, the weight stays the same
+def calculate_stdp_times(pre_spikes, post_spikes, plastic_delay):
+    # If no post spikes, no changes
     if len(post_spikes) == 0:
-        return initial_weight
+        return numpy.zeros(0), numpy.zeros(0)
 
     # Get the spikes and time differences that will be considered by
     # the simulation (as the last pre-spike will be considered differently)
     last_pre_spike_delayed = pre_spikes[-1] - plastic_delay
     considered_post_spikes = post_spikes[post_spikes < last_pre_spike_delayed]
     if len(considered_post_spikes) == 0:
-        return initial_weight
+        return numpy.zeros(0), numpy.zeros(0)
     potentiation_time_diff = numpy.ravel(numpy.subtract.outer(
         considered_post_spikes + plastic_delay, pre_spikes[:-1]))
     potentiation_times = (
@@ -58,7 +57,7 @@ def calculate_spike_pair_additive_stdp_weight(
     """ Calculates the expected stdp weight for SpikePair Additive STDP
     """
     potentiation_times, depression_times = calculate_stdp_times(
-        pre_spikes, post_spikes, initial_weight, plastic_delay)
+        pre_spikes, post_spikes, plastic_delay)
 
     # Work out the weight according to the rules
     potentiations = max_weight * a_plus * numpy.exp(
