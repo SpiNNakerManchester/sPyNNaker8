@@ -59,8 +59,6 @@ def trim_spikes(spikes, indexes):
 
 class TestGetting(BaseTestCase):
 
-    @unittest.skip(
-        "https://github.com/SpiNNakerManchester/sPyNNaker8/issues/278")
     def test_simple_spikes(self):
         sim.setup(timestep=1.0)
         pop = sim.Population(4, sim.IF_curr_exp(), label="a label")
@@ -94,8 +92,6 @@ class TestGetting(BaseTestCase):
 
         sim.end()
 
-    @unittest.skip(
-        "https://github.com/SpiNNakerManchester/sPyNNaker8/issues/278")
     def test_get_spikes_by_index(self):
         sim.setup(timestep=1.0)
         pop = sim.Population(4, sim.IF_curr_exp(), label="a label")
@@ -113,8 +109,6 @@ class TestGetting(BaseTestCase):
 
         sim.end()
 
-    @unittest.skip(
-        "https://github.com/SpiNNakerManchester/sPyNNaker8/issues/278")
     def test_get_spikes_by_view(self):
         sim.setup(timestep=1.0)
         pop = sim.Population(4, sim.IF_curr_exp(), label="a label")
@@ -132,8 +126,6 @@ class TestGetting(BaseTestCase):
 
         sim.end()
 
-    @unittest.skip(
-        "https://github.com/SpiNNakerManchester/sPyNNaker8/issues/278")
     def test_get_spikes_view_missing(self):
         sim.setup(timestep=1.0)
         pop = sim.Population(4, sim.IF_curr_exp(), label="a label")
@@ -155,8 +147,6 @@ class TestGetting(BaseTestCase):
 
         sim.end()
 
-    @unittest.skip(
-        "https://github.com/SpiNNakerManchester/sPyNNaker8/issues/278")
     def test_get_v_view(self):
         sim.setup(timestep=1.0)
         pop = sim.Population(4, sim.IF_curr_exp(), label="a label")
@@ -174,8 +164,6 @@ class TestGetting(BaseTestCase):
 
         sim.end()
 
-    @unittest.skip(
-        "https://github.com/SpiNNakerManchester/sPyNNaker8/issues/278")
     def test_get_v_missing(self):
         sim.setup(timestep=1.0)
         pop = sim.Population(4, sim.IF_curr_exp(), label="a label")
