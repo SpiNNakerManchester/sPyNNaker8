@@ -35,7 +35,7 @@ def convert_analog_signal(signal_array, time_unit=ms):
     else:
         times = signal_array.times.rescale(time_unit).magnitude
     all_times = np.tile(times, len(xs))
-    neurons = np.repeat(xs, len(times))
+    neurons = np.repeat(ids, len(times))
     values = np.concatenate(list(map(
         lambda x: signal_array.magnitude[:, x], xs)))
     return np.column_stack((neurons, all_times, values))
