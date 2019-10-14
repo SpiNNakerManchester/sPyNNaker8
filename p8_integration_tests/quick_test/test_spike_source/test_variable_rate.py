@@ -214,6 +214,43 @@ def variable_rate_reset():
         assert(numpy.array_equal(s2, s3))
 
 
+def variable_rate_100us():
+    """ Test that the source works at 0.1ms timesteps
+    """
+    rates = [1, 10, 100]
+    starts = [0, 1000, 1500]
+    ends = [1000, 1500, 2000]
+    p.setup(0.1)
+    pop = p.Population(100, p.extra_models.SpikeSourcePoissonVariable(
+        rates=rates, starts=starts),
+        additional_parameters={"seed": 0})
+    pop.record("spikes")
+    run_time = 2000
+    p.run(run_time)
+
+    spikes = pop.get_data("spikes").segments[0].spiketrains
+
+    n_spikes = dict()
+    for i in range(len(spikes)):
+        for rate, start, end in zip(rates, starts, ends):
+            rate_spikes = spikes[i][(spikes[i] >= start) &
+                                    (spikes[i] < end)]
+            if (rate, start, end) not in n_spikes:
+                n_spikes[rate, start, end] = len(rate_spikes)
+            else:
+                n_spikes[rate, start, end] += len(rate_spikes)
+    for rate, start, end in n_spikes:
+        expected = (rate / 1000.0) * (end - start)
+        tolerance = scipy.stats.poisson.ppf(0.99, expected) - expected
+        n_spikes_rate = n_spikes[rate, start, end] / 100.0
+        print("Received {} spikes, expected {} spikes"
+              " (with tolerance {}) for rate {}"
+              " for duration {}".format(
+                  n_spikes_rate, expected, tolerance, rate, (end - start)))
+        assert(n_spikes_rate >= (expected - tolerance))
+        assert(n_spikes_rate <= (expected + tolerance))
+
+
 class TestCreatePoissons(BaseTestCase):
 
     def test_variable_rate_options(self):
@@ -222,7 +259,11 @@ class TestCreatePoissons(BaseTestCase):
     def test_rate_reset(self):
         self.runsafe(variable_rate_reset)
 
+    def test_variable_rate_100us(self):
+        self.runsafe(variable_rate_100us)
+
 
 if __name__ == '__main__':
-    variable_rate_options()
-    variable_rate_reset()
+    # variable_rate_options()
+    # variable_rate_reset()
+    variable_rate_100us()
