@@ -205,8 +205,13 @@ def variable_rate_reset():
     spikes_2 = [s.magnitude for s in spikes_pop.segments[1].spiketrains]
     spikes_p_2 = [s.magnitude for s in spikes_pop_2.segments[0].spiketrains]
 
-    assert(numpy.array_equal(spikes_1, spikes_2))
-    assert(numpy.array_equal(spikes_2, spikes_p_2))
+    print(spikes_1)
+    print(spikes_2)
+    print(spikes_p_2)
+
+    for s1, s2, s3 in zip(spikes_1, spikes_2, spikes_p_2):
+        assert(numpy.array_equal(s1, s2))
+        assert(numpy.array_equal(s2, s3))
 
 
 class TestCreatePoissons(BaseTestCase):
