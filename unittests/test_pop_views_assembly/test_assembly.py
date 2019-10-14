@@ -79,3 +79,41 @@ class TestAssembly(BaseTestCase):
         assembly3 = assembly1 + assembly2
         self.assertEqual(assembly3.populations, [p1, p2, p3, p4])
         self.assertEqual(4, len(assembly3))
+        assembly1 += assembly2
+        self.assertEqual(assembly1.populations, [p1, p2, p3, p4])
+        self.assertEqual(4, len(assembly1))
+
+    def test_double(self):
+        sim.setup(timestep=1.0)
+        p1 = sim.Population(1, sim.IF_curr_exp(), label="pop_1")
+        p2 = sim.Population(1, sim.IF_curr_exp(), label="pop_2")
+        doubled = Assembly(p1, p2, p1, label="simple")
+        self.assertEqual(doubled.populations, [p1, p2])
+        doubled += p1
+        self.assertEqual(doubled.populations, [p1, p2])
+
+    def test_size(self):
+        sim.setup(timestep=1.0)
+        p1 = sim.Population(2, sim.IF_curr_exp(), label="pop_1")
+        p2 = sim.Population(3, sim.IF_curr_exp(), label="pop_2")
+        assembly = Assembly(p1, p2, label="simple")
+        self.assertEqual(assembly.populations, [p1, p2])
+        self.assertEqual(5, len(assembly))
+        self.assertEqual(5, assembly.size)
+
+    def test_add_view(self):
+        sim.setup(timestep=1.0)
+        p1 = sim.Population(2, sim.IF_curr_exp(), label="pop_1")
+        p2 = sim.Population(3, sim.IF_curr_exp(), label="pop_2")
+        v1 = p2[:2]
+        assembly = Assembly(p1, v1, label="complex")
+
+    """
+    def test_iter(self):
+        sim.setup(timestep=1.0)
+        p1 = sim.Population(2, sim.IF_curr_exp(), label="pop_1")
+        p2 = sim.Population(3, sim.IF_curr_exp(), label="pop_2")
+        assembly = Assembly(p1, p2, label="simple")
+        for cell in assembly:
+            print(cell)
+    """
