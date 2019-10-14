@@ -14,7 +14,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import division
-import unittest
 import numpy
 from spinn_front_end_common.utilities.globals_variables import get_simulator
 import spynnaker8 as sim
