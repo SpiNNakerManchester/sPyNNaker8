@@ -35,7 +35,7 @@ class TestAssembly(BaseTestCase):
             "label='simple')"
         self.assertEqual(current_repr, str(assembly))
 
-    def test___add__two(self, sim=sim):
+    def test_add_two(self, sim=sim):
         # adding two populations should give an Assembly
         sim.setup(timestep=1.0)
         p1 = sim.Population(6, sim.IF_curr_exp())
@@ -44,7 +44,7 @@ class TestAssembly(BaseTestCase):
         self.assertIsInstance(assembly, sim.Assembly)
         self.assertEqual(assembly.populations, [p1, p2])
 
-    def test___add__three(self, sim=sim):
+    def test_add_three(self, sim=sim):
         # adding three populations should give an Assembly
         sim.setup(timestep=1.0)
         p1 = sim.Population(6, sim.IF_curr_exp())
@@ -53,3 +53,29 @@ class TestAssembly(BaseTestCase):
         assembly = p1 + p2 + p3
         self.assertIsInstance(assembly, sim.Assembly)
         self.assertEqual(assembly.populations, [p1, p2, p3])
+
+    def test_isadd_three(self, sim=sim):
+        # adding three populations should give an Assembly
+        sim.setup(timestep=1.0)
+        p1 = sim.Population(6, sim.IF_curr_exp())
+        p2 = sim.Population(17, sim.IF_cond_exp())
+        p3 = sim.Population(9, sim.IF_cond_exp())
+        assembly = Assembly(p1, p2, label="simple")
+        assembly += p3
+        self.assertIsInstance(assembly, sim.Assembly)
+        self.assertEqual(assembly.populations, [p1, p2, p3])
+
+    def test_four(self):
+        sim.setup(timestep=1.0)
+        p1 = sim.Population(1, sim.IF_curr_exp(), label="pop_1")
+        p2 = sim.Population(1, sim.IF_curr_exp(), label="pop_2")
+        p3 = sim.Population(1, sim.IF_curr_exp(), label="pop_3")
+        p4 = sim.Population(1, sim.IF_curr_exp(), label="pop_4")
+        assembly = Assembly(p1, p2, p3, p4, label="simple")
+        self.assertEqual(assembly.populations, [p1, p2, p3, p4])
+        self.assertEqual(4, len(assembly))
+        assembly1 = Assembly(p1, p2, label="a1")
+        assembly2 = Assembly(p3, p4, label="a2")
+        assembly3 = assembly1 + assembly2
+        self.assertEqual(assembly3.populations, [p1, p2, p3, p4])
+        self.assertEqual(4, len(assembly3))
