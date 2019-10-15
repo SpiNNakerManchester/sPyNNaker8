@@ -12,8 +12,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-from p8_integration_tests.base_test_case import (
-    BaseTestCase, calculate_spike_pair_additive_stdp_weight)
+from p8_integration_tests.base_test_case import BaseTestCase
 import spynnaker8 as p
 import numpy
 
@@ -59,6 +58,8 @@ def structural_shared():
         stim, pop_3, p.FromListConnector([(0, 0)]), struct_pl_stdp)
     proj_4 = p.Projection(
         stim, pop_4, p.FromListConnector([(0, 0)]), struct_pl_stdp)
+    p.Projection(pop_3, pop_4, p.AllToAllConnector(),
+                 p.StaticSynapse(weight=1, delay=3))
     p.run(10)
 
     conns = list(proj.get(["weight", "delay"], "list"))
@@ -74,9 +75,9 @@ def structural_shared():
     print(conns_4)
 
     assert(len(conns) == 1)
-    assert(conns[0] == (0, 0, w_init, delay_init))
+    assert(tuple(conns[0]) == (0, 0, w_init, delay_init))
     assert(len(conns_2) == 1)
-    assert(conns_2[0] == (0, 0, w_init, delay_init))
+    assert(tuple(conns_2[0]) == (0, 0, w_init, delay_init))
     assert(len(conns_3) == 0)
     assert(len(conns_4) == 0)
 
