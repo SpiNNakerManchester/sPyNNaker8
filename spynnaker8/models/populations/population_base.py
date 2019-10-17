@@ -331,10 +331,10 @@ class PopulationBase(object):
         # TODO: support neuron positions and spaces
         _we_dont_do_this_now()  # pragma: no cover
 
-    def tset(self, *args, **kwargs):
+    def tset(self, **kwargs):
         """
         .. warning::
             Deprecated. Use `set(parametername=value_array)` instead.
         """
         _this_is_wholly_deprecated(
-            "Use set(parametername=value_array) instead.", args, kwargs)
+            "Use set(parametername=value_array) instead.", kwargs)
