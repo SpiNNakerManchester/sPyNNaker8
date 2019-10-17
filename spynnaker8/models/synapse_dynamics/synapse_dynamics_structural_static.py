@@ -23,6 +23,8 @@ from spynnaker.pyNN.models.neuron.synapse_dynamics \
 
 class SynapseDynamicsStructuralStatic(StaticStructuralBaseClass):
 
+    __slots__ = []
+
     def __init__(
             self, partner_selection, formation, elimination,
             f_rew=CommonSP.DEFAULT_F_REW,

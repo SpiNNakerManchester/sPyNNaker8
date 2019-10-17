@@ -23,6 +23,8 @@ from spinn_front_end_common.utilities import globals_variables
 
 class SynapseDynamicsStructuralSTDP(STDPStructuralBaseClass):
 
+    __slots__ = []
+
     def __init__(
             self, partner_selection, formation, elimination,
             timing_dependence=None, weight_dependence=None,

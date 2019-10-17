@@ -22,6 +22,8 @@ from spynnaker.pyNN.models.neuron.synapse_dynamics import (
 
 class SynapseDynamicsStatic(_BaseClass):
 
+    __slots__ = []
+
     def __init__(
             self, weight=PyNNStaticSynapse.default_parameters['weight'],
             delay=None):

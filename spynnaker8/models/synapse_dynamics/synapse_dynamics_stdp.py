@@ -26,6 +26,8 @@ NUM_PRE_SYNAPTIC_EVENTS = 4
 
 class SynapseDynamicsSTDP(_BaseClass):
 
+    __slots__ = []
+
     def __init__(
             self, timing_dependence, weight_dependence,
             voltage_dependence=None, dendritic_delay_fraction=1.0,
