@@ -167,7 +167,7 @@ def convert_spiketrains(spiketrains):
     neurons = np.concatenate([
         np.repeat(x.annotations['source_index'], len(x))
         for x in spiketrains])
-    spikes = np.concatenate(list(map(lambda x: x.magnitude, spiketrains)))
+    spikes = np.concatenate([x.magnitude for x in spiketrains])
     return np.column_stack((neurons, spikes))
 
 

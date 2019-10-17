@@ -112,7 +112,8 @@ class PopulationBase(object):
         # TODO:
         raise NotImplementedError  # pragma: no cover
 
-    def is_local(self, id):  # pylint: disable=unused-argument
+    def is_local(self,
+                 id):  # pylint: disable=unused-argument, redefined-builtin
         """ Indicates whether the cell with the given ID exists on the\
             local MPI node.
         """

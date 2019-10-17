@@ -197,6 +197,9 @@ class PopulationView(PopulationBase):
         Values will be expressed in the standard PyNN units (i.e. millivolts,\
         nanoamps, milliseconds, microsiemens, nanofarads, event per second).
         """
+        if not gather:
+            logger.warning("SpiNNaker only supports gather=True. We will run "
+                           "as if gather was set to True.")
         if simplify is not True:
             logger.warning("The simplify value is ignored if not set to true")
 
@@ -255,7 +258,7 @@ class PopulationView(PopulationBase):
         """
         return self.__population
 
-    def id_to_index(self, id):  # pylint: disable=broad-except
+    def id_to_index(self, id):  # pylint: disable=redefined-builtin
         """ Given the ID(s) of cell(s) in the PopulationView, return its /\
             their index / indices(order in the PopulationView).
 
@@ -295,7 +298,8 @@ class PopulationView(PopulationBase):
             self.__population.set_initial_value(
                 variable, value, self.__indexes)
 
-    def record(self, variables, to_file=None, sampling_interval=None):
+    def record(self, variables,  # pylint: disable=arguments-differ
+               to_file=None, sampling_interval=None):
         """ Record the specified variable or variables for all cells in the\
             Population or view.
 
