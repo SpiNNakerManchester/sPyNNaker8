@@ -242,9 +242,6 @@ class RandomDistribution(_PynnRandomDistribution):
           -
     """
 
-    def __str__(self):
-        return super(RandomDistribution, self).__str__()
-
     def __repr__(self):
         return self.__str__()
 
