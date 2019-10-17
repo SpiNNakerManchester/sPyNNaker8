@@ -34,14 +34,14 @@ class ManyBoards(object):
         return pop
 
     def setup(self, n_boards, n_neurons, simtime):
-        n_chips_required = n_boards * CHIPS_PER_BOARD_EXCLUDING_SAFETY
-        sim.setup(timestep=1.0, n_chips_required=n_chips_required)
+        sim.setup(timestep=1.0, n_boards_required=n_boards)
         try:
             machine = sim.get_machine()
         except ConfigurationException as oops:
-            if "Failure to detect machine of " in str(oops):
+            if "Failure to detect machine " in str(oops):
                 raise SkipTest("You Need at least {} boards to run this test"
                                .format(n_boards))
+            raise(oops)
 
         input_spikes = list(range(0, simtime - 100, 10))
         self._expected_spikes = len(input_spikes)

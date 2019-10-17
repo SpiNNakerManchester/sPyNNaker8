@@ -31,7 +31,7 @@ from spynnaker.pyNN.external_devices_models import (
     AbstractEthernetController, AbstractEthernetSensor,
     ArbitraryFPGADevice, ExternalCochleaDevice, ExternalFPGARetinaDevice,
     MunichMotorDevice, MunichRetinaDevice)
-from spynnaker.pyNN.models.utility_models import (
+from spynnaker.pyNN.models.utility_models.spike_injector import (
     SpikeInjector as
     ExternalDeviceSpikeInjector)
 from spynnaker.pyNN import model_binaries
@@ -173,8 +173,13 @@ def EthernetControlPopulation(
         raise Exception(
             "Vertex must be an instance of AbstractEthernetController")
     translator = vertex.get_message_translator()
+    live_packet_gather_label = "EthernetControlReceiver"
     ethernet_control_connection = EthernetControlConnection(
-        translator, local_host, local_port)
+        translator, vertex.label, live_packet_gather_label, local_host,
+        local_port)
+    add_database_socket_address(
+        ethernet_control_connection.local_ip_address,
+        ethernet_control_connection.local_port, database_ack_port_num)
     devices_with_commands = [
         device for device in vertex.get_external_devices()
         if isinstance(device, AbstractSendMeMulticastCommandsVertex)]
@@ -189,7 +194,8 @@ def EthernetControlPopulation(
         ethernet_control_connection.local_ip_address,
         ethernet_control_connection.local_port,
         message_type=EIEIOType.KEY_PAYLOAD_32_BIT,
-        payload_as_time_stamps=False, use_payload_prefix=False)
+        payload_as_time_stamps=False, use_payload_prefix=False,
+        label=live_packet_gather_label)
     spynnaker_external_devices.add_application_vertex(live_packet_gather)
     for partition_id in vertex.get_outgoing_partition_ids():
         spynnaker_external_devices.add_edge(

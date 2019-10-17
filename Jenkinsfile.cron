@@ -60,6 +60,7 @@ pipeline {
                 // scripts
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/IntroLab.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/PyNN8Examples.git'
+                sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/sPyNNaker8NewModelTemplate.git'
                 sh 'support/gitclone.sh git@github.com:SpiNNakerManchester/microcircuit_model.git'
             }
         }
@@ -87,6 +88,7 @@ pipeline {
                 sh 'cd SpiNNFrontEndCommon && python setup.py install'
                 sh 'cd sPyNNaker && python setup.py install'
                 sh 'cd sPyNNaker8 && python ./setup.py install'
+                sh 'cd sPyNNaker8NewModelTemplate && python ./setup.py develop'
                 sh 'python -m spynnaker8.setup_pynn'
                 // Test requirements
                 sh 'pip install -r sPyNNaker8/requirements-test.txt'
@@ -118,9 +120,15 @@ pipeline {
                 run_pytest('sPyNNaker8/p8_integration_tests/long_test/', 12000, 'sPyNNaker8_Integration_Long')
             }
         }
+        stage('Run new Model Example') {
+            steps {
+                run_pytest('sPyNNaker8/p8_integration_tests/test_new_model_templates', 1200, 'new_model_example', 'auto')
+                run_pytest('sPyNNaker8NewModelTemplate/nmt_integration_tests', 1200, 'nmt_integration_tests', 'auto')
+            }
+        }
         stage('Run scripts') {
             steps {
-                sh 'python sPyNNaker8/p8_integration_tests/scripts_test/build_scipt.py'
+                sh 'python sPyNNaker8/p8_integration_tests/scripts_test/build_script.py'
                 run_pytest('sPyNNaker8/p8_integration_tests/scripts_test', 1200, 'sPyNNaker8Scripts')
             }
         }
