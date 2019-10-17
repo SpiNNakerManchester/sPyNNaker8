@@ -382,6 +382,8 @@ class Spynnaker8FailedState(SpynnakerFailedState,
 
     @staticmethod
     def get_generated_output(output):
+        # FIXME: There really is no get_generated_output() there...
+        # pylint: disable=no-member
         return globals_variables.get_generated_output(output)
 
 
