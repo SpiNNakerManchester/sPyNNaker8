@@ -23,6 +23,16 @@ from spinn_utilities.logger_utils import warn_once
 logger = logging.getLogger(__name__)
 
 
+def _we_dont_do_this_now(*args):  # pylint: disable=unused-argument
+    # pragma: no cover
+    raise NotImplementedError("sPyNNaker8 does not currently do this")
+
+
+def _this_is_wholly_deprecated(msg, *args):  # pylint: disable=unused-argument
+    # pragma: no cover
+    raise NotImplementedError(msg)
+
+
 @add_metaclass(AbstractBase)
 class PopulationBase(object):
     """ Shared methods between Populations and Population views.
@@ -50,7 +60,8 @@ class PopulationBase(object):
         """ A Population / PopulationView can be added to another\
             Population, PopulationView or Assembly, returning an Assembly.
         """
-        raise NotImplementedError  # pragma: no cover
+        # TODO: support assemblies
+        _we_dont_do_this_now(other)  # pragma: no cover
 
     def getSpikes(self, *args, **kwargs):  # pylint: disable=unused-argument
         """
@@ -110,7 +121,7 @@ class PopulationBase(object):
         """ Connect a current source to all cells in the Population.
         """
         # TODO:
-        raise NotImplementedError  # pragma: no cover
+        _we_dont_do_this_now(current_source)  # pragma: no cover
 
     def is_local(self,
                  id):  # pylint: disable=unused-argument, redefined-builtin
@@ -152,7 +163,8 @@ class PopulationBase(object):
     def nearest(self, position):
         """ Return the neuron closest to the specified position.
         """
-        raise NotImplementedError  # pragma: no cover
+        # TODO: support neuron positions and spaces
+        _we_dont_do_this_now(position)  # pragma: no cover
 
     @property
     def position_generator(self):
@@ -160,7 +172,8 @@ class PopulationBase(object):
         .. warning::
             NO PyNN description of this method.
         """
-        raise NotImplementedError   # pragma: no cover
+        # TODO: support neuron positions and spaces
+        _we_dont_do_this_now()  # pragma: no cover
 
     @property
     def positions(self):
@@ -168,7 +181,8 @@ class PopulationBase(object):
         .. warning::
             NO PyNN description of this method.
         """
-        raise NotImplementedError   # pragma: no cover
+        # TODO: support neuron positions and spaces
+        _we_dont_do_this_now()  # pragma: no cover
 
     @abstractmethod
     def write_data(self, io, variables='all', gather=True, clear=False,
@@ -246,7 +260,7 @@ class PopulationBase(object):
     def receptor_types(self):
         """ NO PyNN description of this method.
         """
-        raise NotImplementedError   # pragma: no cover
+        _we_dont_do_this_now()  # pragma: no cover
 
     @abstractmethod
     def record(self, variables, to_file=None, sampling_interval=None,
@@ -301,24 +315,26 @@ class PopulationBase(object):
         .. warning::
             Deprecated. Use `set(parametername=rand_distr)` instead.
         """
-        raise NotImplementedError(
-            " Use set(parametername=rand_distr) instead.")   # pragma: no cover
+        _this_is_wholly_deprecated(
+            " Use set(parametername=rand_distr) instead.", args, kwargs)
 
     def save_positions(self, file):  # pylint: disable=redefined-builtin
         """ Save positions to file. The output format is index x y z
         """
-        raise NotImplementedError   # pragma: no cover
+        # TODO:
+        _we_dont_do_this_now(file)  # pragma: no cover
 
     @property
     def structure(self):
         """ The spatial structure of the parent Population.
         """
-        raise NotImplementedError   # pragma: no cover
+        # TODO: support neuron positions and spaces
+        _we_dont_do_this_now()  # pragma: no cover
 
     def tset(self, *args, **kwargs):
         """
         .. warning::
             Deprecated. Use `set(parametername=value_array)` instead.
         """
-        raise NotImplementedError(
-            "Use set(parametername=value_array) instead.")   # pragma: no cover
+        _this_is_wholly_deprecated(
+            "Use set(parametername=value_array) instead.", args, kwargs)
