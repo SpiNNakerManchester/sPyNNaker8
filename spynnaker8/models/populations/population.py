@@ -408,12 +408,6 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
             raise KeyError("Population does not support the initialisation")
         return self._vertex.get_initial_values(selector)
 
-    def get(self, parameter_names, gather=False, simplify=True):
-        if simplify is not True:
-            logger_utils.warn_once(
-                logger, "The simplify value is ignored if not set to true")
-        return PyNNPopulationCommon.get(self, parameter_names, gather)
-
     @property
     def positions(self):
         """ Return the position array for structured populations.
