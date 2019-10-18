@@ -292,6 +292,10 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
             logger_utils.warn_once(
                 logger, "sPyNNaker only supports gather=True. We will run "
                 "as if gather was set to True.")
+        if annotations is not None:
+            logger_utils.warn_once(
+                logger, "Annoations Parameter is not standard PyNN so may not "
+                        "be supported by all platformd.")
 
         return self._extract_neo_block(variables, None, clear, annotations)
 

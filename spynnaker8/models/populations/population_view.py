@@ -228,6 +228,11 @@ class PopulationView(PopulationBase):
         if not gather:
             logger.warning("SpiNNaker only supports gather=True. We will run "
                            "as if gather was set to True.")
+        if annotations is not None:
+            logger_utils.warn_once(
+                logger, "Annoations Parameter is not standard PyNN so may not "
+                        "be supported by all platformd.")
+
         return self.__population.get_data_by_indexes(
             variables, self.__indexes, clear=clear)
 
@@ -369,12 +374,14 @@ class PopulationView(PopulationBase):
             as numbers and strings. The contents will be written into the\
             output data file as metadata.
         """
-        data = self.get_data(
-            variables='all', gather=gather, clear=clear, annotations=None)
+        if not gather:
+            logger.warning("SpiNNaker only supports gather=True. We will run "
+                           "as if gather was set to True.")
+        data = self.__population.get_data_by_indexes(
+            variables, self.__indexes, clear=clear)
 
         if isinstance(io, string_types):
             io = neo.get_io(io)
 
         # write the neo block to the file
         io.write(data)
-
