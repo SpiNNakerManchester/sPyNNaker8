@@ -124,6 +124,10 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         :type to_file: a Neo IO instance
         :param sampling_interval: a value in milliseconds, and an integer\
             multiple of the simulation timestep.
+        :type sampling_interval: int
+        :param indexes: The indexes of neurons to record from.\
+        This is none Standard PyNN and equivelent to creating a view with\
+        these indexes and asking the View to record.
         """
         if indexes is not None:
             logger_utils.warn_once(

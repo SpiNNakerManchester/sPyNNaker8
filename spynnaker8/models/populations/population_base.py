@@ -233,8 +233,7 @@ class PopulationBase(object):
         raise NotImplementedError   # pragma: no cover
 
     @abstractmethod
-    def record(self, variables, to_file=None, sampling_interval=None,
-               indexes=None):
+    def record(self, variables, to_file=None, sampling_interval=None):
         """ Record the specified variable or variables for all cells in the\
             Population or view.
 
@@ -247,6 +246,7 @@ class PopulationBase(object):
         :type to_file: a Neo IO instance
         :param sampling_interval: a value in milliseconds, and an integer\
             multiple of the simulation timestep.
+        :type sampling_interval: int
         """
 
     def record_gsyn(self, sampling_interval=1, indexes=None, to_file=None):
