@@ -62,7 +62,8 @@ class PopulationBase(object):
         return self.get_data("spikes")
 
     @abstractmethod
-    def get_data(self, variables='all', gather=True, clear=False):
+    def get_data(self, variables='all', gather=True, clear=False,
+                 annotations=None):
         """ Return a Neo Block containing the data(spikes, state variables)\
             recorded from the Population.
 
@@ -75,6 +76,7 @@ class PopulationBase(object):
             from the cells simulated on the local node.
         :param clear: If this is True, recorded data will be deleted from the\
             Population.
+        :param annotations: annotations to put on the neo block
         """
 
     def get_gsyn(self, *args, **kwargs):

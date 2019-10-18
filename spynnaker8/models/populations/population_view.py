@@ -14,10 +14,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
+import neo
 import numpy
-from six import integer_types
+from six import integer_types, string_types
 from pyNN import descriptions
 from pyNN.random import NumpyRNG
+import spinn_utilities.logger_utils as logger_utils
 from spinn_utilities.ranged.abstract_sized import AbstractSized
 from .idmixin import IDMixin
 from .population_base import PopulationBase
@@ -202,7 +204,8 @@ class PopulationView(PopulationBase):
         return self.__population.get_by_selector(
             self.__indexes, parameter_names)
 
-    def get_data(self, variables='all', gather=True, clear=False):
+    def get_data(
+            self, variables='all', gather=True, clear=False, annotations=None):
         """ Return a Neo Block containing the data(spikes, state variables)\
             recorded from the Population.
 
@@ -220,7 +223,8 @@ class PopulationView(PopulationBase):
 
         :param clear: If True, recorded data will be deleted from the\
             Population.
-        """
+         :param annotations: annotations to put on the neo block
+       """
         if not gather:
             logger.warning("SpiNNaker only supports gather=True. We will run "
                            "as if gather was set to True.")
@@ -365,3 +369,12 @@ class PopulationView(PopulationBase):
             as numbers and strings. The contents will be written into the\
             output data file as metadata.
         """
+        data = self.get_data(
+            variables='all', gather=gather, clear=clear, annotations=None)
+
+        if isinstance(io, string_types):
+            io = neo.get_io(io)
+
+        # write the neo block to the file
+        io.write(data)
+
