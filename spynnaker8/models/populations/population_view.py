@@ -240,6 +240,10 @@ class PopulationView(PopulationBase):
         """ Returns a dict containing the number of spikes for each neuron.
 
         The dict keys are neuron IDs, not indices.
+
+        Note: Implementation of this method is different to Population as tbe
+        Populations uses PyNN 7 version of the get_spikes method which dooes
+        not support indexes.
         """
         logger.info("get_spike_counts is inefficient as it just counts the "
                     "results of get_datas('spikes')")
