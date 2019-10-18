@@ -110,14 +110,14 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
             time_scale_factor=time_scale_factor,
             front_end_versions=front_end_versions)
 
-    def run(self, simtime):
+    def run(self, run_time):
         """ Run the simulation for a span of simulation time.
 
-        :param simtime: the time to run for, in milliseconds
+        :param run_time: the time to run for, in milliseconds
         :return: None
         """
 
-        self._run_wait(simtime)
+        self._run_wait(run_time)
 
     def run_until(self, tstop):
         """ Run the simulation until the given simulation time.
