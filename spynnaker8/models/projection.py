@@ -19,6 +19,7 @@ import numpy
 from six import string_types
 from pyNN import common as pynn_common, recording
 from pyNN.space import Space as PyNNSpace
+from spinn_utilities.logger_utils import warn_once
 from spinn_front_end_common.utilities import globals_variables
 from spinn_front_end_common.utilities.exceptions import ConfigurationException
 from spynnaker.pyNN.exceptions import InvalidParameterType
@@ -204,8 +205,9 @@ class Projection(PyNNProjectionCommon):
         return self.get(parameter_name, format, gather, with_address=False)
 
     def saveConnections(self, file,  # @ReservedAssignment
-                        gather=True,
-                        compatible_output=True):  # @UnusedVariable
+                        gather=True, compatible_output=True):
+        if not compatible_output:
+            logger.warning("SpiNNaker only supports compatible_output=True.")
         logger.warning(
             "saveConnections is deprecated. Use save('all') instead")
         self.save('all', file, format='list', gather=gather)
@@ -236,19 +238,20 @@ class Projection(PyNNProjectionCommon):
         pynn_common.Projection.weightHistogram(
             self, min=min, max=max, nbins=nbins)
 
-    def __save_callback(
-            self, save_file, format,  # @ReservedAssignment
-            metadata, data):
+    def __save_callback(self, save_file, metadata, data):
         # Convert structured array to normal numpy array
         if hasattr(data, "dtype") and hasattr(data.dtype, "names"):
             dtype = [(name, "<f8") for name in data.dtype.names]
             data = data.astype(dtype)
-        data_file = save_file
-        if isinstance(data_file, string_types):
-            data_file = recording.files.StandardTextFile(save_file, mode='wb')
         data = numpy.nan_to_num(data)
-        data_file.write(data, metadata)
-        data_file.close()
+        if isinstance(save_file, string_types):
+            data_file = recording.files.StandardTextFile(save_file, mode='wb')
+        else:
+            data_file = save_file
+        try:
+            data_file.write(data, metadata)
+        finally:
+            data_file.close()
 
     def save(
             self, attribute_names, file, format='list',  # @ReservedAssignment
@@ -259,6 +262,10 @@ class Projection(PyNNProjectionCommon):
             millivolts, nanoamps, milliseconds, microsiemens, nanofarads, \
             event per second).
         """
+        if not gather:
+            warn_once(
+                logger, "sPyNNaker only supports gather=True. We will run "
+                "as if gather was set to True.")
         if isinstance(attribute_names, string_types):
             attribute_names = [attribute_names]
         # pylint: disable=too-many-arguments
@@ -271,8 +278,7 @@ class Projection(PyNNProjectionCommon):
             metadata["columns"] = ["i", "j"] + list(metadata["columns"])
         self._get_data(
             attribute_names, format, with_address,
-            notify=functools.partial(
-                self.__save_callback, file, format, metadata))
+            notify=functools.partial(self.__save_callback, file, metadata))
 
     @property
     def pre(self):
