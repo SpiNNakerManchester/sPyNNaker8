@@ -254,8 +254,8 @@ class PopulationView(PopulationBase):
                 "as if gather was set to True.")
         logger.info("get_spike_counts is inefficient as it just counts the "
                     "results of get_datas('spikes')")
-        neo = self.get_data("spikes")
-        spiketrains = neo.segments[len(neo.segments) - 1].spiketrains
+        neo_data = self.get_data("spikes")
+        spiketrains = neo_data.segments[len(neo_data.segments) - 1].spiketrains
         return {
             idx: len(spiketrains[i])
             for i, idx in enumerate(self.__indexes)}

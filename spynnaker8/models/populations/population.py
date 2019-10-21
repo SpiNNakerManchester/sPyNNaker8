@@ -128,6 +128,7 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         This is none Standard PyNN and equivelent to creating a view with\
         these indexes and asking the View to record.
         """
+        # pylint: disable=arguments-differ
         if indexes is not None:
             warn_once(
                 logger, "record indexes parameter is non-standard PyNN, "
