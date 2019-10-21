@@ -18,6 +18,7 @@ from spynnaker8 import RandomDistribution
 import functools
 from p8_integration_tests.base_test_case import BaseTestCase
 import numpy
+from pyNN.random import NumpyRNG
 
 
 def run_script():
@@ -29,17 +30,19 @@ def run_script():
     out = p.Population(10, p.IF_curr_exp(), label="IF_curr_exp")
     out.record("spikes")
 
+    rng = NumpyRNG(seed=1235)
     param_projections = [
         (1.0, 1.0),
-        (RandomDistribution("uniform", low=1.0, high=10.0), 2.0),
+        (RandomDistribution("uniform", low=1.0, high=10.0, rng=rng), 2.0),
         (3.0, 17.0),
-        (4.0, RandomDistribution("normal", mu=22.0, sigma=10.0)),
+        (4.0, RandomDistribution("normal", mu=22.0, sigma=10.0, rng=rng)),
         (5.0, RandomDistribution(
-            "normal_clipped", mu=22.0, sigma=10.0, low=5.0, high=32.0)),
+            "normal_clipped", mu=22.0, sigma=10.0,
+            low=5.0, high=32.0, rng=rng)),
         (6.0, RandomDistribution(
-            "normal_clipped_to_boundary", mu=14.0, sigma=5.0,
-            low=6.0, high=16.0)),
-        (7.0, RandomDistribution("exponential", beta=2.0)),
+            "normal_clipped_to_boundary", mu=12.0, sigma=5.0,
+            low=6.0, high=16.0, rng=rng)),
+        (7.0, RandomDistribution("exponential", beta=2.0, rng=rng)),
     ]
     connectors = [
         p.OneToOneConnector,

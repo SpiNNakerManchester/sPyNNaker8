@@ -54,11 +54,10 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
                 model = cellclass()
             else:
                 model = cellclass(**cellparams)
-        else:
-            if cellparams:
-                raise ConfigurationException(
-                    "cellclass is an instance which includes params so "
-                    "cellparams must be None")
+        elif cellparams:
+            raise ConfigurationException(
+                "cellclass is an instance which includes params so "
+                "cellparams must be None")
 
         self._celltype = model
 
@@ -336,7 +335,8 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
             return self._get_spikes()
         return self._get_recorded_pynn7(variable)
 
-    def get_spike_counts(self, gather=True):
+    def get_spike_counts(self,  # pylint: disable=arguments-differ
+                         gather=True):
         """ Return the number of spikes for each neuron.
         """
         spikes = self._get_spikes()
@@ -350,15 +350,15 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         """
         return self._get_variable_unit(variable)
 
-    def set(self, **kwargs):
-        for parameter, value in iteritems(kwargs):
+    def set(self, **parameters):
+        for parameter, value in iteritems(parameters):
             try:
                 super(Population, self).set(parameter, value)
             except InvalidParameterType:
                 super(Population, self)._initialize(parameter, value)
 
     def tset(self, **kwargs):
-        logger.warn(
+        logger.warning(
             "This function is deprecated; call pop.set(...) instead")
         for parameter, value in iteritems(kwargs):
             try:
@@ -407,12 +407,6 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         if not self._vertex_population_initializable:
             raise KeyError("Population does not support the initialisation")
         return self._vertex.get_initial_values(selector)
-
-    def get(self, parameter_names, gather=False, simplify=True):
-        if simplify is not True:
-            logger_utils.warn_once(
-                logger, "The simplify value is ignored if not set to true")
-        return PyNNPopulationCommon.get(self, parameter_names, gather)
 
     @property
     def positions(self):
