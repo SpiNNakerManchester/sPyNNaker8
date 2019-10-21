@@ -13,12 +13,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from pyNN.connectors import Connector
 from spynnaker.pyNN.models.neural_projections.connectors import (
     FromListConnector as CommonFromListConnector)
 
 
-class FromListConnector(CommonFromListConnector, Connector):
+class FromListConnector(CommonFromListConnector):
     """ Make connections according to a list.
     """
     __slots__ = []
@@ -46,5 +45,4 @@ class FromListConnector(CommonFromListConnector, Connector):
         """
         CommonFromListConnector.__init__(
             self, conn_list=conn_list, safe=safe, verbose=verbose,
-            column_names=column_names)
-        Connector.__init__(self, safe=safe, callback=callback)
+            column_names=column_names, callback=callback)
