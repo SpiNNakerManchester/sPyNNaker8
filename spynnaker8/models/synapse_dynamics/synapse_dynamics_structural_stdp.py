@@ -14,27 +14,27 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from pyNN.standardmodels.synapses import StaticSynapse as PyNNStaticSynapse
+from spynnaker.pyNN.models.neuron.synapse_dynamics \
+    import SynapseDynamicsStructuralSTDP as STDPStructuralBaseClass
+from spynnaker.pyNN.models.neuron.synapse_dynamics \
+    import SynapseDynamicsStructuralCommon as CommonSP
 from spinn_front_end_common.utilities import globals_variables
-from spinn_front_end_common.utilities.constants import BYTES_PER_WORD
-from spynnaker.pyNN.models.neuron.synapse_dynamics import (
-    SynapseDynamicsSTDP as
-    _BaseClass)
-
-TIME_STAMP_BYTES = BYTES_PER_WORD
-# When not using the MAD scheme, how many pre-synaptic events are buffered
-NUM_PRE_SYNAPTIC_EVENTS = 4
 
 
-class SynapseDynamicsSTDP(_BaseClass):
+class SynapseDynamicsStructuralSTDP(STDPStructuralBaseClass):
 
     __slots__ = []
 
     def __init__(
-            self, timing_dependence, weight_dependence,
+            self, partner_selection, formation, elimination,
+            timing_dependence=None, weight_dependence=None,
             voltage_dependence=None, dendritic_delay_fraction=1.0,
+            f_rew=CommonSP.DEFAULT_F_REW,
+            initial_weight=CommonSP.DEFAULT_INITIAL_WEIGHT,
+            initial_delay=CommonSP.DEFAULT_INITIAL_DELAY,
+            s_max=CommonSP.DEFAULT_S_MAX, seed=None,
             weight=PyNNStaticSynapse.default_parameters['weight'], delay=None,
             backprop_delay=True):
-        # pylint: disable=too-many-arguments
 
         # move data from timing to weight dependence over as needed to reflect
         # standard structure underneath
@@ -45,8 +45,12 @@ class SynapseDynamicsSTDP(_BaseClass):
         if delay is None:
             delay = globals_variables.get_simulator().min_delay
 
-        # instantiate common functionality.
-        super(SynapseDynamicsSTDP, self).__init__(
-            timing_dependence, weight_dependence, voltage_dependence,
-            dendritic_delay_fraction, weight, delay,
+        STDPStructuralBaseClass.__init__(
+            self, partner_selection, formation, elimination,
+            timing_dependence=timing_dependence,
+            weight_dependence=weight_dependence,
+            voltage_dependence=voltage_dependence,
+            dendritic_delay_fraction=dendritic_delay_fraction, f_rew=f_rew,
+            initial_weight=initial_weight, initial_delay=initial_delay,
+            s_max=s_max, seed=seed, weight=weight, delay=delay,
             backprop_delay=backprop_delay)
