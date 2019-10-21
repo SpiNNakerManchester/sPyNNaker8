@@ -51,7 +51,7 @@ before_install:
 
 install:
   - pip install -r requirements-test.txt
-  - pip install python-coveralls 'coverage>=4.4'
+  - pip install pylint python-coveralls 'coverage>=4.4'
   - python ./setup.py install
 
 before_script:
@@ -64,9 +64,10 @@ before_script:
 
 script:
   # Tests
-  - py.test unittests --cov spynnaker8
-  # Code quality check
+  - py.test --cov-report= unittests --cov spynnaker8
+  # Code quality checks
   - flake8 spynnaker8 unittests p8_fga_tests p8_integration_tests
+  - ( pylint --output-format=colorized --disable=R,C spynnaker8; exit $(($? & 35)) )
   # Copyright check
   - support/rat.sh run
   # Doc check

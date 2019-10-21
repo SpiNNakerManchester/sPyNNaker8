@@ -24,7 +24,6 @@ from spinn_utilities.socket_address import SocketAddress
 from spinnman.messages.eieio import EIEIOType
 from spinn_front_end_common.abstract_models import (
     AbstractSendMeMulticastCommandsVertex)
-from spinn_front_end_common.utility_models import LivePacketGather
 from spinn_front_end_common.utilities import globals_variables
 from spynnaker.pyNN.abstract_spinnaker_common import AbstractSpiNNakerCommon
 from spynnaker.pyNN.external_devices_models import (
@@ -141,6 +140,10 @@ def register_database_notification_request(hostname, notify_port, ack_port):
         SocketAddress(hostname, notify_port, ack_port))
 
 
+# Store the connection to be used by multiple users
+__ethernet_control_connection = None
+
+
 def EthernetControlPopulation(
         n_neurons, model, label=None, local_host=None, local_port=None,
         database_notify_port_num=None, database_ack_port_num=None):
@@ -174,12 +177,16 @@ def EthernetControlPopulation(
             "Vertex must be an instance of AbstractEthernetController")
     translator = vertex.get_message_translator()
     live_packet_gather_label = "EthernetControlReceiver"
-    ethernet_control_connection = EthernetControlConnection(
-        translator, vertex.label, live_packet_gather_label, local_host,
-        local_port)
-    add_database_socket_address(
-        ethernet_control_connection.local_ip_address,
-        ethernet_control_connection.local_port, database_ack_port_num)
+    global __ethernet_control_connection
+    if __ethernet_control_connection is None:
+        __ethernet_control_connection = EthernetControlConnection(
+            translator, vertex.label, live_packet_gather_label, local_host,
+            local_port)
+        add_database_socket_address(
+            __ethernet_control_connection.local_ip_address,
+            __ethernet_control_connection.local_port, database_ack_port_num)
+    else:
+        __ethernet_control_connection.add_translator(vertex.label, translator)
     devices_with_commands = [
         device for device in vertex.get_external_devices()
         if isinstance(device, AbstractSendMeMulticastCommandsVertex)]
@@ -190,16 +197,13 @@ def EthernetControlPopulation(
         add_database_socket_address(
             ethernet_command_connection.local_ip_address,
             ethernet_command_connection.local_port, database_ack_port_num)
-    live_packet_gather = LivePacketGather(
-        ethernet_control_connection.local_ip_address,
-        ethernet_control_connection.local_port,
+    Plugins.update_live_packet_gather_tracker(
+        population._vertex, live_packet_gather_label,
+        port=__ethernet_control_connection.local_port,
+        hostname=__ethernet_control_connection.local_ip_address,
         message_type=EIEIOType.KEY_PAYLOAD_32_BIT,
         payload_as_time_stamps=False, use_payload_prefix=False,
-        label=live_packet_gather_label)
-    spynnaker_external_devices.add_application_vertex(live_packet_gather)
-    for partition_id in vertex.get_outgoing_partition_ids():
-        spynnaker_external_devices.add_edge(
-            vertex, live_packet_gather, partition_id)
+        partition_ids=vertex.get_outgoing_partition_ids())
     return population
 
 

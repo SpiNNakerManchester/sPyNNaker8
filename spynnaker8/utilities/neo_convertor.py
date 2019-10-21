@@ -36,8 +36,7 @@ def convert_analog_signal(signal_array, time_unit=ms):
         times = signal_array.times.rescale(time_unit).magnitude
     all_times = np.tile(times, len(xs))
     neurons = np.repeat(xs, len(times))
-    values = np.concatenate(list(map(
-        lambda x: signal_array.magnitude[:, x], xs)))
+    values = np.concatenate([signal_array.magnitude[:, x] for x in xs])
     return np.column_stack((neurons, all_times, values))
 
 
@@ -151,8 +150,8 @@ def convert_gsyn(gsyn_exc, gsyn_inh):
     all_times = np.tile(times, len(ids))
     neurons = np.repeat(ids, len(times))
     idlist = list(range(len(ids)))
-    exc_np = np.concatenate(list(map(lambda x: exc[:, x], idlist)))
-    inh_np = np.concatenate(list(map(lambda x: inh[:, x], idlist)))
+    exc_np = np.concatenate([exc[:, x] for x in idlist])
+    inh_np = np.concatenate([inh[:, x] for x in idlist])
     return np.column_stack((neurons, all_times, exc_np, inh_np))
 
 
@@ -165,10 +164,10 @@ def convert_spiketrains(spiketrains):
     if len(spiketrains) == 0:
         return np.empty(shape=(0, 2))
 
-    neurons = np.concatenate(
-        list(map(lambda x: np.repeat(x.annotations['source_index'], len(x)),
-             spiketrains)))
-    spikes = np.concatenate(list(map(lambda x: x.magnitude, spiketrains)))
+    neurons = np.concatenate([
+        np.repeat(x.annotations['source_index'], len(x))
+        for x in spiketrains])
+    spikes = np.concatenate([x.magnitude for x in spiketrains])
     return np.column_stack((neurons, spikes))
 
 
