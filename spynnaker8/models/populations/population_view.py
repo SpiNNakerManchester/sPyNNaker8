@@ -19,7 +19,7 @@ import numpy
 from six import integer_types, string_types
 from pyNN import descriptions
 from pyNN.random import NumpyRNG
-import spinn_utilities.logger_utils as logger_utils
+from spinn_utilities.logger_utils import warn_once
 from spinn_utilities.ranged.abstract_sized import AbstractSized
 from .idmixin import IDMixin
 from .population_base import PopulationBase
@@ -198,6 +198,9 @@ class PopulationView(PopulationBase):
         Values will be expressed in the standard PyNN units (i.e. millivolts,\
         nanoamps, milliseconds, microsiemens, nanofarads, event per second).
         """
+        if not gather:
+            logger.warning("SpiNNaker only supports gather=True. We will run "
+                           "as if gather was set to True.")
         if simplify is not True:
             logger.warning("The simplify value is ignored if not set to true")
 
@@ -245,6 +248,10 @@ class PopulationView(PopulationBase):
         Populations uses PyNN 7 version of the get_spikes method which dooes
         not support indexes.
         """
+        if not gather:
+            warn_once(
+                logger, "sPyNNaker only supports gather=True. We will run "
+                "as if gather was set to True.")
         logger.info("get_spike_counts is inefficient as it just counts the "
                     "results of get_datas('spikes')")
         neo = self.get_data("spikes")
@@ -263,7 +270,7 @@ class PopulationView(PopulationBase):
         """
         return self.__population
 
-    def id_to_index(self, id):  # @ReservedAssignment
+    def id_to_index(self, id):  # pylint: disable=redefined-builtin
         """ Given the ID(s) of cell(s) in the PopulationView, return its /\
             their index / indices(order in the PopulationView).
 
@@ -303,7 +310,8 @@ class PopulationView(PopulationBase):
             self.__population.set_initial_value(
                 variable, value, self.__indexes)
 
-    def record(self, variables, to_file=None, sampling_interval=None):
+    def record(self, variables,  # pylint: disable=arguments-differ
+               to_file=None, sampling_interval=None):
         """ Record the specified variable or variables for all cells in the\
             Population or view.
 
