@@ -14,10 +14,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
+import numpy
 import neo
 import inspect
 from six import iteritems, string_types
 from pyNN import descriptions
+from pyNN.random import NumpyRNG
 import spinn_utilities.logger_utils as logger_utils
 from spinn_front_end_common.utilities import globals_variables
 from spinn_front_end_common.utilities.exceptions import ConfigurationException
@@ -52,11 +54,10 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
                 model = cellclass()
             else:
                 model = cellclass(**cellparams)
-        else:
-            if cellparams:
-                raise ConfigurationException(
-                    "cellclass is an instance which includes params so "
-                    "cellparams must be None")
+        elif cellparams:
+            raise ConfigurationException(
+                "cellclass is an instance which includes params so "
+                "cellparams must be None")
 
         self._celltype = model
 
@@ -175,6 +176,18 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         else:  # list of variables, so just iterate though them
             for variable in variables:
                 self._record(variable, sampling_interval, to_file, indexes)
+
+    def sample(self, n, rng=None):
+        """ Randomly sample `n` cells from the Population, and return a\
+            PopulationView object.
+        """
+        if not rng:
+            rng = NumpyRNG()
+        indices = rng.permutation(
+            numpy.arange(len(self), dtype=numpy.int))[0:n]
+        return PopulationView(
+            self, indices,
+            label="Random sample size {} from {}".format(n, self.label))
 
     def write_data(self, io, variables='all', gather=True, clear=False,
                    annotations=None):
@@ -322,7 +335,8 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
             return self._get_spikes()
         return self._get_recorded_pynn7(variable)
 
-    def get_spike_counts(self, gather=True):
+    def get_spike_counts(self,  # pylint: disable=arguments-differ
+                         gather=True):
         """ Return the number of spikes for each neuron.
         """
         spikes = self._get_spikes()
@@ -336,15 +350,15 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         """
         return self._get_variable_unit(variable)
 
-    def set(self, **kwargs):
-        for parameter, value in iteritems(kwargs):
+    def set(self, **parameters):
+        for parameter, value in iteritems(parameters):
             try:
                 super(Population, self).set(parameter, value)
             except InvalidParameterType:
                 super(Population, self)._initialize(parameter, value)
 
     def tset(self, **kwargs):
-        logger.warn(
+        logger.warning(
             "This function is deprecated; call pop.set(...) instead")
         for parameter, value in iteritems(kwargs):
             try:
@@ -393,12 +407,6 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         if not self._vertex_population_initializable:
             raise KeyError("Population does not support the initialisation")
         return self._vertex.get_initial_values(selector)
-
-    def get(self, parameter_names, gather=False, simplify=True):
-        if simplify is not True:
-            logger_utils.warn_once(
-                logger, "The simplify value is ignored if not set to true")
-        return PyNNPopulationCommon.get(self, parameter_names, gather)
 
     @property
     def positions(self):

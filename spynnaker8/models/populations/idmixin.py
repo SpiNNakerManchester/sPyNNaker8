@@ -21,7 +21,7 @@ class IDMixin(object):
     __slots__ = ("__id", "__population")
     __realslots__ = tuple("_IDMixin" + item for item in __slots__)
 
-    def __init__(self, population, id):  # @ReservedAssignment
+    def __init__(self, population, id):  # pylint: disable=redefined-builtin
         self.__id = id
         self.__population = population
 
@@ -38,7 +38,7 @@ class IDMixin(object):
         try:
             return self.__population.get_by_selector(
                 selector=self.__id, parameter_names=name)[0]
-        except Exception as ex:
+        except Exception as ex:  # pylint: disable=broad-except
             try:
                 # try initialisable variable
                 return self.__population.get_initial_value(
@@ -53,7 +53,7 @@ class IDMixin(object):
         else:
             try:
                 self.__population.set_by_selector(self.__id, name, value)
-            except Exception as ex:
+            except Exception as ex:  # pylint: disable=broad-except
                 try:
                     # try initialisable variable
                     return self.__population.set_initial_value(
