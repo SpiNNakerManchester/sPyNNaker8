@@ -281,7 +281,7 @@ class PopulationBase(object):
         :type sampling_interval: int
         """
 
-    def record_gsyn(self, sampling_interval=1, indexes=None, to_file=None):
+    def record_gsyn(self, sampling_interval=1, to_file=None):
         """
         .. warning::
             Deprecated. Use `record(['gsyn_exc', 'gsyn_inh'])` instead.
@@ -295,9 +295,9 @@ class PopulationBase(object):
             'record(["gsyn_exc", "gsyn_inh"], tofile) instead.')
         return self.record(
             ['gsyn_exc', 'gsyn_inh'], to_file=to_file,
-            sampling_interval=sampling_interval, indexes=indexes)
+            sampling_interval=sampling_interval)
 
-    def record_v(self, sampling_interval=1, indexes=None, to_file=None):
+    def record_v(self, sampling_interval=1, to_file=None):
         """
         .. warning::
             Deprecated. Use `record('v')` instead.
@@ -310,7 +310,7 @@ class PopulationBase(object):
                        'Call transfered to record(["v"], .....) instead.')
         return self.record(
             'v', to_file=to_file,
-            sampling_interval=sampling_interval, indexes=indexes)
+            sampling_interval=sampling_interval)
 
     def rset(self, *args, **kwargs):
         """
