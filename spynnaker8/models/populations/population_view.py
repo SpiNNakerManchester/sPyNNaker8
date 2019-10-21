@@ -232,7 +232,7 @@ class PopulationView(PopulationBase):
             logger.warning("SpiNNaker only supports gather=True. We will run "
                            "as if gather was set to True.")
         if annotations is not None:
-            logger_utils.warn_once(
+            warn_once(
                 logger, "Annoations Parameter is not standard PyNN so may not "
                         "be supported by all platformd.")
 
@@ -249,7 +249,7 @@ class PopulationView(PopulationBase):
         not support indexes.
         """
         if not gather:
-            warn_once(
+            logger.warning(
                 logger, "sPyNNaker only supports gather=True. We will run "
                 "as if gather was set to True.")
         logger.info("get_spike_counts is inefficient as it just counts the "
