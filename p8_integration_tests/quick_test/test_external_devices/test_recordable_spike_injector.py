@@ -56,14 +56,19 @@ class TestRecordableSpikeInjector(BaseTestCase):
         for spiketrain in spikes:
             i = spiketrain.annotations['source_index']
             if __name__ == "__main__":
-                if self._n_spikes[i] != len(spiketrain):
+                if self._n_spikes[i] < len(spiketrain):
                     print("Incorrect number of spikes, expected {} but got {}:"
                           .format(self._n_spikes[i], len(spiketrain)))
                     print(spiketrain)
             else:
-                assert self._n_spikes[i] == len(spiketrain)
+                # If too many things send spikes at the same time, some might
+                # get dropped, so we have to use >= rather than ==; we
+                # shouldn't see *more* than the sent number of spikes!
+                assert self._n_spikes[i] >= len(spiketrain)
             spike_trains[i] = spiketrain
 
+        # We expect to see at least one spike per neuron even with dropped
+        # packets
         for (index, count) in iteritems(self._n_spikes):
             if __name__ == "__main__":
                 if index not in spike_trains:
