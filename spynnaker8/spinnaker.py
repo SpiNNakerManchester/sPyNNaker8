@@ -25,6 +25,8 @@ from spinn_utilities.log import FormatAdapter
 from spinn_front_end_common.utilities import globals_variables
 from spinn_front_end_common.utilities.exceptions import ConfigurationException
 from spinn_front_end_common.utilities.failed_state import FAILED_STATE_MSG
+from spinn_front_end_common.utilities.constants import (
+    MICRO_TO_MILLISECOND_CONVERSION)
 from spynnaker.pyNN.abstract_spinnaker_common import AbstractSpiNNakerCommon
 from spynnaker.pyNN.utilities.spynnaker_failed_state import (
     SpynnakerFailedState)
@@ -158,7 +160,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
         # Convert dt into microseconds and divide by
         # realtime proportion to get hardware timestep
         hardware_timestep_us = int(round(
-            (1000.0 * float(self.dt)) / float(self.timescale_factor)))
+            float(self.machine_time_step) / float(self.timescale_factor)))
 
         # Determine how long simulation is in timesteps
         duration_timesteps = int(math.ceil(
@@ -222,7 +224,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
         :return: the machine time step
         """
 
-        return self.machine_time_step
+        return self.machine_time_step / float(MICRO_TO_MILLISECOND_CONVERSION)
 
     @dt.setter
     def dt(self, new_value):
@@ -230,7 +232,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 
         :param new_value: new value for machine time step
         """
-        self.machine_time_step = new_value
+        self.machine_time_step = new_value * MICRO_TO_MILLISECOND_CONVERSION
 
     @property
     def t(self):
