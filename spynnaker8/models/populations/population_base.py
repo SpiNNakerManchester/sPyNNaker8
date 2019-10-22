@@ -74,7 +74,8 @@ class PopulationBase(object):
         return self.get_data("spikes")
 
     @abstractmethod
-    def get_data(self, variables='all', gather=True, clear=False):
+    def get_data(self, variables='all', gather=True, clear=False,
+                 annotations=None):
         """ Return a Neo Block containing the data(spikes, state variables)\
             recorded from the Population.
 
@@ -87,6 +88,7 @@ class PopulationBase(object):
             from the cells simulated on the local node.
         :param clear: If this is True, recorded data will be deleted from the\
             Population.
+        :param annotations: annotations to put on the neo block
         """
 
     def get_gsyn(self, *args, **kwargs):  # pylint: disable=unused-argument
@@ -263,8 +265,7 @@ class PopulationBase(object):
         _we_dont_do_this_now()  # pragma: no cover
 
     @abstractmethod
-    def record(self, variables, to_file=None, sampling_interval=None,
-               indexes=None):
+    def record(self, variables, to_file=None, sampling_interval=None):
         """ Record the specified variable or variables for all cells in the\
             Population or view.
 
@@ -277,9 +278,10 @@ class PopulationBase(object):
         :type to_file: a Neo IO instance
         :param sampling_interval: a value in milliseconds, and an integer\
             multiple of the simulation timestep.
+        :type sampling_interval: int
         """
 
-    def record_gsyn(self, sampling_interval=1, indexes=None, to_file=None):
+    def record_gsyn(self, sampling_interval=1, to_file=None):
         """
         .. warning::
             Deprecated. Use `record(['gsyn_exc', 'gsyn_inh'])` instead.
@@ -293,9 +295,9 @@ class PopulationBase(object):
             'record(["gsyn_exc", "gsyn_inh"], tofile) instead.')
         return self.record(
             ['gsyn_exc', 'gsyn_inh'], to_file=to_file,
-            sampling_interval=sampling_interval, indexes=indexes)
+            sampling_interval=sampling_interval)
 
-    def record_v(self, sampling_interval=1, indexes=None, to_file=None):
+    def record_v(self, sampling_interval=1, to_file=None):
         """
         .. warning::
             Deprecated. Use `record('v')` instead.
@@ -308,7 +310,7 @@ class PopulationBase(object):
                        'Call transfered to record(["v"], .....) instead.')
         return self.record(
             'v', to_file=to_file,
-            sampling_interval=sampling_interval, indexes=indexes)
+            sampling_interval=sampling_interval)
 
     def rset(self, *args, **kwargs):
         """
