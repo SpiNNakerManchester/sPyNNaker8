@@ -19,7 +19,7 @@
 Synfirechain-like example
 """
 import numpy
-import spynnaker8 as p
+import spynnaker as p
 
 
 def do_run(nNeurons, n_pops, neurons_per_core, runtime=25000):

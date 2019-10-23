@@ -20,7 +20,7 @@ import numpy
 import pytest
 from spinn_front_end_common.utilities.exceptions import ConfigurationException
 from spinn_front_end_common.utilities.globals_variables import get_simulator
-import spynnaker8 as sim
+import spynnaker as sim
 from spynnaker.pyNN.utilities import neo_convertor
 from p8_integration_tests.base_test_case import BaseTestCase
 

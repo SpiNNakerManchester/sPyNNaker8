@@ -16,7 +16,7 @@
 import configparser
 import numpy
 from spinn_front_end_common.utilities import globals_variables
-from spynnaker8 import RandomDistribution
+from spynnaker import RandomDistribution
 
 
 class MockPopulation(object):

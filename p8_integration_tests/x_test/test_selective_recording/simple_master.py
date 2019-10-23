@@ -15,7 +15,7 @@
 
 import os
 import numpy
-import spynnaker8 as sim
+import spynnaker as sim
 
 current_file_path = os.path.dirname(os.path.abspath(__file__))
 spike_file = os.path.join(current_file_path, "master_spikes.csv")

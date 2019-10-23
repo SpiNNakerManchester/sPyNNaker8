@@ -17,7 +17,7 @@ from __future__ import print_function
 import numpy
 import spynnaker.spike_checker as spike_checker
 import spynnaker.plot_utils as plot_utils
-import spynnaker8 as p
+import spynnaker as p
 from p8_integration_tests.base_test_case import BaseTestCase
 from p8_integration_tests.scripts.synfire_run import SynfireRunner
 

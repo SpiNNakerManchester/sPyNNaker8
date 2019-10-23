@@ -14,7 +14,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # from testfixtures import LogCapture
-# import spynnaker8 as sim
+# import spynnaker as sim
 from p8_integration_tests.base_test_case import BaseTestCase
 
 

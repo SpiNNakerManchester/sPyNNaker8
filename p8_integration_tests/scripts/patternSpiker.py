@@ -16,7 +16,7 @@
 from __future__ import division
 import numpy
 import math
-from spynnaker8.models.populations.population_view import PopulationView
+from spynnaker.pyNNmodels.populations.population_view import PopulationView
 
 
 class PatternSpiker(object):
@@ -133,7 +133,7 @@ if __name__ == '__main__':
     """
     Main method for algorithm checking
     """
-    import spynnaker8 as sim
+    import spynnaker as sim
     ps = PatternSpiker()
     sim.setup(timestep=1)
     simtime = 100

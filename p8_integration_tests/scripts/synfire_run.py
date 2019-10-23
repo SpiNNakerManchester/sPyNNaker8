@@ -17,9 +17,9 @@
 Synfirechain-like example
 """
 from pyNN.random import NumpyRNG
-import spynnaker8 as p
-from spynnaker8 import IF_curr_exp
-from spynnaker8 import SpikeSourceArray
+import spynnaker as p
+from spynnaker import IF_curr_exp
+from spynnaker import SpikeSourceArray
 from spynnaker.pyNN.utilities import neo_convertor
 
 CELL_PARAMS_LIF = {'cm': 0.25, 'i_offset': 0.0, 'tau_m': 20.0,

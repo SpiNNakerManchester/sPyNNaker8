@@ -13,8 +13,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import spynnaker8 as sim
-from spynnaker8.utilities import neo_compare
+import spynnaker as sim
+from spynnaker.pyNNutilities import neo_compare
 from p8_integration_tests.base_test_case import BaseTestCase
 from p8_integration_tests.scripts.checker import check_neuron_data
 

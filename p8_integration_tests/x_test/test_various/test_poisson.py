@@ -14,8 +14,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import spynnaker.plot_utils as plot_utils
-import spynnaker8 as sim
-from spynnaker8.utilities import neo_convertor
+import spynnaker as sim
+from spynnaker.pyNNutilities import neo_convertor
 from p8_integration_tests.base_test_case import BaseTestCase
 
 

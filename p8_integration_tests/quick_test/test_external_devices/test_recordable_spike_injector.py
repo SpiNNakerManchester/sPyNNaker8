@@ -18,7 +18,7 @@ from random import randint
 import time
 import unittest
 from six import iteritems
-import spynnaker8 as p
+import spynnaker as p
 from p8_integration_tests.base_test_case import BaseTestCase
 
 

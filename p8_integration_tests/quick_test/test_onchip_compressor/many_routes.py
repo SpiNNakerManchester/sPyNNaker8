@@ -17,7 +17,7 @@ from __future__ import division
 import math
 from unittest import SkipTest
 from spynnaker.pyNN.exceptions import ConfigurationException
-import spynnaker8 as sim
+import spynnaker as sim
 
 
 def find_good_chip(machine, n_target):

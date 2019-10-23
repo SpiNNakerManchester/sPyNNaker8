@@ -16,8 +16,8 @@
 import os
 from neo.io import PickleIO
 from spinn_front_end_common.utilities.exceptions import ConfigurationException
-import spynnaker8 as sim
-from spynnaker8.utilities import neo_compare
+import spynnaker as sim
+from spynnaker.pyNNutilities import neo_compare
 from p8_integration_tests.base_test_case import BaseTestCase
 
 current_file_path = os.path.dirname(os.path.abspath(__file__))

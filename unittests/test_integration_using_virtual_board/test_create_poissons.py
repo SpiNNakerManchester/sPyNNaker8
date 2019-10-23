@@ -14,7 +14,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import print_function
-import spynnaker8 as p
+import spynnaker as p
 from p8_integration_tests.base_test_case import BaseTestCase
 
 

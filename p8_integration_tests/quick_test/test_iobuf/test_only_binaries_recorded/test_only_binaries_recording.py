@@ -17,7 +17,7 @@
 Synfirechain-like example
 """
 from unittest import SkipTest
-import spynnaker8 as sim
+import spynnaker as sim
 from p8_integration_tests.base_test_case import BaseTestCase
 
 

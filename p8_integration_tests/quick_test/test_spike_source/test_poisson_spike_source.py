@@ -15,7 +15,7 @@
 
 from __future__ import division
 from p8_integration_tests.base_test_case import BaseTestCase
-import spynnaker8 as sim
+import spynnaker as sim
 import math
 import time
 

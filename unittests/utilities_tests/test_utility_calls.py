@@ -18,7 +18,7 @@ import shutil
 import unittest
 from pyNN.random import RandomDistribution
 from spynnaker.pyNN.utilities import utility_calls
-from spynnaker8 import setup
+from spynnaker import setup
 
 
 class TestUtilityCalls(unittest.TestCase):

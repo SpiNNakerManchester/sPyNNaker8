@@ -17,8 +17,8 @@ import os
 import sys
 import numpy
 from six.moves import xrange
-import spynnaker8 as sim
-from spynnaker8.models.populations.population_view import PopulationView
+import spynnaker as sim
+from spynnaker.pyNNmodels.populations.population_view import PopulationView
 from p8_integration_tests.base_test_case import BaseTestCase
 
 

@@ -38,9 +38,9 @@ from neo.io import PickleIO
 import unittest
 from unittest import SkipTest
 from p8_integration_tests.base_test_case import BaseTestCase
-import spynnaker8 as p
-from spynnaker8.utilities import neo_compare
-from spynnaker8.utilities import neo_convertor
+import spynnaker as p
+from spynnaker.pyNNutilities import neo_compare
+from spynnaker.pyNNutilities import neo_convertor
 from pyNN.random import NumpyRNG, RandomDistribution
 from pyNN.utility import Timer
 from spinnman.exceptions import SpinnmanTimeoutException

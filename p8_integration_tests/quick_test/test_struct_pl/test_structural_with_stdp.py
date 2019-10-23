@@ -14,7 +14,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from p8_integration_tests.base_test_case import (
     BaseTestCase, calculate_spike_pair_additive_stdp_weight)
-import spynnaker8 as p
+import spynnaker as p
 import numpy
 
 

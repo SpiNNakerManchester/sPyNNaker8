@@ -18,7 +18,7 @@ Script to demo why some connectors not tested virtually.
 
 They do on machine generation so guess what they need!
 """
-import spynnaker8 as sim
+import spynnaker as sim
 sim.setup(1.0)
 
 pop1 = sim.Population(5, sim.IF_curr_exp(), {}, label="pop")

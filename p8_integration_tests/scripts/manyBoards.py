@@ -16,7 +16,7 @@
 from __future__ import division
 from unittest import SkipTest
 from spynnaker.pyNN.exceptions import ConfigurationException
-import spynnaker8 as sim
+import spynnaker as sim
 from p8_integration_tests.scripts.checker import check_data
 
 CHIPS_PER_BOARD_EXCLUDING_SAFETY = 43.19
