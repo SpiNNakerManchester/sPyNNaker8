@@ -87,7 +87,7 @@ pipeline {
                 sh 'cd sPyNNaker && python setup.py develop'
                 sh 'cd sPyNNaker8 && python ./setup.py develop'
                 sh 'cd sPyNNaker8NewModelTemplate && python ./setup.py develop'
-                sh 'python -m spynnaker8.setup_pynn'
+                sh 'python -m spynnaker.pyNN.setup_pynn'
                 // Test requirements
                 sh 'pip install -r SpiNNMachine/requirements-test.txt'
                 sh 'pip install -r SpiNNStorageHandlers/requirements-test.txt'
