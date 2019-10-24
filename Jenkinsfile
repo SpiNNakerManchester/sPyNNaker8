@@ -143,13 +143,13 @@ pipeline {
         }
         stage('Test') {
             steps {
-                run_pytest('sPyNNaker8/p8_integration_tests/quick_test/', 1200, 'sPyNNaker8_Integration', 'auto')
+                run_pytest('sPyNNaker/spynnaker_integration_tests/quick_test/', 1200, 'sPyNNaker8_Integration', 'auto')
             }
         }
         stage('Run new Model Example') {
             steps {
-                run_pytest('sPyNNaker8/p8_integration_tests/test_new_model_templates', 1200, 'new_model_example', 'auto')
-                run_pytest('sPyNNaker8NewModelTemplate/nmt_integration_tests', 1200, 'nmt_integration_tests', 'auto')
+                run_pytest('sPyNNaker/spynnaker_integration_tests/test_new_model_templates', 1200, 'new_model_example', 'auto')
+                run_pytest('sPyNNaker/spynnaker_integration_tests', 1200, 'nmt_integration_tests', 'auto')
             }
         }
         stage('Reports') {
@@ -159,7 +159,7 @@ pipeline {
         }
         stage('Check Destroyed') {
             steps {
-                sh 'py.test sPyNNaker8/p8_integration_tests/destroyed_checker_test --forked --instafail --timeout 120'
+                sh 'py.test sPyNNaker/spynnaker_integration_tests/destroyed_checker_test --forked --instafail --timeout 120'
             }
         }
     }
