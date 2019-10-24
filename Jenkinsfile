@@ -138,7 +138,6 @@ pipeline {
                 run_pytest('DataSpecification/unittests', 1200, 'DataSpecification', 'auto')
                 run_pytest('SpiNNFrontEndCommon/unittests SpiNNFrontEndCommon/fec_integration_tests', 1200, 'SpiNNFrontEndCommon', 'auto')
                 run_pytest('sPyNNaker/unittests', 1200, 'sPyNNaker', 'auto')
-                run_pytest('sPyNNaker8/unittests', 1200, 'sPyNNaker8', 'auto')
             }
         }
         stage('Test') {
