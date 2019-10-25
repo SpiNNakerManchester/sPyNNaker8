@@ -14,10 +14,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
+import neo
 import numpy
-from six import integer_types
+from six import integer_types, string_types
 from pyNN import descriptions
 from pyNN.random import NumpyRNG
+from spinn_utilities.logger_utils import warn_once
 from spinn_utilities.ranged.abstract_sized import AbstractSized
 from .idmixin import IDMixin
 from .population_base import PopulationBase
@@ -122,6 +124,10 @@ class PopulationView(PopulationBase):
     def _indexes(self):
         return tuple(self.__indexes)
 
+    @property
+    def _get_vertex(self):
+        return self.__population._get_vertex
+
     def __getitem__(self, index):
         """ Return either a single cell (ID object) from the Population,\
             if index is an integer, or a subset of the cells\
@@ -196,13 +202,17 @@ class PopulationView(PopulationBase):
         Values will be expressed in the standard PyNN units (i.e. millivolts,\
         nanoamps, milliseconds, microsiemens, nanofarads, event per second).
         """
+        if not gather:
+            logger.warning("SpiNNaker only supports gather=True. We will run "
+                           "as if gather was set to True.")
         if simplify is not True:
             logger.warning("The simplify value is ignored if not set to true")
 
         return self.__population.get_by_selector(
             self.__indexes, parameter_names)
 
-    def get_data(self, variables='all', gather=True, clear=False):
+    def get_data(
+            self, variables='all', gather=True, clear=False, annotations=None):
         """ Return a Neo Block containing the data(spikes, state variables)\
             recorded from the Population.
 
@@ -220,10 +230,16 @@ class PopulationView(PopulationBase):
 
         :param clear: If True, recorded data will be deleted from the\
             Population.
-        """
+         :param annotations: annotations to put on the neo block
+       """
         if not gather:
             logger.warning("SpiNNaker only supports gather=True. We will run "
                            "as if gather was set to True.")
+        if annotations is not None:
+            warn_once(
+                logger, "Annoations Parameter is not standard PyNN so may not "
+                        "be supported by all platformd.")
+
         return self.__population.get_data_by_indexes(
             variables, self.__indexes, clear=clear)
 
@@ -231,11 +247,19 @@ class PopulationView(PopulationBase):
         """ Returns a dict containing the number of spikes for each neuron.
 
         The dict keys are neuron IDs, not indices.
+
+        Note: Implementation of this method is different to Population as tbe
+        Populations uses PyNN 7 version of the get_spikes method which dooes
+        not support indexes.
         """
+        if not gather:
+            logger.warning(
+                logger, "sPyNNaker only supports gather=True. We will run "
+                "as if gather was set to True.")
         logger.info("get_spike_counts is inefficient as it just counts the "
                     "results of get_datas('spikes')")
-        neo = self.get_data("spikes")
-        spiketrains = neo.segments[len(neo.segments) - 1].spiketrains
+        neo_data = self.get_data("spikes")
+        spiketrains = neo_data.segments[len(neo_data.segments) - 1].spiketrains
         return {
             idx: len(spiketrains[i])
             for i, idx in enumerate(self.__indexes)}
@@ -250,7 +274,7 @@ class PopulationView(PopulationBase):
         """
         return self.__population
 
-    def id_to_index(self, id):  # @ReservedAssignment
+    def id_to_index(self, id):  # pylint: disable=redefined-builtin
         """ Given the ID(s) of cell(s) in the PopulationView, return its /\
             their index / indices(order in the PopulationView).
 
@@ -290,7 +314,8 @@ class PopulationView(PopulationBase):
             self.__population.set_initial_value(
                 variable, value, self.__indexes)
 
-    def record(self, variables, to_file=None, sampling_interval=None):
+    def record(self, variables,  # pylint: disable=arguments-differ
+               to_file=None, sampling_interval=None):
         """ Record the specified variable or variables for all cells in the\
             Population or view.
 
@@ -365,3 +390,14 @@ class PopulationView(PopulationBase):
             as numbers and strings. The contents will be written into the\
             output data file as metadata.
         """
+        if not gather:
+            logger.warning("SpiNNaker only supports gather=True. We will run "
+                           "as if gather was set to True.")
+        data = self.__population.get_data_by_indexes(
+            variables, self.__indexes, clear=clear)
+
+        if isinstance(io, string_types):
+            io = neo.get_io(io)
+
+        # write the neo block to the file
+        io.write(data)
