@@ -1,3 +1,18 @@
+# Copyright (c) 2017-2019 The University of Manchester
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 # common imports
 import numpy as __numpy
 from six import iteritems
@@ -54,6 +69,9 @@ from spynnaker8.models.connectors.one_to_one_connector import \
 # noinspection PyUnresolvedReferences
 from spynnaker8.models.connectors.small_world_connector import \
     SmallWorldConnector
+# noinspection PyUnresolvedReferences
+from spynnaker8.models.connectors.kernel_connector import \
+    KernelConnector
 
 # synapse structures
 from spynnaker8.models.synapse_dynamics.synapse_dynamics_static import \
@@ -62,6 +80,10 @@ from spynnaker8.models.synapse_dynamics.synapse_dynamics_static import \
 # plastic stuff
 from spynnaker8.models.synapse_dynamics.synapse_dynamics_stdp import \
     SynapseDynamicsSTDP as STDPMechanism
+from spynnaker8.models.synapse_dynamics.synapse_dynamics_structural_static \
+    import SynapseDynamicsStructuralStatic as StructuralMechanismStatic
+from spynnaker8.models.synapse_dynamics.synapse_dynamics_structural_stdp \
+    import SynapseDynamicsStructuralSTDP as StructuralMechanismSTDP
 from spynnaker8.models.synapse_dynamics.weight_dependence\
     .weight_dependence_additive import WeightDependenceAdditive as \
     AdditiveWeightDependence
@@ -71,6 +93,14 @@ from spynnaker8.models.synapse_dynamics.weight_dependence\
 from spynnaker8.models.synapse_dynamics.timing_dependence\
     .timing_dependence_spike_pair import TimingDependenceSpikePair as \
     SpikePairRule
+from spynnaker.pyNN.models.neuron.structural_plasticity.synaptogenesis\
+    .partner_selection import LastNeuronSelection
+from spynnaker.pyNN.models.neuron.structural_plasticity.synaptogenesis\
+    .partner_selection import RandomSelection
+from spynnaker.pyNN.models.neuron.structural_plasticity.synaptogenesis\
+    .formation import DistanceDependentFormation
+from spynnaker.pyNN.models.neuron.structural_plasticity.synaptogenesis\
+    .elimination import RandomByWeightElimination
 
 from spynnaker8.models.synapse_dynamics.timing_dependence import \
     TimingDependenceERBP
@@ -132,11 +162,16 @@ __all__ = [
     'FixedNumberPreConnector', 'FixedProbabilityConnector',
     'FromFileConnector', 'FromListConnector', 'IndexBasedProbabilityConnector',
     'FixedTotalNumberConnector', 'OneToOneConnector', 'SmallWorldConnector',
+    'KernelConnector',
     # synapse structures
     'StaticSynapse',
     # plastic stuff
     'STDPMechanism', 'AdditiveWeightDependence',
     'MultiplicativeWeightDependence', 'SpikePairRule',
+    # Structural plasticity by Petrut Bogdan
+    'StructuralMechanismStatic', 'StructuralMechanismSTDP',
+    'LastNeuronSelection', 'RandomSelection',
+    'DistanceDependentFormation', 'RandomByWeightElimination',
 
     'TimingDependenceERBP', 'WeightDependenceERBP',
 
@@ -231,6 +266,9 @@ class RandomDistribution(_PynnRandomDistribution):
           -
     """
 
+    def __repr__(self):
+        return self.__str__()
+
 
 # Patch the bugs in the PyNN documentation... Ugh!
 def distance(src, tgt, mask=None, scale_factor=1.0, offset=0.0,
@@ -261,7 +299,7 @@ def setup(timestep=_pynn_control.DEFAULT_TIMESTEP,
           extra_mapping_inputs=None, extra_mapping_algorithms=None,
           extra_pre_run_algorithms=None, extra_post_run_algorithms=None,
           extra_load_algorithms=None, time_scale_factor=None,
-          n_chips_required=None, **extra_params):
+          n_chips_required=None, n_boards_required=None, **extra_params):
     """ The main method needed to be called to make the PyNN 0.8 setup. Needs\
         to be called before any other function
 
@@ -282,9 +320,19 @@ def setup(timestep=_pynn_control.DEFAULT_TIMESTEP,
         extra algorithms to use within the loading phase
     :param time_scale_factor: multiplicative factor to the machine time step\
         (does not affect the neuron models accuracy)
-    :param n_chips_required: The number of chips needed by the simulation
+    :param n_chips_required:\
+        Deprecated! Use n_boards_required instead.
+        Must be None if n_boards_required specified.
+    :type n_chips_required: int or None
+    :param n_boards_required:\
+        if you need to be allocated a machine (for spalloc) before building\
+        your graph, then fill this in with a general idea of the number of
+        boards you need so that the spalloc system can allocate you a machine\
+        big enough for your needs.
     :param extra_params: other stuff
     :return: rank thing
+    :raises ConfigurationException if both n_chips_required and
+        n_boards_required are used.
     """
     # pylint: disable=too-many-arguments, too-many-function-args
     if pynn8_syntax:
@@ -314,7 +362,8 @@ def setup(timestep=_pynn_control.DEFAULT_TIMESTEP,
         extra_load_algorithms=extra_load_algorithms,
         time_scale_factor=time_scale_factor, timestep=timestep,
         min_delay=min_delay, max_delay=max_delay, graph_label=graph_label,
-        n_chips_required=n_chips_required)
+        n_chips_required=n_chips_required,
+        n_boards_required=n_boards_required)
 
     # warn about kwargs arguments
     if extra_params:
@@ -488,7 +537,7 @@ def create(cellclass, cellparams=None, n=1):
     """
     if not globals_variables.has_simulator():
         raise ConfigurationException(FAILED_STATE_MSG)
-    __pynn["create"](cellclass, cellparams, n)
+    return __pynn["create"](cellclass, cellparams, n)
 
 
 def NativeRNG(seed_value):
@@ -535,11 +584,11 @@ def get_max_delay():
 def get_time_step():
     """ The integration time step
 
-    :return: get the time step of the simulation
+    :return: get the time step of the simulation (in ms)
     """
     if not globals_variables.has_simulator():
         raise ConfigurationException(FAILED_STATE_MSG)
-    return __pynn["get_time_step"]()
+    return float(__pynn["get_time_step"]()) / 1000.0
 
 
 def initialize(cells, **initial_values):

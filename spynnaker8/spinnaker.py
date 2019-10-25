@@ -1,3 +1,18 @@
+# Copyright (c) 2017-2019 The University of Manchester
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import logging
 import math
 from lazyarray import __version__ as lazyarray_version
@@ -10,6 +25,8 @@ from spinn_utilities.log import FormatAdapter
 from spinn_front_end_common.utilities import globals_variables
 from spinn_front_end_common.utilities.exceptions import ConfigurationException
 from spinn_front_end_common.utilities.failed_state import FAILED_STATE_MSG
+from spinn_front_end_common.utilities.constants import (
+    MICRO_TO_MILLISECOND_CONVERSION)
 from spynnaker.pyNN.abstract_spinnaker_common import AbstractSpiNNakerCommon
 from spynnaker.pyNN.utilities.spynnaker_failed_state import (
     SpynnakerFailedState)
@@ -39,7 +56,8 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
             extra_mapping_algorithms, extra_pre_run_algorithms,
             extra_post_run_algorithms, extra_load_algorithms,
             time_scale_factor, min_delay, max_delay, graph_label,
-            n_chips_required, timestep=0.1, hostname=None):
+            n_chips_required=None, n_boards_required=None, timestep=0.1,
+            hostname=None):
         # pylint: disable=too-many-arguments, too-many-locals
 
         # change min delay auto to be the min delay supported by simulator
@@ -51,8 +69,8 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
         self._projections = list()
 
         # pynn demanded objects
-        self._segment_counter = 0
-        self._recorders = set([])
+        self.__segment_counter = 0
+        self.__recorders = set([])
 
         # main pynn interface inheritance
         pynn_control.BaseState.__init__(self)
@@ -88,19 +106,20 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
             extra_post_run_algorithms=extra_post_run_algorithms,
             extra_load_algorithms=built_in_extra_load_algorithms,
             graph_label=graph_label, n_chips_required=n_chips_required,
+            n_boards_required=n_boards_required,
             hostname=hostname, min_delay=min_delay,
             max_delay=max_delay, timestep=timestep,
             time_scale_factor=time_scale_factor,
             front_end_versions=front_end_versions)
 
-    def run(self, simtime):
+    def run(self, run_time):
         """ Run the simulation for a span of simulation time.
 
-        :param simtime: the time to run for, in milliseconds
+        :param run_time: the time to run for, in milliseconds
         :return: None
         """
 
-        self._run_wait(simtime)
+        self._run_wait(run_time)
 
     def run_until(self, tstop):
         """ Run the simulation until the given simulation time.
@@ -114,8 +133,8 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
         """ Clear the current recordings and reset the simulation
         """
         self.recorders = set([])
-        self._id_counter = 0
-        self._segment_counter = -1
+        self.id_counter = 0
+        self.__segment_counter = -1
         self.reset()
 
         # Stop any currently running SpiNNaker application
@@ -127,7 +146,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
         for population in self._populations:
             population.cache_data()
 
-        self._segment_counter += 1
+        self.__segment_counter += 1
 
         AbstractSpiNNakerCommon.reset(self)
 
@@ -141,7 +160,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
         # Convert dt into microseconds and divide by
         # realtime proportion to get hardware timestep
         hardware_timestep_us = int(round(
-            (1000.0 * float(self.dt)) / float(self.timescale_factor)))
+            float(self.machine_time_step) / float(self.timescale_factor)))
 
         # Determine how long simulation is in timesteps
         duration_timesteps = int(math.ceil(
@@ -205,7 +224,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
         :return: the machine time step
         """
 
-        return self._machine_time_step
+        return self.machine_time_step / float(MICRO_TO_MILLISECOND_CONVERSION)
 
     @dt.setter
     def dt(self, new_value):
@@ -213,7 +232,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 
         :param new_value: new value for machine time step
         """
-        self._machine_time_step = new_value
+        self.machine_time_step = new_value * MICRO_TO_MILLISECOND_CONVERSION
 
     @property
     def t(self):
@@ -222,7 +241,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
         :return: the current runtime already executed
         """
         return (
-            self._current_run_timesteps * (self._machine_time_step / 1000.0))
+            self._current_run_timesteps * (self.machine_time_step / 1000.0))
 
     @property
     def segment_counter(self):
@@ -230,7 +249,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 
         :return: the segment counter
         """
-        return self._segment_counter
+        return self.__segment_counter
 
     @segment_counter.setter
     def segment_counter(self, new_value):
@@ -238,7 +257,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 
         :param new_value: new value for the segment counter
         """
-        self._segment_counter = new_value
+        self.__segment_counter = new_value
 
     @property
     def running(self):
@@ -293,7 +312,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 
         :return: the internal recorders object
         """
-        return self._recorders
+        return self.__recorders
 
     @recorders.setter
     def recorders(self, new_value):
@@ -301,7 +320,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 
         :param new_value: the new value for the recorder
         """
-        self._recorders = new_value
+        self.__recorders = new_value
 
     def get_distribution_to_stats(self):
         return {
@@ -324,7 +343,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
         return isinstance(thing, RandomDistribution)
 
     def get_pynn_NumpyRNG(self):
-        return NumpyRNG()
+        return NumpyRNG
 
 
 # Defined in this file to prevent an import loop

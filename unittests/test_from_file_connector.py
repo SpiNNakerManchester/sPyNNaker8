@@ -1,3 +1,18 @@
+# Copyright (c) 2017-2019 The University of Manchester
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import numpy
 import pytest
 from pacman.model.graphs.common.slice import Slice
@@ -67,7 +82,10 @@ def test_connector(
             assert(extra_params[:, i].shape == (len(clist), ))
 
     # Check weights and delays are used or ignored as expected
+    pre_slice = Slice(0, 10)
+    post_slice = Slice(0, 10)
     block = connector.create_synaptic_block(
-        weights, delays, [], 0, [], 0, Slice(0, 10), Slice(0, 10), 1)
+        weights, delays, [pre_slice], 0, [post_slice], 0, pre_slice,
+        post_slice, 1)
     assert(numpy.array_equal(block["weight"], numpy.array(expected_weights)))
     assert(numpy.array_equal(block["delay"], numpy.array(expected_delays)))

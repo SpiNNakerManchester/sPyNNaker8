@@ -1,5 +1,19 @@
-import p8_integration_tests.scripts.pynnBrunnelPlot as pblt
+# Copyright (c) 2017-2019 The University of Manchester
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import p8_integration_tests.scripts.pynnBrunnelPlot as pblt
 from p8_integration_tests.base_test_case import BaseTestCase
 import p8_integration_tests.scripts.pynnBrunnelBrianNestSpinnaker as script
 from spynnaker8.utilities import neo_convertor
@@ -33,12 +47,12 @@ class PynnBrunnelBrianNestSpinnaker(BaseTestCase):
             Neurons, sim_time, record=True, seed=1)
         esp_numpy = neo_convertor.convert_spikes(esp)
         s_numpy = neo_convertor.convert_spikes(s)
-        self.assertEquals(2400, N_E)
+        self.assertEqual(2400, N_E)
         # Range required, because random delays are used, and although these
         # are seeded, the order of generation is not consistent
         self.assertLessEqual(210, len(esp_numpy))
         self.assertGreaterEqual(230, len(esp_numpy))
-        self.assertEquals(23888, len(s_numpy))
+        self.assertEqual(23888, len(s_numpy))
 
 
 if __name__ == '__main__':

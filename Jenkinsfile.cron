@@ -1,3 +1,19 @@
+/*
+# Copyright (c) 2017-2019 The University of Manchester
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 pipeline {
     agent {
         docker { image 'python3.6' }
@@ -44,6 +60,7 @@ pipeline {
                 // scripts
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/IntroLab.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/PyNN8Examples.git'
+                sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/sPyNNaker8NewModelTemplate.git'
                 sh 'support/gitclone.sh git@github.com:SpiNNakerManchester/microcircuit_model.git'
             }
         }
@@ -61,6 +78,7 @@ pipeline {
                 sh 'make -C SpiNNFrontEndCommon/c_common'
                 sh 'make -C SpiNNFrontEndCommon/c_common install'
                 sh 'make -C sPyNNaker/neural_modelling'
+                sh 'make -C sPyNNaker8NewModelTemplate/c_models'
                 // Python install
                 sh 'cd SpiNNMachine && python setup.py install'
                 sh 'cd SpiNNStorageHandlers && python setup.py install'
@@ -70,7 +88,8 @@ pipeline {
                 sh 'cd spalloc && python setup.py install'
                 sh 'cd SpiNNFrontEndCommon && python setup.py install'
                 sh 'cd sPyNNaker && python setup.py install'
-                sh 'cd sPyNNaker8 && python ./setup.py install'
+                sh 'cd sPyNNaker8 && python ./setup.py develop'
+                sh 'cd sPyNNaker8NewModelTemplate && python ./setup.py develop'
                 sh 'python -m spynnaker8.setup_pynn'
                 // Test requirements
                 sh 'pip install -r sPyNNaker8/requirements-test.txt'
@@ -102,9 +121,15 @@ pipeline {
                 run_pytest('sPyNNaker8/p8_integration_tests/long_test/', 12000, 'sPyNNaker8_Integration_Long')
             }
         }
+        stage('Run new Model Example') {
+            steps {
+                run_pytest('sPyNNaker8/p8_integration_tests/test_new_model_templates', 1200, 'new_model_example')
+                run_pytest('sPyNNaker8NewModelTemplate/nmt_integration_tests', 1200, 'nmt_integration_tests')
+            }
+        }
         stage('Run scripts') {
             steps {
-                sh 'python sPyNNaker8/p8_integration_tests/scripts_test/build_scipt.py'
+                sh 'python sPyNNaker8/p8_integration_tests/scripts_test/build_script.py'
                 run_pytest('sPyNNaker8/p8_integration_tests/scripts_test', 1200, 'sPyNNaker8Scripts')
             }
         }

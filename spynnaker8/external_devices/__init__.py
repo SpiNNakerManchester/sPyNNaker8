@@ -1,3 +1,18 @@
+# Copyright (c) 2017-2019 The University of Manchester
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 """
 The :py:mod:`spynnaker.pyNN` package contains the front end specifications
 and implementation for the PyNN High-level API
@@ -9,14 +24,13 @@ from spinn_utilities.socket_address import SocketAddress
 from spinnman.messages.eieio import EIEIOType
 from spinn_front_end_common.abstract_models import (
     AbstractSendMeMulticastCommandsVertex)
-from spinn_front_end_common.utility_models import LivePacketGather
 from spinn_front_end_common.utilities import globals_variables
 from spynnaker.pyNN.abstract_spinnaker_common import AbstractSpiNNakerCommon
 from spynnaker.pyNN.external_devices_models import (
     AbstractEthernetController, AbstractEthernetSensor,
     ArbitraryFPGADevice, ExternalCochleaDevice, ExternalFPGARetinaDevice,
     MunichMotorDevice, MunichRetinaDevice)
-from spynnaker.pyNN.models.utility_models import (
+from spynnaker.pyNN.models.utility_models.spike_injector import (
     SpikeInjector as
     ExternalDeviceSpikeInjector)
 from spynnaker.pyNN import model_binaries
@@ -126,6 +140,10 @@ def register_database_notification_request(hostname, notify_port, ack_port):
         SocketAddress(hostname, notify_port, ack_port))
 
 
+# Store the connection to be used by multiple users
+__ethernet_control_connection = None
+
+
 def EthernetControlPopulation(
         n_neurons, model, label=None, local_host=None, local_port=None,
         database_notify_port_num=None, database_ack_port_num=None):
@@ -158,8 +176,17 @@ def EthernetControlPopulation(
         raise Exception(
             "Vertex must be an instance of AbstractEthernetController")
     translator = vertex.get_message_translator()
-    ethernet_control_connection = EthernetControlConnection(
-        translator, local_host, local_port)
+    live_packet_gather_label = "EthernetControlReceiver"
+    global __ethernet_control_connection
+    if __ethernet_control_connection is None:
+        __ethernet_control_connection = EthernetControlConnection(
+            translator, vertex.label, live_packet_gather_label, local_host,
+            local_port)
+        add_database_socket_address(
+            __ethernet_control_connection.local_ip_address,
+            __ethernet_control_connection.local_port, database_ack_port_num)
+    else:
+        __ethernet_control_connection.add_translator(vertex.label, translator)
     devices_with_commands = [
         device for device in vertex.get_external_devices()
         if isinstance(device, AbstractSendMeMulticastCommandsVertex)]
@@ -170,15 +197,13 @@ def EthernetControlPopulation(
         add_database_socket_address(
             ethernet_command_connection.local_ip_address,
             ethernet_command_connection.local_port, database_ack_port_num)
-    live_packet_gather = LivePacketGather(
-        ethernet_control_connection.local_ip_address,
-        ethernet_control_connection.local_port,
+    Plugins.update_live_packet_gather_tracker(
+        population._vertex, live_packet_gather_label,
+        port=__ethernet_control_connection.local_port,
+        hostname=__ethernet_control_connection.local_ip_address,
         message_type=EIEIOType.KEY_PAYLOAD_32_BIT,
-        payload_as_time_stamps=False, use_payload_prefix=False)
-    spynnaker_external_devices.add_application_vertex(live_packet_gather)
-    for partition_id in vertex.get_outgoing_partition_ids():
-        spynnaker_external_devices.add_edge(
-            vertex, live_packet_gather, partition_id)
+        payload_as_time_stamps=False, use_payload_prefix=False,
+        partition_ids=vertex.get_outgoing_partition_ids())
     return population
 
 

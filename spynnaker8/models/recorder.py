@@ -1,3 +1,18 @@
+# Copyright (c) 2017-2019 The University of Manchester
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 from datetime import datetime
 import logging
 import numpy
@@ -117,7 +132,7 @@ class Recorder(RecordingCommon):
             if filter_ids[neuron_id]:
                 # add population first ID to ensure all atoms have a unique
                 # identifier (PyNN enforcement)
-                record_ids.append(neuron_id + self._population._first_id)
+                record_ids.append(neuron_id + self._population.first_id)
         return record_ids
 
     def _clean_variables(self, variables):
@@ -264,8 +279,8 @@ class Recorder(RecordingCommon):
             'size': self._population.size,
             'first_index': 0,
             'last_index': self._population.size,
-            'first_id': int(self._population._first_id),
-            'last_id': int(self._population._last_id),
+            'first_id': int(self._population.first_id),
+            'last_id': int(self._population.last_id),
             'label': self._population.label,
             'simulator': get_simulator().name,
         }
@@ -365,7 +380,7 @@ class Recorder(RecordingCommon):
         :param units: the units of the recorded value
         :param label: human readable label
         """
-        # pylint: disable=too-many-arguments
+        # pylint: disable=too-many-arguments, no-member
         t_start = recording_start_time * quantities.ms
         sampling_period = sampling_interval * quantities.ms
         if view_indexes is None:
