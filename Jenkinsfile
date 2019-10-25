@@ -148,7 +148,7 @@ pipeline {
         stage('Run new Model Example') {
             steps {
                 run_pytest('sPyNNaker/spynnaker_integration_tests/test_new_model_templates', 1200, 'new_model_example', 'auto')
-                run_pytest('sPyNNaker/spynnaker_integration_tests', 1200, 'nmt_integration_tests', 'auto')
+                run_pytest('sPyNNaker8NewModelTemplate/nmt_integration_tests', 1200, 'nmt_integration_tests', 'auto')
             }
         }
         stage('Reports') {
