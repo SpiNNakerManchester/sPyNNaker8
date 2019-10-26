@@ -19,6 +19,7 @@ import functools
 from p8_integration_tests.base_test_case import BaseTestCase
 import numpy
 from pyNN.random import NumpyRNG
+from collections import defaultdict
 
 
 def run_script():
@@ -45,20 +46,25 @@ def run_script():
         (7.0, RandomDistribution("exponential", beta=2.0, rng=rng)),
     ]
     connectors = [
-        p.OneToOneConnector,
-        p.AllToAllConnector,
-        functools.partial(p.AllToAllConnector,
+        (p.OneToOneConnector, functools.partial(check_one_to_one, 10)),
+        (p.AllToAllConnector,
+         functools.partial(check_all_to_all, 10, True),
+        (functools.partial(p.AllToAllConnector,
                           allow_self_connections=False),
-        functools.partial(p.FixedProbabilityConnector, 0.5),
-        functools.partial(p.FixedTotalNumberConnector, 50,
+         functools.partial(check_all_to_all, 10, False)),
+        (functools.partial(p.FixedProbabilityConnector, 0.5),
+         functools.partial(check_fixed_prob, 10, 0.5)),
+        (functools.partial(p.FixedTotalNumberConnector, 50,
                           with_replacement=True),
-        functools.partial(p.FixedTotalNumberConnector, 20,
-                          with_replacement=False)
+         functools.partial(check_fixed_total, 10, 50)),
+        (functools.partial(p.FixedTotalNumberConnector, 20,
+                          with_replacement=False),
+         functools.partial(check_fixed_total, 10, 20))
     ]
 
     projs = list()
     for weight, delay in param_projections:
-        for connector in connectors:
+        for connector, check in connectors:
             conn = connector()
             projs.append((weight, delay, conn, False, p.Projection(
                 inp, out, conn,
@@ -67,16 +73,19 @@ def run_script():
                 inp, out, conn,
                 p.STDPMechanism(
                     p.SpikePairRule(), p.AdditiveWeightDependence(),
-                    weight=weight, delay=delay))))
+                    weight=weight, delay=delay))),
+                check)
 
     p.run(10)
 
-    for weight, delay, connector, is_stdp, proj in projs:
+    for weight, delay, connector, is_stdp, proj, check in projs:
         weights = proj.get("weight", "list", with_address=False)
         delays = proj.get("delay", "list", with_address=False)
+        conns = proj.get([], "list")
         if not is_stdp:
             check_params(weight, weights)
         check_params(delay, delays)
+        ckeck(conns)
 
     p.end()
 
@@ -95,6 +104,33 @@ def check_params(param, result):
             assert(param.parameters["low"] <= minimum)
         if "high" in param.parameters:
             assert(param.parameters["high"] >= maximum)
+
+
+def check_one_to_one(n, conns):
+    assert(len(conns) == n)
+    assert(all(pre == post for pre, post in conns))
+
+def conns_by_pre(conns):
+    conns_by_pre = defaultdict(list)
+    for pre, post in conns:
+        conns_by_pre[pre].append(post)
+    return conns_by_pre
+
+def check_all_to_all(n, allow_self, conns):
+    cbp = conns_by_pre(conns)
+    assert(len(cbp) == n)
+    for pre in cbp:
+        if allow_self:
+            assert(numpy.array_equal(cpb[pre], range(n)))
+        else:
+            assert(numpy.array_equal(cbp[pre],
+                                     [i for i in range(n) if i != pre]))
+
+def check_fixed_prob(n, prob, conns):
+    pass
+
+def check_fixed_total(n, total, conns):
+    pass
 
 
 class TestSynapticExpander(BaseTestCase):
