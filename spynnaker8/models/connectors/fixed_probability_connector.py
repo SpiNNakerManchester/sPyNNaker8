@@ -50,7 +50,7 @@ class FixedProbabilityConnector(
         CommonFixedProbabilityConnector.__init__(
             self, p_connect=p_connect,
             allow_self_connections=allow_self_connections, safe=safe,
-            verbose=verbose)
+            verbose=verbose, rng=rng)
         PyNNFixedProbabilityConnector.__init__(
             self, p_connect=p_connect, callback=callback,
             allow_self_connections=allow_self_connections, rng=rng, safe=safe)
