@@ -66,15 +66,18 @@ def run_script():
     for weight, delay in param_projections:
         for connector, check in connectors:
             conn = connector()
-            projs.append((weight, delay, conn, False, p.Projection(
-                inp, out, conn,
-                p.StaticSynapse(weight=weight, delay=delay))))
-            projs.append((weight, delay, conn, True, p.Projection(
-                inp, out, conn,
-                p.STDPMechanism(
-                    p.SpikePairRule(), p.AdditiveWeightDependence(),
-                    weight=weight, delay=delay))),
-                check)
+            projs.append((
+                weight, delay, conn, False, p.Projection(
+                    inp, out, conn,
+                    p.StaticSynapse(weight=weight, delay=delay)),
+                check))
+            projs.append((
+                weight, delay, conn, True, p.Projection(
+                    inp, out, conn,
+                    p.STDPMechanism(
+                        p.SpikePairRule(), p.AdditiveWeightDependence(),
+                        weight=weight, delay=delay)),
+                check))
 
     p.run(10)
 
@@ -85,7 +88,7 @@ def run_script():
         if not is_stdp:
             check_params(weight, weights)
         check_params(delay, delays)
-        ckeck(conns)
+        check(conns)
 
     p.end()
 
@@ -110,24 +113,28 @@ def check_one_to_one(n, conns):
     assert(len(conns) == n)
     assert(all(pre == post for pre, post in conns))
 
+
 def conns_by_pre(conns):
-    conns_by_pre = defaultdict(list)
+    cbp = defaultdict(list)
     for pre, post in conns:
-        conns_by_pre[pre].append(post)
-    return conns_by_pre
+        cbp[pre].append(post)
+    return cbp
+
 
 def check_all_to_all(n, allow_self, conns):
     cbp = conns_by_pre(conns)
     assert(len(cbp) == n)
     for pre in cbp:
         if allow_self:
-            assert(numpy.array_equal(cpb[pre], range(n)))
+            assert(numpy.array_equal(cbp[pre], range(n)))
         else:
             assert(numpy.array_equal(cbp[pre],
                                      [i for i in range(n) if i != pre]))
 
+
 def check_fixed_prob(n, prob, conns):
     pass
+
 
 def check_fixed_total(n, total, conns):
     pass
