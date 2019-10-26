@@ -48,17 +48,17 @@ def run_script():
     connectors = [
         (p.OneToOneConnector, functools.partial(check_one_to_one, 10)),
         (p.AllToAllConnector,
-         functools.partial(check_all_to_all, 10, True),
+         functools.partial(check_all_to_all, 10, True)),
         (functools.partial(p.AllToAllConnector,
-                          allow_self_connections=False),
+                           allow_self_connections=False),
          functools.partial(check_all_to_all, 10, False)),
         (functools.partial(p.FixedProbabilityConnector, 0.5),
          functools.partial(check_fixed_prob, 10, 0.5)),
         (functools.partial(p.FixedTotalNumberConnector, 50,
-                          with_replacement=True),
+                           with_replacement=True),
          functools.partial(check_fixed_total, 10, 50)),
         (functools.partial(p.FixedTotalNumberConnector, 20,
-                          with_replacement=False),
+                           with_replacement=False),
          functools.partial(check_fixed_total, 10, 20))
     ]
 
