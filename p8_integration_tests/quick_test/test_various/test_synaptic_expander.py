@@ -20,6 +20,7 @@ from p8_integration_tests.base_test_case import BaseTestCase
 import numpy
 from pyNN.random import NumpyRNG
 from collections import defaultdict
+import math
 
 
 def run_script():
@@ -53,7 +54,7 @@ def run_script():
                            allow_self_connections=False),
          functools.partial(check_all_to_all, 10, False)),
         (functools.partial(p.FixedProbabilityConnector, 0.5),
-         functools.partial(check_fixed_prob, 10, 0.5)),
+         functools.partial(check_fixed_prob, 10, 0.5, 3)),
         (functools.partial(p.FixedTotalNumberConnector, 50,
                            with_replacement=True),
          functools.partial(check_fixed_total, 10, 50)),
@@ -126,18 +127,28 @@ def check_all_to_all(n, allow_self, conns):
     assert(len(cbp) == n)
     for pre in cbp:
         if allow_self:
-            assert(numpy.array_equal(cbp[pre], range(n)))
+            assert(numpy.array_equal(
+                sorted(cbp[pre]), range(n)))
         else:
-            assert(numpy.array_equal(cbp[pre],
-                                     [i for i in range(n) if i != pre]))
+            assert(numpy.array_equal(
+                sorted(cbp[pre]),
+                [i for i in range(n) if i != pre]))
 
 
-def check_fixed_prob(n, prob, conns):
-    pass
-
+def check_fixed_prob(n, prob, conns, n_per_core):
+    cpb = conns_by_pre(conns)
+    expected = n * prob
+    error = math.sqrt(expected)
+    avg = sum(len(cpb[pre]) for pre in cpb) / float(n)
+    assert(avg >= (expected - error))
+    assert(avg <= (expected + error))
+    for i in range(0, n, n_per_core):
+        for pre in range(i + 1, i + n_per_core):
+            assert(not numpy.array_equal(
+                sorted(cpb[i]), sorted(cpb[pre])))
 
 def check_fixed_total(n, total, conns):
-    pass
+    assert(len(conns) == total)
 
 
 class TestSynapticExpander(BaseTestCase):
