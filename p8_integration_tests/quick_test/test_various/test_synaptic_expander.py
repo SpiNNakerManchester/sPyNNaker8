@@ -122,6 +122,13 @@ def conns_by_pre(conns):
     return cbp
 
 
+def conns_by_post(conns):
+    cbp = defaultdict(list)
+    for pre, post in conns:
+        cbp[post].append(pre)
+    return cbp
+
+
 def check_all_to_all(n, allow_self, conns):
     cbp = conns_by_pre(conns)
     assert(len(cbp) == n)
@@ -135,17 +142,26 @@ def check_all_to_all(n, allow_self, conns):
                 [i for i in range(n) if i != pre]))
 
 
-def check_fixed_prob(n, prob, conns, n_per_core):
-    cpb = conns_by_pre(conns)
+def check_fixed_prob(n, prob, n_per_core, conns):
+    cbpre = conns_by_pre(conns)
+    cbpost = conns_by_post(conns)
     expected = n * prob
     error = math.sqrt(expected)
-    avg = sum(len(cpb[pre]) for pre in cpb) / float(n)
-    assert(avg >= (expected - error))
-    assert(avg <= (expected + error))
+    avgpre = sum(len(cbpre[pre]) for pre in cbpre) / float(n)
+    avgpost = sum(len(cbpost[post]) for post in cbpost) / float(n)
+    assert(avgpre >= (expected - error))
+    assert(avgpre <= (expected + error))
+    assert(avgpost >= (expected - error))
+    assert(avgpost <= (expected + error))
+
     for i in range(0, n, n_per_core):
         for pre in range(i + 1, i + n_per_core):
             assert(not numpy.array_equal(
-                sorted(cpb[i]), sorted(cpb[pre])))
+                sorted(cbpre[i]), sorted(cbpre[pre])))
+        for post in range(i + 1, i + n_per_core):
+            assert(not numpy.array_equal(
+                sorted(cbpost[i]), sorted(cbpost[post])))
+
 
 def check_fixed_total(n, total, conns):
     assert(len(conns) == total)
