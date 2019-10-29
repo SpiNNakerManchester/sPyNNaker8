@@ -16,7 +16,7 @@
 import numpy
 import pytest
 from pacman.model.graphs.common.slice import Slice
-from unittests.mocks import MockSimulator
+from unittests.mocks import MockSimulator, MockSynapseInfo, MockPopulation
 from spynnaker8.models.connectors import FromFileConnector
 import tempfile
 
@@ -84,8 +84,10 @@ def test_connector(
     # Check weights and delays are used or ignored as expected
     pre_slice = Slice(0, 10)
     post_slice = Slice(0, 10)
+    mock_synapse_info = MockSynapseInfo(MockPopulation(10, "Pre"),
+                                        MockPopulation(10, "Post"))
     block = connector.create_synaptic_block(
         weights, delays, [pre_slice], 0, [post_slice], 0, pre_slice,
-        post_slice, 1)
+        post_slice, 1, mock_synapse_info)
     assert(numpy.array_equal(block["weight"], numpy.array(expected_weights)))
     assert(numpy.array_equal(block["delay"], numpy.array(expected_delays)))

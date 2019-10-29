@@ -300,11 +300,13 @@ class Projection(PyNNProjectionCommon):
 
     @property
     def pre(self):
-        return self._synapse_information.connector.pre_population
+        return self._synapse_information.connector.pre_population(
+            self._synapse_information)
 
     @property
     def post(self):
-        return self._synapse_information.connector.post_population
+        return self._synapse_information.connector.post_population(
+            self._synapse_information)
 
     @property
     def label(self):

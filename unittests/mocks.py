@@ -37,6 +37,21 @@ class MockPopulation(object):
         return "Population {}".format(self._label)
 
 
+class MockSynapseInfo(object):
+
+    def __init__(self, pre_population, post_population):
+        self._pre_population = pre_population
+        self._post_population = post_population
+
+    @property
+    def pre_population(self):
+        return self._pre_population
+
+    @property
+    def post_population(self):
+        return self._post_population
+
+
 class MockRNG(object):
 
     def __init__(self):
