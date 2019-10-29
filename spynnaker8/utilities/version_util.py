@@ -13,10 +13,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from distutils.version import StrictVersion
+from distutils.version import StrictVersion  # pylint: disable=all
 from six import raise_from
-from pyNN import __version__ as pynn_version
-from neo import __version__ as neo_version
+from pyNN import __version__ as _pynn_version
+from neo import __version__ as _neo_version
 
 
 _SUPPORTED_MSG = (
@@ -40,11 +40,11 @@ def detect_supported_configuration(pynn_version, neo_version):
     """
     try:
         pynn = StrictVersion(pynn_version)
-    except Exception as e:
+    except Exception as e:  # pylint: disable=broad-except
         raise_from(ImportError("couldn't parse pyNN version number"), e)
     try:
         neo = StrictVersion(neo_version)
-    except Exception as e:
+    except Exception as e:  # pylint: disable=broad-except
         raise_from(ImportError("couldn't parse neo version number"), e)
 
     if pynn >= "0.9":
@@ -68,5 +68,5 @@ def detect_supported_configuration(pynn_version, neo_version):
 
 
 print("Detected PyNN version {} and Neo version {}".format(
-    pynn_version, neo_version))
-pynn8_syntax = detect_supported_configuration(pynn_version, neo_version)
+    _pynn_version, _neo_version))
+pynn8_syntax = detect_supported_configuration(_pynn_version, _neo_version)
