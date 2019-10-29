@@ -20,12 +20,14 @@ from p8_integration_tests.base_test_case import BaseTestCase
 def do_run():
 
     p.setup(timestep=1.0)
-    inp1 = p.Population(5, p.SpikeSourceArray(spike_times=[0]))
-    out1 = p.Population(5, p.IF_curr_exp())
-    inp2 = p.Population(10, p.SpikeSourceArray(spike_times=[0]))
-    out2 = p.Population(10, p.IF_curr_exp())
+    # The larger population needs to be first for this test
+    inp1 = p.Population(10, p.SpikeSourceArray(spike_times=[0]))
+    out1 = p.Population(10, p.IF_curr_exp())
+    inp2 = p.Population(5, p.SpikeSourceArray(spike_times=[0]))
+    out2 = p.Population(5, p.IF_curr_exp())
 
-    connector = p.OneToOneConnector()
+    # Using an AllToAll to avoid the OneToOne's direct matrix
+    connector = p.AllToAllConnector()
 
     proj_1 = p.Projection(inp1, out1, connector,
                           p.StaticSynapse(weight=2.0, delay=4.0))
@@ -46,8 +48,8 @@ class ReuseConnectorDifferentPopsTest(BaseTestCase):
         proj_1_list, proj_2_list = do_run()
         # Check the lists are the correct length and
         # have the correct weights / delays
-        self.assertEqual(5, len(proj_1_list))
-        self.assertEqual(10, len(proj_2_list))
+        self.assertEqual(100, len(proj_1_list))
+        self.assertEqual(25, len(proj_2_list))
         self.assertEqual(2.0, proj_1_list[0][2])
         self.assertEqual(4.0, proj_1_list[0][3])
         self.assertEqual(1.0, proj_2_list[0][2])
