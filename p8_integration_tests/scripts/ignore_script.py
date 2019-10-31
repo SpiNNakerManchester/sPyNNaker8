@@ -11,6 +11,7 @@ def hacked_receive_chip_info(self, scp_read_chip_info_response):
         self._ignore_cores.add((2, 2, -9, chip_info.ethernet_ip_address))
         self._ignore_cores.add((2, 2, 4, chip_info.ethernet_ip_address))
         self._ignore_chips.add((3, 3, chip_info.ethernet_ip_address))
+        self._ignore_links.add((4, 4, 1, chip_info.ethernet_ip_address))
 
 
 GetMachineProcess._receive_chip_info = hacked_receive_chip_info
