@@ -23,8 +23,7 @@ from spinn_utilities.logger_utils import warn_once
 from spinn_front_end_common.utilities import globals_variables
 from spinn_front_end_common.utilities.exceptions import ConfigurationException
 from spynnaker.pyNN.exceptions import InvalidParameterType
-from spynnaker8.models.connectors import FromListConnector, OneToOneConnector,\
-    AllToAllConnector, FixedProbabilityConnector
+from spynnaker8.models.connectors import FromListConnector
 from spynnaker8.models.synapse_dynamics import SynapseDynamicsStatic
 # This line has to come in this order as it otherwise causes a circular
 # dependency
@@ -55,8 +54,8 @@ class Projection(PyNNProjectionCommon):
                 "sPyNNaker8 {} does not yet support multi-compartmental "
                 "cells.".format(__version__))
 
-        self._check_population_param(pre_synaptic_population, connector)
-        self._check_population_param(post_synaptic_population, connector)
+        self._check_population_param(pre_synaptic_population)
+        self._check_population_param(post_synaptic_population)
 
         # set space object if not set
         if space is None:
@@ -99,34 +98,17 @@ class Projection(PyNNProjectionCommon):
             connector=connector, synapse_dynamics_stdp=synapse_type,
             target=receptor_type, spinnaker_control=self.__simulator,
             pre_synaptic_population=pre_synaptic_population,
-            post_synaptic_population=post_synaptic_population,
-            prepop_is_view=isinstance(pre_synaptic_population,
-                                      PopulationView),
-            postpop_is_view=isinstance(post_synaptic_population,
-                                       PopulationView),
-            rng=rng, machine_time_step=self.__simulator.machine_time_step,
+            post_synaptic_population=post_synaptic_population, rng=rng,
+            machine_time_step=self.__simulator.machine_time_step,
             user_max_delay=self.__simulator.max_delay, label=label,
             time_scale_factor=self.__simulator.time_scale_factor)
 
-    def _check_population_param(self, param, connector):
+    def _check_population_param(self, param):
         if isinstance(param, Population):
-            return  # Projections work from Populations
+            return  # Good that is what we want
         if isinstance(param, PopulationView):
-            if (isinstance(connector, OneToOneConnector) or
-                    isinstance(connector, AllToAllConnector) or
-                    isinstance(connector, FixedProbabilityConnector)):
-                # Check whether the array is contiguous or not
-                inds = param._indexes
-                if (inds == tuple(range(inds[0], inds[-1] + 1))):
-                    return
-                else:
-                    raise NotImplementedError(
-                        "Projections over views only work on contiguous "
-                        "arrays, e.g. view = pop[n:m], not view = pop[n,m]")
-            else:
-                raise NotImplementedError(
-                    "Projections over views not currently supported with "
-                    "the {}".format(connector))
+            raise NotImplementedError(
+                "Projections over views not currently supported")
         raise ConfigurationException("Unexpected parameter type {}. Expected "
                                      "Population".format(type(param)))
 

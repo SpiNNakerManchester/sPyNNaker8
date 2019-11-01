@@ -94,19 +94,3 @@ class TestAllToAllConnector(BaseTestCase):
 
     def test_using_static_synapse_singles(self):
         self.runsafe(self.using_static_synapse_singles)
-
-    def using_population_views(self):
-        sim.setup(timestep=1.0)
-        input = sim.Population(4, sim.SpikeSourceArray([0]), label="input")
-        pop = sim.Population(4, sim.IF_curr_exp(), label="pop")
-        conn = sim.Projection(input[1:3], pop[2:4], sim.AllToAllConnector(),
-                              sim.StaticSynapse(weight=0.5, delay=2))
-        sim.run(1)
-        weights = conn.get(['weight', 'delay'], 'list')
-        sim.end()
-        target = [(1, 2, 0.5, 2.), (1, 3, 0.5, 2.), (2, 2, 0.5, 2.),
-                  (2, 3, 0.5, 2.)]
-        self.assertEqual(weights.tolist(), target)
-
-    def test_using_population_views(self):
-        self.runsafe(self.using_population_views)
