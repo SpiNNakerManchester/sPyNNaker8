@@ -25,6 +25,8 @@ from spinn_utilities.log import FormatAdapter
 from spinn_front_end_common.utilities import globals_variables
 from spinn_front_end_common.utilities.exceptions import ConfigurationException
 from spinn_front_end_common.utilities.failed_state import FAILED_STATE_MSG
+from spinn_front_end_common.utilities.constants import (
+    MICRO_TO_MILLISECOND_CONVERSION)
 from spynnaker.pyNN.abstract_spinnaker_common import AbstractSpiNNakerCommon
 from spynnaker.pyNN.utilities.spynnaker_failed_state import (
     SpynnakerFailedState)
@@ -110,14 +112,14 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
             time_scale_factor=time_scale_factor,
             front_end_versions=front_end_versions)
 
-    def run(self, simtime):
+    def run(self, run_time):
         """ Run the simulation for a span of simulation time.
 
-        :param simtime: the time to run for, in milliseconds
+        :param run_time: the time to run for, in milliseconds
         :return: None
         """
 
-        self._run_wait(simtime)
+        self._run_wait(run_time)
 
     def run_until(self, tstop):
         """ Run the simulation until the given simulation time.
@@ -158,7 +160,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
         # Convert dt into microseconds and divide by
         # realtime proportion to get hardware timestep
         hardware_timestep_us = int(round(
-            (1000.0 * float(self.dt)) / float(self.timescale_factor)))
+            float(self.machine_time_step) / float(self.timescale_factor)))
 
         # Determine how long simulation is in timesteps
         duration_timesteps = int(math.ceil(
@@ -222,7 +224,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
         :return: the machine time step
         """
 
-        return self._machine_time_step
+        return self.machine_time_step / float(MICRO_TO_MILLISECOND_CONVERSION)
 
     @dt.setter
     def dt(self, new_value):
@@ -230,7 +232,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 
         :param new_value: new value for machine time step
         """
-        self._machine_time_step = new_value
+        self.machine_time_step = new_value * MICRO_TO_MILLISECOND_CONVERSION
 
     @property
     def t(self):
@@ -239,7 +241,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
         :return: the current runtime already executed
         """
         return (
-            self._current_run_timesteps * (self._machine_time_step / 1000.0))
+            self._current_run_timesteps * (self.machine_time_step / 1000.0))
 
     @property
     def segment_counter(self):
@@ -379,10 +381,6 @@ class Spynnaker8FailedState(SpynnakerFailedState,
     @property
     def t(self):
         raise ConfigurationException(FAILED_STATE_MSG)
-
-    @staticmethod
-    def get_generated_output(output):
-        return globals_variables.get_generated_output(output)
 
 
 # At import time change the default FailedState

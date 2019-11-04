@@ -66,17 +66,13 @@ class TestKernelConnector(BaseTestCase):
         weightsdelays = sorted(c2.get(['weight', 'delay'], 'list'),
                                key=lambda x: x[1])
 
-        # Get data
-        spikes = pop.spinnaker_get_data('spikes')
-        v = pop.spinnaker_get_data('v')
-
         sim.end()
 
-        return v, spikes, weightsdelays
+        return weightsdelays
 
     def test_oddsquarek_run(self):
         (psh, psw, ksh, ksw) = (4, 4, 3, 3)
-        v, spikes, weightsdelays = self.do_run(psh, psw, ksh, ksw)
+        weightsdelays = self.do_run(psh, psw, ksh, ksw)
         # Checks go here
         self.assertEqual(25, len(weightsdelays))
         list10 = (1, 0, 5.0, 20.0)
@@ -87,41 +83,33 @@ class TestKernelConnector(BaseTestCase):
         #       with the following, but in 3.5 it generates a FutureWarning
 #         self.assertSequenceEqual(list10, weightsdelays[1])
 #         self.assertSequenceEqual(list11, weightsdelays[5])
-        self.assertEqual(59, len(spikes))
-        self.assertEqual(4320, len(v))
 
     def test_evensquarek_run(self):
         (psh, psw, ksh, ksw) = (4, 4, 2, 2)
-        v, spikes, weightsdelays = self.do_run(psh, psw, ksh, ksw)
+        weightsdelays = self.do_run(psh, psw, ksh, ksw)
         # Checks go here
         self.assertEqual(9, len(weightsdelays))
         list01 = (0, 1, 5.0, 20.0)
         list03 = (0, 3, 7.0, 10.0)
         [self.assertEqual(list01[i], weightsdelays[1][i]) for i in range(4)]
         [self.assertEqual(list03[i], weightsdelays[5][i]) for i in range(4)]
-        self.assertEqual(20, len(spikes))
-        self.assertEqual(4320, len(v))
 
     def test_nonsquarek_run(self):
         (psh, psw, ksh, ksw) = (4, 4, 1, 3)
-        v, spikes, weightsdelays = self.do_run(psh, psw, ksh, ksw)
+        weightsdelays = self.do_run(psh, psw, ksh, ksw)
         # Checks go here
         self.assertEqual(10, len(weightsdelays))
         list10 = (1, 0, 7.0, 10.0)
         list42 = (4, 2, 5.0, 20.0)
         [self.assertEqual(list10[i], weightsdelays[1][i]) for i in range(4)]
         [self.assertEqual(list42[i], weightsdelays[5][i]) for i in range(4)]
-        self.assertEqual(22, len(spikes))
-        self.assertEqual(4320, len(v))
 
     def test_bigger_nonsquarep_run(self):
         (psh, psw, ksh, ksw) = (32, 16, 3, 3)
-        v, spikes, weightsdelays = self.do_run(psh, psw, ksh, ksw)
+        weightsdelays = self.do_run(psh, psw, ksh, ksw)
         # Checks go here
         self.assertEqual(1081, len(weightsdelays))
         list10 = (1, 0, 5.0, 20.0)
         list11 = (1, 1, 7.0, 10.0)
         [self.assertEqual(list10[i], weightsdelays[1][i]) for i in range(4)]
         [self.assertEqual(list11[i], weightsdelays[5][i]) for i in range(4)]
-        self.assertEqual(2385, len(spikes))
-        self.assertEqual(455680, len(v))

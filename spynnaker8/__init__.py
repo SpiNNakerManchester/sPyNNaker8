@@ -80,6 +80,10 @@ from spynnaker8.models.synapse_dynamics.synapse_dynamics_static import \
 # plastic stuff
 from spynnaker8.models.synapse_dynamics.synapse_dynamics_stdp import \
     SynapseDynamicsSTDP as STDPMechanism
+from spynnaker8.models.synapse_dynamics.synapse_dynamics_structural_static \
+    import SynapseDynamicsStructuralStatic as StructuralMechanismStatic
+from spynnaker8.models.synapse_dynamics.synapse_dynamics_structural_stdp \
+    import SynapseDynamicsStructuralSTDP as StructuralMechanismSTDP
 from spynnaker8.models.synapse_dynamics.weight_dependence\
     .weight_dependence_additive import WeightDependenceAdditive as \
     AdditiveWeightDependence
@@ -89,6 +93,14 @@ from spynnaker8.models.synapse_dynamics.weight_dependence\
 from spynnaker8.models.synapse_dynamics.timing_dependence\
     .timing_dependence_spike_pair import TimingDependenceSpikePair as \
     SpikePairRule
+from spynnaker.pyNN.models.neuron.structural_plasticity.synaptogenesis\
+    .partner_selection import LastNeuronSelection
+from spynnaker.pyNN.models.neuron.structural_plasticity.synaptogenesis\
+    .partner_selection import RandomSelection
+from spynnaker.pyNN.models.neuron.structural_plasticity.synaptogenesis\
+    .formation import DistanceDependentFormation
+from spynnaker.pyNN.models.neuron.structural_plasticity.synaptogenesis\
+    .elimination import RandomByWeightElimination
 from spynnaker8.models.synapse_dynamics.timing_dependence \
     .timing_dependence_izhikevich_neuromodulation \
     import TimingDependenceIzhikevichNeuromodulation \
@@ -170,6 +182,11 @@ __all__ = [
     # plastic stuff
     'STDPMechanism', 'AdditiveWeightDependence',
     'MultiplicativeWeightDependence', 'SpikePairRule',
+    # Structural plasticity by Petrut Bogdan
+    'StructuralMechanismStatic', 'StructuralMechanismSTDP',
+    'LastNeuronSelection', 'RandomSelection',
+    'DistanceDependentFormation', 'RandomByWeightElimination',
+    # Neuromodulation (Mantas Mikaitis)
     'IzhikevichNeuromodulation',
     # neuron stuff
     'IF_cond_exp', 'IF_curr_exp', "IF_curr_alpha",
@@ -264,9 +281,6 @@ class RandomDistribution(_PynnRandomDistribution):
           - ``mu``, ``kappa``
           -
     """
-
-    def __str__(self):
-        return super(RandomDistribution, self).__str__()
 
     def __repr__(self):
         return self.__str__()
@@ -539,7 +553,7 @@ def create(cellclass, cellparams=None, n=1):
     """
     if not globals_variables.has_simulator():
         raise ConfigurationException(FAILED_STATE_MSG)
-    __pynn["create"](cellclass, cellparams, n)
+    return __pynn["create"](cellclass, cellparams, n)
 
 
 def NativeRNG(seed_value):
