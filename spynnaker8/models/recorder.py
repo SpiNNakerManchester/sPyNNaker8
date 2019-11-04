@@ -380,7 +380,7 @@ class Recorder(RecordingCommon):
         :param units: the units of the recorded value
         :param label: human readable label
         """
-        # pylint: disable=too-many-arguments
+        # pylint: disable=too-many-arguments, no-member
         t_start = recording_start_time * quantities.ms
         sampling_period = sampling_interval * quantities.ms
         if view_indexes is None:
