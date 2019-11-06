@@ -14,7 +14,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-from distutils.version import StrictVersion as Version
+from distutils.version import StrictVersion as Version  # pylint: disable=all
 import pyNN
 
 

@@ -29,6 +29,7 @@ except ImportError:
     matplotlib_missing = True
 from spynnaker8.utilities.version_util import pynn8_syntax
 if pynn8_syntax:
+    # pylint: disable=no-name-in-module
     from neo import AnalogSignalArray as AnalogSignalType  # @UnresolvedImport
 else:
     from neo import AnalogSignal as AnalogSignalType  # @Reimport
@@ -93,10 +94,9 @@ def plot_spiketrains(ax, spiketrains, label='', **options):
     """
     ax.set_xlim(0, spiketrains[0].t_stop / ms)
     handle_options(ax, options)
-    neurons = np.concatenate(map(lambda x:
-                                 np.repeat(x.annotations['source_index'],
-                                           len(x)),
-                                 spiketrains))
+    neurons = np.concatenate(
+        [np.repeat(x.annotations['source_index'], len(x))
+         for x in spiketrains])
     spike_times = np.concatenate(spiketrains, axis=0)
     plot_spikes(ax, spike_times, neurons, label=label, **options)
 
@@ -169,7 +169,7 @@ def heat_plot_neo(ax, signal_array, label='', **options):
     all_times = np.tile(times, n_neurons)
     neurons = np.repeat(xs, len(times))
     magnitude = signal_array.magnitude
-    values = np.concatenate(map(lambda x: magnitude[:, x], xs))
+    values = np.concatenate([magnitude[:, x] for x in xs])
     heat_plot(ax, neurons, all_times, values, label=label, **options)
 
 
