@@ -1,4 +1,3 @@
-from __future__ import print_function
 import spynnaker8 as p
 import numpy
 from pyNN.utility.plotting import Figure, Panel

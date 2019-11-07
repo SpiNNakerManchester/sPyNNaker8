@@ -1,4 +1,3 @@
-from __future__ import print_function
 import spynnaker8 as pyNN
 import numpy as np
 from pyNN.utility.plotting import Figure, Panel
@@ -80,7 +79,7 @@ def main(argv):
                                 label="err_pop")
 
     # TODO MAKE NEGATIVE ERROR POP
-    
+
 
     learning_rule_vis_to_hid = pyNN.STDPMechanism(
         timing_dependence=pyNN.TimingDependenceERBP(
