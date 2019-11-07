@@ -22,8 +22,6 @@ from spinn_front_end_common.utilities import globals_variables
 class TestOnlyCoresRecording(BaseTestCase):
 
     def do_run(self):
-        # From the config file
-        requested_cores = [(0, 0, 1), (0, 0, 3), (1, 1, 1)]
         sim.setup(timestep=1.0, n_boards_required=1)
         sim.set_number_of_neurons_per_core(sim.IF_curr_exp, 100)
 
