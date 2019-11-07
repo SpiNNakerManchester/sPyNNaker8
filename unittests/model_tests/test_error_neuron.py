@@ -1,3 +1,4 @@
+from __future__ import print_function
 import spynnaker8 as pyNN
 from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt
@@ -52,4 +53,4 @@ F = Figure(
 
 plt.show()
 pyNN.end()
-print "job complete"
+print("job complete")

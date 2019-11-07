@@ -1,3 +1,4 @@
+from __future__ import print_function
 import spynnaker8 as pyNN
 import numpy as np
 from pyNN.utility.plotting import Figure, Panel
@@ -158,8 +159,8 @@ def main(argv):
     out_neuron_data = pop_out.get_data()
     weight = vis_hid_synapse_plastic.get('weight', 'list', with_address=False)
 
-    print "Original weight: {}".format(w_plastic_vis_to_hid)
-    print "Updated SpiNNaker weight: {}".format(weight)
+    print("Original weight: {}".format(w_plastic_vis_to_hid))
+    print("Updated SpiNNaker weight: {}".format(weight))
 
     # Plot
     F = Figure(
@@ -187,7 +188,7 @@ def main(argv):
 
     plt.show()
     pyNN.end()
-    print "job done"
+    print("job done")
 
 
 if __name__ == "__main__":

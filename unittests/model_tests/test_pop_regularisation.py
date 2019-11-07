@@ -1,3 +1,4 @@
+from __future__ import print_function
 import spynnaker8 as p
 import numpy
 import math
@@ -291,7 +292,7 @@ plot_end = plot_start + window
 
 for i in range(batches):
 
-    print "run: {}".format(i)
+    print("run: {}".format(i))
     p.run(runtime/batches)
 
     in_spikes = pop_in.get_data('spikes')
@@ -321,5 +322,5 @@ plt.show()
 p.end()
 
 
-print "job done"
+print("job done")
 

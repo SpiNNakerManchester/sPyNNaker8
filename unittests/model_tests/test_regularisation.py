@@ -1,3 +1,4 @@
+from __future__ import print_function
 import spynnaker8 as p
 import numpy
 import math
@@ -284,5 +285,5 @@ plt.show()
 p.end()
 
 
-print "job done"
+print("job done")
 

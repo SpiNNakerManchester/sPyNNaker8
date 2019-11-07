@@ -1,3 +1,4 @@
+from __future__ import print_function
 import spynnaker8 as p
 import numpy
 import math
@@ -11,6 +12,13 @@ cycle_time = 1023
 timestep = 1
 p.setup(timestep) # simulation timestep (ms)
 runtime = num_repeats * cycle_time * batches
+
+target_data = []
+for i in range(1024):
+            target_data.append(
+                5 + 2 * numpy.sin(2 * i * 2* numpy.pi / 1024) \
+                    + 2 * numpy.sin((4 * i * 2* numpy.pi / 1024))
+                )
 
 
 # # Post-synapse population
@@ -27,6 +35,7 @@ erbp_neuron_params = {
 readout_neuron_params = {
     "v": 0,
     "v_thresh": 30, # controls firing rate of error neurons
+    "target_data": target_data
     }
 
 tau_err = 20
@@ -377,7 +386,7 @@ plot_end = plot_start + window
 
 for i in range(batches):
 
-    print "run: {}".format(i)
+    print("run: {}".format(i))
     p.run(runtime/batches)
 
 #     in_spikes = pop_in.get_data('spikes')
@@ -419,6 +428,6 @@ for i in range(batches):
 p.end()
 
 
-print "job done"
+print("job done")
 
 plt.show()

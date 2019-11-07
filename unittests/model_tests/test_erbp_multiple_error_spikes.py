@@ -1,3 +1,4 @@
+from __future__ import print_function
 import spynnaker8 as p
 import numpy
 from pyNN.utility.plotting import Figure, Panel
@@ -115,7 +116,7 @@ for exc_err_spike in dt_exc:
                    (neuron_params["v_thresh"] - neuron_params["v_rest"]))
     trace_at_err_spike = p_j * numpy.exp(-exc_err_spike / tau_err)
     dw_exc += trace_at_err_spike * w_err_exc * l_rate
-    print dw_exc
+    print(dw_exc)
 
 # Hand calculate weight update to check SpiNNajer operation
 dw_inh = 0
@@ -124,16 +125,16 @@ for inh_err_spike in dt_inh:
                    (neuron_params["v_thresh"] - neuron_params["v_rest"]))
     trace_at_err_spike = p_j * numpy.exp(-inh_err_spike / tau_err)
     dw_inh += trace_at_err_spike * w_err_inh * l_rate
-    print dw_inh
+    print(dw_inh)
 
 
 
 
 hand_calc_weight = w_plastic + dw_exc - dw_inh
 
-print "Original weight: {}".format(w_plastic)
-print "Updated SpiNNaker weight: {}".format(weight)
-print "Handcalculated updated weight: {}".format(hand_calc_weight)
+print("Original weight: {}".format(w_plastic))
+print("Updated SpiNNaker weight: {}".format(weight))
+print("Handcalculated updated weight: {}".format(hand_calc_weight))
 
 
 # Plot

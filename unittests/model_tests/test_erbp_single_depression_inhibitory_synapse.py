@@ -90,9 +90,9 @@ trace_at_err_spike = p_j * numpy.exp(-dt / tau_err)
 dw = trace_at_err_spike * w_err * l_rate
 hand_calc_weight = w_plastic - dw
 
-print "Original weight: {}".format(w_plastic)
-print "Updated SpiNNaker weight: {}".format(weight)
-print "Handcalculated updated weight: {}".format(hand_calc_weight)
+print("Original weight: {}".format(w_plastic))
+print("Updated SpiNNaker weight: {}".format(weight))
+print("Handcalculated updated weight: {}".format(hand_calc_weight))
 
 
 # Plot

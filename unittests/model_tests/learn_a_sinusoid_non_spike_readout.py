@@ -1,3 +1,4 @@
+from __future__ import print_function
 import spynnaker8 as p
 import numpy
 import math
@@ -5,7 +6,7 @@ import unittest
 from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt
 
-batches = 50
+batches = 25
 num_repeats = 5  # in a batch
 cycle_time = 1023
 timestep = 1
@@ -430,7 +431,7 @@ conv_plot.xlim(0, runtime/cycle_time)
 
 for i in range(batches):
 
-    print "run: {}".format(i)
+    print("run: {}".format(i))
     p.run(runtime/batches)
     if i is 0:
         in_spikes = pop_in.get_data('spikes')
@@ -450,7 +451,7 @@ for i in range(batches):
                 ))
             )
     conv_plot.figure(2)
-    print err_conv
+    print(err_conv)
     conv_plot.plot(err_conv)
     conv_plot.pause(0.1)
 
@@ -491,5 +492,5 @@ plt.show()
 p.end()
 
 
-print "job done"
+print("job done")
 

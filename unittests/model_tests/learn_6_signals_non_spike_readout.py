@@ -1,3 +1,4 @@
+from __future__ import print_function
 import spynnaker8 as p
 import numpy
 import math
@@ -25,7 +26,7 @@ erbp_neuron_params = {
     }
 
 # Load data
-bottle_traj = numpy.load('reaching_trajectories_periodic/bottle.npy')
+bottle_traj = numpy.load('reaching_trajectories_periodic/bottle.npy', allow_pickle=True, encoding='bytes')
 t0 = bottle_traj[1][:,0][::2][0:1024]
 t1 = bottle_traj[1][:,1][::2][0:1024]
 t2 = bottle_traj[1][:,2][::2][0:1024]
@@ -664,7 +665,7 @@ conv_plot.xlim(0, runtime/cycle_time)
 
 for i in range(batches):
 
-    print "run: {}".format(i)
+    print("run: {}".format(i))
     p.run(runtime/batches)
     if i is 0:
         in_spikes = pop_in.get_data('spikes')
@@ -794,5 +795,5 @@ plt.show()
 p.end()
 
 
-print "job done"
+print("job done")
 
