@@ -39,9 +39,11 @@ class MockPopulation(object):
 
 class MockSynapseInfo(object):
 
-    def __init__(self, pre_population, post_population):
+    def __init__(self, pre_population, post_population, weights, delays):
         self._pre_population = pre_population
         self._post_population = post_population
+        self._weights = weights
+        self._delays = delays
 
     @property
     def pre_population(self):
