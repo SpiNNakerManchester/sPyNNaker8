@@ -14,6 +14,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from unittest import SkipTest
+from spinn_machine.ignores import IgnoreChip, IgnoreCore, IgnoreLink
 from spinnman.processes.get_machine_process import GetMachineProcess
 from p8_integration_tests.base_test_case import BaseTestCase
 import spynnaker8 as sim
@@ -24,11 +25,16 @@ def hacked_receive_chip_info(self, scp_read_chip_info_response):
     self._chip_info[chip_info.x, chip_info.y] = chip_info
     # Hack to test ignores
     if (chip_info.x == 8 and chip_info.y == 4):
-        self._ignore_cores.add((2, 2, -10, chip_info.ethernet_ip_address))
-        self._ignore_cores.add((2, 2, -9, chip_info.ethernet_ip_address))
-        self._ignore_cores.add((2, 2, 4, chip_info.ethernet_ip_address))
-        self._ignore_chips.add((3, 3, chip_info.ethernet_ip_address))
-        self._ignore_links.add((4, 4, 1, chip_info.ethernet_ip_address))
+        self._ignore_cores.add(
+            IgnoreCore(2, 2, -10, chip_info.ethernet_ip_address))
+        self._ignore_cores.add(
+            IgnoreCore(2, 2, -9, chip_info.ethernet_ip_address))
+        self._ignore_cores.add(
+            IgnoreCore(2, 2, 4, chip_info.ethernet_ip_address))
+        self._ignore_chips.add(
+            IgnoreChip(3, 3, chip_info.ethernet_ip_address))
+        self._ignore_links.add(
+            IgnoreLink(4, 4, 1, chip_info.ethernet_ip_address))
 
 
 class TestAllow(BaseTestCase):
