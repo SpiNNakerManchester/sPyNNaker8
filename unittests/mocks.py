@@ -69,6 +69,7 @@ class MockSynapseInfo(object):
     def delays(self):
         return self._delays
 
+
 class MockRNG(object):
 
     def __init__(self):
