@@ -185,23 +185,23 @@ class TestPoissonSpikeSource(BaseTestCase):
         saved_label_stop = None
 
         def init(label, vertex_size, run_time_ms, machine_timestep_ms):
-            global saved_label_init
-            global saved_vertex_size
-            global saved_run_time_ms
-            global saved_machine_timestep_ms
+            nonlocal saved_label_init
+            nonlocal saved_vertex_size
+            nonlocal saved_run_time_ms
+            nonlocal saved_machine_timestep_ms
             saved_label_init = label
             saved_vertex_size = vertex_size
             saved_run_time_ms = run_time_ms
             saved_machine_timestep_ms = machine_timestep_ms
 
         def set_rates(label, conn):
-            global saved_label_set
+            nonlocal saved_label_set
             time.sleep(1.0)
             conn.set_rates(label, [(i, 50) for i in range(50)])
             saved_label_set = label
 
         def stop(label, _conn):
-            global saved_label_stop
+            nonlocal saved_label_stop
             saved_label_stop = label
 
         n_neurons = 100
