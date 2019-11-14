@@ -16,9 +16,9 @@
 """
 Synfirechain-like example
 """
-from unittest import SkipTest
 import spynnaker8 as sim
 from p8_integration_tests.base_test_case import BaseTestCase
+from spinn_front_end_common.utilities import globals_variables
 
 
 class TestCoresAndBinariesRecording(BaseTestCase):
@@ -34,27 +34,34 @@ class TestCoresAndBinariesRecording(BaseTestCase):
                        synapse_type=sim.StaticSynapse(weight=5, delay=18))
         sim.run(500)
 
-        provenance_files = self.get_provenance_files()
+        app_iobuf_files = self.get_app_iobuf_files()
+        graph_mapper = globals_variables.get_simulator()._graph_mapper
+        placements = globals_variables.get_simulator()._placements
         sim.end()
 
-        # assuming placements as expected
-        xmls = {  # extract_iobuf_from_binary_types = IF_curr_exp.aplx
-                "0_0_5_pop_1_0_99.xml", "0_0_6_pop_1_100_199.xml",
-                }
-        if xmls < set(provenance_files):
+        machine_verts = graph_mapper.get_machine_vertices(pop_1._vertex)
+        data = set()
+        false_data = list()
+
+        for machine_vertex in machine_verts:
+            placement = placements.get_placement_of_vertex(machine_vertex)
+            data.add(placement)
+
+        for processor in range(0, 16):
+            if not placements.is_processor_occupied(0, 0, processor):
+                false_data.append(processor)
+            elif placements._placements[(0, 0, processor)] not in data:
+                false_data.append(processor)
+
+        for placement in data:
+            self.assertIn(
+                "iobuf_for_chip_{}_{}_processor_id_{}.txt".format(
+                    placement.x, placement.y, placement.p), app_iobuf_files)
+        for processor in false_data:
             # extract_iobuf_from_cores = None
             self.assertNotIn(
-                "iobuf_for_chip_0_0_processor_id_2.txt", provenance_files)
-            self.assertNotIn(
-                "iobuf_for_chip_0_0_processor_id_3.txt", provenance_files)
-            self.assertNotIn(
-                "iobuf_for_chip_0_0_processor_id_4.txt", provenance_files)
-            self.assertIn(
-                "iobuf_for_chip_0_0_processor_id_5.txt", provenance_files)
-            self.assertIn(
-                "iobuf_for_chip_0_0_processor_id_6.txt", provenance_files)
-        else:
-            raise SkipTest("Unexpected placements {}".format(provenance_files))
+                "iobuf_for_chip_0_0_processor_id_{}.txt".format(processor),
+                app_iobuf_files)
 
     def test_do_run(self):
         self.runsafe(self.do_run)
