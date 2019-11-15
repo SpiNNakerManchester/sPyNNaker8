@@ -177,32 +177,26 @@ class TestPoissonSpikeSource(BaseTestCase):
 
     def poisson_live_rates(self):
 
-        saved_label_init = None
-        saved_vertex_size = None
-        saved_run_time_ms = None
-        saved_machine_timestep_ms = None
-        saved_label_set = None
-        saved_label_stop = None
+        self._saved_label_init = None
+        self._saved_vertex_size = None
+        self._saved_run_time_ms = None
+        self._saved_machine_timestep_ms = None
+        self._saved_label_set = None
+        self._saved_label_stop = None
 
         def init(label, vertex_size, run_time_ms, machine_timestep_ms):
-            nonlocal saved_label_init
-            nonlocal saved_vertex_size
-            nonlocal saved_run_time_ms
-            nonlocal saved_machine_timestep_ms
-            saved_label_init = label
-            saved_vertex_size = vertex_size
-            saved_run_time_ms = run_time_ms
-            saved_machine_timestep_ms = machine_timestep_ms
+            self._saved_label_init = label
+            self._saved_vertex_size = vertex_size
+            self._saved_run_time_ms = run_time_ms
+            self._saved_machine_timestep_ms = machine_timestep_ms
 
         def set_rates(label, conn):
-            nonlocal saved_label_set
             time.sleep(1.0)
             conn.set_rates(label, [(i, 50) for i in range(50)])
-            saved_label_set = label
+            self._saved_label_set = label
 
         def stop(label, _conn):
-            nonlocal saved_label_stop
-            saved_label_stop = label
+            self._saved_label_stop = label
 
         n_neurons = 100
         timestep = 1.0
@@ -238,12 +232,12 @@ class TestPoissonSpikeSource(BaseTestCase):
         tolerance = math.sqrt(50.0)
         self.assertAlmostEqual(50.0, count_0_49 / 50.0, delta=tolerance)
         self.assertEqual(count_50_99, 0.0)
-        self.assertEqual(saved_label_set, pop_label)
-        self.assertEqual(saved_label_init, pop_label)
-        self.assertEqual(saved_label_stop, pop_label)
-        self.assertEqual(saved_machine_timestep_ms, timestep)
-        self.assertEqual(saved_vertex_size, n_neurons)
-        self.assertEqual(saved_run_time_ms, runtime)
+        self.assertEqual(self._saved_label_set, pop_label)
+        self.assertEqual(self._saved_label_init, pop_label)
+        self.assertEqual(self._saved_label_stop, pop_label)
+        self.assertEqual(self._saved_machine_timestep_ms, timestep)
+        self.assertEqual(self._saved_vertex_size, n_neurons)
+        self.assertEqual(self._saved_run_time_ms, runtime)
 
     def test_poisson_live_rates(self):
         self.runsafe(self.poisson_live_rates)
