@@ -19,7 +19,7 @@ import numpy
 import spynnaker8 as p
 
 
-class MyTestCase(BaseTestCase):
+class TestSpikeSourceArray(BaseTestCase):
     __name__ = "bOB"
 
     def recording_1_element(self):
@@ -65,7 +65,7 @@ class MyTestCase(BaseTestCase):
     def test_recording_1_element(self):
         self.runsafe(self.recording_1_element)
 
-    def recording_numerious_element(self, run_zero):
+    def recording_numerous_elements(self, run_zero):
         p.setup(timestep=1.0, min_delay=1.0, max_delay=144.0)
         n_neurons = 20  # number of neurons in each population
         p.set_number_of_neurons_per_core(p.IF_curr_exp, n_neurons / 2)
@@ -117,14 +117,35 @@ class MyTestCase(BaseTestCase):
         numpy.testing.assert_array_equal(spike_array_spikes, boxed_array)
         p.end()
 
-    def recording_numerious_element_no_zero(self):
-        self.recording_numerious_element(False)
+    def recording_numerous_elements_no_zero(self):
+        self.recording_numerous_elements(False)
 
-    def test_recording_numerious_element_no_zero(self):
-        self.runsafe(self.recording_numerious_element_no_zero)
+    def test_recording_numerous_elements_no_zero(self):
+        self.runsafe(self.recording_numerous_elements_no_zero)
 
-    def recording_numerious_element_with_zero(self):
-        self.recording_numerious_element(True)
+    def recording_numerous_elements_with_zero(self):
+        self.recording_numerous_elements(True)
 
-    def test_recording_numerious_element_with_zero(self):
-        self.runsafe(self.recording_numerious_element_with_zero)
+    def test_recording_numerous_element_with_zero(self):
+        self.runsafe(self.recording_numerous_elements_with_zero)
+
+    def recording_with_empty_lists(self):
+        p.setup(timestep=1.0)
+        p.set_number_of_neurons_per_core(p.SpikeSourceArray, 2)
+        spike_times = [[1], [], [], [], [4], [3]]
+        input1 = p.Population(
+            6, p.SpikeSourceArray(spike_times=spike_times), label="input1")
+        input1.record("spikes")
+        p.run(50)
+
+        neo = input1.get_data(variables=["spikes"])
+        spikes = neo.segments[0].spiketrains
+
+        spikes_test = [list(spikes[i].times.magnitude) for i in range(
+            len(spikes))]
+        numpy.testing.assert_array_equal(spikes_test, spike_times)
+
+        p.end()
+
+    def test_recording_with_empty_lists(self):
+        self.runsafe(self.recording_with_empty_lists)
