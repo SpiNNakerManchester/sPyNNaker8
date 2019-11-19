@@ -195,7 +195,7 @@ class RandomDistribution(_PynnRandomDistribution):
     :param distribution: the name of a random number distribution.
     :param parameters_pos: \
         parameters of the distribution, provided as a tuple. For the correct\
-        ordering, see `random.available_distributions`.
+        ordering, see `random.available_distributions`  .
     :param rng: the random number generator to use, if a specific one is\
         desired (e.g., to provide a seed). If present, should be a\
         :py:class:`NumpyRNG`,\
