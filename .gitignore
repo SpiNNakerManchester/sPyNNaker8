@@ -31,5 +31,5 @@ MANIFEST
 __pycache__
 *local/
 *.log
-JobDestroyedError.txt
 *.dat
+JobDestroyedError.txt
