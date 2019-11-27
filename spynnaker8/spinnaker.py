@@ -219,7 +219,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 
     @property
     def dt(self):
-        """ The machine time step.
+        """ The machine time step in milliseconds
 
         :return: the machine time step
         """
@@ -228,15 +228,15 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 
     @dt.setter
     def dt(self, new_value):
-        """ The machine time step
+        """ The machine time step in milliseconds
 
-        :param new_value: new value for machine time step
+        :param new_value: new value for machine time step in microseconds
         """
         self.machine_time_step = new_value * MICRO_TO_MILLISECOND_CONVERSION
 
     @property
     def t(self):
-        """ The current simulation time
+        """ The current simulation time in milliseconds
 
         :return: the current runtime already executed
         """
