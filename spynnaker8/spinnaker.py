@@ -157,19 +157,6 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
         :type duration_ms: int or float
         """
 
-        # Convert dt into microseconds and divide by
-        # realtime proportion to get hardware timestep
-        hardware_timestep_us = int(round(
-            float(self.machine_time_step) / float(self.timescale_factor)))
-
-        # Determine how long simulation is in timesteps
-        duration_timesteps = int(math.ceil(
-            float(duration_ms) / float(self.dt)))
-
-        log.info(
-            "Simulating for {} {}ms timesteps using a hardware timestep "
-            "of {}us", duration_timesteps, self.dt, hardware_timestep_us)
-
         super(SpiNNaker, self).run(duration_ms)
 
     @property
