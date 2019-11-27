@@ -604,7 +604,7 @@ def get_time_step():
     """
     if not globals_variables.has_simulator():
         raise ConfigurationException(FAILED_STATE_MSG)
-    return float(__pynn["get_time_step"]()) / 1000.0
+    return float(__pynn["get_time_step"]())
 
 
 def initialize(cells, **initial_values):
