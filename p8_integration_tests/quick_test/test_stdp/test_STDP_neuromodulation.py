@@ -46,7 +46,7 @@ class TestSTDPNeuromodulation(BaseTestCase):
         duration = 3000
 
         # Main parameters from Izhikevich 2007 STDP paper
-        t_pre = [1500, 2400] # Pre-synaptic neuron times
+        t_pre = [1500, 2400]  # Pre-synaptic neuron times
         t_post = [1502]  # Post-synaptic neuron stimuli time
         t_dopamine = [1600]  # Dopaminergic neuron spike times
         tau_c = 1000  # Eligibility trace decay time constant.
@@ -90,14 +90,14 @@ class TestSTDPNeuromodulation(BaseTestCase):
             timing_dependence=sim.IzhikevichNeuromodulation(
                 tau_plus=10, tau_minus=12,
                 A_plus=1, A_minus=1,
-                tau_c=1000, tau_d=200),
+                tau_c=tau_c, tau_d=tau_d),
             weight_dependence=sim.MultiplicativeWeightDependence(
                 w_min=0, w_max=20),
-            weight=0.0,
+            weight=rewarded_syn_weight,
             neuromodulation=True)
 
         # Create dopaminergic connection
-        reward_projection = sim.Projection(
+        sim.Projection(
             reward_pop, post_pop,
             sim.AllToAllConnector(),
             synapse_type=sim.StaticSynapse(weight=DA_concentration),
