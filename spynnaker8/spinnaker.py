@@ -14,7 +14,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
-import math
 from lazyarray import __version__ as lazyarray_version
 from quantities import __version__ as quantities_version
 from neo import __version__ as neo_version
@@ -156,19 +155,6 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
         :param duration_ms: The run duration, in milliseconds
         :type duration_ms: int or float
         """
-
-        # Convert dt into microseconds and divide by
-        # realtime proportion to get hardware timestep
-        hardware_timestep_us = int(round(
-            float(self.machine_time_step) / float(self.timescale_factor)))
-
-        # Determine how long simulation is in timesteps
-        duration_timesteps = int(math.ceil(
-            float(duration_ms) / float(self.dt)))
-
-        log.info(
-            "Simulating for {} {}ms timesteps using a hardware timestep "
-            "of {}us", duration_timesteps, self.dt, hardware_timestep_us)
 
         super(SpiNNaker, self).run(duration_ms)
 
