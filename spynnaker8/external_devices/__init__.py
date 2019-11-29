@@ -132,8 +132,11 @@ def register_database_notification_request(hostname, notify_port, ack_port):
     """ Adds a socket system which is registered with the notification protocol
 
     :param hostname: hostname to connect to
+    :type hostname: str
     :param notify_port: port num for the notify command
+    :type notify_port: int
     :param ack_port: port num for the acknowledge command
+    :type ack_port: int
     :rtype: None
     """
     spynnaker_external_devices.add_socket_address(
@@ -151,23 +154,32 @@ def EthernetControlPopulation(
         control an external device which is connected to the host
 
     :param n_neurons: The number of neurons in the control population
+    :type n_neurons: int
     :param model:\
         Class of a model that creates a vertex of type\
         AbstractEthernetController
+    :type model: class
     :param label: An optional label for the population
+    :type label: str or None
     :param local_host:\
         The optional local host IP address to listen on for commands
+    :type local_host: str or None
     :param local_port: The optional local port to listen on for commands
+    :type local_port: int or None
     :param database_ack_port_num:\
         The optional port to which responses to the database notification\
         protocol are to be sent
+    :type database_ack_port_num: int or None
     :param database_notify_port_num:\
         The optional port to which notifications from the database\
         notification protocol are to be sent
+    :type database_notify_port_num: int or None
     :return:\
         A pyNN Population which can be used as the target of a Projection.\
         Note that the Population can also be used as the source of a\
         Projection, but it might not send spikes.
+    :rtype: Population
+    :raises Exception: If an invalid model class is used.
     """
     # pylint: disable=protected-access, too-many-arguments, too-many-locals
     population = Population(n_neurons, model, label=label)
@@ -214,21 +226,26 @@ def EthernetSensorPopulation(
         receive spikes from a device connected to the host
 
     :param device: Class of a model that implements AbstractEthernetController
+    :type device: AbstractEthernetSensor
     :param local_host:\
         The optional local host IP address to listen on for database\
         notification
+    :type local_host: str or None
     :param database_ack_port_num:\
         The optional port to which responses to the database notification\
         protocol are to be sent
+    :type database_ack_port_num: int or None
     :param database_notify_port_num:\
         The optional port to which notifications from the database\
         notification protocol are to be sent
+    :type database_notify_port_num: int or None
     :return:\
         A pyNN Population which can be used as the source of a Projection.\
         Note that the Population cannot be used as the target of a Projection.
+    :rtype: Population
     """
     if not isinstance(device, AbstractEthernetSensor):
-        raise Exception("Model must be an instance of AbstractEthernetSensor")
+        raise Exception("Device must be an instance of AbstractEthernetSensor")
     injector_params = dict(device.get_injector_parameters())
 
     population = Population(
@@ -255,16 +272,18 @@ def SpikeInjector(
         database_ack_port_num=None):
     """ Supports adding a spike injector to the application graph.
 
+    :param notify: Whether to register for notifications
+    :type notify: bool
     :param database_notify_host: the hostname for the device which is\
         listening to the database notification.
-    :type database_notify_host: str
+    :type database_notify_host: str or None
     :param database_ack_port_num: the port number to which a external device\
         will acknowledge that they have finished reading the database and are\
         ready for it to start execution
-    :type database_ack_port_num: int
+    :type database_ack_port_num: int or None
     :param database_notify_port_num: The port number to which a external\
         device will receive the database is ready command
-    :type database_notify_port_num: int
+    :type database_notify_port_num: int or None
     """
     # pylint: disable=too-many-arguments
     if notify:

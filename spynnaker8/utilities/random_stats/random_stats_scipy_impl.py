@@ -14,6 +14,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import scipy.stats
+from spinn_utilities.overrides import overrides
 from spynnaker.pyNN.utilities.random_stats import AbstractRandomStats
 
 
@@ -24,26 +25,33 @@ class RandomStatsScipyImpl(AbstractRandomStats):
     def __init__(self, distribution_type):
         self._scipy_stats = getattr(scipy.stats, distribution_type)
 
+    @overrides(AbstractRandomStats.cdf)
     def cdf(self, dist, v):
         return self._scipy_stats.cdf(v, *dist.parameters)
 
+    @overrides(AbstractRandomStats.ppf)
     def ppf(self, dist, p):
         return self._scipy_stats.ppf(p, *dist.parameters)
 
+    @overrides(AbstractRandomStats.mean)
     def mean(self, dist):
         return self._scipy_stats.mean(*dist.parameters)
 
+    @overrides(AbstractRandomStats.std)
     def std(self, dist):
         return self._scipy_stats.std(*dist.parameters)
 
+    @overrides(AbstractRandomStats.var)
     def var(self, dist):
         return self._scipy_stats.var(*dist.parameters)
 
+    @overrides(AbstractRandomStats.high)
     def high(self, dist):
         if "high" in dist.parameters:
             return dist.parameters['high']
         return None
 
+    @overrides(AbstractRandomStats.low)
     def low(self, dist):
         if "low" in dist.parameters:
             return dist.parameters['low']

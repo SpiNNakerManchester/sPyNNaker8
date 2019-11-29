@@ -57,6 +57,7 @@ _READTHEDOCS_PATTERN = 'https://{}.readthedocs.io/en/latest/'
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3.6', None),
     'numpy': ("https://docs.scipy.org/doc/numpy/", None),
+    'maplotlib': ('https://matplotlib.org', None),
     'pynn': ("http://neuralensemble.org/docs/PyNN/", None),
     'neo': (_READTHEDOCS_PATTERN.format('neo'), None),
     'spinn_machine': (_READTHEDOCS_PATTERN.format('spinnmachine'), None),
@@ -391,5 +392,7 @@ apidoc.main([None, '-o', ".", "../../spynnaker8",
              "../../spynnaker8/models/synapse_dynamics/*/[a-z]*.py",
              "../../spynnaker8/utilities/random_stats/[a-z]*.py",
              "../../spynnaker8/utilities/[einv]*.py",
-             "../../spynnaker8/s*.py",
+             "../../spynnaker8/setup_pynn.py",
+             "../../spynnaker8/spinnaker.py",
+             "../../spynnaker8/spynnaker8_simulation_interface.py",
              ])
