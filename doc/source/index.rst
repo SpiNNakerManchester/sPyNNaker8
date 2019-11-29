@@ -7,15 +7,15 @@ SpiNNFrontEndCommon_, sPyNNaker_
 
 .. _SpiNNaker: http://apt.cs.manchester.ac.uk/projects/SpiNNaker
 .. _sPyNNaker8: https://github.com/SpiNNakerManchester/sPyNNaker8
-.. _SpiNNUtils: http://spinnutils.readthedocs.io
-.. _SpiNNMachine: http://spinnmachine.readthedocs.io
+.. _SpiNNUtils: https://spinnutils.readthedocs.io
+.. _SpiNNMachine: https://spinnmachine.readthedocs.io
 .. _SpiNNStorageHandlers: http://spinnstoragehandlers.readthedocs.io
-.. _SpiNNMan: http://spinnman.readthedocs.io
-.. _PACMAN: http://pacman.readthedocs.io
-.. _DataSpecification: http://dataspecification.readthedocs.io
-.. _SpiNNFrontEndCommon: http://spinnfrontendcommon.readthedocs.io
-.. _sPyNNaker: http://spynnaker.readthedocs.io
-.. _Combined_documentation: http://spinnakermanchester.readthedocs.io
+.. _SpiNNMan: https://spinnman.readthedocs.io
+.. _PACMAN: https://pacman.readthedocs.io
+.. _DataSpecification: https://dataspecification.readthedocs.io
+.. _SpiNNFrontEndCommon: https://spinnfrontendcommon.readthedocs.io
+.. _sPyNNaker: https://spynnaker.readthedocs.io
+.. _Combined_documentation: https://spinnakermanchester.readthedocs.io
 
 
 sPyNNaker8
@@ -26,9 +26,7 @@ sPyNNaker8
 Contents:
 
 .. toctree::
-   :maxdepth: 4
-
-   spynnaker8
+   modules
 
 
 Indices and tables
