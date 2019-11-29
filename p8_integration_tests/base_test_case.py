@@ -186,6 +186,8 @@ class BaseTestCase(unittest.TestCase):
                 method()
                 break
             except JobDestroyedError as ex:
+                if not os.environ.get("CONTINUOUS_INTEGRATION"):
+                    raise ex
                 class_file = sys.modules[self.__module__].__file__
                 with open(self.destory_path(), "a") as destroyed_file:
                     destroyed_file.write(class_file)
@@ -194,7 +196,7 @@ class BaseTestCase(unittest.TestCase):
                     destroyed_file.write("\n")
                 retries += 1
                 globals_variables.unset_simulator()
-                if retries >= 3:
+                if retries >= RETRIES:
                     raise ex
             except SpinnmanException as ex:
                 class_file = sys.modules[self.__module__].__file__
