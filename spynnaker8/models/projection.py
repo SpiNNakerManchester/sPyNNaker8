@@ -287,7 +287,7 @@ class Projection(PyNNProjectionCommon):
         if isinstance(attribute_names, string_types):
             attribute_names = [attribute_names]
         # pylint: disable=too-many-arguments
-        if attribute_names in ('all', 'connections'):
+        if attribute_names in (['all'], ['connections']):
             attribute_names = \
                 self._projection_edge.post_vertex.synapse_dynamics.\
                 get_parameter_names()
