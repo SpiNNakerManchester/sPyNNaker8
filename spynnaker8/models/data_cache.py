@@ -24,7 +24,7 @@ class DataCache(object):
         Required because deep-copy does not work on neo Objects
 
     Stores the Data shared by all variable types at the top level\
-    and holds a cache for the variable specific data
+    and holds a cache for the variable specific data.
     """
 
     __slots__ = ("__cache",
@@ -39,11 +39,16 @@ class DataCache(object):
                  recording_start_time, t):
         """
         :param label: cache label
+        :type label: str
         :param description: cache description
+        :type description:
         :param segment_number: cache segment number
+        :param segment_number: int
         :param recording_start_time: \
             when this cache was started in recording space.
+        :type recording_start_time: float
         :param t: time
+        :type t: float
         """
         # pylint: disable=too-many-arguments
         self.__label = label
@@ -113,9 +118,9 @@ class DataCache(object):
         :param variable: name of variable data applies to
         :type variable: str
         :param data: raw data in sPyNNaker format
-        :type data: nparray
+        :type data: ~numpy.ndarray
         :param indexes: population indexes for which data should be returned
-        :type indexes: nparray
+        :type indexes: ~numpy.ndarray
         :param n_neurons: Number of neurons in the population.\
             Regardless of if they where recording or not.
         :type n_neurons: int

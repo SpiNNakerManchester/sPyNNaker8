@@ -21,9 +21,9 @@ def compare_spiketrain(spiketrain1, spiketrain2, same_length=True):
     """ Checks two Spiketrains have the exact same data
 
     :param spiketrain1: first spiketrain
-    :type spiketrain1: SpikeTrain
+    :type spiketrain1: ~neo.core.SpikeTrain
     :param spiketrain2: second spiketrain
-    :type spiketrain: SpikeTrain
+    :type spiketrain2: ~neo.core.SpikeTrain
     :param same_length: Flag to indicate if the same length of data is held.\
         I.e.: All spikes up to the same time.\
         If False allows one trains to have additional spikes after the first \
@@ -57,9 +57,9 @@ def compare_spiketrains(
     """ Check two Lists of SpikeTrains have the exact same data
 
     :param spiketrains1: First list SpikeTrains to compare
-    :type spiketrains1: List[SpikeTrain]
+    :type spiketrains1: list(~neo.core.SpikeTrain)
     :param spiketrains2: Second list of SpikeTrains to compare
-    :type spiketrains2: List[SpikeTrain]
+    :type spiketrains2: list(~neo.core.SpikeTrain)
     :param same_data: Flag to indicate if the same type of data is held.\
         I.e.: Same spikes, v, gsyn_exc and gsyn_inh.\
         If False allows one or both lists to be Empty.\
@@ -86,14 +86,14 @@ def compare_spiketrains(
 
 
 def compare_analogsignal(as1, as2, same_length=True):
-    """ Compares two analogsignalarray Objects to see if they are the same
+    """ Compares two analogsignal Objects to see if they are the same
 
     :param as1: first analogsignal\
         holding list of individual analogsignal Objects
-    :type as1: Analogsignal
+    :type as1: ~neo.core.AnalogSignal
     :param as2: second analogsignal\
         holding list of individual analogsignal Objects
-    :type as2: Analogsignal
+    :type as2: ~neo.core.AnalogSignal
     :param same_length: Flag to indicate if the same length of data is held.\
         I.e.: All spikes up to the same time.\
         If False allows one trains to have additional data after the first \
@@ -101,7 +101,7 @@ def compare_analogsignal(as1, as2, same_length=True):
         This is used to compare data extracted part way with data extracted \
         at the end.
     :type same_length: bool
-    :raises AssertionError: If the analogsignalarrays are not equal
+    :raises AssertionError: If the analogsignals are not equal
     """
     if pynn8_syntax:
         as1_index = as1.channel_index
@@ -158,9 +158,9 @@ def compare_analogsignal(as1, as2, same_length=True):
 def compare_segments(seg1, seg2, same_data=True, same_length=True):
     """
     :param seg1: First Segment to check
-    :type seg1: Segment
+    :type seg1: ~neo.core.Segment
     :param seg2: Second Segment to check
-    :type seg2: Segment
+    :type seg2: ~neo.core.Segment
     :param same_data: Flag to indicate if the same type of data is held.\
         I.e.: Same spikes, v, gsyn_exc and gsyn_inh.\
         If False only data in both blocks is compared
@@ -208,9 +208,9 @@ def compare_blocks(
     """ Compares two neo Blocks to see if they hold the same data.
 
     :param neo1: First block to check
-    :type neo1: Block
+    :type neo1: ~neo.core.Block
     :param neo2: Second block to check
-    :type Block:
+    :type neo2: ~neo.core.Block
     :param same_runs: Flag to signal if blocks are the same length.\
         If False extra segments in the larger block are ignored
     :type same_runs: bool

@@ -26,14 +26,16 @@ class VariableCache(object):
     def __init__(self, data, indexes, n_neurons, units, sampling_interval):
         """
         :param data: raw data in sPyNNaker format
-        :type data: nparray
+        :type data: ~numpy.ndarray
         :param indexes: Population indexes for which data was collected
-        :type indexes: list (int)
+        :type indexes: list(int)
         :param n_neurons: Number of neurons in the population,\
             regardless of whether they were recording or not.
         :type n_neurons: int
         :param units: the units in which the data is
         :type units: str
+        :param sampling_interval:
+        :type sampling_interval: ?
         """
         self.__data = data
         self.__indexes = indexes
@@ -43,18 +45,30 @@ class VariableCache(object):
 
     @property
     def data(self):
+        """
+        :rtype: ~numpy.ndarray
+        """
         return self.__data
 
     @property
     def indexes(self):
+        """
+        :rtype: list(int)
+        """
         return self.__indexes
 
     @property
     def n_neurons(self):
+        """
+        :rtype: int
+        """
         return self.__n_neurons
 
     @property
     def units(self):
+        """
+        :rtype: str
+        """
         return self.__units
 
     @property

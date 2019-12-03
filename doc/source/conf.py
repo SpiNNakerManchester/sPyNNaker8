@@ -60,6 +60,8 @@ intersphinx_mapping = {
     'maplotlib': ('https://matplotlib.org', None),
     'pynn': ("http://neuralensemble.org/docs/PyNN/", None),
     'neo': (_READTHEDOCS_PATTERN.format('neo'), None),
+    # We don't link to quantities; their docs are too shit
+    # 'quantities': (_READTHEDOCS_PATTERN.format('python-quantities'), None),
     'spinn_machine': (_READTHEDOCS_PATTERN.format('spinnmachine'), None),
     'spinn_storage_handlers': (
         _READTHEDOCS_PATTERN.format('spinnstoragehandlers'), None),
@@ -391,7 +393,7 @@ apidoc.main([None, '-o', ".", "../../spynnaker8",
              "../../spynnaker8/models/synapse_dynamics/s*.py",
              "../../spynnaker8/models/synapse_dynamics/*/[a-z]*.py",
              "../../spynnaker8/utilities/random_stats/[a-z]*.py",
-             "../../spynnaker8/utilities/[einv]*.py",
+             "../../spynnaker8/utilities/id.py",
              "../../spynnaker8/setup_pynn.py",
              "../../spynnaker8/spinnaker.py",
              "../../spynnaker8/spynnaker8_simulation_interface.py",
