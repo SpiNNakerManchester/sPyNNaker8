@@ -32,6 +32,35 @@ class SynapseDynamicsStructuralStatic(StaticStructuralBaseClass):
             initial_delay=CommonSP.DEFAULT_INITIAL_DELAY,
             s_max=CommonSP.DEFAULT_S_MAX, seed=None,
             weight=PyNNStaticSynapse.default_parameters['weight'], delay=None):
+        """
+        :param partner_selection: The partner selection rule
+        :type partner_selection: \
+            ~spynnaker.pyNN.models.neuron.structural_plasticity.synaptogenesis.partner_selection.AbstractPartnerSelection
+        :param formation: The formation rule
+        :type formation: \
+            ~spynnaker.pyNN.models.neuron.structural_plasticity.synaptogenesis.formation.AbstractFormation
+        :param elimination: The elimination rule
+        :type elimination: \
+            ~spynnaker.pyNN.models.neuron.structural_plasticity.synaptogenesis.elimination.AbstractElimination
+        :param f_rew: How many rewiring attempts will be done per second.
+        :type f_rew: int
+        :param initial_weight: Weight assigned to a newly formed connection
+        :type initial_weight: float
+        :param initial_delay:\
+            Delay assigned to a newly formed connection; a single value means\
+            a fixed delay value, or a tuple of two values means the delay will\
+            be chosen at random from a uniform distribution between the given\
+            values
+        :type initial_delay: float or tuple(float, float)
+        :param s_max: Maximum fan-in per target layer neuron
+        :type s_max: int
+        :param seed: seed the random number generators
+        :type seed: int
+        :param weight: The weight of connections formed by the connector
+        :type weight: float
+        :param delay: The delay of connections formed by the connector
+        :type delay: float or None
+        """
         if delay is None:
             delay = globals_variables.get_simulator().min_delay
         StaticStructuralBaseClass.__init__(
