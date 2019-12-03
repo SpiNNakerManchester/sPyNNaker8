@@ -24,7 +24,7 @@ class KernelConnector(CommonKernelConnector):
     Connect every post(row, col) neuron to many pre(row, col, kernel) through\
     a (kernel) set of weights and/or delays.
 
-    .. todo::
+    .. note::
         TODO: should these include `allow_self_connections` and \
         `with_replacement`?
     """
