@@ -330,9 +330,8 @@ class PopulationBase(object):
         :param to_file: a file to automatically record to (optional).\
             `write_data()` will be automatically called when `end()` is called.
         :type to_file: ~neo.io or ~neo.rawio or str
-        :param sampling_interval: a value in milliseconds, and an integer\
+        :param int sampling_interval: a value in milliseconds, and an integer\
             multiple of the simulation timestep.
-        :type sampling_interval: int
         """
 
     def record_gsyn(self, sampling_interval=1, to_file=None):

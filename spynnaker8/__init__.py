@@ -192,8 +192,7 @@ class RandomDistribution(_PynnRandomDistribution):
     """ Class which defines a next(n) method which returns an array of ``n``\
         random numbers from a given distribution.
 
-    :param distribution: the name of a random number distribution.
-    :type distribution: str
+    :param str distribution: the name of a random number distribution.
     :param parameters_pos: \
         parameters of the distribution, provided as a tuple. For the correct\
         ordering, see `random.available_distributions`.
@@ -270,16 +269,15 @@ def distance(src, tgt, mask=None, scale_factor=1.0, offset=0.0,
 
     :param src:
     :param tgt:
-    :param mask: allows only certain dimensions to be considered, e.g.:
+    :param ~numpy.ndarray mask: allows only certain dimensions to be\
+        considered, e.g.:
         * to ignore the z-dimension, use ``mask=array([0,1])``
         * to ignore y, ``mask=array([0,2])``
         * to just consider z-distance, ``mask=array([2])``
-    :type mask: ~numpy.ndarray
-    :param scale_factor: allows for different units in the pre- and post-\
-        position (the post-synaptic position is multiplied by this quantity).
-    :type scale_factor: float
-    :param offset:
-    :type offset: float
+    :param float scale_factor: allows for different units in the pre- and\
+        post-position (the post-synaptic position is multiplied by this\
+        quantity).
+    :param float offset:
     :param periodic_boundaries:
     """
     return _pynn_distance(
@@ -424,8 +422,7 @@ def Projection(
     :type synapse_type: \
         ~spynnaker.pyNN.models.neuron.synapse_dynamics.AbstractStaticSynapseDynamics
     :param None source: Unsupported; must be None
-    :param receptor_type: the receptor type
-    :type receptor_type: str
+    :param str receptor_type: the receptor type
     :param space: the space object
     :type space: ~pyNN.space.Space or None
     :param label: the label
@@ -534,7 +531,8 @@ def set_number_of_neurons_per_core(neuron_type, max_permitted):
         placed on a single core.
 
     :param neuron_type: neuron type
-    :type neuron_type: type(AbstractPopulationVertex)
+    :type neuron_type: \
+        type(~spynnaker.pyNN.models.neuron.AbstractPopulationVertex)
     :param int max_permitted: the number to set to
     :rtype: None
     """
@@ -638,6 +636,9 @@ def initialize(cells, **initial_values):
     """ Sets cells to be initialised to the given values
 
     :param cells: the cells to change params on
+    :type cells: ~spynnaker8.models.populations.Population or \
+        ~spynnaker8.models.populations.PopulationView or \
+        ~spynnaker8.models.populations.Assembly
     :param initial_values: the params and their values to change
     :rtype: None
     """

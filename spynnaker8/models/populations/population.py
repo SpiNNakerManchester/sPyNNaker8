@@ -149,9 +149,8 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
             :py:meth:`write_data` will be automatically called when\
             `sim.end()` is called.
         :type to_file: ~neo.io or ~neo.rawio or str
-        :param sampling_interval: a value in milliseconds, and an integer\
+        :param int sampling_interval: a value in milliseconds, and an integer\
             multiple of the simulation timestep.
-        :type sampling_interval: int
         :param indexes: The indexes of neurons to record from.\
             This is non-standard PyNN and equivalent to creating a view with\
             these indexes and asking the View to record.
@@ -346,13 +345,12 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
             names. Variables must have been previously recorded, otherwise an
             Exception will be raised.
         :type variables: str or list(str)
-        :param indexes: List of neuron indexes to include in the data.
-            Clearly only neurons recording will actually have any data
-            If None will be taken as all recording as get_data
-        :type indexes: list(int)
+        :param list(int) indexes: List of neuron indexes to include in the\
+            data. Clearly only neurons recording will actually have any data.\
+            If None will be taken as all recording as in :meth:`get_data`
         :param bool clear: Whether recorded data will be deleted.
         :param annotations: annotations to put on the neo block
-        :type annotations: dict
+        :type annotations: dict(str, ...)
         :rtype: ~neo.core.Block
         """
         return self._extract_neo_block(variables, indexes, clear, annotations)
@@ -535,11 +533,11 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         Create ``n`` cells all of the same type.\
         Returns a Population object.
 
-        :param cellclass: see Population.__init__
+        :param cellclass: see :meth:`Population.__init__`
         :type cellclass: type or ~spynnaker.pyNN.models.AbstractPyNNModel
-        :param cellparams: see Population.__init__
+        :param cellparams: see :meth:`Population.__init__`
         :type cellparams: dict(str, ...)
-        :param int n: see Population.__init__(size...)
+        :param int n: see :meth:`Population.__init__` (``size`` parameter)
         :return: A New Population
         :rtype: ~spynnaker8.models.populations.Population
         """

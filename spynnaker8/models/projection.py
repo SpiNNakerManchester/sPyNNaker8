@@ -165,17 +165,15 @@ class Projection(PyNNProjectionCommon):
 
         :param attribute_names: list of attributes to gather
         :type attribute_names: str or iterable(str)
-        :param format: "list" or "array"
-        :type format: str
-        :param gather: gather over all nodes (defaulted to true on SpiNNaker)
-        :type gather: bool
-        :param with_address: True if the source and target are to be included
-        :type with_address: bool
-        :param multiple_synapses:\
+        :param str format: ``"list"`` or ``"array"``
+        :param bool gather: gather over all nodes\
+            (defaulted to true on SpiNNaker)
+        :param bool with_address: \
+            True if the source and target are to be included
+        :param str multiple_synapses:\
             What to do with the data if format="array" and if the multiple\
             source-target pairs with the same values exist.  Currently only\
             "last" is supported
-        :type multiple_synapses: str
         :return: values selected
         """
         # pylint: disable=too-many-arguments

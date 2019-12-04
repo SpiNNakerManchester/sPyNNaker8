@@ -28,18 +28,12 @@ class TimingDependencePfisterSpikeTriplet(_BaseClass):
             self, tau_plus, tau_minus, tau_x, tau_y, A_plus=0.01,
             A_minus=0.01):
         r"""
-        :param tau_plus: :math:`\tau_+`
-        :type tau_plus: float
-        :param tau_minus: :math:`\tau_-`
-        :type tau_minus: float
-        :param tau_x: :math:`\tau_x`
-        :type tau_x: float
-        :param tau_y: :math:`\tau_y`
-        :type tau_y: float
-        :param A_plus: :math:`A^+`
-        :type A_plus: float
-        :param A_minus: :math:`A^-`
-        :type A_minus: float
+        :param float tau_plus: :math:`\tau_+`
+        :param float tau_minus: :math:`\tau_-`
+        :param float tau_x: :math:`\tau_x`
+        :param float tau_y: :math:`\tau_y`
+        :param float A_plus: :math:`A^+`
+        :param float A_minus: :math:`A^-`
         """
         # pylint: disable=too-many-arguments
         super(TimingDependencePfisterSpikeTriplet, self).__init__(
