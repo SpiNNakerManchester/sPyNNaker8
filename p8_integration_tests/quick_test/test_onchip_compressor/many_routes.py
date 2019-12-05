@@ -34,7 +34,7 @@ def find_good_chip(machine, n_target):
 
 
 def do_run():
-    n_source = 2000
+    n_source = 19200
     n_target = 16
     n_neurons = 1
     n_boards = math.ceil((n_source + n_target) / 16 / 48)
