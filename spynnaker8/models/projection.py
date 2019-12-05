@@ -50,26 +50,20 @@ class Projection(PyNNProjectionCommon):
             connector, synapse_type=None, source=None,
             receptor_type=None, space=None, label=None):
         """
-        :param pre_synaptic_population:
-        :type pre_synaptic_population: \
-            ~spynnaker8.models.populations.PopulationBase
-        :param post_synaptic_population:
-        :type post_synaptic_population: \
-            ~spynnaker8.models.populations.PopulationBase
+        :param ~spynnaker8.models.populations.PopulationBase \
+                pre_synaptic_population:
+        :param ~spynnaker8.models.populations.PopulationBase \
+                post_synaptic_population:
         :param connector:
-        :type connector: \
+        :type connector:
             ~spynnaker.pyNN.models.neural_projections.connectors.AbstractConnector
         :param synapse_type:
-        :type synapse_type: \
+        :type synapse_type:
             ~spynnaker.pyNN.models.neuron.synapse_dynamics.AbstractStaticSynapseDynamics
-        :param source: Unsupported; must be None
-        :type source: None
-        :param receptor_type:
-        :type receptor_type: str or None
-        :param space:
-        :type space: ~pyNN.space.Space or None
-        :param label:
-        :type label: str or None
+        :param None source: Unsupported; must be None
+        :param str receptor_type:
+        :param ~pyNN.space.Space space:
+        :param str label:
         """
         # pylint: disable=too-many-arguments
         if source is not None:
@@ -168,9 +162,9 @@ class Projection(PyNNProjectionCommon):
         :param str format: ``"list"`` or ``"array"``
         :param bool gather: gather over all nodes\
             (defaulted to true on SpiNNaker)
-        :param bool with_address: \
+        :param bool with_address:
             True if the source and target are to be included
-        :param str multiple_synapses:\
+        :param str multiple_synapses:
             What to do with the data if format="array" and if the multiple\
             source-target pairs with the same values exist.  Currently only\
             "last" is supported
@@ -318,12 +312,9 @@ class Projection(PyNNProjectionCommon):
         :type attribute_names: str or list(str)
         :param file:
         :type file: str or file
-        :param format:
-        :type format: str
-        :param gather: Ignored (sPyNNaker always gathers)
-        :type gather: bool
-        :param with_address:
-        :type with_address: bool
+        :param str format:
+        :param bool gather: Ignored (sPyNNaker always gathers)
+        :param bool with_address:
         """
         if not gather:
             warn_once(

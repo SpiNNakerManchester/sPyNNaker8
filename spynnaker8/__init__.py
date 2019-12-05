@@ -14,29 +14,26 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # common imports
+import logging
 import numpy as __numpy
 from six import iteritems
-
-# pynn imports
 from pyNN import common as pynn_common
 from pyNN.common import control as _pynn_control
 from pyNN.recording import get_io
 from pyNN.random import NumpyRNG, RandomDistribution as _PynnRandomDistribution
-from pyNN.space import \
-    Space, Line, Grid2D, Grid3D, Cuboid, Sphere, RandomStructure
+from pyNN.space import (
+    Space, Line, Grid2D, Grid3D, Cuboid, Sphere, RandomStructure)
 from pyNN.space import distance as _pynn_distance
-
-# fec imports
+from spinn_utilities.log import FormatAdapter
 from spinn_front_end_common.utilities.exceptions import ConfigurationException
 from spinn_front_end_common.utilities import globals_variables
 from spinn_front_end_common.utilities.failed_state import FAILED_STATE_MSG
-
 from spynnaker.pyNN.models.abstract_pynn_model import AbstractPyNNModel
 
 # connections
 # noinspection PyUnresolvedReferences
-from spynnaker8.models.connectors.all_to_all_connector import \
-    AllToAllConnector
+from spynnaker8.models.connectors.all_to_all_connector import (
+    AllToAllConnector)
 # noinspection PyUnresolvedReferences
 from spynnaker8.models.connectors.array_connector import ArrayConnector
 # noinspection PyUnresolvedReferences
@@ -45,54 +42,54 @@ from spynnaker8.models.connectors.csa_connector import CSAConnector
 from spynnaker8.models.connectors.distance_dependent_probability_connector \
     import DistanceDependentProbabilityConnector
 # noinspection PyUnresolvedReferences
-from spynnaker8.models.connectors.fixed_number_post_connector import \
-    FixedNumberPostConnector
+from spynnaker8.models.connectors.fixed_number_post_connector import (
+    FixedNumberPostConnector)
 # noinspection PyUnresolvedReferences
-from spynnaker8.models.connectors.fixed_number_pre_connector import \
-    FixedNumberPreConnector
+from spynnaker8.models.connectors.fixed_number_pre_connector import (
+    FixedNumberPreConnector)
 # noinspection PyUnresolvedReferences
-from spynnaker8.models.connectors.fixed_probability_connector import \
-    FixedProbabilityConnector
+from spynnaker8.models.connectors.fixed_probability_connector import (
+    FixedProbabilityConnector)
 # noinspection PyUnresolvedReferences
 from spynnaker8.models.connectors.from_file_connector import FromFileConnector
 # noinspection PyUnresolvedReferences
 from spynnaker8.models.connectors.from_list_connector import FromListConnector
 # noinspection PyUnresolvedReferences
-from spynnaker8.models.connectors.index_based_probability_connector import\
-    IndexBasedProbabilityConnector
+from spynnaker8.models.connectors.index_based_probability_connector import (
+    IndexBasedProbabilityConnector)
 # noinspection PyUnresolvedReferences
-from spynnaker8.models.connectors.multapse_connector import MultapseConnector \
-    as FixedTotalNumberConnector
+from spynnaker8.models.connectors.multapse_connector import (
+    MultapseConnector as FixedTotalNumberConnector)
 # noinspection PyUnresolvedReferences
-from spynnaker8.models.connectors.one_to_one_connector import \
-    OneToOneConnector
+from spynnaker8.models.connectors.one_to_one_connector import (
+    OneToOneConnector)
 # noinspection PyUnresolvedReferences
-from spynnaker8.models.connectors.small_world_connector import \
-    SmallWorldConnector
+from spynnaker8.models.connectors.small_world_connector import (
+    SmallWorldConnector)
 # noinspection PyUnresolvedReferences
-from spynnaker8.models.connectors.kernel_connector import \
-    KernelConnector
+from spynnaker8.models.connectors.kernel_connector import (
+    KernelConnector)
 
 # synapse structures
-from spynnaker8.models.synapse_dynamics.synapse_dynamics_static import \
-    SynapseDynamicsStatic as StaticSynapse
+from spynnaker8.models.synapse_dynamics.synapse_dynamics_static import (
+    SynapseDynamicsStatic as StaticSynapse)
 
 # plastic stuff
-from spynnaker8.models.synapse_dynamics.synapse_dynamics_stdp import \
-    SynapseDynamicsSTDP as STDPMechanism
+from spynnaker8.models.synapse_dynamics.synapse_dynamics_stdp import (
+    SynapseDynamicsSTDP as STDPMechanism)
 from spynnaker8.models.synapse_dynamics.synapse_dynamics_structural_static \
     import SynapseDynamicsStructuralStatic as StructuralMechanismStatic
 from spynnaker8.models.synapse_dynamics.synapse_dynamics_structural_stdp \
     import SynapseDynamicsStructuralSTDP as StructuralMechanismSTDP
 from spynnaker8.models.synapse_dynamics.weight_dependence\
-    .weight_dependence_additive import WeightDependenceAdditive as \
-    AdditiveWeightDependence
+    .weight_dependence_additive import (
+        WeightDependenceAdditive as AdditiveWeightDependence)
 from spynnaker8.models.synapse_dynamics.weight_dependence\
-    .weight_dependence_multiplicative import \
-    WeightDependenceMultiplicative as MultiplicativeWeightDependence
+    .weight_dependence_multiplicative import (
+        WeightDependenceMultiplicative as MultiplicativeWeightDependence)
 from spynnaker8.models.synapse_dynamics.timing_dependence\
-    .timing_dependence_spike_pair import TimingDependenceSpikePair as \
-    SpikePairRule
+    .timing_dependence_spike_pair import (
+        TimingDependenceSpikePair as SpikePairRule)
 from spynnaker.pyNN.models.neuron.structural_plasticity.synaptogenesis\
     .partner_selection import LastNeuronSelection
 from spynnaker.pyNN.models.neuron.structural_plasticity.synaptogenesis\
@@ -104,23 +101,23 @@ from spynnaker.pyNN.models.neuron.structural_plasticity.synaptogenesis\
 
 # neuron stuff
 # noinspection PyUnresolvedReferences
-from spynnaker.pyNN.models.neuron.builds.if_cond_exp_base import \
-    IFCondExpBase as IF_cond_exp
+from spynnaker.pyNN.models.neuron.builds.if_cond_exp_base import (
+    IFCondExpBase as IF_cond_exp)
 # noinspection PyUnresolvedReferences
-from spynnaker.pyNN.models.neuron.builds.if_curr_exp_base import \
-    IFCurrExpBase as IF_curr_exp
+from spynnaker.pyNN.models.neuron.builds.if_curr_exp_base import (
+    IFCurrExpBase as IF_curr_exp)
 # noinspection PyUnresolvedReferences
-from spynnaker.pyNN.models.neuron.builds.if_curr_alpha import \
-    IFCurrAlpha as IF_curr_alpha
+from spynnaker.pyNN.models.neuron.builds.if_curr_alpha import (
+    IFCurrAlpha as IF_curr_alpha)
 # noinspection PyUnresolvedReferences
-from spynnaker.pyNN.models.neuron.builds.izk_curr_exp_base import \
-    IzkCurrExpBase as Izhikevich
+from spynnaker.pyNN.models.neuron.builds.izk_curr_exp_base import (
+    IzkCurrExpBase as Izhikevich)
 # noinspection PyUnresolvedReferences
-from spynnaker.pyNN.models.spike_source.spike_source_array \
-    import SpikeSourceArray
+from spynnaker.pyNN.models.spike_source.spike_source_array import (
+    SpikeSourceArray)
 # noinspection PyUnresolvedReferences
-from spynnaker.pyNN.models.spike_source.spike_source_poisson \
-    import SpikeSourcePoisson
+from spynnaker.pyNN.models.spike_source.spike_source_poisson import (
+    SpikeSourcePoisson)
 
 # pops
 # noinspection PyUnresolvedReferences
@@ -140,9 +137,6 @@ from spynnaker8.utilities.version_util import pynn8_syntax
 
 # big stuff
 from spynnaker8.spinnaker import SpiNNaker
-from spinn_utilities.log import FormatAdapter
-
-import logging
 
 logger = FormatAdapter(logging.getLogger(__name__))
 
@@ -193,7 +187,7 @@ class RandomDistribution(_PynnRandomDistribution):
         random numbers from a given distribution.
 
     :param str distribution: the name of a random number distribution.
-    :param parameters_pos: \
+    :param parameters_pos:
         parameters of the distribution, provided as a tuple. For the correct\
         ordering, see `random.available_distributions`.
     :type parameters_pos: tuple or None
@@ -201,7 +195,7 @@ class RandomDistribution(_PynnRandomDistribution):
         desired (e.g., to provide a seed).
     :type rng: ~pyNN.random.NumpyRNG or ~pyNN.random.GSLRNG or \
         ~pyNN.random.NativeRNG or None
-    :param parameters_named: \
+    :param parameters_named:
         parameters of the distribution, provided as keyword arguments.
 
     Parameters may be provided either through ``parameters_pos`` or through\
@@ -269,8 +263,8 @@ def distance(src, tgt, mask=None, scale_factor=1.0, offset=0.0,
 
     :param src:
     :param tgt:
-    :param ~numpy.ndarray mask: allows only certain dimensions to be\
-        considered, e.g.:
+    :param ~numpy.ndarray mask:
+        allows only certain dimensions to be considered, e.g.:
         * to ignore the z-dimension, use ``mask=array([0,1])``
         * to ignore y, ``mask=array([0,2])``
         * to just consider z-distance, ``mask=array([2])``
@@ -286,9 +280,8 @@ def distance(src, tgt, mask=None, scale_factor=1.0, offset=0.0,
 
 def get_projections_data(projection_data):
     """
-    :param projection_data: \
-        the projection to attributes mapping
-    :type projection_data: \
+    :param projection_data: the projection to attributes mapping
+    :type projection_data:
         dict(~spynnaker.pyNN.models.pynn_projection_common.PyNNProjectionCommon,\
         list(int) or tuple(int) or None)
     :return: a extracted data object with get method for getting the data
@@ -319,31 +312,31 @@ def setup(timestep=_pynn_control.DEFAULT_TIMESTEP,
     :type graph_label: str or None
     :param database_socket_addresses: the sockets used by external devices\
         for the database notification protocol
-    :type database_socket_addresses: \
+    :type database_socket_addresses:
         iterable(~spinn_utilities.socket_address.SocketAddress)
-    :param extra_algorithm_xml_paths: \
+    :param extra_algorithm_xml_paths:
         list of paths to where other XML are located
     :type extra_algorithm_xml_paths: list(str) or None
     :param extra_mapping_inputs: other inputs used by the mapping process
     :type extra_mapping_inputs: dict(str, Any) or None
-    :param extra_mapping_algorithms: \
+    :param extra_mapping_algorithms:
         other algorithms to be used by the mapping process
     :type extra_mapping_algorithms: list(str) or None
     :param extra_pre_run_algorithms: extra algorithms to use before a run
     :type extra_pre_run_algorithms: list(str) or None
     :param extra_post_run_algorithms: extra algorithms to use after a run
     :type extra_post_run_algorithms: list(str) or None
-    :param extra_load_algorithms: \
+    :param extra_load_algorithms:
         extra algorithms to use within the loading phase
     :type extra_load_algorithms: list(str) or None
     :param time_scale_factor: multiplicative factor to the machine time step\
         (does not affect the neuron models accuracy)
     :type time_scale_factor: int or None
-    :param n_chips_required:\
+    :param n_chips_required:
         Deprecated! Use n_boards_required instead.
         Must be None if n_boards_required specified.
     :type n_chips_required: int or None
-    :param n_boards_required:\
+    :param n_boards_required:
         if you need to be allocated a machine (for spalloc) before building\
         your graph, then fill this in with a general idea of the number of
         boards you need so that the spalloc system can allocate you a machine\
@@ -416,10 +409,10 @@ def Projection(
     :param postsynaptic_population: the dest pop
     :type postsynaptic_population: ~spynnaker8.models.populations.Population
     :param connector: the connector type
-    :type connector: \
+    :type connector:
         ~spynnaker.pyNN.models.neural_projections.connectors.AbstractConnector
     :param synapse_type: the synapse type
-    :type synapse_type: \
+    :type synapse_type:
         ~spynnaker.pyNN.models.neuron.synapse_dynamics.AbstractStaticSynapseDynamics
     :param None source: Unsupported; must be None
     :param str receptor_type: the receptor type
@@ -531,7 +524,7 @@ def set_number_of_neurons_per_core(neuron_type, max_permitted):
         placed on a single core.
 
     :param neuron_type: neuron type
-    :type neuron_type: \
+    :type neuron_type:
         type(~spynnaker.pyNN.models.neuron.AbstractPopulationVertex)
     :param int max_permitted: the number to set to
     :rtype: None
@@ -685,8 +678,8 @@ def record(variables, source, filename, sampling_interval=None,
     :type source: ~spynnaker8.models.populations.Population or \
         ~spynnaker8.models.populations.PopulationView
     :param str filename: file name to write data to
-    :param sampling_interval: \
-        how often to sample the recording, not  ignored so far
+    :param sampling_interval:
+        how often to sample the recording, not ignored so far
     :param annotations: the annotations to data writers
     :type annotations: dict(str, ...)
     :return: neo object

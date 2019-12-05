@@ -50,12 +50,11 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         :param dict cellparams: Parameters to pass to ``cellclass`` if it\
             is a class to instantiate.
         :param ~pyNN.space.BaseStructure structure:
-        :param dict(str,float) initial_values: \
+        :param dict(str,float) initial_values:
             Initial values of state variables
         :param str label: A label for the population
-        :param constraints: \
+        :param list(~pacman.model.constraints.AbstractConstraint) constraints:
             Any constraints on how the population is deployed to SpiNNaker.
-        :type constraints: list(~pacman.model.constraints.AbstractConstraint)
         :param additional_parameters: Additional parameters to pass to the\
             vertex creation function.
         :type additional_parameters: dict(str, ...)
@@ -232,16 +231,16 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         """ Write recorded data to file, using one of the file formats\
             supported by Neo.
 
-        :param io: \
+        :param io:
             a Neo IO instance, or a string for where to put a neo instance
         :type io: ~neo.io or ~neo.rawio or str
-        :param variables: \
+        :param variables:
             either a single variable name or a list of variable names.\
             Variables must have been previously recorded, otherwise an\
             Exception will be raised.
         :type variables: str or list(str)
         :param bool gather: pointless on sPyNNaker
-        :param bool clear: \
+        :param bool clear:
             clears the storage data if set to true after reading it back
         :param annotations: annotations to put on the neo block
         :type annotations: dict(str, ...)
@@ -319,7 +318,7 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
                 This is irrelevant on sPyNNaker, which always behaves as if
                 this parameter is True.
 
-        :param bool clear: \
+        :param bool clear:
             Whether recorded data will be deleted from the `Assembly`.
         :param annotations: annotations to put on the neo block
         :type annotations: dict(str, ...)
@@ -359,7 +358,7 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         """ Public accessor for getting data as a numpy array, instead of\
             the neo based object
 
-        :param variable: \
+        :param variable:
             either a single variable name or a list of variable names.\
             Variables must have been previously recorded, otherwise an\
             Exception will be raised.

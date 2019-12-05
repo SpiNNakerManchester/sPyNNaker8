@@ -53,9 +53,9 @@ def compare_spiketrains(
         spiketrains1, spiketrains2, same_data=True, same_length=True):
     """ Check two Lists of SpikeTrains have the exact same data
 
-    :param list(~neo.core.SpikeTrain) spiketrains1: \
+    :param list(~neo.core.SpikeTrain) spiketrains1:
         First list SpikeTrains to compare
-    :param list(~neo.core.SpikeTrain) spiketrains2: \
+    :param list(~neo.core.SpikeTrain) spiketrains2:
         Second list of SpikeTrains to compare
     :param bool same_data: Flag to indicate if the same type of data is held,\
         i.e., same spikes, v, gsyn_exc and gsyn_inh.\
@@ -83,10 +83,10 @@ def compare_spiketrains(
 def compare_analogsignal(as1, as2, same_length=True):
     """ Compares two analogsignal Objects to see if they are the same
 
-    :param ~neo.core.AnalogSignal as1: first analogsignal\
-        holding list of individual analogsignal Objects
-    :param ~neo.core.AnalogSignal as2: second analogsignal\
-        holding list of individual analogsignal Objects
+    :param ~neo.core.AnalogSignal as1:
+        first analogsignal holding list of individual analogsignal Objects
+    :param ~neo.core.AnalogSignal as2:
+        second analogsignal holding list of individual analogsignal Objects
     :param bool same_length: Flag to indicate if the same length of data is\
         held, i.e., all spikes up to the same time.\
         If False allows one trains to have additional data after the first \
@@ -152,7 +152,7 @@ def compare_segments(seg1, seg2, same_data=True, same_length=True):
     :param ~neo.core.Segment seg1: First Segment to check
     :param ~neo.core.Segment seg2: Second Segment to check
     :param bool same_data: Flag to indicate if the same type of data is held,\
-        i.e., aame spikes, v, gsyn_exc and gsyn_inh.\
+        i.e., same spikes, v, gsyn_exc and gsyn_inh.\
         If False only data in both blocks is compared
     :param bool same_length: Flag to indicate if the same length of data is\
         held, i.e., all spikes up to the same time.\
@@ -160,7 +160,6 @@ def compare_segments(seg1, seg2, same_data=True, same_length=True):
         ends.
         This is used to compare data extracted part way with data extracted \
         at the end.
-    :rtype: None
     :raises AssertionError: If the segments are not equal
     """
     compare_spiketrains(
@@ -208,7 +207,6 @@ def compare_blocks(
         ends.
         This is used to compare data extracted part way with data extracted \
         at the end.
-    :rtype: None
     :raises AssertionError: If the blocks are not equal
     """
     if same_runs and len(neo1.segments) != len(neo2.segments):

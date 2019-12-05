@@ -30,7 +30,7 @@ class CSAConnector(CommonCSAConnector):
         :type cset: csa.connset.CSet
         :param bool safe: if True, check that weights and delays have valid\
             values. If False, this check is skipped.
-        :param bool verbose: \
+        :param bool verbose:
             Whether to output extra information about the connectivity to a\
             CSV file
         :param callable callback: Ignored

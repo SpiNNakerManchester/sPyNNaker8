@@ -147,31 +147,31 @@ __ethernet_control_connection = None
 def EthernetControlPopulation(
         n_neurons, model, label=None, local_host=None, local_port=None,
         database_notify_port_num=None, database_ack_port_num=None):
-    """ Create a PyNN population that can be included in a network to\
+    """ Create a PyNN population that can be included in a network to
         control an external device which is connected to the host
 
     :param int n_neurons: The number of neurons in the control population
-    :param type model:\
-        Class of a model that creates a vertex of type\
-        AbstractEthernetController
+    :param type model:
+        Class of a model that creates a vertex of type
+        :py:class:`AbstractEthernetController`
     :param label: An optional label for the population
     :type label: str or None
-    :param local_host:\
+    :param local_host:
         The optional local host IP address to listen on for commands
     :type local_host: str or None
     :param local_port: The optional local port to listen on for commands
     :type local_port: int or None
-    :param database_ack_port_num:\
-        The optional port to which responses to the database notification\
+    :param database_ack_port_num:
+        The optional port to which responses to the database notification
         protocol are to be sent
     :type database_ack_port_num: int or None
-    :param database_notify_port_num:\
-        The optional port to which notifications from the database\
+    :param database_notify_port_num:
+        The optional port to which notifications from the database
         notification protocol are to be sent
     :type database_notify_port_num: int or None
-    :return:\
-        A pyNN Population which can be used as the target of a Projection.\
-        Note that the Population can also be used as the source of a\
+    :return:
+        A pyNN Population which can be used as the target of a Projection.
+        Note that the Population can also be used as the source of a
         Projection, but it might not send spikes.
     :rtype: Population
     :raises Exception: If an invalid model class is used.
@@ -221,20 +221,20 @@ def EthernetSensorPopulation(
         receive spikes from a device connected to the host
 
     :param AbstractEthernetSensor device: The sensor model
-    :param local_host:\
-        The optional local host IP address to listen on for database\
+    :param local_host:
+        The optional local host IP address to listen on for database
         notification
     :type local_host: str or None
-    :param database_ack_port_num:\
-        The optional port to which responses to the database notification\
+    :param database_ack_port_num:
+        The optional port to which responses to the database notification
         protocol are to be sent
     :type database_ack_port_num: int or None
-    :param database_notify_port_num:\
-        The optional port to which notifications from the database\
+    :param database_notify_port_num:
+        The optional port to which notifications from the database
         notification protocol are to be sent
     :type database_notify_port_num: int or None
-    :return:\
-        A pyNN Population which can be used as the source of a Projection.\
+    :return:
+        A pyNN Population which can be used as the source of a Projection.
         Note that the Population cannot be used as the target of a Projection.
     :rtype: Population
     """

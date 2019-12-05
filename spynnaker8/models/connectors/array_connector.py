@@ -28,11 +28,11 @@ class ArrayConnector(CommonArrayConnector):
         """
         :param array: an array of integers
         :type array: ~numpy.ndarray(2, ~numpy.uint8)
-        :param bool safe: \
+        :param bool safe:
             Whether to check that weights and delays have valid values.\
             If False, this check is skipped.
         :param callable callback: Ignored
-        :param bool verbose: \
+        :param bool verbose:
             Whether to output extra information about the connectivity to a\
             CSV file
         """

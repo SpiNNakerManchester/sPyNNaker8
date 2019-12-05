@@ -142,7 +142,7 @@ class PopulationBase(object):
             Currently unimplemented.
 
         :param current_source:
-        :type current_source: \
+        :type current_source:
             pyNN.neuron.standardmodels.electrodes.NeuronCurrentSource
         """
         # TODO:
@@ -236,10 +236,10 @@ class PopulationBase(object):
         """ Write recorded data to file, using one of the file formats\
             supported by Neo.
 
-        :param io: \
+        :param io:
             a Neo IO instance, or a string for where to put a Neo instance
         :type io: ~neo.io or ~neo.rawio or str
-        :param variables: \
+        :param variables:
             either a single variable name or a list of variable names.\
             Variables must have been previously recorded, otherwise an\
             Exception will be raised.
@@ -249,7 +249,7 @@ class PopulationBase(object):
             from all nodes. Otherwise, the Neo Block will contain only data\
             from the cells simulated on the local node. This is pointless on\
             sPyNNaker.
-        :param bool clear: \
+        :param bool clear:
             clears the storage data if set to true after reading it back
         :param annotations: annotations to put on the Neo block
         :type annotations: None or dict(str, ...)

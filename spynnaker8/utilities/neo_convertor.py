@@ -22,8 +22,8 @@ def convert_analog_signal(signal_array, time_unit=ms):
     """ Converts part of a NEO object into told spynnaker7 format
 
     :param ~neo.core.AnalogSignal signal_array: Extended Quantities object
-    :param time_unit: Data time unit for time index
-    :type time_unit: quantities.unitquantity.UnitTime
+    :param quantities.unitquantity.UnitTime time_unit:
+        Data time unit for time index
     :rtype: ~numpy.ndarray
     """
     if pynn8_syntax:
@@ -97,7 +97,7 @@ def convert_gsyn_exc_list(data):
     """ Converts the gsyn_exc into a list numpy array one per segment (all\
         runs) in the format ID, time, value
 
-    :param ~neo.core.Block data: \
+    :param ~neo.core.Block data:
         The data to convert; it must have Gsyn_exc data in it
     :rtype: list(~numpy.ndarray)
     """
@@ -108,7 +108,7 @@ def convert_gsyn_inh_list(data):
     """ Converts the gsyn_inh into a list numpy array one per segment (all\
         runs) in the format ID, time, value
 
-    :param ~neo.core.Block data: \
+    :param ~neo.core.Block data:
         The data to convert; it must have Gsyn_inh data in it
     :rtype: list(~numpy.ndarray)
     """

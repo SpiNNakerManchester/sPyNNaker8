@@ -31,15 +31,15 @@ class IndexBasedProbabilityConnector(CommonIndexBasedProbabilityConnector):
         :param str `index_expression`: A function of the indices of the\
             populations, written as a Python expression; the indices will be\
             given as variables `i` and `j` when the expression is evaluated.
-        :param bool allow_self_connections: \
+        :param bool allow_self_connections:
             allow a neuron to connect to itself
         :param rng: random number generator
         :type rng: ~pyNN.random.NumpyRNG or None
-        :param bool safe: \
+        :param bool safe:
             Whether to check that weights and delays have valid values.\
             If False, this check is skipped.
         :param callable callback: Ignored
-        :param bool verbose: \
+        :param bool verbose:
             Whether to output extra information about the connectivity to a\
             CSV file
         """

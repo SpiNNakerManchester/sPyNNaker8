@@ -26,7 +26,7 @@ class VariableCache(object):
     def __init__(self, data, indexes, n_neurons, units, sampling_interval):
         """
         :param ~numpy.ndarray data: raw data in sPyNNaker format
-        :param list(int) indexes: \
+        :param list(int) indexes:
             Population indexes for which data was collected
         :param int n_neurons: Number of neurons in the population,\
             regardless of whether they were recording or not.

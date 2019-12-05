@@ -37,28 +37,28 @@ class SynapseDynamicsStructuralSTDP(STDPStructuralBaseClass):
             backprop_delay=True):
         """
         :param partner_selection: The partner selection rule
-        :type partner_selection: \
+        :type partner_selection:
             ~spynnaker.pyNN.models.neuron.structural_plasticity.synaptogenesis.partner_selection.AbstractPartnerSelection
         :param formation: The formation rule
-        :type formation: \
+        :type formation:
             ~spynnaker.pyNN.models.neuron.structural_plasticity.synaptogenesis.formation.AbstractFormation
         :param elimination: The elimination rule
-        :type elimination: \
+        :type elimination:
             ~spynnaker.pyNN.models.neuron.structural_plasticity.synaptogenesis.elimination.AbstractElimination
         :param timing_dependence:
-        :type timing_dependence: \
+        :type timing_dependence:
             ~spynnaker.pyNN.models.neuron.plasticity.stdp.timing_dependence.AbstractTimingDependence
         :param weight_dependence:
-        :type weight_dependence: \
+        :type weight_dependence:
             ~spynnaker.pyNN.models.neuron.plasticity.stdp.weight_dependence.AbstractWeightDependence
         :param voltage_dependence: The STDP voltage dependence (unsupported)
         :type voltage_dependence: None
-        :param float dendritic_delay_fraction: \
+        :param float dendritic_delay_fraction:
             The STDP dendritic delay fraction
         :param int f_rew: How many rewiring attempts will be done per second.
-        :param float initial_weight: \
+        :param float initial_weight:
             Weight assigned to a newly formed connection
-        :param initial_delay:\
+        :param initial_delay:
             Delay assigned to a newly formed connection; a single value means\
             a fixed delay value, or a tuple of two values means the delay will\
             be chosen at random from a uniform distribution between the given\

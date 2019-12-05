@@ -41,7 +41,7 @@ class DataCache(object):
         :param str label: cache label
         :param description: cache description
         :param int segment_number: cache segment number
-        :param float recording_start_time: \
+        :param float recording_start_time:
             when this cache was started in recording space.
         :param float t: time
         """
@@ -110,7 +110,7 @@ class DataCache(object):
 
         :param str variable: name of variable data applies to
         :param ~numpy.ndarray data: raw data in sPyNNaker format
-        :param ~numpy.ndarray indexes: \
+        :param ~numpy.ndarray indexes:
             population indexes for which data should be returned
         :param int n_neurons: Number of neurons in the population.\
             Regardless of if they where recording or not.

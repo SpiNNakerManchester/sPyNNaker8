@@ -32,17 +32,17 @@ class SmallWorldConnector(_BaseClass):
         :param float degree: the region length where nodes will be connected\
             locally
         :param float rewiring: the probability of rewiring each edge
-        :param bool allow_self_connections: \
+        :param bool allow_self_connections:
             if the connector is used to connect a Population to itself, this\
             flag determines whether a neuron is allowed to connect to itself,\
             or only to other neurons in the Population.
-        :param bool safe: \
+        :param bool safe:
             Whether to check that weights and delays have valid values.\
             If False, this check is skipped.
-        :param bool verbose: \
+        :param bool verbose:
             Whether to output extra information about the connectivity to a\
             CSV file
-        :param n_connections: \
+        :param n_connections:
             if specified, the number of efferent synaptic connections per\
             neuron
         :type n_connections: int or None

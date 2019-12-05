@@ -33,19 +33,19 @@ class FixedNumberPreConnector(CommonFixedNumberPreConnector,
             self, n, allow_self_connections=True, safe=True, verbose=False,
             with_replacement=False, rng=None, callback=None):
         """
-        :param int n: \
+        :param int n:
             number of random pre-synaptic neurons connected to post-neurons
-        :param bool allow_self_connections: \
+        :param bool allow_self_connections:
             if the connector is used to connect a Population to itself, this\
             flag determines whether a neuron is allowed to connect to itself,\
             or only to other neurons in the Population.
-        :param bool safe: \
+        :param bool safe:
             Whether to check that weights and delays have valid values.\
             If False, this check is skipped.
-        :param bool verbose: \
+        :param bool verbose:
             Whether to output extra information about the connectivity to a\
             CSV file
-        :param bool with_replacement:\
+        :param bool with_replacement:
             if False, once a connection is made, it can't be made again; if\
             True, multiple connections between the same pair of neurons are\
             allowed

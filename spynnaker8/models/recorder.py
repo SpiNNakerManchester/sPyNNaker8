@@ -328,7 +328,7 @@ class Recorder(RecordingCommon):
         :param ~neo.core.Segment segment: Segment to add spikes to
         :param ~numpy.ndarray spikes: Spike data in raw sPyNNaker format
         :param int t: last simulation time
-        :param int n_neurons: \
+        :param int n_neurons:
             total number of neurons including ones not recording
         :param int recording_start_time: time recording started
         :param int sampling_interval: how often a neuron is recorded
