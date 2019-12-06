@@ -34,6 +34,10 @@ class IDMixin(object):
     def _population(self):
         return self.__population
 
+    def record(self, variables, to_file=None, sampling_interval=None):
+        self.__population.record(variables, to_file, sampling_interval,
+                                 [self.__id])
+
     def __getattr__(self, name):
         try:
             return self.__population.get_by_selector(

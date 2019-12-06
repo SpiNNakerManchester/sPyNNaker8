@@ -17,6 +17,8 @@ from __future__ import division
 from p8_integration_tests.base_test_case import BaseTestCase
 import spynnaker8 as sim
 import math
+import time
+from spinn_front_end_common.utilities.exceptions import ConfigurationException
 
 
 class TestPoissonSpikeSource(BaseTestCase):
@@ -172,3 +174,70 @@ class TestPoissonSpikeSource(BaseTestCase):
 
     def test_recording_poisson_spikes_rate_slow(self):
         self.runsafe(self.recording_poisson_spikes_rate_slow)
+
+    def poisson_live_rates(self):
+
+        self._saved_label_init = None
+        self._saved_vertex_size = None
+        self._saved_run_time_ms = None
+        self._saved_machine_timestep_ms = None
+        self._saved_label_set = None
+        self._saved_label_stop = None
+
+        def init(label, vertex_size, run_time_ms, machine_timestep_ms):
+            self._saved_label_init = label
+            self._saved_vertex_size = vertex_size
+            self._saved_run_time_ms = run_time_ms
+            self._saved_machine_timestep_ms = machine_timestep_ms
+
+        def set_rates(label, conn):
+            time.sleep(1.0)
+            conn.set_rates(label, [(i, 50) for i in range(50)])
+            self._saved_label_set = label
+
+        def stop(label, _conn):
+            self._saved_label_stop = label
+
+        n_neurons = 100
+        timestep = 1.0
+        runtime = 2000
+        sim.setup(timestep=timestep)
+        sim.set_number_of_neurons_per_core(sim.SpikeSourcePoisson, 75)
+        pop_label = "pop_to_control"
+        pop = sim.Population(
+            n_neurons, sim.SpikeSourcePoisson(rate=0.0),
+            label=pop_label,
+            additional_parameters={"max_rate": 50.0})
+        pop.record("spikes")
+        conn = sim.external_devices.SpynnakerPoissonControlConnection(
+            poisson_labels=[pop_label], local_port=None)
+        conn.add_start_resume_callback(pop_label, set_rates)
+        conn.add_init_callback(pop_label, init)
+        conn.add_pause_stop_callback(pop_label, stop)
+        with self.assertRaises(ConfigurationException):
+            conn.add_receive_callback(pop_label, stop)
+        sim.external_devices.add_database_socket_address(
+            conn.local_ip_address, conn.local_port, None)
+        sim.external_devices.add_poisson_live_rate_control(pop)
+        sim.run(runtime)
+        neo = pop.get_data("spikes")
+        spikes = neo.segments[0].spiketrains
+        sim.end()
+        count_0_49 = 0
+        for a_spikes in spikes[0:50]:
+            count_0_49 += len(a_spikes)
+        count_50_99 = 0
+        for a_spikes in spikes[50:100]:
+            count_50_99 += len(a_spikes)
+        tolerance = math.sqrt(50.0)
+        self.assertAlmostEqual(50.0, count_0_49 / 50.0, delta=tolerance)
+        self.assertEqual(count_50_99, 0.0)
+        self.assertEqual(self._saved_label_set, pop_label)
+        self.assertEqual(self._saved_label_init, pop_label)
+        self.assertEqual(self._saved_label_stop, pop_label)
+        self.assertEqual(self._saved_machine_timestep_ms, timestep)
+        self.assertEqual(self._saved_vertex_size, n_neurons)
+        self.assertEqual(self._saved_run_time_ms, runtime)
+
+    def test_poisson_live_rates(self):
+        self.runsafe(self.poisson_live_rates)

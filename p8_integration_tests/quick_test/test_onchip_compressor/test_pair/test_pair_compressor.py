@@ -13,20 +13,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-SpiNNUtilities >= 1!5.1.1, < 1!6.0.0
-SpiNNMachine >= 1!5.1.1, < 1!6.0.0
-SpiNNMan >= 1!5.1.1, < 1!6.0.0
-SpiNNStorageHandlers >= 1!5.1.1, < 1!6.0.0
-SpiNNaker_PACMAN >= 1!5.1.1, < 1!6.0.0
-SpiNNaker_DataSpecification >= 1!5.1.1, < 1!6.0.0
-spalloc >= 2.0.2, < 3.0.0
-SpiNNFrontEndCommon >= 1!5.1.1, < 1!6.0.0
-sPyNNaker >= 1!5.1.1, < 1!6.0.0
-quantities >= 0.12.1
-pynn >= 0.9.1, < 0.10
-lazyarray >= 0.2.9, <= 0.4.0
-appdirs >= 1.4.2 , < 2.0.0
-neo >= 0.5.2, < 0.7.0
-matplotlib
-# csa  # needed but excluded due to readthedocs
-#spinnaker_tools
+from p8_integration_tests.base_test_case import BaseTestCase
+from p8_integration_tests.quick_test.test_onchip_compressor.many_routes \
+    import do_run
+
+
+class TestPairCompressor(BaseTestCase):
+
+    def test_do_run(self):
+        self.runsafe(do_run)

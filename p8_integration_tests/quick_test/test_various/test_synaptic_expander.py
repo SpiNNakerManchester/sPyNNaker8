@@ -19,6 +19,8 @@ import functools
 from p8_integration_tests.base_test_case import BaseTestCase
 import numpy
 from pyNN.random import NumpyRNG
+from collections import defaultdict
+import math
 
 
 def run_script():
@@ -45,38 +47,49 @@ def run_script():
         (7.0, RandomDistribution("exponential", beta=2.0, rng=rng)),
     ]
     connectors = [
-        p.OneToOneConnector,
-        p.AllToAllConnector,
-        functools.partial(p.AllToAllConnector,
-                          allow_self_connections=False),
-        functools.partial(p.FixedProbabilityConnector, 0.5),
-        functools.partial(p.FixedTotalNumberConnector, 50,
-                          with_replacement=True),
-        functools.partial(p.FixedTotalNumberConnector, 20,
-                          with_replacement=False)
+        (p.OneToOneConnector, functools.partial(check_one_to_one, 10)),
+        (p.AllToAllConnector,
+         functools.partial(check_all_to_all, 10, True)),
+        (functools.partial(p.AllToAllConnector,
+                           allow_self_connections=False),
+         functools.partial(check_all_to_all, 10, False)),
+        (functools.partial(p.FixedProbabilityConnector, 0.5),
+         functools.partial(check_fixed_prob, 10, 0.5, 3)),
+        (functools.partial(p.FixedTotalNumberConnector, 50,
+                           with_replacement=True),
+         functools.partial(check_fixed_total, 10, 50)),
+        (functools.partial(p.FixedTotalNumberConnector, 20,
+                           with_replacement=False),
+         functools.partial(check_fixed_total, 10, 20))
     ]
 
     projs = list()
     for weight, delay in param_projections:
-        for connector in connectors:
+        for connector, check in connectors:
             conn = connector()
-            projs.append((weight, delay, conn, False, p.Projection(
-                inp, out, conn,
-                p.StaticSynapse(weight=weight, delay=delay))))
-            projs.append((weight, delay, conn, True, p.Projection(
-                inp, out, conn,
-                p.STDPMechanism(
-                    p.SpikePairRule(), p.AdditiveWeightDependence(),
-                    weight=weight, delay=delay))))
+            projs.append((
+                weight, delay, conn, False, p.Projection(
+                    inp, out, conn,
+                    p.StaticSynapse(weight=weight, delay=delay)),
+                check))
+            projs.append((
+                weight, delay, conn, True, p.Projection(
+                    inp, out, conn,
+                    p.STDPMechanism(
+                        p.SpikePairRule(), p.AdditiveWeightDependence(),
+                        weight=weight, delay=delay)),
+                check))
 
     p.run(10)
 
-    for weight, delay, connector, is_stdp, proj in projs:
+    for weight, delay, connector, is_stdp, proj, check in projs:
         weights = proj.get("weight", "list", with_address=False)
         delays = proj.get("delay", "list", with_address=False)
+        conns = proj.get([], "list")
         if not is_stdp:
             check_params(weight, weights)
         check_params(delay, delays)
+        check(conns)
 
     p.end()
 
@@ -95,6 +108,63 @@ def check_params(param, result):
             assert(param.parameters["low"] <= minimum)
         if "high" in param.parameters:
             assert(param.parameters["high"] >= maximum)
+
+
+def check_one_to_one(n, conns):
+    assert(len(conns) == n)
+    assert(all(pre == post for pre, post in conns))
+
+
+def conns_by_pre(conns):
+    cbp = defaultdict(list)
+    for pre, post in conns:
+        cbp[pre].append(post)
+    return cbp
+
+
+def conns_by_post(conns):
+    cbp = defaultdict(list)
+    for pre, post in conns:
+        cbp[post].append(pre)
+    return cbp
+
+
+def check_all_to_all(n, allow_self, conns):
+    cbp = conns_by_pre(conns)
+    assert(len(cbp) == n)
+    for pre in cbp:
+        if allow_self:
+            assert(numpy.array_equal(
+                sorted(cbp[pre]), range(n)))
+        else:
+            assert(numpy.array_equal(
+                sorted(cbp[pre]),
+                [i for i in range(n) if i != pre]))
+
+
+def check_fixed_prob(n, prob, n_per_core, conns):
+    cbpre = conns_by_pre(conns)
+    cbpost = conns_by_post(conns)
+    expected = n * prob
+    error = math.sqrt(expected)
+    avgpre = sum(len(cbpre[pre]) for pre in cbpre) / float(n)
+    avgpost = sum(len(cbpost[post]) for post in cbpost) / float(n)
+    assert(avgpre >= (expected - error))
+    assert(avgpre <= (expected + error))
+    assert(avgpost >= (expected - error))
+    assert(avgpost <= (expected + error))
+
+    for i in range(0, n, n_per_core):
+        for pre in range(i + 1, i + n_per_core):
+            assert(not numpy.array_equal(
+                sorted(cbpre[i]), sorted(cbpre[pre])))
+        for post in range(i + 1, i + n_per_core):
+            assert(not numpy.array_equal(
+                sorted(cbpost[i]), sorted(cbpost[post])))
+
+
+def check_fixed_total(n, total, conns):
+    assert(len(conns) == total)
 
 
 class TestSynapticExpander(BaseTestCase):

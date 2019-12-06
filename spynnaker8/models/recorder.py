@@ -377,7 +377,7 @@ class Recorder(RecordingCommon):
         t_start = recording_start_time * quantities.ms
         sampling_period = sampling_interval * quantities.ms
         if view_indexes is None:
-            if not numpy.array_equal(data_indexes, self._all_ids):
+            if len(data_indexes) != self._population.size:
                 msg = "Warning getting data on a whole population when " \
                       "selective recording is active will result in only " \
                       "the requested neurons being returned in numerical " \
