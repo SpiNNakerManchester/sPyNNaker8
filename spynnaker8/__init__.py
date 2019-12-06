@@ -138,6 +138,12 @@ from spynnaker8.utilities.version_util import pynn8_syntax
 # big stuff
 from spynnaker8.spinnaker import SpiNNaker
 
+#: The timestep to use of "auto" is specified as a timestep
+SPYNNAKER_AUTO_TIMESTEP = 1.0
+
+#: The number of timesteps of delay to use as max_delay if "auto" is specified
+SPYNNAKER_AUTO_MAX_DELAY = 144
+
 logger = FormatAdapter(logging.getLogger(__name__))
 
 __all__ = [
@@ -348,6 +354,14 @@ def setup(timestep=_pynn_control.DEFAULT_TIMESTEP,
     :raises ConfigurationException: if both ``n_chips_required`` and
         ``n_boards_required`` are used.
     """
+    # Check for "auto" values
+    if timestep == "auto":
+        timestep = SPYNNAKER_AUTO_TIMESTEP
+    if min_delay == "auto":
+        min_delay = timestep
+    if max_delay == "auto":
+        max_delay = SPYNNAKER_AUTO_MAX_DELAY * timestep
+
     # pylint: disable=too-many-arguments, too-many-function-args
     if pynn8_syntax:
         # setup PyNN common stuff
