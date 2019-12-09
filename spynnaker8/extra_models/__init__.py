@@ -14,22 +14,29 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from spynnaker8.models.synapse_dynamics.timing_dependence import (
-    TimingDependenceRecurrent as
-    RecurrentRule,
-    TimingDependenceSpikeNearestPair as
-    SpikeNearestPairRule,
-    TimingDependenceVogels2011 as
-    Vogels2011Rule,
-    TimingDependencePfisterSpikeTriplet as
-    PfisterSpikeTriplet)
+    TimingDependenceRecurrent as RecurrentRule,
+    TimingDependenceSpikeNearestPair as SpikeNearestPairRule,
+    TimingDependenceVogels2011 as Vogels2011Rule,
+    TimingDependencePfisterSpikeTriplet as PfisterSpikeTriplet,
+    TimingDependenceIzhikevichNeuromodulation as
+    TimingIzhikevichNeuromodulation)
 from spynnaker8.models.synapse_dynamics.weight_dependence import (
     WeightDependenceAdditiveTriplet)
 from spynnaker.pyNN.models.neuron.builds import (
-    IFCondExpStoc, IFCurrDelta as
-    IFCurDelta, IFCurrExpCa2Adaptive, IFCurrDualExpBase as
-    IF_curr_dual_exp, IzkCondExpBase as
-    Izhikevich_cond, IFCurrExpSEMDBase as
-    IF_curr_exp_sEMD)
+    IFCondExpStoc,
+    IFCurrDelta as IFCurDelta,
+    IFCurrExpCa2Adaptive,
+    IFCurrDualExpBase as IF_curr_dual_exp,
+    IzkCondExpBase as Izhikevich_cond,
+    IFCurrExpSEMDBase as IF_curr_exp_sEMD,
+    IFCurrExpIzhikevichNeuromodulation as
+    IF_curr_exp_izhikevich_neuromodulation,
+    IFCondExpIzhikevichNeuromodulation as
+    IF_cond_exp_izhikevich_neuromodulation,
+    IZKCurrExpIzhikevichNeuromodulation as
+    IZK_curr_exp_izhikevich_neuromodulation,
+    IZKCondExpIzhikevichNeuromodulation as
+    IZK_cond_exp_izhikevich_neuromodulation)
 
 # Variable rate poisson
 from spynnaker.pyNN.models.spike_source.spike_source_poisson_variable \

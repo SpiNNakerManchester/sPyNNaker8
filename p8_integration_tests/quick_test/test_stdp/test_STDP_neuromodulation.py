@@ -82,12 +82,12 @@ class TestSTDPNeuromodulation(BaseTestCase):
 
         # Create post-synaptic pop which will be modulated by DA concentration
         post_pop = sim.Population(
-            1, sim.IF_curr_exp_izhikevich_neuromodulation, cell_params,
-            label='post1')
+            1, sim.extra_models.IF_curr_exp_izhikevich_neuromodulation,
+            cell_params, label='post1')
 
         # Create STDP dynamics with neuromodulation
         synapse_dynamics = sim.STDPMechanism(
-            timing_dependence=sim.IzhikevichNeuromodulation(
+            timing_dependence=sim.extra_models.IzhikevichNeuromodulation(
                 tau_plus=10, tau_minus=12,
                 A_plus=1, A_minus=1,
                 tau_c=tau_c, tau_d=tau_d),

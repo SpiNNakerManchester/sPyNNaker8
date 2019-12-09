@@ -101,10 +101,6 @@ from spynnaker.pyNN.models.neuron.structural_plasticity.synaptogenesis\
     .formation import DistanceDependentFormation
 from spynnaker.pyNN.models.neuron.structural_plasticity.synaptogenesis\
     .elimination import RandomByWeightElimination
-from spynnaker8.models.synapse_dynamics.timing_dependence \
-    .timing_dependence_izhikevich_neuromodulation \
-    import TimingDependenceIzhikevichNeuromodulation \
-    as IzhikevichNeuromodulation
 
 # neuron stuff
 # noinspection PyUnresolvedReferences
@@ -113,20 +109,6 @@ from spynnaker.pyNN.models.neuron.builds.if_cond_exp_base import \
 # noinspection PyUnresolvedReferences
 from spynnaker.pyNN.models.neuron.builds.if_curr_exp_base import \
     IFCurrExpBase as IF_curr_exp
-from spynnaker.pyNN.models.neuron.builds.\
-     if_curr_exp_izhikevich_neuromodulation \
-     import IFCurrExpIzhikevichNeuromodulation \
-     as IF_curr_exp_izhikevich_neuromodulation
-
-# Adding Izhikevich current and conductance based models - June 2019
-from spynnaker.pyNN.models.neuron.builds.\
-     izk_curr_exp_izhikevich_neuromodulation \
-     import IZKCurrExpIzhikevichNeuromodulation \
-     as IZK_curr_exp_izhikevich_neuromodulation
-from spynnaker.pyNN.models.neuron.builds.\
-     izk_cond_exp_izhikevich_neuromodulation \
-     import IZKCondExpIzhikevichNeuromodulation \
-     as IZK_cond_exp_izhikevich_neuromodulation
 
 # noinspection PyUnresolvedReferences
 from spynnaker.pyNN.models.neuron.builds.if_curr_alpha import \
