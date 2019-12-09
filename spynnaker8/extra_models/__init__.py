@@ -46,6 +46,7 @@ __all__ = [
     # sPyNNaker 8 models
     'IFCurDelta', 'IFCurrExpCa2Adaptive', 'IFCondExpStoc',
     'Izhikevich_cond', 'IF_curr_dual_exp', 'IF_curr_exp_sEMD',
+    # Neuromodulation (Mantas Mikaitis)
     'IF_curr_exp_izhikevich_neuromodulation',
     'IF_cond_exp_izhikevich_neuromodulation',
     'IZK_curr_exp_izhikevich_neuromodulation',
@@ -56,6 +57,7 @@ __all__ = [
     'PfisterSpikeTriplet',
     'SpikeNearestPairRule',
     'RecurrentRule', 'Vogels2011Rule',
+    # Neuromodulation (Mantas Mikaitis)
     'TimingIzhikevichNeuromodulation',
 
     # Variable rate Poisson

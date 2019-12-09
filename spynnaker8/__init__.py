@@ -174,14 +174,9 @@ __all__ = [
     'StructuralMechanismStatic', 'StructuralMechanismSTDP',
     'LastNeuronSelection', 'RandomSelection',
     'DistanceDependentFormation', 'RandomByWeightElimination',
-    # Neuromodulation (Mantas Mikaitis)
-    'IzhikevichNeuromodulation',
     # neuron stuff
     'IF_cond_exp', 'IF_curr_exp', "IF_curr_alpha",
-    'IF_curr_exp_izhikevich_neuromodulation',
-    'IZK_curr_exp_izhikevich_neuromodulation',
     'Izhikevich', 'SpikeSourceArray', 'SpikeSourcePoisson',
-    'IZK_cond_exp_izhikevich_neuromodulation',
     # pops
     'Assembly', 'Population', 'PopulationView',
     # projection
