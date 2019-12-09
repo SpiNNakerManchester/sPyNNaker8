@@ -46,12 +46,17 @@ __all__ = [
     # sPyNNaker 8 models
     'IFCurDelta', 'IFCurrExpCa2Adaptive', 'IFCondExpStoc',
     'Izhikevich_cond', 'IF_curr_dual_exp', 'IF_curr_exp_sEMD',
+    'IF_curr_exp_izhikevich_neuromodulation',
+    'IF_cond_exp_izhikevich_neuromodulation',
+    'IZK_curr_exp_izhikevich_neuromodulation',
+    'IZK_cond_exp_izhikevich_neuromodulation',
 
     # sPyNNaker 8 plastic stuff
     'WeightDependenceAdditiveTriplet',
     'PfisterSpikeTriplet',
     'SpikeNearestPairRule',
     'RecurrentRule', 'Vogels2011Rule',
+    'TimingIzhikevichNeuromodulation',
 
     # Variable rate Poisson
     'SpikeSourcePoissonVariable']
