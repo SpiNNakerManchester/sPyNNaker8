@@ -87,7 +87,7 @@ class TestSTDPNeuromodulation(BaseTestCase):
 
         # Create STDP dynamics with neuromodulation
         synapse_dynamics = sim.STDPMechanism(
-            timing_dependence=sim.extra_models.IzhikevichNeuromodulation(
+            timing_dependence=sim.extra_models.TimingIzhikevichNeuromodulation(
                 tau_plus=10, tau_minus=12,
                 A_plus=1, A_minus=1,
                 tau_c=tau_c, tau_d=tau_d),
