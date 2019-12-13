@@ -104,7 +104,7 @@ class Projection(PyNNProjectionCommon):
                                       PopulationView),
             postpop_is_view=isinstance(post_synaptic_population,
                                        PopulationView),
-            rng=rng, machine_time_step=self.__simulator.machine_time_step,
+            rng=rng, machine_time_step=self.__simulator.user_time_step_in_us,
             user_max_delay=self.__simulator.max_delay, label=label,
             time_scale_factor=self.__simulator.time_scale_factor)
 
