@@ -24,8 +24,7 @@ from spinn_utilities.log import FormatAdapter
 from spinn_front_end_common.utilities import globals_variables
 from spinn_front_end_common.utilities.exceptions import ConfigurationException
 from spinn_front_end_common.utilities.failed_state import FAILED_STATE_MSG
-from spinn_front_end_common.utilities.constants import (
-    MICRO_TO_MILLISECOND_CONVERSION)
+from spinn_front_end_common.utilities.constants import US_TO_MS
 from spynnaker.pyNN.abstract_spinnaker_common import AbstractSpiNNakerCommon
 from spynnaker.pyNN.utilities.spynnaker_failed_state import (
     SpynnakerFailedState)
@@ -210,7 +209,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
         :return: the machine time step
         """
 
-        return self.user_time_step_in_us / float(MICRO_TO_MILLISECOND_CONVERSION)
+        return self.user_time_step_in_us / float(US_TO_MS)
 
     @dt.setter
     def dt(self, new_value):
@@ -218,7 +217,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 
         :param new_value: new value for machine time step in microseconds
         """
-        self.user_time_step_in_us = new_value * MICRO_TO_MILLISECOND_CONVERSION
+        self.user_time_step_in_us = new_value * US_TO_MS
 
     @property
     def t(self):

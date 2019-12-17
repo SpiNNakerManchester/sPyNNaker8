@@ -29,6 +29,8 @@ import numpy
 p8_integration_factor = float(os.environ.get('P8_INTEGRATION_FACTOR', "1"))
 random.seed(os.environ.get('P8_INTEGRATION_SEED', None))
 
+RETRIES = 3
+
 
 def calculate_stdp_times(pre_spikes, post_spikes, plastic_delay):
     # If no post spikes, no changes
