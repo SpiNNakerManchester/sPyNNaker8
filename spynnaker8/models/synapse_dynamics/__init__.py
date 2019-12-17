@@ -15,5 +15,8 @@
 
 from .synapse_dynamics_static import SynapseDynamicsStatic
 from .synapse_dynamics_stdp import SynapseDynamicsSTDP
+from .synapse_dynamics_structural_static import SynapseDynamicsStructuralStatic
+from .synapse_dynamics_structural_stdp import SynapseDynamicsStructuralSTDP
 
-__all__ = ["SynapseDynamicsStatic", "SynapseDynamicsSTDP"]
+__all__ = ["SynapseDynamicsStatic", "SynapseDynamicsSTDP",
+           "SynapseDynamicsStructuralStatic", "SynapseDynamicsStructuralSTDP"]

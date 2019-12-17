@@ -14,6 +14,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from scipy.stats import binom
+from spinn_utilities.overrides import overrides
 from spynnaker.pyNN.utilities.random_stats import AbstractRandomStats
 
 
@@ -24,23 +25,30 @@ class RandomStatsBinomialImpl(AbstractRandomStats):
     def _get_params(self, dist):
         return [dist.parameters['n'], dist.parameters['p']]
 
+    @overrides(AbstractRandomStats.cdf)
     def cdf(self, dist, v):
         return binom.cdf(v, *self._get_params(dist))
 
+    @overrides(AbstractRandomStats.ppf)
     def ppf(self, dist, p):
         return binom.ppf(p, *self._get_params(dist))
 
+    @overrides(AbstractRandomStats.mean)
     def mean(self, dist):
         return binom.mean(*self._get_params(dist))
 
+    @overrides(AbstractRandomStats.std)
     def std(self, dist):
         return binom.std(*self._get_params(dist))
 
+    @overrides(AbstractRandomStats.var)
     def var(self, dist):
         return binom.var(*self._get_params(dist))
 
+    @overrides(AbstractRandomStats.high)
     def high(self, dist):
         return None
 
+    @overrides(AbstractRandomStats.low)
     def low(self, dist):
         return None

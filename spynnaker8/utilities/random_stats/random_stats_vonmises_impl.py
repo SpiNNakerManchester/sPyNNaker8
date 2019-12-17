@@ -14,33 +14,41 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from scipy.stats import vonmises
+from spinn_utilities.overrides import overrides
 from spynnaker.pyNN.utilities.random_stats import AbstractRandomStats
 
 
 class RandomStatsVonmisesImpl(AbstractRandomStats):
-    """ An implementation of AbstractRandomStats for vonmises distributions
+    """ An implementation of AbstractRandomStats for von Mises distributions
     """
 
     def _get_params(self, dist):
         return [dist.parameters['mu'], dist.parameters['kappa']]
 
+    @overrides(AbstractRandomStats.cdf)
     def cdf(self, dist, v):
         return vonmises.cdf(v, *self._get_params(dist))
 
+    @overrides(AbstractRandomStats.ppf)
     def ppf(self, dist, p):
         return vonmises.ppf(p, *self._get_params(dist))
 
+    @overrides(AbstractRandomStats.mean)
     def mean(self, dist):
         return vonmises.mean(*self._get_params(dist))
 
+    @overrides(AbstractRandomStats.std)
     def std(self, dist):
         return vonmises.std(*self._get_params(dist))
 
+    @overrides(AbstractRandomStats.var)
     def var(self, dist):
         return vonmises.var(*self._get_params(dist))
 
+    @overrides(AbstractRandomStats.high)
     def high(self, dist):
         return None
 
+    @overrides(AbstractRandomStats.low)
     def low(self, dist):
         return None

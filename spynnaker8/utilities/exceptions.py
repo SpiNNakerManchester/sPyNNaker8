@@ -17,12 +17,12 @@ from spinn_front_end_common.utilities.exceptions import ConfigurationException
 
 
 class Spynnaker8Exception(Exception):
-    """ Superclass of all exceptions from the pynn module
+    """ Superclass of all exceptions from the pyNN module
     """
 
 
 class MemReadException(Spynnaker8Exception):
-    """ Raised when the pynn front end fails to read a certain memory region
+    """ Raised when the pyNN front end fails to read a certain memory region
     """
 
 
