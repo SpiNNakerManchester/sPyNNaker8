@@ -141,3 +141,7 @@ class MockSimulator(object):
         simulator = MockSimulator()
         globals_variables.set_simulator(simulator)
         return simulator
+
+    @property
+    def user_time_step_in_us(self):
+        return 1000
