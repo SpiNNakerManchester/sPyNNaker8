@@ -226,8 +226,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 
         :return: the current runtime already executed
         """
-        return (
-            self._current_run_timesteps * (self.user_time_step_in_us / 1000.0))
+        return self.get_current_time()
 
     @property
     def segment_counter(self):
