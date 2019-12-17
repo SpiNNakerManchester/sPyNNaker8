@@ -99,7 +99,8 @@ pipeline {
                 sh 'pip install -r sPyNNaker/requirements-test.txt'
                 sh 'pip install -r sPyNNaker8/requirements-test.txt'
                 // Additional requirements for testing here
-                sh 'pip install python-coveralls "coverage>=4.4"'
+                // coverage version capped due to https://github.com/nedbat/coveragepy/issues/883
+                sh 'pip install python-coveralls "coverage>=4.4,<5.0.0"'
                 sh 'pip install pytest-instafail pytest-xdist'
                 // Java install
                 sh 'mvn -f JavaSpiNNaker package'
