@@ -16,6 +16,7 @@
 import random
 from p8_integration_tests.base_test_case import BaseTestCase
 import numpy
+import pytest
 import spynnaker8 as sim
 
 
@@ -55,5 +56,6 @@ class MyTestCase(BaseTestCase):
 
         sim.end()
 
+    pytest.mark.timeout(12000)
     def test_recording_1_element(self):
         self.runsafe(self.recording_1_element)
