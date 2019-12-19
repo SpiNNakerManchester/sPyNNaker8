@@ -88,11 +88,17 @@ from spynnaker8.models.synapse_dynamics.weight_dependence\
     .weight_dependence_additive import WeightDependenceAdditive as \
     AdditiveWeightDependence
 from spynnaker8.models.synapse_dynamics.weight_dependence\
+    .weight_dependence_additive import WeightDependenceAdditive as \
+    AdditiveWeightDependencePredictive
+from spynnaker8.models.synapse_dynamics.weight_dependence\
     .weight_dependence_multiplicative import \
     WeightDependenceMultiplicative as MultiplicativeWeightDependence
 from spynnaker8.models.synapse_dynamics.timing_dependence\
     .timing_dependence_spike_pair import TimingDependenceSpikePair as \
     SpikePairRule
+from spynnaker8.models.synapse_dynamics.timing_dependence\
+    .timing_dependence_spike_pair import TimingDependenceSpikePair as \
+    SpikePairRulePredictive
 from spynnaker.pyNN.models.neuron.structural_plasticity.synaptogenesis\
     .partner_selection import LastNeuronSelection
 from spynnaker.pyNN.models.neuron.structural_plasticity.synaptogenesis\
@@ -167,8 +173,9 @@ __all__ = [
     # synapse structures
     'StaticSynapse',
     # plastic stuff
-    'STDPMechanism', 'AdditiveWeightDependence',
-    'MultiplicativeWeightDependence', 'SpikePairRule',
+    'STDPMechanism', 'AdditiveWeightDependence', 'AdditiveWeightDependencePredictive',
+    'MultiplicativeWeightDependence', 'SpikePairRule', 'SpikePairRulePredictive'
+
     # Structural plasticity by Petrut Bogdan
     'StructuralMechanismStatic', 'StructuralMechanismSTDP',
     'LastNeuronSelection', 'RandomSelection',
