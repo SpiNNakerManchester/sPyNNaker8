@@ -209,7 +209,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
         :return: the machine time step
         """
 
-        return self.user_time_step_in_us / float(US_TO_MS)
+        return self.user_timestep_in_us / float(US_TO_MS)
 
     @dt.setter
     def dt(self, new_value):
@@ -217,7 +217,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 
         :param new_value: new value for machine time step in microseconds
         """
-        self.user_time_step_in_us = new_value * US_TO_MS
+        self.user_timestep_in_us = new_value * US_TO_MS
 
     @property
     def t(self):
