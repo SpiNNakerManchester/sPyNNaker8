@@ -20,6 +20,7 @@ from six import string_types
 from pyNN import common as pynn_common, recording
 from pyNN.space import Space as PyNNSpace
 from spinn_utilities.logger_utils import warn_once
+from spinn_front_end_common.abstract_models import ApplicationTimestepVertex
 from spinn_front_end_common.utilities import globals_variables
 from spinn_front_end_common.utilities.exceptions import ConfigurationException
 from spynnaker.pyNN.exceptions import InvalidParameterType
@@ -80,6 +81,7 @@ class Projection(PyNNProjectionCommon):
         # set the space function as required
         connector.set_space(space)
 
+
         # as a from list connector can have plastic parameters, grab those (
         # if any and add them to the synapse dynamics object)
         if isinstance(connector, FromListConnector):
@@ -95,6 +97,8 @@ class Projection(PyNNProjectionCommon):
         if hasattr(connector, "rng"):
             rng = connector.rng
 
+        timestep_in_us = self._find_timestep_in_us(post_synaptic_population)
+
         super(Projection, self).__init__(
             connector=connector, synapse_dynamics_stdp=synapse_type,
             target=receptor_type, spinnaker_control=self.__simulator,
@@ -104,7 +108,7 @@ class Projection(PyNNProjectionCommon):
                                       PopulationView),
             postpop_is_view=isinstance(post_synaptic_population,
                                        PopulationView),
-            rng=rng, machine_time_step=self.__simulator.user_timestep_in_us,
+            rng=rng, machine_time_step=timestep_in_us,
             user_max_delay=self.__simulator.max_delay, label=label,
             time_scale_factor=self.__simulator.time_scale_factor)
 
@@ -129,6 +133,13 @@ class Projection(PyNNProjectionCommon):
                     "the {}".format(connector))
         raise ConfigurationException("Unexpected parameter type {}. Expected "
                                      "Population".format(type(param)))
+
+    def _find_timestep_in_us(self, post_synaptic_population):
+        vertex = post_synaptic_population._vertex
+        if isinstance(vertex, ApplicationTimestepVertex):
+            return vertex.timestep_in_us
+        raise NotImplementedError(
+            "Post Vertex does is not an ApplicationTimestepVertex")
 
     def __len__(self):
         raise NotImplementedError
