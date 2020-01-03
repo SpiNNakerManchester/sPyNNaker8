@@ -19,6 +19,7 @@ from spinn_utilities.helpful_functions import lcm
 import spynnaker8 as sim
 from p8_integration_tests.base_test_case import BaseTestCase
 
+
 class TestSimple(BaseTestCase):
 
     def do_script(self, sys_timestep, ssa_timestep, ssa_spike_time,
@@ -51,13 +52,13 @@ class TestSimple(BaseTestCase):
 
         # If specific was None the sys should have been used
         if ssa_timestep is None:
-            ssa_timestep =  int(sys_timestep * 1000)
+            ssa_timestep = int(sys_timestep * 1000)
         if if_curr_timestep is None:
             if_curr_timestep = int(sys_timestep * 1000)
 
         # Calc when input sent spike
         input_spike_in_us = ssa_spike_time * 1000
-        rounded_input_in_us =  ssa_timestep * int(
+        rounded_input_in_us = ssa_timestep * int(
             math.ceil(input_spike_in_us/ssa_timestep))
         rounded_input_spike_in_ms = rounded_input_in_us / 1000
 
@@ -68,10 +69,10 @@ class TestSimple(BaseTestCase):
             estimate_arrival_in_us / if_curr_timestep)
         # Assumed to have actually been sent in the previous timestep
         # This could even be -1 if the ssa timestep is smaller than pop's
-        calc_arrival_in_steps  = estimate_arrival_in_step - 1
+        calc_arrival_in_steps = estimate_arrival_in_step - 1
         calc_arrival_in_us = calc_arrival_in_steps * if_curr_timestep
 
-        #round delay but always at least 1 timestep
+        # round delay but always at least 1 timestep
         delay_timesteps = int(round((delay * 1000) / if_curr_timestep))
         if delay_timesteps < 1:
             delay_timesteps = 1
@@ -91,7 +92,7 @@ class TestSimple(BaseTestCase):
         runtimeb_in_lcm = math.ceil(runb * 1000 / lcm_timestep)
         runtimeb_in_us = runtimeb_in_lcm * lcm_timestep
         runtime_in_pop_timesteps = (runtimea_in_us + runtimeb_in_us) \
-                                   / if_curr_timestep
+            / if_curr_timestep
 
         print(rounded_input_spike_in_ms, calc_arrival_in_us, delay_in_us,
               calc_spike_in_ms, runtime_in_pop_timesteps)
