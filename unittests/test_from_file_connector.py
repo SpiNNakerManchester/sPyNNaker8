@@ -64,6 +64,7 @@ def test_connector(
             f.write("# {}\n".format(header))
 
     connector = FromFileConnector(temp.name)
+    connector.set_timestep_in_us(1000)
     if expected_clist is not None:
         assert(numpy.array_equal(connector.conn_list, expected_clist))
     else:
