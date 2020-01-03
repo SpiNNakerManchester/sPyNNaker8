@@ -81,10 +81,12 @@ class Projection(PyNNProjectionCommon):
         # set the space function as required
         connector.set_space(space)
 
+        timestep_in_us = self._find_timestep_in_us(post_synaptic_population)
 
         # as a from list connector can have plastic parameters, grab those (
         # if any and add them to the synapse dynamics object)
         if isinstance(connector, FromListConnector):
+            connector.set_timestep_in_us(timestep_in_us)
             synapse_plastic_parameters = connector.get_extra_parameters()
             if synapse_plastic_parameters is not None:
                 for i, parameter in enumerate(
@@ -96,8 +98,6 @@ class Projection(PyNNProjectionCommon):
         rng = None
         if hasattr(connector, "rng"):
             rng = connector.rng
-
-        timestep_in_us = self._find_timestep_in_us(post_synaptic_population)
 
         super(Projection, self).__init__(
             connector=connector, synapse_dynamics_stdp=synapse_type,
