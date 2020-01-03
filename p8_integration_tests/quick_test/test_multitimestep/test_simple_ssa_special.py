@@ -63,8 +63,10 @@ class TestSimpleSsaSpecial(BaseTestCase):
         calc_arrival_in_steps  = estimate_arrival_in_step - 1
         calc_arrival_in_us = calc_arrival_in_steps * if_curr_timestep
 
-        #round delay up
-        delay_timesteps = int(math.ceil((delay * 1000) / if_curr_timestep))
+        #round delay but always at least 1 timestep
+        delay_timesteps = int(round((delay * 1000) / if_curr_timestep))
+        if delay_timesteps < 1:
+            delay_timesteps = 1
         delay_in_us = delay_timesteps * if_curr_timestep
 
         # 6000 is what I think the time to spike is
@@ -88,6 +90,22 @@ class TestSimpleSsaSpecial(BaseTestCase):
         v = p_neo.segments[0].filter(name='v')[0]
         # Runtime 20ms rounded up to next lcm timestep of 3000us so 21ms
         self.assertEquals(v.size, runtime_in_pop_timesteps)
+
+    def do_pop_3000_4(self):
+        self.do_script(
+            sys_timestep=1.0, ssa_timestep=1000, ssa_spike_time=0,
+            if_curr_timestep=3000, delay=4, runtime=20)
+
+    def test_pop_3000_4(self):
+        self.runsafe(self.do_pop_3000_4)
+
+    def do_pop_3000_5(self):
+        self.do_script(
+            sys_timestep=1.0, ssa_timestep=1000, ssa_spike_time=0,
+            if_curr_timestep=3000, delay=5, runtime=20)
+
+    def test_pop_3000_5(self):
+        self.runsafe(self.do_pop_3000_5)
 
     def do_pop_3000(self):
         self.do_script(
