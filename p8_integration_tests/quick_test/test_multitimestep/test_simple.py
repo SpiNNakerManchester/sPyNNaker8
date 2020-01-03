@@ -19,7 +19,7 @@ from spinn_utilities.helpful_functions import lcm
 import spynnaker8 as sim
 from p8_integration_tests.base_test_case import BaseTestCase
 
-class TestSimpleSsaSpecial(BaseTestCase):
+class TestSimple(BaseTestCase):
 
     def do_script(self, sys_timestep, ssa_timestep, ssa_spike_time,
                   if_curr_timestep, delay, runtime):
