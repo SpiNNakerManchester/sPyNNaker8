@@ -22,7 +22,7 @@ from p8_integration_tests.base_test_case import BaseTestCase
 class TestSimple(BaseTestCase):
 
     def do_script(self, sys_timestep, ssa_timestep, ssa_spike_time,
-                  if_curr_timestep, delay, runtime):
+                  if_curr_timestep, delay, runtime, split=True):
         sim.setup(timestep=sys_timestep)
 
         input = sim.Population(
@@ -36,7 +36,15 @@ class TestSimple(BaseTestCase):
 
         sim.Projection(input, pop_1, sim.OneToOneConnector(),
                        synapse_type=sim.StaticSynapse(weight=5, delay=delay))
-        sim.run(runtime)
+        if split:
+            runa = runtime * 0.45
+            runb = runtime - runa
+            sim.run(runa)
+            sim.run(runb)
+        else:
+            runa = runtime
+            runb = 0
+            sim.run(runtime)
         i_neo = input.get_data(variables=["spikes"])
         p_neo = pop_1.get_data(variables=["spikes", "v"])
         sim.end()
@@ -76,16 +84,21 @@ class TestSimple(BaseTestCase):
             math.ceil(calc_spike_in_us / if_curr_timestep))
         calc_spike_in_ms = calc_spike_rounded / 1000
 
-        lcm_timestep = lcm(int(sys_timestep * 1000), ssa_timestep, if_curr_timestep)
-        runtime_in_lcm = math.ceil(runtime * 1000 / lcm_timestep)
-        runtime_in_us = runtime_in_lcm * lcm_timestep
-        runtime_in_pop_timesteps = runtime_in_us / if_curr_timestep
+        lcm_timestep = lcm(int(sys_timestep * 1000),
+                           ssa_timestep, if_curr_timestep)
+        runtimea_in_lcm = math.ceil(runa * 1000 / lcm_timestep)
+        runtimea_in_us = runtimea_in_lcm * lcm_timestep
+        runtimeb_in_lcm = math.ceil(runb * 1000 / lcm_timestep)
+        runtimeb_in_us = runtimeb_in_lcm * lcm_timestep
+        runtime_in_pop_timesteps = (runtimea_in_us + runtimeb_in_us) \
+                                   / if_curr_timestep
 
         print(rounded_input_spike_in_ms, calc_arrival_in_us, delay_in_us,
               calc_spike_in_ms, runtime_in_pop_timesteps)
         i_spikes = i_neo.segments[0].spiketrains
         self.assertEquals(len(i_spikes), 1)
-        self.assertAlmostEquals(float(i_spikes[0].magnitude), rounded_input_spike_in_ms)
+        self.assertAlmostEquals(float(i_spikes[0].magnitude),
+                                rounded_input_spike_in_ms)
 
         spikes = p_neo.segments[0].spiketrains
         # Spike sent timestgep after the 6 so 9. Pop spikes 6 steps later so 15
@@ -153,7 +166,7 @@ class TestSimple(BaseTestCase):
     def do_simple(self):
         self.do_script(
             sys_timestep=1.0, ssa_timestep=1000, ssa_spike_time=0,
-            if_curr_timestep=1000, delay=1, runtime=20)
+            if_curr_timestep=1000, delay=1, runtime=20, split=False)
 
     def test_simple(self):
         self.runsafe(self.do_simple)
