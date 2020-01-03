@@ -53,17 +53,13 @@ class TestSimpleSsaSpecial(BaseTestCase):
             math.ceil(input_spike_in_us/ssa_timestep))
         rounded_input_spike_in_ms = rounded_input_in_us / 1000
 
-        i_spikes = i_neo.segments[0].spiketrains
-        self.assertEquals(len(i_spikes), 1)
-        self.assertEquals(i_spikes[0].magnitude, rounded_input_spike_in_ms)
-
-        # Calc when the input spike received
-        # Arrives with a minor delay  (10 is a quess)
-        estimate_arrival_in_us = rounded_input_in_us + 10
-        # Arrive At the start of an input timestep (ceil to get to next one)
-        estimate_arrival_in_step = math.ceil(
+        # Spike sent by ssa at the end of the timestep
+        estimate_arrival_in_us = rounded_input_in_us + ssa_timestep
+        # Arrive during an input timestep
+        estimate_arrival_in_step = math.floor(
             estimate_arrival_in_us / if_curr_timestep)
         # Assumed to have actually been sent in the previous timestep
+        # This could even be -1 if the ssa timestep is smaller than pop's
         calc_arrival_in_steps  = estimate_arrival_in_step - 1
         calc_arrival_in_us = calc_arrival_in_steps * if_curr_timestep
 
@@ -71,23 +67,35 @@ class TestSimpleSsaSpecial(BaseTestCase):
         delay_timesteps = int(math.ceil((delay * 1000) / if_curr_timestep))
         delay_in_us = delay_timesteps * if_curr_timestep
 
-        # 6000 is what I think the timke to spike is
+        # 6000 is what I think the time to spike is
         calc_spike_in_us = calc_arrival_in_us + delay_in_us + 6000
-        calc_spike_in_timestep = int(
-            math.ceil(calc_spike_in_us / if_curr_timestep))
+        calc_spike_in_ms = calc_spike_in_us / 1000
 
         lcm_timestep = lcm(int(sys_timestep * 1000), ssa_timestep, if_curr_timestep)
         runtime_in_lcm = math.ceil(runtime * 1000 / lcm_timestep)
         runtime_in_us = runtime_in_lcm * lcm_timestep
         runtime_in_pop_timesteps = runtime_in_us / if_curr_timestep
 
+        print(rounded_input_spike_in_ms, calc_arrival_in_us, delay_in_us,
+              calc_spike_in_ms, runtime_in_pop_timesteps)
+        i_spikes = i_neo.segments[0].spiketrains
+        self.assertEquals(len(i_spikes), 1)
+        self.assertEquals(i_spikes[0].magnitude, rounded_input_spike_in_ms)
+
         spikes = p_neo.segments[0].spiketrains
         # Spike sent timestgep after the 6 so 9. Pop spikes 6 steps later so 15
-        self.assertEquals(spikes[0].magnitude, calc_spike_in_timestep)
+        self.assertEquals(spikes[0].magnitude, calc_spike_in_ms)
         v = p_neo.segments[0].filter(name='v')[0]
         # Runtime 20ms rounded up to next lcm timestep of 3000us so 21ms
         self.assertEquals(v.size, runtime_in_pop_timesteps)
 
+    def do_pop_3000(self):
+        self.do_script(
+            sys_timestep=1.0, ssa_timestep=1000, ssa_spike_time=0,
+            if_curr_timestep=3000, delay=1, runtime=20)
+
+    def test_pop_3000(self):
+        self.runsafe(self.do_pop_3000)
 
     def do_ssa_3000_5(self):
         self.do_script(
@@ -97,21 +105,13 @@ class TestSimpleSsaSpecial(BaseTestCase):
     def test_ssa_3000_5(self):
         self.runsafe(self.do_ssa_3000_5)
 
-    def do_ssa_3000_3(self):
+    def do_ssa_1000_6(self):
         self.do_script(
-            sys_timestep=1.0, ssa_timestep=3000, ssa_spike_time=3,
+            sys_timestep=1.0, ssa_timestep=1000, ssa_spike_time=6,
             if_curr_timestep=1000, delay=1, runtime=20)
 
-    def test_ssa_3000_3(self):
-        self.runsafe(self.do_ssa_3000_5)
-
-    def do_ssa_1000_5(self):
-        self.do_script(
-            sys_timestep=1.0, ssa_timestep=1000, ssa_spike_time=5,
-            if_curr_timestep=1000, delay=1, runtime=20)
-
-    def test_ssa_1000_5(self):
-        self.runsafe(self.do_ssa_1000_5)
+    def test_ssa_1000_6(self):
+        self.runsafe(self.do_ssa_1000_6)
 
     def do_simple(self):
         self.do_script(
