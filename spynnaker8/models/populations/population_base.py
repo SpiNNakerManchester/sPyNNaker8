@@ -340,3 +340,10 @@ class PopulationBase(object):
         """
         _this_is_wholly_deprecated(
             "Use set(parametername=value_array) instead.", kwargs)
+
+    @abstractproperty
+    def _vertex(self):
+        """
+        Returns the vertext associated with this population
+        :return:
+        """

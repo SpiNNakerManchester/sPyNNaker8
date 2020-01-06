@@ -20,6 +20,7 @@ from six import integer_types, string_types
 from pyNN import descriptions
 from pyNN.random import NumpyRNG
 from spinn_utilities.logger_utils import warn_once
+from spinn_utilities.overrides import overrides
 from spinn_utilities.ranged.abstract_sized import AbstractSized
 from .idmixin import IDMixin
 from .population_base import PopulationBase
@@ -115,6 +116,7 @@ class PopulationView(PopulationBase):
         return self.__mask
 
     @property
+    @overrides(PopulationBase.all_cells)
     def all_cells(self):
         """ An array containing the cell IDs of all neurons in the\
             Population (all MPI nodes). """
@@ -211,6 +213,7 @@ class PopulationView(PopulationBase):
         return self.__population.get_by_selector(
             self.__indexes, parameter_names)
 
+    @overrides(PopulationBase.get_data)
     def get_data(
             self, variables='all', gather=True, clear=False, annotations=None):
         """ Return a Neo Block containing the data(spikes, state variables)\
@@ -243,6 +246,7 @@ class PopulationView(PopulationBase):
         return self.__population.get_data_by_indexes(
             variables, self.__indexes, clear=clear)
 
+    @overrides(PopulationBase.get_spike_counts)
     def get_spike_counts(self, gather=True):
         """ Returns a dict containing the number of spikes for each neuron.
 
@@ -314,6 +318,7 @@ class PopulationView(PopulationBase):
             self.__population.set_initial_value(
                 variable, value, self.__indexes)
 
+    @overrides(PopulationBase.record)
     def record(self, variables,  # pylint: disable=arguments-differ
                to_file=None, sampling_interval=None):
         """ Record the specified variable or variables for all cells in the\
@@ -371,6 +376,7 @@ class PopulationView(PopulationBase):
             self.__population.set_by_selector(
                 selector=self.__indexes, parameter=parameter, value=value)
 
+    @overrides(PopulationBase.write_data)
     def write_data(self, io, variables='all', gather=True, clear=False,
                    annotations=None):
         """ Write recorded data to file, using one of the file formats\
@@ -401,3 +407,8 @@ class PopulationView(PopulationBase):
 
         # write the neo block to the file
         io.write(data)
+
+    @property
+    @overrides(PopulationBase._vertex)
+    def _vertex(self):
+        return self.__population._vertex
