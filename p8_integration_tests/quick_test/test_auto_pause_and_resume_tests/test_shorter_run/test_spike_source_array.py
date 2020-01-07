@@ -57,5 +57,6 @@ class MyTestCase(BaseTestCase):
         sim.end()
 
     pytest.mark.timeout(12000)
+
     def test_recording_1_element(self):
         self.runsafe(self.recording_1_element)
