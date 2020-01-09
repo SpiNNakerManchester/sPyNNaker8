@@ -20,4 +20,3 @@ For up to date information on Contributors see the graphs/contributors pages on 
 For example [https://github.com/SpiNNakerManchester/sPyNNaker8/graphs/contributors](https://github.com/SpiNNakerManchester/sPyNNaker8/graphs/contributors)
 
 [Combined list](http://spinnakermanchester.github.io/common_pages/4.0.0/LicenseAgreement.html#contributors)
-
