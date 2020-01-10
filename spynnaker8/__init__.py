@@ -109,6 +109,9 @@ from spynnaker.pyNN.models.spike_source.spike_source_array \
 # noinspection PyUnresolvedReferences
 from spynnaker.pyNN.models.spike_source.spike_source_poisson \
     import SpikeSourcePoisson
+# noinspection PyUnresolvedReferences
+from spynnaker.pyNN.models.spike_source.rate_source_array \
+    import RateSourceArray
 
 # pops
 # noinspection PyUnresolvedReferences
