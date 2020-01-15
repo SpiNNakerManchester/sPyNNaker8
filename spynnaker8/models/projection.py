@@ -81,8 +81,12 @@ class Projection(PyNNProjectionCommon):
         # set the space function as required
         connector.set_space(space)
 
-        rounding_in_us = self._find_rounding_in_us(
+        timestep_in_us = self._find_shared_timestep_in_us(
             pre_synaptic_population, post_synaptic_population)
+        if timestep_in_us is None:
+            rounding_in_us = 1
+        else:
+            rounding_in_us = timestep_in_us
 
         # as a from list connector can have plastic parameters, grab those (
         # if any and add them to the synapse dynamics object)
@@ -109,7 +113,7 @@ class Projection(PyNNProjectionCommon):
                                       PopulationView),
             postpop_is_view=isinstance(post_synaptic_population,
                                        PopulationView),
-            rng=rng, machine_time_step=rounding_in_us,
+            rng=rng, timestep_in_us=timestep_in_us,
             user_max_delay=self.__simulator.max_delay, label=label,
             time_scale_factor=self.__simulator.time_scale_factor)
 
@@ -135,12 +139,12 @@ class Projection(PyNNProjectionCommon):
         raise ConfigurationException("Unexpected parameter type {}. Expected "
                                      "Population".format(type(param)))
 
-    def _find_rounding_in_us(
+    def _find_shared_timestep_in_us(
             self, pre_synaptic_population, post_synaptic_population):
         """
         Finds the timestep to do rounding by.
 
-        Unless pre and post share the same single timestep 1 is returned
+        Unless pre and post share the same single timestep None is returned
 
         :param pre_synaptic_population:
         :param post_synaptic_population:
@@ -150,12 +154,12 @@ class Projection(PyNNProjectionCommon):
         if isinstance(vertex, ApplicationTimestepVertex):
             possible = vertex.timestep_in_us
         else:
-            return 1
+            return None
         vertex = post_synaptic_population._vertex
         if isinstance(vertex, ApplicationTimestepVertex):
             if possible == vertex.timestep_in_us:
                 return possible
-        return 1
+        return None
 
     def __len__(self):
         raise NotImplementedError
