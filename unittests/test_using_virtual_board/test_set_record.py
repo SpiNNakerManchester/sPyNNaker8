@@ -141,7 +141,8 @@ class TestSetRecord(BaseTestCase):
 
     def test_turn_off_some_indexes(self):
         recorder = NeuronRecorder(
-            ["spikes", "v", "gsyn_exc", "gsyn_inh"], 5, 1000)
+            allowed_variables=["spikes", "v", "gsyn_exc", "gsyn_inh"],
+            min_id=0, max_id=5, timestep_in_us=1000)
         recorder.set_recording("spikes", True)
         self.assertListEq(["spikes"], recorder.recording_variables)
         recorder.set_recording("spikes", False, indexes=[2, 4])
