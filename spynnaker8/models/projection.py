@@ -81,12 +81,13 @@ class Projection(PyNNProjectionCommon):
         # set the space function as required
         connector.set_space(space)
 
-        timestep_in_us = self._find_timestep_in_us(post_synaptic_population)
+        rounding_in_us = self._find_rounding_in_us(
+            pre_synaptic_population, post_synaptic_population)
 
         # as a from list connector can have plastic parameters, grab those (
         # if any and add them to the synapse dynamics object)
         if isinstance(connector, FromListConnector):
-            connector.set_timestep_in_us(timestep_in_us)
+            connector.set_timestep_in_us(rounding_in_us)
             synapse_plastic_parameters = connector.get_extra_parameters()
             if synapse_plastic_parameters is not None:
                 for i, parameter in enumerate(
@@ -108,7 +109,7 @@ class Projection(PyNNProjectionCommon):
                                       PopulationView),
             postpop_is_view=isinstance(post_synaptic_population,
                                        PopulationView),
-            rng=rng, machine_time_step=timestep_in_us,
+            rng=rng, machine_time_step=rounding_in_us,
             user_max_delay=self.__simulator.max_delay, label=label,
             time_scale_factor=self.__simulator.time_scale_factor)
 
@@ -134,12 +135,27 @@ class Projection(PyNNProjectionCommon):
         raise ConfigurationException("Unexpected parameter type {}. Expected "
                                      "Population".format(type(param)))
 
-    def _find_timestep_in_us(self, post_synaptic_population):
+    def _find_rounding_in_us(
+            self, pre_synaptic_population, post_synaptic_population):
+        """
+        Finds the timestep to do rounding by.
+
+        Unless pre and post share the same single timestep 1 is returned
+
+        :param pre_synaptic_population:
+        :param post_synaptic_population:
+        :return:
+        """
+        vertex = pre_synaptic_population._vertex
+        if isinstance(vertex, ApplicationTimestepVertex):
+            possible = vertex.timestep_in_us
+        else:
+            return 1
         vertex = post_synaptic_population._vertex
         if isinstance(vertex, ApplicationTimestepVertex):
-            return vertex.timestep_in_us
-        raise NotImplementedError(
-            "Post Vertex does is not an ApplicationTimestepVertex")
+            if possible == vertex.timestep_in_us:
+                return possible
+        return 1
 
     def __len__(self):
         raise NotImplementedError
