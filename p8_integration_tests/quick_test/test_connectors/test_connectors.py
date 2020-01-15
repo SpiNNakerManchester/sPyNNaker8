@@ -255,3 +255,41 @@ class ConnectorsTest(BaseTestCase):
 
     def test_fixedprob_population_views(self):
         self.runsafe(self.fixedprob_population_views)
+
+    def fixedpre_population_views(self):
+        sim.setup(timestep=1.0)
+        input = sim.Population(4, sim.SpikeSourceArray([0]), label="input")
+        pop = sim.Population(4, sim.IF_curr_exp(), label="pop")
+        rng = NumpyRNG(seed=1)
+        conn = sim.Projection(input[0:3], pop[1:4],
+                              sim.FixedNumberPreConnector(2, rng=rng),
+                              sim.StaticSynapse(weight=0.5, delay=2))
+        sim.run(1)
+        weights = conn.get(['weight', 'delay'], 'list')
+        sim.end()
+        # The fixed seed means this gives the same answer each time
+        target = [(0, 1, 0.5, 2.0), (0, 2, 0.5, 2.0), (0, 3, 0.5, 2.0),
+                  (1, 2, 0.5, 2.0), (2, 1, 0.5, 2.0), (2, 3, 0.5, 2.0)]
+        self.assertEqual(weights.tolist(), target)
+
+    def test_fixedpre_population_views(self):
+        self.runsafe(self.fixedpre_population_views)
+
+    def fixedpost_population_views(self):
+        sim.setup(timestep=1.0)
+        input = sim.Population(4, sim.SpikeSourceArray([0]), label="input")
+        pop = sim.Population(4, sim.IF_curr_exp(), label="pop")
+        rng = NumpyRNG(seed=1)
+        conn = sim.Projection(input[0:3], pop[1:4],
+                              sim.FixedNumberPostConnector(2, rng=rng),
+                              sim.StaticSynapse(weight=0.5, delay=2))
+        sim.run(1)
+        weights = conn.get(['weight', 'delay'], 'list')
+        sim.end()
+        # The fixed seed means this gives the same answer each time
+        target = [(0, 2, 0.5, 2.0), (0, 3, 0.5, 2.0), (1, 1, 0.5, 2.0),
+                  (1, 3, 0.5, 2.0), (2, 1, 0.5, 2.0), (2, 2, 0.5, 2.0)]
+        self.assertEqual(weights.tolist(), target)
+
+    def test_fixedpost_population_views(self):
+        self.runsafe(self.fixedpost_population_views)
