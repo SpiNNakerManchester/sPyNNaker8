@@ -24,7 +24,8 @@ from spinn_front_end_common.utilities import globals_variables
 from spinn_front_end_common.utilities.exceptions import ConfigurationException
 from spynnaker.pyNN.exceptions import InvalidParameterType
 from spynnaker8.models.connectors import FromListConnector, OneToOneConnector,\
-    AllToAllConnector, FixedProbabilityConnector, FixedNumberPostConnector
+    AllToAllConnector, FixedProbabilityConnector, FixedNumberPostConnector,\
+    FixedNumberPreConnector
 from spynnaker8.models.synapse_dynamics import SynapseDynamicsStatic
 # This line has to come in this order as it otherwise causes a circular
 # dependency
@@ -115,7 +116,8 @@ class Projection(PyNNProjectionCommon):
             if (isinstance(connector, OneToOneConnector) or
                     isinstance(connector, AllToAllConnector) or
                     isinstance(connector, FixedProbabilityConnector) or
-                    isinstance(connector, FixedNumberPostConnector)):
+                    isinstance(connector, FixedNumberPostConnector) or
+                    isinstance(connector, FixedNumberPreConnector)):
                 # Check whether the array is contiguous or not
                 inds = param._indexes
                 if (inds == tuple(range(inds[0], inds[-1] + 1))):
