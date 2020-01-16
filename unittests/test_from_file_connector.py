@@ -16,7 +16,9 @@
 import numpy
 import pytest
 from pacman.model.graphs.common.slice import Slice
-from unittests.mocks import MockSimulator, MockSynapseInfo, MockPopulation
+from spynnaker.pyNN.models.neural_projections.synapse_information import (
+    SynapseInformation)
+from unittests.mocks import MockSimulator, MockPopulation
 from spynnaker8.models.connectors import FromFileConnector
 import tempfile
 
@@ -27,14 +29,14 @@ import tempfile
     "expected_extra_parameter_names", [
         (None, None, 0, 0, numpy.zeros((0, 2)), [], [], None, None),
         ([], None, 0, 0, numpy.zeros((0, 2)), [], [], None, None),
-        (numpy.array([(0, 0, 0, 0), (1, 1, 1, 1), (2, 2, 2, 2)]), None, 5, 1,
-         None, [0, 1, 2], [0, 1, 2], None, None),
+        (numpy.array([(0, 0, 0, 1), (1, 1, 1, 2), (2, 2, 2, 3)]), None, 5, 1,
+         None, [0, 1, 2], [1, 2, 3], None, None),
         (numpy.array([(0, 0), (1, 1), (2, 2)]), None, 5, 1,
          None, [5, 5, 5], [1, 1, 1], None, None),
         (numpy.array([(0, 0, 0), (1, 1, 1), (2, 2, 2)]), ["weight"], 5, 1,
          None, [0, 1, 2], [1, 1, 1], None, None),
-        (numpy.array([(0, 0, 0), (1, 1, 1), (2, 2, 2)]), ["delay"], 5, 1,
-         None, [5, 5, 5], [0, 1, 2], None, None),
+        (numpy.array([(0, 0, 1), (1, 1, 2), (2, 2, 3)]), ["delay"], 5, 1,
+         None, [5, 5, 5], [1, 2, 3], None, None),
         (numpy.array([(0, 0, 0), (1, 1, 0), (2, 2, 0)]), ["extra"], 5, 1,
          None, [5, 5, 5], [1, 1, 1], numpy.array([[0], [0], [0]]), ["extra"]),
     ], ids=[
@@ -85,11 +87,14 @@ def test_connector(
     # Check weights and delays are used or ignored as expected
     pre_slice = Slice(0, 10)
     post_slice = Slice(0, 10)
-    mock_synapse_info = MockSynapseInfo(MockPopulation(10, "Pre"),
-                                        MockPopulation(10, "Post"),
-                                        weights, delays)
+    synapse_info = SynapseInformation(
+        connector=connector, pre_population=MockPopulation(10, "pre"),
+        post_population=MockPopulation(10, "post"),
+        prepop_is_view=False, postpop_is_view=False, rng=None,
+        synapse_dynamics="Stub", synapse_type="Stub", weights=weights,
+        delays=delays)
     block = connector.create_synaptic_block(
         [pre_slice], 0, [post_slice], 0, pre_slice,
-        post_slice, 1, mock_synapse_info)
+        post_slice, 1, synapse_info, 1000)
     assert(numpy.array_equal(block["weight"], numpy.array(expected_weights)))
     assert(numpy.array_equal(block["delay"], numpy.array(expected_delays)))
