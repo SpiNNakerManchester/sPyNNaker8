@@ -121,6 +121,8 @@ pipeline {
                 // Prepare coverage
                 sh 'rm -f coverage.xml'
                 sh 'rm -f .coverage'
+                sh 'echo "[run]" > ~/.coveragerc'
+                sh 'echo "parallel = True" >> ~/.coveragerc'
                 // Prepare for unit tests
                 sh 'echo "# Empty config" >  ~/.spinnaker.cfg'
                 // Create a directory for test outputs
