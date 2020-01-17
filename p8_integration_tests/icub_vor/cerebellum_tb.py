@@ -20,15 +20,18 @@ from pyNN.random import RandomDistribution, NumpyRNG
 from spynnaker.pyNN.models.neuron.plasticity.stdp.common \
     import plasticity_helpers
 
+L_RATE = 2
+H_RATE = 20
+
 # cerebellum test bench
-runtime = 250
+runtime = 1000
 
 # Synapsis parameters
 gc_pc_weights = 0.05
 mf_vn_weights = 0.01
 pc_vn_weights = 0.0002
 cf_pc_weights = 0.0
-mf_gc_weights = 0.1
+mf_gc_weights = 0.5
 go_gc_weights = 0.002
 input_weights = 0.0025
 mf_go_weights = 0.1
@@ -63,13 +66,13 @@ max_weight_c = 0.005
 pot_alpha_c = 0.001 # this is alpha in the paper
 beta_c = 11
 sigma_c = 201
-initial_weight_c = max_weight_c #0.0005
+initial_weight_c = 0.001 # max_weight_c #0.0005
 # initial_weight_c = 0.05
 plastic_delay_c = 4
 
 # Learning parameters sin rule (GrC to PC)
 min_weight_s = 0
-max_weight_s = 0.001
+max_weight_s = 0.01
 pot_alpha_s =0.01
 t_peak_s =100
 initial_weight_s = max_weight_s #0.0001
@@ -81,6 +84,9 @@ weight_dist_pfpc = RandomDistribution('uniform',
 
 
 sim.setup(timestep=1.)
+
+
+
 
 # Sensorial Activity: input activity from vestibulus (will come from the head IMU, now it is a test bench)
 # We simulate the output of the head encoders with a sinusoidal function. Each "sensorial activity" value is derived from the
@@ -141,31 +147,33 @@ def sensorial_activity(pt): # pt is a single point in time at which we measure t
 # Error Activity: error from eye and head encoders
 def error_activity(error_):
 
-    min_rate = 1.0
-    max_rate = 25.0
-
-    low_neuron_ID_threshold = abs(error_) * 100.0
-    up_neuron_ID_threshold = low_neuron_ID_threshold - 100.0
+#     min_rate = 1.0
+#     max_rate = 25.0
+# 
+#     low_neuron_ID_threshold = abs(error_) * 100.0
+#     up_neuron_ID_threshold = low_neuron_ID_threshold - 100.0
     IO_agonist = np.zeros((100))
     IO_antagonist = np.zeros((100))
-
-    rate = []
-    for i in range (100):
-        if(i < up_neuron_ID_threshold):
-            rate.append(max_rate)
-        elif(i<low_neuron_ID_threshold):
-            aux_rate=max_rate - (max_rate-min_rate)*((i - up_neuron_ID_threshold)/(low_neuron_ID_threshold - up_neuron_ID_threshold))
-            rate.append(aux_rate)
-        else:
-            rate.append(min_rate)
-
-    if error_>=0.0:
-        IO_agonist[0:100]=min_rate
-        IO_antagonist=rate
-    else:
-        IO_antagonist[0:100]=min_rate
-        IO_agonist=rate
-
+# 
+#     rate = []
+#     for i in range (100):
+#         if(i < up_neuron_ID_threshold):
+#             rate.append(max_rate)
+#         elif(i<low_neuron_ID_threshold):
+#             aux_rate=max_rate - (max_rate-min_rate)*((i - up_neuron_ID_threshold)/(low_neuron_ID_threshold - up_neuron_ID_threshold))
+#             rate.append(aux_rate)
+#         else:
+#             rate.append(min_rate)
+# 
+#     if error_>=0.0:
+#         IO_agonist[0:100]=min_rate
+#         IO_antagonist=rate
+#     else:
+#         IO_antagonist[0:100]=min_rate
+#         IO_agonist=rate
+    IO_agonist[:] = H_RATE
+    IO_antagonist[:] = L_RATE
+    
     ea_rate = np.concatenate((IO_agonist,IO_antagonist))
 
     return ea_rate
@@ -366,16 +374,49 @@ cf_pc_connections = sim.Projection(CF_population,
 
 MF_population.record(['spikes'])
 CF_population.record(['spikes'])
-GC_population.record(['spikes'])
+GC_population.record('all')
 GOC_population.record(['spikes'])
 VN_population.record(['spikes'])
 PC_population.record(['spikes'])
 
-sim.run(runtime)
+
+repeats = 3
+
+for i in range(repeats):
+    sim.run(runtime*0.4)
+    
+    CF_rates=[]
+    lower_rate=100*[L_RATE]
+    upper_rate=100*[H_RATE]
+    CF_rates.extend(lower_rate)
+    CF_rates.extend(upper_rate)
+    CF_population.set(rate=CF_rates)
+    
+    sim.run(runtime*0.4)
+    
+    CF_rates=[]
+    lower_rate=100*[H_RATE]
+    upper_rate=100*[L_RATE]
+    CF_rates.extend(lower_rate)
+    CF_rates.extend(upper_rate)
+    CF_population.set(rate=CF_rates)
+    
+    sim.run(runtime*0.2)
+    
+    CF_rates=[]
+    lower_rate=100*[H_RATE]
+    upper_rate=100*[L_RATE]
+    CF_rates.extend(lower_rate)
+    CF_rates.extend(upper_rate)
+    CF_population.set(rate=CF_rates)
+    
+
+
+total_runtime = runtime*repeats
 
 MF_spikes = MF_population.get_data('spikes')
 CF_spikes = CF_population.get_data('spikes')
-GC_spikes = GC_population.get_data('spikes')
+GC_spikes = GC_population.get_data('all')
 GOC_spikes = GOC_population.get_data('spikes')
 VN_spikes = VN_population.get_data('spikes')
 PC_spikes = PC_population.get_data('spikes')
@@ -387,23 +428,25 @@ pfpc_weights = pf_pc_connections.get('weight', 'list', with_address=False)
 # Plot
 F = Figure(
     Panel(MF_spikes.segments[0].spiketrains,
-          yticks=True, markersize=2, xlim=(0, runtime),
+          yticks=True, markersize=2, xlim=(0, total_runtime),
           xlabel='MF_spikes'),
     Panel(CF_spikes.segments[0].spiketrains,
-          yticks=True, markersize=2, xlim=(0, runtime),
+          yticks=True, markersize=2, xlim=(0, total_runtime),
           xlabel='CF_spikes'),
     Panel(GC_spikes.segments[0].spiketrains,
-          yticks=True, markersize=2, xlim=(0, runtime),
+          yticks=True, markersize=2, xlim=(0, total_runtime),
           xlabel='GC_spikes'),
     Panel(GOC_spikes.segments[0].spiketrains,
-          yticks=True, markersize=2, xlim=(0, runtime),
+          yticks=True, markersize=2, xlim=(0, total_runtime),
           xlabel='GOC_spikes'),
     Panel(PC_spikes.segments[0].spiketrains,
-          yticks=True, markersize=2, xlim=(0, runtime),
+          yticks=True, markersize=2, xlim=(0, total_runtime),
           xlabel='PC_spikes'),
     Panel(VN_spikes.segments[0].spiketrains,
-          yticks=True, markersize=2, xlim=(0, runtime),
+          yticks=True, markersize=2, xlim=(0, total_runtime),
           xlabel='VN_spikes'),
+    Panel(GC_spikes.segments[0].filter(name='v')[0],
+          ylabel="Membrane potential (mV)", yticks=True, xlim=(0, total_runtime))
     )
 plt.show(block=False)
 
