@@ -31,11 +31,6 @@ from spynnaker.pyNN.utilities.spynnaker_failed_state import (
 from spynnaker8 import _version
 from spynnaker8.spynnaker8_simulator_interface import (
     Spynnaker8SimulatorInterface)
-from spynnaker8.utilities.random_stats import (
-    RandomStatsExponentialImpl, RandomStatsGammaImpl, RandomStatsLogNormalImpl,
-    RandomStatsNormalClippedImpl, RandomStatsNormalImpl,
-    RandomStatsPoissonImpl, RandomStatsRandIntImpl, RandomStatsUniformImpl,
-    RandomStatsVonmisesImpl, RandomStatsBinomialImpl)
 from ._version import __version__ as version
 
 log = FormatAdapter(logging.getLogger(__name__))
@@ -306,20 +301,6 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
         :param new_value: the new value for the recorder
         """
         self.__recorders = new_value
-
-    def get_distribution_to_stats(self):
-        return {
-            'binomial': RandomStatsBinomialImpl(),
-            'gamma': RandomStatsGammaImpl(),
-            'exponential': RandomStatsExponentialImpl(),
-            'lognormal': RandomStatsLogNormalImpl(),
-            'normal': RandomStatsNormalImpl(),
-            'normal_clipped': RandomStatsNormalClippedImpl(),
-            'normal_clipped_to_boundary': RandomStatsNormalClippedImpl(),
-            'poisson': RandomStatsPoissonImpl(),
-            'uniform': RandomStatsUniformImpl(),
-            'randint': RandomStatsRandIntImpl(),
-            'vonmises': RandomStatsVonmisesImpl()}
 
 
 # Defined in this file to prevent an import loop
