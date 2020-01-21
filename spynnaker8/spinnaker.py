@@ -328,9 +328,6 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
     def is_a_pynn_random(self, thing):
         return isinstance(thing, RandomDistribution)
 
-    def get_pynn_NumpyRNG(self):
-        return NumpyRNG
-
 
 # Defined in this file to prevent an import loop
 class Spynnaker8FailedState(SpynnakerFailedState,
