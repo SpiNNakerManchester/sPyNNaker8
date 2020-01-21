@@ -338,7 +338,7 @@ class Projection(PyNNProjectionCommon):
     def pre(self):
         """ The pre-population.
 
-        :rtype: ~spynnaker8.models.populations.PopulationBase
+        :rtype: PopulationBase
         """
         return self._synapse_information.pre_population
 
@@ -346,7 +346,7 @@ class Projection(PyNNProjectionCommon):
     def post(self):
         """ The post-population.
 
-        :rtype: ~spynnaker8.models.populations.PopulationBase
+        :rtype: PopulationBase
         """
         return self._synapse_information.post_population
 
