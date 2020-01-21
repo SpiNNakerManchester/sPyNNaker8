@@ -18,7 +18,7 @@ from lazyarray import __version__ as lazyarray_version
 from quantities import __version__ as quantities_version
 from neo import __version__ as neo_version
 from pyNN.common import control as pynn_control
-from pyNN.random import RandomDistribution, NumpyRNG
+from pyNN.random import RandomDistribution
 from pyNN import __version__ as pynn_version
 from spinn_utilities.log import FormatAdapter
 from spinn_front_end_common.utilities import globals_variables
@@ -324,9 +324,6 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 
     def get_random_distribution(self):
         return RandomDistribution
-
-    def is_a_pynn_random(self, thing):
-        return isinstance(thing, RandomDistribution)
 
 
 # Defined in this file to prevent an import loop
