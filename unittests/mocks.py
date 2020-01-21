@@ -100,9 +100,6 @@ class MockSimulator(object):
         self.config["MasterPopTable"] = {"generator": "BinarySearch"}
         self.config["Reports"] = {"n_profile_samples": 0}
 
-    def get_random_distribution(self):
-        return RandomDistribution
-
     def add_population(self, pop):
         pass
 
