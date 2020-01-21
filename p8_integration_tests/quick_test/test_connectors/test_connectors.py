@@ -293,3 +293,31 @@ class ConnectorsTest(BaseTestCase):
 
     def test_fixedpost_population_views(self):
         self.runsafe(self.fixedpost_population_views)
+
+    def fixedtotal_population_views(self):
+        sim.setup(timestep=1.0)
+        input = sim.Population(4, sim.SpikeSourceArray([0]), label="input")
+        pop = sim.Population(4, sim.IF_curr_exp(), label="pop")
+        rng = NumpyRNG(seed=1)
+        conn = sim.Projection(input[0:3], pop[1:4],
+                              sim.FixedTotalNumberConnector(
+                                  5, with_replacement=False, rng=rng),
+                              sim.StaticSynapse(weight=0.5, delay=2))
+        conn2 = sim.Projection(input[0:3], pop[1:4],
+                               sim.FixedTotalNumberConnector(
+                                   5, with_replacement=True, rng=rng),
+                               sim.StaticSynapse(weight=0.5, delay=2))
+        sim.run(1)
+        weights = conn.get(['weight', 'delay'], 'list')
+        weights2 = conn2.get(['weight', 'delay'], 'list')
+        sim.end()
+        # The fixed seed means this gives the same answer each time
+        target = [(0, 1, 0.5, 2.0), (0, 2, 0.5, 2.0), (1, 3, 0.5, 2.0),
+                  (2, 2, 0.5, 2.0), (2, 3, 0.5, 2.0)]
+        target2 = [(0, 3, 0.5, 2.0), (1, 1, 0.5, 2.0), (1, 2, 0.5, 2.0),
+                  (2, 1, 0.5, 2.0), (2, 3, 0.5, 2.0)]
+        self.assertEqual(weights.tolist(), target)
+        self.assertEqual(weights2.tolist(), target2)
+
+    def test_fixedtotal_population_views(self):
+        self.runsafe(self.fixedtotal_population_views)
