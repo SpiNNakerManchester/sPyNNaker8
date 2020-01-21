@@ -315,7 +315,7 @@ class ConnectorsTest(BaseTestCase):
         target = [(0, 1, 0.5, 2.0), (0, 2, 0.5, 2.0), (1, 3, 0.5, 2.0),
                   (2, 2, 0.5, 2.0), (2, 3, 0.5, 2.0)]
         target2 = [(0, 3, 0.5, 2.0), (1, 1, 0.5, 2.0), (1, 2, 0.5, 2.0),
-                  (2, 1, 0.5, 2.0), (2, 3, 0.5, 2.0)]
+                   (2, 1, 0.5, 2.0), (2, 3, 0.5, 2.0)]
         self.assertEqual(weights.tolist(), target)
         self.assertEqual(weights2.tolist(), target2)
 
