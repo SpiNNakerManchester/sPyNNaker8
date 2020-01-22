@@ -53,7 +53,7 @@ def run_script():
         (functools.partial(p.AllToAllConnector,
                            allow_self_connections=False),
          functools.partial(check_all_to_all, 10, False)),
-        (functools.partial(p.FixedProbabilityConnector, 0.5),
+        (functools.partial(p.FixedProbabilityConnector, 0.5, rng=rng),
          functools.partial(check_fixed_prob, 10, 0.5, 3)),
         (functools.partial(p.FixedTotalNumberConnector, 50,
                            with_replacement=True),
