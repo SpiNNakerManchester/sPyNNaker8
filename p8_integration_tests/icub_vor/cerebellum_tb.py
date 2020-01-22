@@ -27,9 +27,9 @@ H_RATE = 20
 runtime = 1000
 
 # Synapsis parameters
-gc_pc_weights = 0.05
-mf_vn_weights = 0.01
-pc_vn_weights = 0.0002
+gc_pc_weights = 0.005
+mf_vn_weights = 0.0005
+pc_vn_weights = 0.002
 cf_pc_weights = 0.0
 mf_gc_weights = 0.5
 go_gc_weights = 0.002
@@ -94,18 +94,23 @@ sim.setup(timestep=1.)
 # that will come from the robot, through the spinnLink)
 # the neurons that are active depend on the value of the sensorial activity. For each a gaussian is created centered on a specific neuron
 
-def sensorial_activity(pt): # pt is a single point in time at which we measure the head encoder's output
-    MAX_AMPLITUDE = 0.8
-    RELATIVE_AMPLITUDE = 1.0
-    _head_pos = []
-    _head_vel = []
 
-    i = np.arange(0,2,0.01)
-    for t in i:
-        desired_speed=-np.cos(t*2*np.pi)*MAX_AMPLITUDE*RELATIVE_AMPLITUDE*2.0*np.pi
-        desired_pos=-np.sin(t*2*np.pi)*MAX_AMPLITUDE*RELATIVE_AMPLITUDE
-        _head_pos.append(desired_pos)
-        _head_vel.append(desired_speed)
+# Prepare variables once at beginning
+MAX_AMPLITUDE = 0.8
+RELATIVE_AMPLITUDE = 1.0
+_head_pos = []
+_head_vel = []
+
+i = np.arange(0,1000,0.001)
+for t in i:
+    desired_speed=-np.cos(t*2*np.pi)*MAX_AMPLITUDE*RELATIVE_AMPLITUDE*2.0*np.pi
+    desired_pos=-np.sin(t*2*np.pi)*MAX_AMPLITUDE*RELATIVE_AMPLITUDE
+    _head_pos.append(desired_pos)
+    _head_vel.append(desired_speed)
+
+
+def sensorial_activity(pt): # pt is a single point in time at which we measure the head encoder's output
+
 
     # single point over time
     head_pos = _head_pos[pt]
@@ -129,7 +134,7 @@ def sensorial_activity(pt): # pt is a single point in time at which we measure t
     MF_pos_activity = np.zeros((50))
     MF_vel_activity = np.zeros((50))
 
-# generate gaussian distributions around the neuron tuned to a given sensorial activity
+    # generate gaussian distributions around the neuron tuned to a given sensorial activity
     for i in range(50):
         mean = float(i) / 50.0 + 0.01
         gaussian = np.exp(-((head_pos - mean) * (head_pos - mean))/(2.0 * sigma * sigma))
@@ -149,12 +154,12 @@ def error_activity(error_):
 
 #     min_rate = 1.0
 #     max_rate = 25.0
-# 
+#
 #     low_neuron_ID_threshold = abs(error_) * 100.0
 #     up_neuron_ID_threshold = low_neuron_ID_threshold - 100.0
     IO_agonist = np.zeros((100))
     IO_antagonist = np.zeros((100))
-# 
+#
 #     rate = []
 #     for i in range (100):
 #         if(i < up_neuron_ID_threshold):
@@ -164,7 +169,7 @@ def error_activity(error_):
 #             rate.append(aux_rate)
 #         else:
 #             rate.append(min_rate)
-# 
+#
 #     if error_>=0.0:
 #         IO_agonist[0:100]=min_rate
 #         IO_antagonist=rate
@@ -173,10 +178,19 @@ def error_activity(error_):
 #         IO_agonist=rate
     IO_agonist[:] = H_RATE
     IO_antagonist[:] = L_RATE
-    
+
     ea_rate = np.concatenate((IO_agonist,IO_antagonist))
 
     return ea_rate
+
+def process_VN_spiketrains(VN_spikes, t_start):
+    total_spikes = 0
+    for spiketrain in VN_spikes.segments[0].spiketrains:
+        s = spiketrain.as_array()[np.where(spiketrain.as_array() >= t_start)[0]]
+        total_spikes += len(s)
+
+    return total_spikes
+
 
 ###############################################################
 # Create Populations
@@ -187,7 +201,7 @@ def error_activity(error_):
 MF_population = sim.Population(num_MF_neurons, # number of sources
                         sim.SpikeSourcePoisson, # source type
                         #{'rate': sa_mean_freq}, # source spike times
-                        {'rate': sensorial_activity(10)[0]}, # source spike times
+                        {'rate': sensorial_activity(0)[0]}, # source spike times
                         label="MFLayer" # identifier
                         )
 
@@ -379,37 +393,56 @@ GOC_population.record(['spikes'])
 VN_population.record(['spikes'])
 PC_population.record(['spikes'])
 
+samples_in_repeat= 99
+sample_time = 10
+repeats = 1
+total_runtime = 0
+VN_transfer_func = []
 
-repeats = 3
+for i in range(samples_in_repeat):
 
-for i in range(repeats):
-    sim.run(runtime*0.4)
-    
-    CF_rates=[]
-    lower_rate=100*[L_RATE]
-    upper_rate=100*[H_RATE]
-    CF_rates.extend(lower_rate)
-    CF_rates.extend(upper_rate)
-    CF_population.set(rate=CF_rates)
-    
-    sim.run(runtime*0.4)
-    
-    CF_rates=[]
-    lower_rate=100*[H_RATE]
-    upper_rate=100*[L_RATE]
-    CF_rates.extend(lower_rate)
-    CF_rates.extend(upper_rate)
-    CF_population.set(rate=CF_rates)
-    
-    sim.run(runtime*0.2)
-    
-    CF_rates=[]
-    lower_rate=100*[H_RATE]
-    upper_rate=100*[L_RATE]
-    CF_rates.extend(lower_rate)
-    CF_rates.extend(upper_rate)
-    CF_population.set(rate=CF_rates)
-    
+    sim.run(sample_time)
+
+    VN_spikes = VN_population.get_data('spikes')
+    VN_transfer_func.append(process_VN_spiketrains(VN_spikes, total_runtime))
+
+    total_runtime +=sample_time
+
+    print(total_runtime)
+
+    MF_population.set(rate=sensorial_activity(total_runtime)[0])
+
+
+
+
+
+#     sim.run(runtime*0.4)
+#
+#     CF_rates=[]
+#     lower_rate=100*[L_RATE]
+#     upper_rate=100*[H_RATE]
+#     CF_rates.extend(lower_rate)
+#     CF_rates.extend(upper_rate)
+#     CF_population.set(rate=CF_rates)
+#
+#     sim.run(runtime*0.4)
+#
+#     CF_rates=[]
+#     lower_rate=100*[H_RATE]
+#     upper_rate=100*[L_RATE]
+#     CF_rates.extend(lower_rate)
+#     CF_rates.extend(upper_rate)
+#     CF_population.set(rate=CF_rates)
+#
+#     sim.run(runtime*0.2)
+#
+#     CF_rates=[]
+#     lower_rate=100*[H_RATE]
+#     upper_rate=100*[L_RATE]
+#     CF_rates.extend(lower_rate)
+#     CF_rates.extend(upper_rate)
+#     CF_population.set(rate=CF_rates)
+
 
 
 total_runtime = runtime*repeats
@@ -445,8 +478,8 @@ F = Figure(
     Panel(VN_spikes.segments[0].spiketrains,
           yticks=True, markersize=2, xlim=(0, total_runtime),
           xlabel='VN_spikes'),
-    Panel(GC_spikes.segments[0].filter(name='v')[0],
-          ylabel="Membrane potential (mV)", yticks=True, xlim=(0, total_runtime))
+#     Panel(GC_spikes.segments[0].filter(name='v')[0],
+#           ylabel="Membrane potential (mV)", yticks=True, xlim=(0, total_runtime))
     )
 plt.show(block=False)
 
@@ -459,6 +492,11 @@ plt.figure()
 plt.plot(pfpc_weights, color='orange',
          label='pf-pc weights (init: {})'.format(initial_weight_s))
 plt.legend()
+
+print(VN_transfer_func)
+
+plt.figure()
+plt.plot(VN_transfer_func)
 
 plt.show()
 
