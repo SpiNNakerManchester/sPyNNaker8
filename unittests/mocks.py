@@ -16,7 +16,6 @@
 import configparser
 import numpy
 from spinn_front_end_common.utilities import globals_variables
-from spynnaker8 import RandomDistribution
 
 
 class MockPopulation(object):
@@ -68,18 +67,6 @@ class MockSynapseInfo(object):
     @property
     def delays(self):
         return self._delays
-
-
-class MockRNG(object):
-
-    def __init__(self):
-        self._rng = numpy.random.RandomState()
-
-    def next(self, n):
-        return self._rng.uniform(size=n)
-
-    def __getattr__(self, name):
-        return getattr(self._rng, name)
 
 
 class MockSimulator(object):
