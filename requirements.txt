@@ -22,5 +22,6 @@ SpiNNaker_DataSpecification >= 1!5.1.1, < 1!6.0.0
 spalloc >= 2.0.2, < 3.0.0
 SpiNNFrontEndCommon >= 1!5.1.1, < 1!6.0.0
 sPyNNaker >= 1!5.1.1, < 1!6.0.0
+lazyarray >= 0.2.9, <= 0.4.0
 quantities >= 0.12.1
 # csa  # needed but excluded due to readthedocs
