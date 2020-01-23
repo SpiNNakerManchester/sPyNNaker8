@@ -29,7 +29,7 @@ runtime = 1000
 # Synapsis parameters
 gc_pc_weights = 0.005
 mf_vn_weights = 0.0005
-pc_vn_weights = 0.002
+pc_vn_weights = 0.01
 cf_pc_weights = 0.0
 mf_gc_weights = 0.5
 go_gc_weights = 0.002
@@ -390,7 +390,7 @@ MF_population.record(['spikes'])
 CF_population.record(['spikes'])
 GC_population.record('all')
 GOC_population.record(['spikes'])
-VN_population.record(['spikes'])
+VN_population.record('all') # VN_population.record(['spikes'])
 PC_population.record(['spikes'])
 
 samples_in_repeat= 99
@@ -451,7 +451,7 @@ MF_spikes = MF_population.get_data('spikes')
 CF_spikes = CF_population.get_data('spikes')
 GC_spikes = GC_population.get_data('all')
 GOC_spikes = GOC_population.get_data('spikes')
-VN_spikes = VN_population.get_data('spikes')
+VN_spikes = VN_population.get_data('all') # VN_population.get_data('spikes')
 PC_spikes = PC_population.get_data('spikes')
 
 
@@ -478,8 +478,8 @@ F = Figure(
     Panel(VN_spikes.segments[0].spiketrains,
           yticks=True, markersize=2, xlim=(0, total_runtime),
           xlabel='VN_spikes'),
-#     Panel(GC_spikes.segments[0].filter(name='v')[0],
-#           ylabel="Membrane potential (mV)", yticks=True, xlim=(0, total_runtime))
+    Panel(VN_spikes.segments[0].filter(name='gsyn_inh')[0],
+          ylabel="Membrane potential (mV)", yticks=True, xlim=(0, total_runtime))
     )
 plt.show(block=False)
 
