@@ -154,14 +154,6 @@ def check_fixed_prob(n, prob, n_per_core, conns):
     assert(avgpost >= (expected - error))
     assert(avgpost <= (expected + error))
 
-    for i in range(0, n, n_per_core):
-        for pre in range(i + 1, i + n_per_core):
-            assert(not numpy.array_equal(
-                sorted(cbpre[i]), sorted(cbpre[pre])))
-        for post in range(i + 1, i + n_per_core):
-            assert(not numpy.array_equal(
-                sorted(cbpost[i]), sorted(cbpost[post])))
-
 
 def check_fixed_total(n, total, conns):
     assert(len(conns) == total)
