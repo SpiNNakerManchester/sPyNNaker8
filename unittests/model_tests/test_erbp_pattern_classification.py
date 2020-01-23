@@ -8,11 +8,10 @@ import matplotlib.pyplot as plt
 import sys
 import argparse
 import pdb
-from collections import OrderedDict
+from collections import OrderedDict, Counter
 
 def main(argv):
-    parser = argparse.ArgumentParser(
-        description='Foo')
+    parser = argparse.ArgumentParser()
 
     required_named = parser.add_argument_group('required named arguments')
 
@@ -38,8 +37,8 @@ def main(argv):
         "tau_err": 1000
         }
 
-    highest_input_spike_rate = 100.
-    input_rate_patterns = (np.random.sample(args.nclass * args.nvis) * highest_input_spike_rate + 1.).reshape(args.nclass, args.nvis)
+    highest_input_spike_rate = 10.
+    input_rate_patterns = (np.random.sample(args.nclass * args.nvis) * highest_input_spike_rate).reshape(args.nclass, args.nvis)
     label_spike_rate = 60
 
     # Input neuron population
@@ -184,6 +183,35 @@ def main(argv):
     pop_hidden.record("spikes")
     pop_out.record("spikes")
 
+    def compute_accuracy(out_spikes, sample_orders, start_sample_times):
+        n_correct_classifications = 0
+        for sample_idx, (start, stop) in enumerate(zip(start_sample_times[:-1], start_sample_times[1:])):
+            spike_counter = Counter()
+            for neuron_idx, spiketrain in enumerate(out_spikes):
+                spike_counter[neuron_idx] = len(spiketrain[ (spiketrain >= start) & (spiketrain < stop) ])
+            winner_idx = spike_counter.most_common(n=1)[0][0]
+            n_correct_classifications += (winner_idx == sample_orders[sample_idx])
+            n_samples = len(start_sample_times)
+            acc = n_correct_classifications * 100. / n_samples
+        return n_correct_classifications, n_samples, acc
+
+
+    def train_test_accuracy(out_spikes, sample_orders):
+        current_time = int(pyNN.get_current_time())
+        time_per_sample = args.simtime + args.cooloff
+        assert(current_time == time_per_sample * args.nclass * (args.learn_epoch + 1))
+        start_sample_times = np.arange(0, current_time, step=time_per_sample)
+        start_sample_times_train,  sample_orders_train = start_sample_times[:-args.nclass], sample_orders[:-args.nclass]
+        start_sample_times_test,  sample_orders_test = start_sample_times[args.nclass:], sample_orders[args.nclass:]
+        correct_train, count_train, acc_train = compute_accuracy(out_spikes, sample_orders_train, start_sample_times_train)
+        correct_test, count_test, acc_test = compute_accuracy(out_spikes, sample_orders_test, start_sample_times_test)
+        print('Train accuracy: {}/{} ({}%)\tTest accuracy: {}/{} ({}%)'.format(
+            correct_train, count_train, acc_train,
+            correct_test, count_test, acc_test
+        ))
+        return acc_train, acc_test
+
+
     def run_sample(input_rates, label_idx=None):
         pop_vis.set(rate=input_rates.tolist())
         if label_idx is not None:
@@ -195,18 +223,19 @@ def main(argv):
         pop_label.set(rate=np.zeros(args.nclass).tolist())
         pyNN.run(args.cooloff)
 
+    all_sample_orders = []
     # train
-
     for epoch in range(1, args.learn_epoch+1):
         print("learning epoch {}/{}".format(epoch, args.learn_epoch))
         sample_order = np.random.permutation(args.nclass)
+        all_sample_orders.append(sample_order)
         for i, sample_idx in enumerate(sample_order):
             print("\tsample {}/{}".format(i+1, args.nclass))
             run_sample(input_rate_patterns[sample_idx], sample_idx)
 
     # test: simulate without label
     sample_order = np.random.permutation(args.nclass)
-    print("test order: {}".format(sample_order))
+    all_sample_orders.append(sample_order)
     for sample_idx in sample_order:
         run_sample(input_rate_patterns[sample_idx])
 
@@ -220,6 +249,8 @@ def main(argv):
         ('err_pos', pop_error_pos.get_data())
     ])
 
+    acc_train, acc_test = train_test_accuracy(network_spikes['out'].segments[0].spiketrains,
+                                              np.concatenate(all_sample_orders))
 
     panels = [
         Panel(spikes.segments[0].spiketrains,
