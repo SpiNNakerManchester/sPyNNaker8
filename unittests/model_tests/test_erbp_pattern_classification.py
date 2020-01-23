@@ -28,16 +28,17 @@ def main(argv):
     timestep = 1
     pyNN.setup(timestep)  # simulation timestep (ms)
 
-    neuron_params = {
+    neuron_params_hid = {
         "v_thresh": 30.0,
         "v_reset": 0.0,
         "v_rest": 0.0,
-        "i_offset": 1,
+        "i_offset": 0,
         "v": 0.0,
         "tau_err": 1000
         }
+    neuron_params_out = dict(neuron_params_hid, **{"i_offset": 1.})
 
-    highest_input_spike_rate = 10.
+    highest_input_spike_rate = 100.
     input_rate_patterns = (np.random.sample(args.nclass * args.nvis) * highest_input_spike_rate).reshape(args.nclass, args.nvis)
     label_spike_rate = 60
 
@@ -48,12 +49,12 @@ def main(argv):
 
     # Hidden neuron population
     pop_hidden = pyNN.Population(args.nhid,
-                                 pyNN.extra_models.IFCurrExpERBP(**neuron_params),
+                                 pyNN.extra_models.IFCurrExpERBP(**neuron_params_hid),
                                  label="ERBP Neuron")
 
     # Out neuron population
     pop_out = pyNN.Population(args.nclass,
-                              pyNN.extra_models.IFCurrExpERBP(**neuron_params),
+                              pyNN.extra_models.IFCurrExpERBP(**neuron_params_out),
                               label="ERBP Neuron")
 
     pop_label = pyNN.Population(args.nclass,
@@ -68,13 +69,16 @@ def main(argv):
                                     label="err_pop_neg")
 
     # Learning rule parameters
-    w_err_to_hid = np.random.sample(args.nclass * args.nhid)
-    w_err_to_out = 1.
+    w_err_to_hid = np.random.sample(args.nclass * args.nhid) * 10.
+    w_err_to_out = 10.
 
     w_label_to_err = 1.0
     w_out_to_err = w_label_to_err
 
-    def get_erbp_learning_rule(init_weight_factor=0.2, tau_err=200., l_rate=0.1, reg_rate=0.):
+    w_vis_to_hid = 0.5
+    w_hid_to_out = 0.2
+
+    def get_erbp_learning_rule(init_weight_factor=0.2, tau_err=20., l_rate=1., reg_rate=0.):
         weight_dist = pyNN.RandomDistribution(
             distribution='normal_clipped', mu=init_weight_factor, sigma=init_weight_factor,
             low=0.0, high=2*init_weight_factor)
@@ -92,7 +96,7 @@ def main(argv):
         pop_vis,
         pop_hidden,
         pyNN.AllToAllConnector(),
-        synapse_type=get_erbp_learning_rule(0.2),
+        synapse_type=get_erbp_learning_rule(w_vis_to_hid),
         receptor_type="excitatory")
 
     # # Create projection from hidden to output neuron using learning rule
@@ -100,7 +104,7 @@ def main(argv):
         pop_hidden,
         pop_out,
         pyNN.AllToAllConnector(),
-        synapse_type=get_erbp_learning_rule(0.1),
+        synapse_type=get_erbp_learning_rule(w_hid_to_out),
         receptor_type="excitatory")
 
     # Create static dendritic projection from error to hidden neuron
