@@ -15,9 +15,9 @@ def main(argv):
 
     required_named = parser.add_argument_group('required named arguments')
 
-    required_named.add_argument('--nvis', help='Number of visual neurons', type=int, default=10)
-    required_named.add_argument('--nhid', help='Number of first hidden layer neurons', type=int, default=20)
-    required_named.add_argument('--learn-epoch', help='Number of learning epoch', type=int, default=10)
+    required_named.add_argument('--nvis', help='Number of visual neurons', type=int, default=50)
+    required_named.add_argument('--nhid', help='Number of first hidden layer neurons', type=int, default=10)
+    required_named.add_argument('--learn-epoch', help='Number of learning epoch', type=int, default=5)
     required_named.add_argument('--simtime', help='Simulation time of an epoch', type=float, default=700.)
     required_named.add_argument('--nclass', help='Number of class', type=int, default=3)
     required_named.add_argument('--cooloff', help='Simtime between samples', type=float, default=100.)
@@ -40,7 +40,7 @@ def main(argv):
 
     highest_input_spike_rate = 100.
     input_rate_patterns = (np.random.sample(args.nclass * args.nvis) * highest_input_spike_rate).reshape(args.nclass, args.nvis)
-    label_spike_rate = 60
+    label_spike_rate = 100
 
     # Input neuron population
     pop_vis = pyNN.Population(args.nvis,
@@ -75,7 +75,7 @@ def main(argv):
     w_label_to_err = 1.0
     w_out_to_err = w_label_to_err
 
-    w_vis_to_hid = 0.5
+    w_vis_to_hid = 0.2
     w_hid_to_out = 0.2
 
     def get_erbp_learning_rule(init_weight_factor=0.2, tau_err=20., l_rate=1., reg_rate=0.):
@@ -187,34 +187,32 @@ def main(argv):
     pop_hidden.record("spikes")
     pop_out.record("spikes")
 
-    def compute_accuracy(out_spikes, sample_orders, start_sample_times):
+    def compute_epoch_accuracy(out_spikes, sample_orders, sample_times):
         n_correct_classifications = 0
-        for sample_idx, (start, stop) in enumerate(zip(start_sample_times[:-1], start_sample_times[1:])):
+        for sample_idx, (start, stop) in enumerate(zip(sample_times[:-1], sample_times[1:])):
             spike_counter = Counter()
             for neuron_idx, spiketrain in enumerate(out_spikes):
                 spike_counter[neuron_idx] = len(spiketrain[ (spiketrain >= start) & (spiketrain < stop) ])
             winner_idx = spike_counter.most_common(n=1)[0][0]
             n_correct_classifications += (winner_idx == sample_orders[sample_idx])
-            n_samples = len(start_sample_times)
-            acc = n_correct_classifications * 100. / n_samples
-        return n_correct_classifications, n_samples, acc
+        n_samples = len(sample_times) - 1
+        acc = n_correct_classifications * 100. / n_samples
+        return acc
 
-
-    def train_test_accuracy(out_spikes, sample_orders):
+    def compute_accuracy(out_spikes, all_sample_orders):
         current_time = int(pyNN.get_current_time())
         time_per_sample = args.simtime + args.cooloff
-        assert(current_time == time_per_sample * args.nclass * (args.learn_epoch + 1))
-        start_sample_times = np.arange(0, current_time, step=time_per_sample)
-        start_sample_times_train,  sample_orders_train = start_sample_times[:-args.nclass], sample_orders[:-args.nclass]
-        start_sample_times_test,  sample_orders_test = start_sample_times[args.nclass:], sample_orders[args.nclass:]
-        correct_train, count_train, acc_train = compute_accuracy(out_spikes, sample_orders_train, start_sample_times_train)
-        correct_test, count_test, acc_test = compute_accuracy(out_spikes, sample_orders_test, start_sample_times_test)
-        print('Train accuracy: {}/{} ({}%)\tTest accuracy: {}/{} ({}%)'.format(
-            correct_train, count_train, acc_train,
-            correct_test, count_test, acc_test
-        ))
-        return acc_train, acc_test
+        assert(current_time == time_per_sample * args.nclass * (args.learn_epoch + 1)) # check we simulated the right duration
+        epoch_start_times = np.arange(0, current_time, step=time_per_sample * args.nclass)
+        assert(len(epoch_start_times) == (args.learn_epoch + 1) == len(all_sample_orders)) # check we did the right number of epochs
+        relative_sample_times = np.arange(0, time_per_sample * args.nclass + time_per_sample, step=time_per_sample)
 
+        all_accuracies = []
+        for i_epoch, epoch_sample_order in enumerate(all_sample_orders):
+            sample_times = epoch_start_times[i_epoch] + relative_sample_times
+            all_accuracies.append(compute_epoch_accuracy(out_spikes, epoch_sample_order, sample_times))
+
+        return all_accuracies
 
     def run_sample(input_rates, label_idx=None):
         pop_vis.set(rate=input_rates.tolist())
@@ -253,8 +251,10 @@ def main(argv):
         ('err_pos', pop_error_pos.get_data())
     ])
 
-    acc_train, acc_test = train_test_accuracy(network_spikes['out'].segments[0].spiketrains,
-                                              np.concatenate(all_sample_orders))
+    all_accuracies = compute_accuracy(network_spikes['out'].segments[0].spiketrains,
+                                      all_sample_orders)
+    print('Train accuracy: {}\tTest accuracy: {:.2f}'.format(all_accuracies[:-1], all_accuracies[-1]))
+
 
     panels = [
         Panel(spikes.segments[0].spiketrains,
