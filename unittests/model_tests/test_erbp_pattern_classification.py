@@ -13,16 +13,19 @@ from collections import OrderedDict, Counter
 def main(argv):
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--nvis', help='Number of visual neurons', type=int, default=50)
+    parser.add_argument('--nvis', help='Number of visual neurons', type=int, default=40)
     parser.add_argument('--nhid', help='Number of first hidden layer neurons', type=int, default=10)
-    parser.add_argument('--learn-epoch', help='Number of learning epoch', type=int, default=5)
+    parser.add_argument('--learn-epoch', help='Number of learning epoch', type=int, default=1)
     parser.add_argument('--simtime', help='Simulation time of an epoch', type=float, default=700.)
     parser.add_argument('--nclass', help='Number of class', type=int, default=3)
     parser.add_argument('--cooloff', help='Simtime between samples', type=float, default=100.)
     # Important network hyperparameters
-    parser.add_argument('--w-error-gain', help='Gain for feedback alignment (error synapses)', type=float, default=10.)
-    parser.add_argument('--l-rate', help='Learning rate e-prop', type=float, default=1.)
-
+    parser.add_argument('--w_error_gain', help='Gain for feedback alignment (error synapses)', type=float, default=10.)
+    parser.add_argument('--l_rate', help='Learning rate e-prop', type=float, default=1.)
+    parser.add_argument('--i_offset', help='DC input to neurons', type=float, default=1.)
+    parser.add_argument('--neuron_tau_err', help='Error time constant in the neurons', type=float, default=100.)
+    parser.add_argument('--synapse_tau_err', help='Error time constant in the synapse', type=float, default=20.)
+    parser.add_argument('--error_neuron_tau_m', help='Membrane potential time constant of error neurons', type=float, default=100.)
 
     args = parser.parse_args()
     np.random.seed(12345)
@@ -34,14 +37,28 @@ def main(argv):
         "v_thresh": 30.0,
         "v_reset": 0.0,
         "v_rest": 0.0,
-        "i_offset": 0,
+        "i_offset": args.i_offset,
         "v": 0.0,
-        "tau_err": 1000
+        "tau_err": args.neuron_tau_err
         }
-    neuron_params_out = dict(neuron_params_hid, **{"i_offset": 1.})
+    neuron_params_out = dict(neuron_params_hid)
 
-    highest_input_spike_rate = 100.
-    input_rate_patterns = (np.random.sample(args.nclass * args.nvis) * highest_input_spike_rate).reshape(args.nclass, args.nvis)
+    highest_input_spike_rate = 50.
+    def random_rates(threshold_low_rates=True):
+        input_rate_patterns = (np.random.sample(args.nclass * args.nvis) * highest_input_spike_rate).reshape(args.nclass, args.nvis)
+        if threshold_low_rates:
+            input_rate_patterns[input_rate_patterns < 10] = 0.
+        return input_rate_patterns
+
+    def clean_classes():
+        input_rate_patterns = np.zeros((args.nclass, args.nvis))
+        n_active_input = args.nvis // args.nclass
+        for i in range(args.nclass):
+            input_rate_patterns[i][i * n_active_input : (i + 1) * n_active_input] = highest_input_spike_rate
+        return input_rate_patterns
+
+    input_rate_patterns = clean_classes()
+    # input_rate_patterns = random_rates()
     label_spike_rate = 60
 
     # Input neuron population
@@ -64,25 +81,25 @@ def main(argv):
                                 label="label_pop")
 
     pop_error_pos = pyNN.Population(args.nclass,
-                                    pyNN.extra_models.ErrorNeuron(tau_m=1000),
+                                    pyNN.extra_models.ErrorNeuron(tau_m=args.error_neuron_tau_m),
                                     label="err_pop_pos")
     pop_error_neg = pyNN.Population(args.nclass,
-                                    pyNN.extra_models.ErrorNeuron(tau_m=1000),
+                                    pyNN.extra_models.ErrorNeuron(tau_m=args.error_neuron_tau_m),
                                     label="err_pop_neg")
 
     # Learning rule parameters
     w_err_to_hid = np.random.sample(args.nclass * args.nhid) * args.w_error_gain
     w_err_to_out = 1. * args.w_error_gain
 
-    w_label_to_err = 1.0
+    w_label_to_err = 5.
     w_out_to_err = w_label_to_err
 
-    w_vis_to_hid = 0.2
+    w_vis_to_hid = 0.01
     w_hid_to_out = 0.2
 
-    def get_erbp_learning_rule(init_weight_factor=0.2, tau_err=20., l_rate=args.l_rate, reg_rate=0.):
+    def get_erbp_learning_rule(init_weight_factor=0.2, tau_err=args.synapse_tau_err, l_rate=args.l_rate, reg_rate=0.):
         weight_dist = pyNN.RandomDistribution(
-            distribution='normal_clipped', mu=init_weight_factor, sigma=init_weight_factor,
+            distribution='normal_clipped', mu=init_weight_factor, sigma=0.5,
             low=0.0, high=2*init_weight_factor)
 
         return pyNN.STDPMechanism(
@@ -98,7 +115,7 @@ def main(argv):
         pop_vis,
         pop_hidden,
         pyNN.AllToAllConnector(),
-        synapse_type=get_erbp_learning_rule(w_vis_to_hid),
+        synapse_type=get_erbp_learning_rule(w_vis_to_hid, reg_rate=0.5),
         receptor_type="excitatory")
 
     # # Create projection from hidden to output neuron using learning rule
@@ -117,19 +134,19 @@ def main(argv):
         pyNN.StaticSynapse(weight=w_err_to_hid, delay=timestep),
         receptor_type="inh_err")
 
-    error_pos_out_synapse = pyNN.Projection(
-        pop_error_pos,
-        pop_out,
-        pyNN.OneToOneConnector(),
-        pyNN.StaticSynapse(weight=w_err_to_out, delay=timestep),
-        receptor_type="inh_err")
-
     error_neg_hid_synapse = pyNN.Projection(
         pop_error_neg,
         pop_hidden,
         pyNN.AllToAllConnector(),
         pyNN.StaticSynapse(weight=w_err_to_hid, delay=timestep),
         receptor_type="exc_err")
+
+    error_pos_out_synapse = pyNN.Projection(
+        pop_error_pos,
+        pop_out,
+        pyNN.OneToOneConnector(),
+        pyNN.StaticSynapse(weight=w_err_to_out, delay=timestep),
+        receptor_type="inh_err")
 
     error_neg_out_synapse = pyNN.Projection(
         pop_error_neg,
