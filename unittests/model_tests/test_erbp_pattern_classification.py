@@ -13,14 +13,16 @@ from collections import OrderedDict, Counter
 def main(argv):
     parser = argparse.ArgumentParser()
 
-    required_named = parser.add_argument_group('required named arguments')
+    parser.add_argument('--nvis', help='Number of visual neurons', type=int, default=50)
+    parser.add_argument('--nhid', help='Number of first hidden layer neurons', type=int, default=10)
+    parser.add_argument('--learn-epoch', help='Number of learning epoch', type=int, default=5)
+    parser.add_argument('--simtime', help='Simulation time of an epoch', type=float, default=700.)
+    parser.add_argument('--nclass', help='Number of class', type=int, default=3)
+    parser.add_argument('--cooloff', help='Simtime between samples', type=float, default=100.)
+    # Important network hyperparameters
+    parser.add_argument('--w-error-gain', help='Gain for feedback alignment (error synapses)', type=float, default=10.)
+    parser.add_argument('--l-rate', help='Learning rate e-prop', type=float, default=1.)
 
-    required_named.add_argument('--nvis', help='Number of visual neurons', type=int, default=50)
-    required_named.add_argument('--nhid', help='Number of first hidden layer neurons', type=int, default=10)
-    required_named.add_argument('--learn-epoch', help='Number of learning epoch', type=int, default=5)
-    required_named.add_argument('--simtime', help='Simulation time of an epoch', type=float, default=700.)
-    required_named.add_argument('--nclass', help='Number of class', type=int, default=3)
-    required_named.add_argument('--cooloff', help='Simtime between samples', type=float, default=100.)
 
     args = parser.parse_args()
     np.random.seed(12345)
@@ -40,7 +42,7 @@ def main(argv):
 
     highest_input_spike_rate = 100.
     input_rate_patterns = (np.random.sample(args.nclass * args.nvis) * highest_input_spike_rate).reshape(args.nclass, args.nvis)
-    label_spike_rate = 100
+    label_spike_rate = 60
 
     # Input neuron population
     pop_vis = pyNN.Population(args.nvis,
@@ -69,8 +71,8 @@ def main(argv):
                                     label="err_pop_neg")
 
     # Learning rule parameters
-    w_err_to_hid = np.random.sample(args.nclass * args.nhid) * 10.
-    w_err_to_out = 10.
+    w_err_to_hid = np.random.sample(args.nclass * args.nhid) * args.w_error_gain
+    w_err_to_out = 1. * args.w_error_gain
 
     w_label_to_err = 1.0
     w_out_to_err = w_label_to_err
@@ -78,7 +80,7 @@ def main(argv):
     w_vis_to_hid = 0.2
     w_hid_to_out = 0.2
 
-    def get_erbp_learning_rule(init_weight_factor=0.2, tau_err=20., l_rate=1., reg_rate=0.):
+    def get_erbp_learning_rule(init_weight_factor=0.2, tau_err=20., l_rate=args.l_rate, reg_rate=0.):
         weight_dist = pyNN.RandomDistribution(
             distribution='normal_clipped', mu=init_weight_factor, sigma=init_weight_factor,
             low=0.0, high=2*init_weight_factor)
