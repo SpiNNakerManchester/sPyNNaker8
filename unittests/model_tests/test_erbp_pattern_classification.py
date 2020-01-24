@@ -15,7 +15,7 @@ def main(argv):
 
     parser.add_argument('--nvis', help='Number of visual neurons', type=int, default=40)
     parser.add_argument('--nhid', help='Number of first hidden layer neurons', type=int, default=10)
-    parser.add_argument('--learn-epoch', help='Number of learning epoch', type=int, default=1)
+    parser.add_argument('--learn-epoch', help='Number of learning epoch', type=int, default=3)
     parser.add_argument('--simtime', help='Simulation time of an epoch', type=float, default=700.)
     parser.add_argument('--nclass', help='Number of class', type=int, default=3)
     parser.add_argument('--cooloff', help='Simtime between samples', type=float, default=100.)
@@ -28,7 +28,7 @@ def main(argv):
     parser.add_argument('--error_neuron_tau_m', help='Membrane potential time constant of error neurons', type=float, default=100.)
 
     args = parser.parse_args()
-    np.random.seed(12345)
+    np.random.seed(123456)
 
     timestep = 1
     pyNN.setup(timestep)  # simulation timestep (ms)
@@ -115,7 +115,7 @@ def main(argv):
         pop_vis,
         pop_hidden,
         pyNN.AllToAllConnector(),
-        synapse_type=get_erbp_learning_rule(w_vis_to_hid, reg_rate=0.5),
+        synapse_type=get_erbp_learning_rule(w_vis_to_hid, reg_rate=0.),
         receptor_type="excitatory")
 
     # # Create projection from hidden to output neuron using learning rule
