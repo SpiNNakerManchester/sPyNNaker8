@@ -10,6 +10,17 @@ import argparse
 import pdb
 from collections import OrderedDict, Counter
 
+class AssertOnce():
+    def __init__(self, assert_fn, text):
+        self.assert_fn = assert_fn
+        self.text = text
+        self.was_called = False
+    def __call__(self):
+        if not self.was_called:
+            if not self.assert_fn():
+                raise AssertionError(self.text)
+        self.was_called = True
+
 def main(argv):
     parser = argparse.ArgumentParser()
 
@@ -46,7 +57,7 @@ def main(argv):
     neuron_params_out = dict(neuron_params_hid)
 
     highest_input_spike_rate = 50.
-    def random_rates(threshold_low_rates=False):
+    def random_rates(threshold_low_rates=True):
         input_rate_patterns = (np.random.sample(args.nclass * args.nvis) * highest_input_spike_rate).reshape(args.nclass, args.nvis)
         if threshold_low_rates:
             input_rate_patterns[input_rate_patterns < 10] = 0.
@@ -63,8 +74,6 @@ def main(argv):
         input_rate_patterns = clean_classes()
     else:
         input_rate_patterns = random_rates()
-
-        import ipdb; ipdb.set_trace()
     label_spike_rate = 60
 
     # Input neuron population
@@ -107,7 +116,7 @@ def main(argv):
             timing_dependence=pyNN.TimingDependenceERBP(
                 tau_plus=tau_err, A_plus=l_rate, A_minus=l_rate),
             weight_dependence=pyNN.WeightDependenceERBP(
-                w_min=0.0, w_max=1, reg_rate=reg_rate),
+                w_min=0.0, w_max=1., reg_rate=reg_rate),
             weight=weight_dist,
             delay=timestep)
 
@@ -249,6 +258,9 @@ def main(argv):
 
         return all_accuracies
 
+    def retrieve_weights():
+        return vis_hid_synapse_plastic.getWeights()
+
     def run_sample(input_rates, label_idx=None):
         pop_vis.set(rate=input_rates)
         if label_idx is not None:
@@ -262,6 +274,8 @@ def main(argv):
 
     all_sample_orders = []
     # train
+    old_weights = retrieve_weights()
+    check_weight_change = AssertOnce(lambda : not np.allclose(old_weights, retrieve_weights()), text='Early abort: weights did not change on first sample presentation')
     for epoch in range(1, args.learn_epoch+1):
         print("learning epoch {}/{}".format(epoch, args.learn_epoch))
         sample_order = np.random.permutation(args.nclass)
@@ -269,6 +283,7 @@ def main(argv):
         for i, sample_idx in enumerate(sample_order):
             print("\tsample {}/{}".format(i+1, args.nclass))
             run_sample(input_rate_patterns[sample_idx], sample_idx)
+            check_weight_change()
 
     # test: simulate without label
     sample_order = np.random.permutation(args.nclass)
