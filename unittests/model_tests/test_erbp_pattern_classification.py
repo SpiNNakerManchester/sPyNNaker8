@@ -13,9 +13,11 @@ from collections import OrderedDict, Counter
 def main(argv):
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--nvis', help='Number of visual neurons', type=int, default=40)
+    parser.add_argument('--nvis', help='Number of visual neurons', type=int, default=50)
     parser.add_argument('--nhid', help='Number of first hidden layer neurons', type=int, default=10)
-    parser.add_argument('--learn-epoch', help='Number of learning epoch', type=int, default=3)
+    parser.add_argument('--use_hidden', help='Whether to use a hidden layer', action='store_true')
+    parser.add_argument('--clean_patterns', help='Whether input patterns are clean or random', action='store_true')
+    parser.add_argument('--learn_epoch', help='Number of learning epoch', type=int, default=3)
     parser.add_argument('--simtime', help='Simulation time of an epoch', type=float, default=700.)
     parser.add_argument('--nclass', help='Number of class', type=int, default=3)
     parser.add_argument('--cooloff', help='Simtime between samples', type=float, default=100.)
@@ -44,11 +46,11 @@ def main(argv):
     neuron_params_out = dict(neuron_params_hid)
 
     highest_input_spike_rate = 50.
-    def random_rates(threshold_low_rates=True):
+    def random_rates(threshold_low_rates=False):
         input_rate_patterns = (np.random.sample(args.nclass * args.nvis) * highest_input_spike_rate).reshape(args.nclass, args.nvis)
         if threshold_low_rates:
             input_rate_patterns[input_rate_patterns < 10] = 0.
-        return input_rate_patterns
+        return np.around(input_rate_patterns - 0.5, decimals=0)
 
     def clean_classes():
         input_rate_patterns = np.zeros((args.nclass, args.nvis))
@@ -57,19 +59,18 @@ def main(argv):
             input_rate_patterns[i][i * n_active_input : (i + 1) * n_active_input] = highest_input_spike_rate
         return input_rate_patterns
 
-    input_rate_patterns = clean_classes()
-    # input_rate_patterns = random_rates()
+    if args.clean_patterns:
+        input_rate_patterns = clean_classes()
+    else:
+        input_rate_patterns = random_rates()
+
+        import ipdb; ipdb.set_trace()
     label_spike_rate = 60
 
     # Input neuron population
     pop_vis = pyNN.Population(args.nvis,
-                              pyNN.SpikeSourcePoisson(rate=np.zeros(args.nvis).tolist()),
+                              pyNN.SpikeSourcePoisson(rate=np.zeros(args.nvis)),
                               label="input_pop")
-
-    # Hidden neuron population
-    pop_hidden = pyNN.Population(args.nhid,
-                                 pyNN.extra_models.IFCurrExpERBP(**neuron_params_hid),
-                                 label="ERBP Neuron")
 
     # Out neuron population
     pop_out = pyNN.Population(args.nclass,
@@ -77,7 +78,7 @@ def main(argv):
                               label="ERBP Neuron")
 
     pop_label = pyNN.Population(args.nclass,
-                                pyNN.SpikeSourcePoisson(rate=np.zeros(args.nclass).tolist()),
+                                pyNN.SpikeSourcePoisson(rate=np.zeros(args.nclass)),
                                 label="label_pop")
 
     pop_error_pos = pyNN.Population(args.nclass,
@@ -110,36 +111,50 @@ def main(argv):
             weight=weight_dist,
             delay=timestep)
 
-    # Create projection from input to hidden neuron using learning rule
-    vis_hid_synapse_plastic = pyNN.Projection(
-        pop_vis,
-        pop_hidden,
-        pyNN.AllToAllConnector(),
-        synapse_type=get_erbp_learning_rule(w_vis_to_hid, reg_rate=0.),
-        receptor_type="excitatory")
+    if args.use_hidden:
+        # Hidden neuron population
+        pop_hidden = pyNN.Population(args.nhid,
+                                     pyNN.extra_models.IFCurrExpERBP(**neuron_params_hid),
+                                     label="ERBP Neuron")
 
-    # # Create projection from hidden to output neuron using learning rule
-    hid_out_synapse = pyNN.Projection(
-        pop_hidden,
-        pop_out,
-        pyNN.AllToAllConnector(),
-        synapse_type=get_erbp_learning_rule(w_hid_to_out),
-        receptor_type="excitatory")
+        # Create projection from input to hidden neuron using learning rule
+        vis_hid_synapse_plastic = pyNN.Projection(
+            pop_vis,
+            pop_hidden,
+            pyNN.AllToAllConnector(),
+            synapse_type=get_erbp_learning_rule(w_vis_to_hid, reg_rate=0.),
+            receptor_type="excitatory")
 
-    # Create static dendritic projection from error to hidden neuron
-    error_pos_hid_synapse = pyNN.Projection(
-        pop_error_pos,
-        pop_hidden,
-        pyNN.AllToAllConnector(),
-        pyNN.StaticSynapse(weight=w_err_to_hid, delay=timestep),
-        receptor_type="inh_err")
+        # # Create projection from hidden to output neuron using learning rule
+        hid_out_synapse = pyNN.Projection(
+            pop_hidden,
+            pop_out,
+            pyNN.AllToAllConnector(),
+            synapse_type=get_erbp_learning_rule(w_hid_to_out),
+            receptor_type="excitatory")
 
-    error_neg_hid_synapse = pyNN.Projection(
-        pop_error_neg,
-        pop_hidden,
-        pyNN.AllToAllConnector(),
-        pyNN.StaticSynapse(weight=w_err_to_hid, delay=timestep),
-        receptor_type="exc_err")
+        # Create static dendritic projection from error to hidden neuron
+        error_pos_hid_synapse = pyNN.Projection(
+            pop_error_pos,
+            pop_hidden,
+            pyNN.AllToAllConnector(),
+            pyNN.StaticSynapse(weight=w_err_to_hid, delay=timestep),
+            receptor_type="inh_err")
+
+        error_neg_hid_synapse = pyNN.Projection(
+            pop_error_neg,
+            pop_hidden,
+            pyNN.AllToAllConnector(),
+            pyNN.StaticSynapse(weight=w_err_to_hid, delay=timestep),
+            receptor_type="exc_err")
+    else:
+        # Create projection from input to hidden neuron using learning rule
+        vis_hid_synapse_plastic = pyNN.Projection(
+            pop_vis,
+            pop_out,
+            pyNN.AllToAllConnector(),
+            synapse_type=get_erbp_learning_rule(w_hid_to_out),
+            receptor_type="excitatory")
 
     error_pos_out_synapse = pyNN.Projection(
         pop_error_pos,
@@ -203,8 +218,9 @@ def main(argv):
     pop_error_pos.record('spikes')
     pop_error_neg.record('spikes')
     pop_label.record('spikes')
-    pop_hidden.record("spikes")
     pop_out.record("spikes")
+    if args.use_hidden:
+        pop_hidden.record("spikes")
 
     def compute_epoch_accuracy(out_spikes, sample_orders, sample_times):
         n_correct_classifications = 0
@@ -234,14 +250,14 @@ def main(argv):
         return all_accuracies
 
     def run_sample(input_rates, label_idx=None):
-        pop_vis.set(rate=input_rates.tolist())
+        pop_vis.set(rate=input_rates)
         if label_idx is not None:
             label_rates = np.zeros(args.nclass)
             label_rates[label_idx] = label_spike_rate
-            pop_label.set(rate=label_rates.tolist())
+            pop_label.set(rate=label_rates)
         pyNN.run(args.simtime)
-        pop_vis.set(rate=np.zeros(args.nvis).tolist())
-        pop_label.set(rate=np.zeros(args.nclass).tolist())
+        pop_vis.set(rate=np.zeros(args.nvis))
+        pop_label.set(rate=np.zeros(args.nclass))
         pyNN.run(args.cooloff)
 
     all_sample_orders = []
@@ -261,14 +277,23 @@ def main(argv):
         run_sample(input_rate_patterns[sample_idx])
 
     # Get data
-    network_spikes = OrderedDict([
-        ('vis', pop_vis.get_data()),
-        ('hidden', pop_hidden.get_data()),
-        ('out', pop_out.get_data()),
-        ('label', pop_label.get_data()),
-        ('err_neg', pop_error_neg.get_data()),
-        ('err_pos', pop_error_pos.get_data())
-    ])
+    if args.use_hidden:
+        network_spikes = OrderedDict([
+            ('vis', pop_vis.get_data()),
+            ('out', pop_out.get_data()),
+            ('hidden', pop_hidden.get_data()),
+            ('label', pop_label.get_data()),
+            ('err_neg', pop_error_neg.get_data()),
+            ('err_pos', pop_error_pos.get_data())
+        ])
+    else:
+        network_spikes = OrderedDict([
+            ('vis', pop_vis.get_data()),
+            ('out', pop_out.get_data()),
+            ('label', pop_label.get_data()),
+            ('err_neg', pop_error_neg.get_data()),
+            ('err_pos', pop_error_pos.get_data())
+        ])
 
     all_accuracies = compute_accuracy(network_spikes['out'].segments[0].spiketrains,
                                       all_sample_orders)
