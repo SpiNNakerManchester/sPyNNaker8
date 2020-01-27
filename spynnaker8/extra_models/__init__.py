@@ -21,7 +21,8 @@ from spynnaker8.models.synapse_dynamics.timing_dependence import (
     TimingDependenceVogels2011 as
     Vogels2011Rule,
     TimingDependencePfisterSpikeTriplet as
-    PfisterSpikeTriplet)
+    PfisterSpikeTriplet,
+    TimingDependenceSpikePairPredictive as PredictiveRule)
 from spynnaker8.models.synapse_dynamics.weight_dependence import (
     WeightDependenceAdditiveTriplet)
 from spynnaker.pyNN.models.neuron.builds import (
@@ -45,6 +46,7 @@ __all__ = [
     'PfisterSpikeTriplet',
     'SpikeNearestPairRule',
     'RecurrentRule', 'Vogels2011Rule',
+    'PredictiveRule',
 
     # Variable rate Poisson
     'SpikeSourcePoissonVariable']
