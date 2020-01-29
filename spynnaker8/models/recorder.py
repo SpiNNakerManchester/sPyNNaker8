@@ -160,7 +160,6 @@ class Recorder(RecordingCommon):
         return variables
 
     def _append_current_segment(self, block, variables, view_indexes, clear):
-
         # build segment for the current data to be gathered in
         segment = neo.Segment(
             name="segment{}".format(get_simulator().segment_counter),
@@ -366,7 +365,7 @@ class Recorder(RecordingCommon):
         :param ~neo.core.Block block: neo block
         :param ~numpy.ndarray signal_array: the raw signal data
         :param list(int) data_indexes: The indexes for the recorded data
-        :param view_indexes: The indexes for which data should be returned.\
+        :param view_indexes: The indexes for which data should be returned.
             If None all data (view_index = data_indexes)
         :type view_indexes: list(int) or None
         :param str variable: the variable name

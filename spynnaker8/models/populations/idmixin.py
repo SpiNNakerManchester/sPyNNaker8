@@ -52,17 +52,17 @@ class IDMixin(object):
     def record(self, variables, to_file=None, sampling_interval=None):
         """ Record the given variable(s) of this cell.
 
-        :param variables: either a single variable name or a list of variable\
-            names. For a given celltype class, celltype.recordable contains a\
+        :param variables: either a single variable name or a list of variable
+            names. For a given celltype class, celltype.recordable contains a
             list of variables that can be recorded for that celltype.
         :type variables: str or list(str)
         :param to_file:
-            If specified, should be a Neo IO instance and write_data()\
+            If specified, should be a Neo IO instance and write_data()
             will be automatically called when end() is called.
         :type to_file: ~neo.io or ~neo.rawio or str
         :param int sampling_interval:
-            should be a value in milliseconds, and an integer\
-            multiple of the simulation timestep.
+            should be a value in milliseconds, and an integer multiple of the
+            simulation timestep.
         """
         self.__population.record(variables, to_file, sampling_interval,
                                  [self.__id])

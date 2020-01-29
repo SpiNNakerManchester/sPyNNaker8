@@ -40,10 +40,10 @@ class MultapseConnector(_BaseClass):
         :param bool with_replacement:
             Bool. When selecting, allow a neuron to be re-selected or not.
         :param bool safe:
-            Whether to check that weights and delays have valid values.\
+            Whether to check that weights and delays have valid values.
             If False, this check is skipped.
         :param bool verbose:
-            Whether to output extra information about the connectivity to a\
+            Whether to output extra information about the connectivity to a
             CSV file
         :param rng: random number generator
         :type rng: ~pyNN.random.NumpyRNG or None

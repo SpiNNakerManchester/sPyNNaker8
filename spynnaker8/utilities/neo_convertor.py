@@ -45,7 +45,7 @@ def convert_data(data, name, run=0):
     """ Converts the data into a numpy array in the format ID, time, value
 
     :param ~neo.core.Block data: Data as returned by a getData() call
-    :param str name: Name of the data to be extracted.\
+    :param str name: Name of the data to be extracted.
         Same values as used in getData()
     :param int run: Zero based index of the run to extract data for
     :rtype: ~numpy.ndarray
@@ -68,9 +68,9 @@ def convert_data_list(data, name, runs=None):
         value
 
     :param ~neo.core.Block data: Data as returned by a getData() call
-    :param str name: Name of the data to be extracted.\
+    :param str name: Name of the data to be extracted.
         Same values as used in getData()
-    :param runs: List of Zero based index of the run to extract data for.\
+    :param runs: List of Zero based index of the run to extract data for.
         Or None to extract all runs
     :type runs: list(int) or None
     :rtype: list(~numpy.ndarray)

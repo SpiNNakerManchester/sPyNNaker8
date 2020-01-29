@@ -23,8 +23,9 @@ from spinn_utilities.logger_utils import warn_once
 from spinn_front_end_common.utilities import globals_variables
 from spinn_front_end_common.utilities.exceptions import ConfigurationException
 from spynnaker.pyNN.exceptions import InvalidParameterType
-from spynnaker8.models.connectors import FromListConnector, OneToOneConnector,\
-    AllToAllConnector, FixedProbabilityConnector
+from spynnaker8.models.connectors import (
+    FromListConnector, OneToOneConnector, AllToAllConnector,
+    FixedProbabilityConnector)
 from spynnaker8.models.synapse_dynamics import SynapseDynamicsStatic
 # This line has to come in this order as it otherwise causes a circular
 # dependency
@@ -126,25 +127,24 @@ class Projection(PyNNProjectionCommon):
 
     def _check_population_param(self, param, connector):
         if isinstance(param, Population):
-            return  # Projections work from Populations
-        if isinstance(param, PopulationView):
-            if (isinstance(connector, OneToOneConnector) or
-                    isinstance(connector, AllToAllConnector) or
-                    isinstance(connector, FixedProbabilityConnector)):
-                # Check whether the array is contiguous or not
-                inds = param._indexes
-                if (inds == tuple(range(inds[0], inds[-1] + 1))):
-                    return
-                else:
-                    raise NotImplementedError(
-                        "Projections over views only work on contiguous "
-                        "arrays, e.g. view = pop[n:m], not view = pop[n,m]")
-            else:
-                raise NotImplementedError(
-                    "Projections over views not currently supported with "
-                    "the {}".format(connector))
-        raise ConfigurationException("Unexpected parameter type {}. Expected "
-                                     "Population".format(type(param)))
+            return  # Projections definitely work from Populations
+        if not isinstance(param, PopulationView):
+            raise ConfigurationException(
+                "Unexpected parameter type {}. Expected Population".format(
+                    type(param)))
+        if not (isinstance(connector, OneToOneConnector) or
+                isinstance(connector, AllToAllConnector) or
+                isinstance(connector, FixedProbabilityConnector)):
+            raise NotImplementedError(
+                "Projections over views not currently supported with the {}"
+                .format(connector))
+        # Check whether the array is contiguous or not
+        inds = param._indexes
+        if inds != tuple(range(inds[0], inds[-1] + 1)):
+            raise NotImplementedError(
+                "Projections over views only work on contiguous arrays, "
+                "e.g. view = pop[n:m], not view = pop[n,m]")
+        # Projection is compatible
 
     def __len__(self):
         raise NotImplementedError
@@ -160,13 +160,16 @@ class Projection(PyNNProjectionCommon):
         :param attribute_names: list of attributes to gather
         :type attribute_names: str or iterable(str)
         :param str format: ``"list"`` or ``"array"``
-        :param bool gather: gather over all nodes\
-            (defaulted to true on SpiNNaker)
+        :param bool gather: gather over all nodes
+
+            .. note::
+                SpiNNaker always gathers.
+
         :param bool with_address:
             True if the source and target are to be included
         :param str multiple_synapses:
-            What to do with the data if format="array" and if the multiple\
-            source-target pairs with the same values exist.  Currently only\
+            What to do with the data if format="array" and if the multiple
+            source-target pairs with the same values exist.  Currently only
             "last" is supported
         :return: values selected
         """
@@ -179,8 +182,7 @@ class Projection(PyNNProjectionCommon):
 
     def _get_data(
             self, attribute_names, format,  # @ReservedAssignment
-            with_address, multiple_synapses='last',
-            notify=None):
+            with_address, multiple_synapses='last', notify=None):
         """ Internal data getter to add notify option
         """
         # pylint: disable=too-many-arguments
@@ -313,7 +315,11 @@ class Projection(PyNNProjectionCommon):
         :param file:
         :type file: str or file
         :param str format:
-        :param bool gather: Ignored (sPyNNaker always gathers)
+        :param bool gather: Ignored
+
+            .. note::
+                SpiNNaker always gathers.
+
         :param bool with_address:
         """
         if not gather:

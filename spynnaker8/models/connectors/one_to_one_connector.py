@@ -30,10 +30,10 @@ class OneToOneConnector(CommonOneToOneConnector, PyNNOneToOneConnector):
 
     def __init__(self, safe=True, callback=None):
         """
-        :param bool safe: if True, check that weights and delays have valid\
+        :param bool safe: if True, check that weights and delays have valid
             values. If False, this check is skipped.
-        :param callable callback: a function that will be called with the\
-            fractional progress of the connection routine. An example would\
+        :param callable callback: a function that will be called with the
+            fractional progress of the connection routine. An example would
             be progress_bar.set_level.
         """
         CommonOneToOneConnector.__init__(
