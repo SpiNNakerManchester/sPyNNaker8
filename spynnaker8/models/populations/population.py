@@ -472,6 +472,7 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         if globals_variables.get_not_running_simulator().has_ran \
                 and not self._vertex_changeable_after_run:
             raise Exception("Population does not support changes after run")
+        self._read_parameters_before_set()
         self._vertex.set_initial_value(variable, value, selector)
 
     # NON-PYNN API CALL

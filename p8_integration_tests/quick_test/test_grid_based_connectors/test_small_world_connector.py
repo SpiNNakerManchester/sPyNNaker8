@@ -150,6 +150,7 @@ class SmallWorldConnectorTest(BaseTestCase):
 
 
 if __name__ == '__main__':
-    v, spikes = do_run(plot=True)
+    v, spikes, weights = do_run(plot=True)
     print(len(neo_convertor.convert_data(v, name='v')))
     print(len(neo_convertor.convert_data(spikes, name='spikes')))
+    print(len(weights))
