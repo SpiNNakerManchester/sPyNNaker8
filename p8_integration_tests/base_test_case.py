@@ -1,16 +1,70 @@
+# Copyright (c) 2017-2019 The University of Manchester
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 from lxml import etree
 import os
 import random
 import sys
+import time
 import unittest
 from unittest import SkipTest
 import spinn_utilities.conf_loader as conf_loader
 from spinnman.exceptions import SpinnmanException
 from spalloc.job import JobDestroyedError
 from spinn_front_end_common.utilities import globals_variables
+import numpy
 
 p8_integration_factor = float(os.environ.get('P8_INTEGRATION_FACTOR', "1"))
 random.seed(os.environ.get('P8_INTEGRATION_SEED', None))
+
+
+def calculate_stdp_times(pre_spikes, post_spikes, plastic_delay):
+    # If no post spikes, no changes
+    if len(post_spikes) == 0:
+        return numpy.zeros(0), numpy.zeros(0)
+
+    # Get the spikes and time differences that will be considered by
+    # the simulation (as the last pre-spike will be considered differently)
+    last_pre_spike_delayed = pre_spikes[-1] - plastic_delay
+    considered_post_spikes = post_spikes[post_spikes < last_pre_spike_delayed]
+    if len(considered_post_spikes) == 0:
+        return numpy.zeros(0), numpy.zeros(0)
+    potentiation_time_diff = numpy.ravel(numpy.subtract.outer(
+        considered_post_spikes + plastic_delay, pre_spikes[:-1]))
+    potentiation_times = (
+        potentiation_time_diff[potentiation_time_diff > 0] * -1)
+    depression_time_diff = numpy.ravel(numpy.subtract.outer(
+        considered_post_spikes + plastic_delay, pre_spikes))
+    depression_times = depression_time_diff[depression_time_diff < 0]
+    return potentiation_times, depression_times
+
+
+def calculate_spike_pair_additive_stdp_weight(
+        pre_spikes, post_spikes, initial_weight, plastic_delay, max_weight,
+        a_plus, a_minus, tau_plus, tau_minus):
+    """ Calculates the expected stdp weight for SpikePair Additive STDP
+    """
+    potentiation_times, depression_times = calculate_stdp_times(
+        pre_spikes, post_spikes, plastic_delay)
+
+    # Work out the weight according to the rules
+    potentiations = max_weight * a_plus * numpy.exp(
+        (potentiation_times / tau_plus))
+    depressions = max_weight * a_minus * numpy.exp(
+        (depression_times / tau_minus))
+    return initial_weight + numpy.sum(potentiations) - numpy.sum(depressions)
 
 
 class BaseTestCase(unittest.TestCase):
@@ -94,9 +148,19 @@ class BaseTestCase(unittest.TestCase):
         return "".join(results)
 
     def get_provenance_files(self):
-        provenance_file_path = globals_variables.get_simulator() \
-            ._provenance_file_path
+        provenance_file_path = (
+            globals_variables.get_simulator()._provenance_file_path)
         return os.listdir(provenance_file_path)
+
+    def get_system_iobuf_files(self):
+        system_iobuf_file_path = (
+            globals_variables.get_simulator()._system_provenance_file_path)
+        return os.listdir(system_iobuf_file_path)
+
+    def get_app_iobuf_files(self):
+        app_iobuf_file_path = (
+            globals_variables.get_simulator()._app_provenance_file_path)
+        return os.listdir(app_iobuf_file_path)
 
     def get_run_time_of_BufferExtractor(self):
         return self.get_provenance("Execution", "BufferExtractor")
@@ -115,13 +179,12 @@ class BaseTestCase(unittest.TestCase):
         test_dir = os.path.dirname(p8_integration_tests_directory)
         return os.path.join(test_dir, "JobDestroyedError.txt")
 
-    def runsafe(self, method):
+    def runsafe(self, method, retry_delay=3.0):
         retries = 0
-        last_error = None
-        while retries < 3:
+        while True:
             try:
                 method()
-                return
+                break
             except JobDestroyedError as ex:
                 class_file = sys.modules[self.__module__].__file__
                 with open(self.destory_path(), "a") as destroyed_file:
@@ -129,9 +192,10 @@ class BaseTestCase(unittest.TestCase):
                     destroyed_file.write("\n")
                     destroyed_file.write(str(ex))
                     destroyed_file.write("\n")
-                last_error = ex
                 retries += 1
                 globals_variables.unset_simulator()
+                if retries >= 3:
+                    raise ex
             except SpinnmanException as ex:
                 class_file = sys.modules[self.__module__].__file__
                 with open(self.spinnman_exception_path(), "a") as exc_file:
@@ -139,10 +203,18 @@ class BaseTestCase(unittest.TestCase):
                     exc_file.write("\n")
                     exc_file.write(str(ex))
                     exc_file.write("\n")
-                last_error = ex
                 retries += 1
                 globals_variables.unset_simulator()
-        raise last_error
+                if retries >= 3:
+                    raise ex
+            print("")
+            print("==========================================================")
+            print(" Will run {} again in {} seconds".format(
+                method, retry_delay))
+            print("retry: {}".format(retries))
+            print("==========================================================")
+            print("")
+            time.sleep(retry_delay)
 
     def get_placements(self, label):
         report_default_directory = globals_variables.get_simulator() \

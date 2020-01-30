@@ -1,6 +1,24 @@
-from unittest import SkipTest
+# Copyright (c) 2017-2019 The University of Manchester
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import spynnaker8 as sim
 from p8_integration_tests.base_test_case import BaseTestCase
+from spinn_front_end_common.utilities import globals_variables
+from spinn_front_end_common.utility_models import \
+    ReverseIPTagMulticastSourceMachineVertex
+from spynnaker.pyNN.models.neuron import PopulationMachineVertex
 
 n_neurons = 200  # number of neurons in each population
 simtime = 500
@@ -20,32 +38,37 @@ class TestCoresAndBinariesRecording(BaseTestCase):
                        synapse_type=sim.StaticSynapse(weight=5, delay=18))
         sim.run(simtime)
 
-        provenance_files = self.get_provenance_files()
+        provenance_files = self.get_app_iobuf_files()
+        placements = globals_variables.get_simulator()._placements
+        machine_graph = globals_variables.get_simulator()._machine_graph
         sim.end()
 
-        # extract_iobuf_from_cores = None
-        self.assertIn(
-            "iobuf_for_chip_0_0_processor_id_2.txt", provenance_files)
-        # assuming placements as expected
-        # Not delayed
-        xmls = {"0_0_3_input_delayed_0_0.xml",
-                # extract_iobuf_from_binary_types =
-                # reverse_iptag_multicast_source.aplx
-                "0_0_4_input_0_0.xml",
-                # extract_iobuf_from_binary_types = IF_curr_exp.aplx
-                "0_0_5_pop_1_0_99.xml", "0_0_6_pop_1_100_199.xml",
-                }
-        if xmls < set(provenance_files):
+        data = set()
+        false_data = list()
+
+        for machine_vertex in machine_graph.vertices:
+            if (isinstance(machine_vertex, PopulationMachineVertex) or
+                    isinstance(
+                        machine_vertex,
+                        ReverseIPTagMulticastSourceMachineVertex)):
+                placement = placements.get_placement_of_vertex(machine_vertex)
+                data.add(placement)
+
+        for processor in range(0, 16):
+            if not placements.is_processor_occupied(0, 0, processor):
+                false_data.append(processor)
+            elif placements._placements[(0, 0, processor)] not in data:
+                false_data.append(processor)
+
+        for placement in data:
+            self.assertIn(
+                "iobuf_for_chip_{}_{}_processor_id_{}.txt".format(
+                    placement.x, placement.y, placement.p), provenance_files)
+        for processor in false_data:
+            # extract_iobuf_from_cores = None
             self.assertNotIn(
-                "iobuf_for_chip_0_0_processor_id_3.txt", provenance_files)
-            self.assertIn(
-                "iobuf_for_chip_0_0_processor_id_4.txt", provenance_files)
-            self.assertIn(
-                "iobuf_for_chip_0_0_processor_id_5.txt", provenance_files)
-            self.assertIn(
-                "iobuf_for_chip_0_0_processor_id_6.txt", provenance_files)
-        else:
-            raise SkipTest("Unexpected placements {}".format(provenance_files))
+                "iobuf_for_chip_0_0_processor_id_{}.txt".format(processor),
+                provenance_files)
 
     def test_do_run(self):
         self.runsafe(self.do_run)

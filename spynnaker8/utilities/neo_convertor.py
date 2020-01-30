@@ -1,3 +1,18 @@
+# Copyright (c) 2017-2019 The University of Manchester
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 from quantities import ms
 import numpy as np
 from spynnaker8.utilities.version_util import pynn8_syntax
@@ -21,8 +36,7 @@ def convert_analog_signal(signal_array, time_unit=ms):
         times = signal_array.times.rescale(time_unit).magnitude
     all_times = np.tile(times, len(xs))
     neurons = np.repeat(xs, len(times))
-    values = np.concatenate(list(map(
-        lambda x: signal_array.magnitude[:, x], xs)))
+    values = np.concatenate([signal_array.magnitude[:, x] for x in xs])
     return np.column_stack((neurons, all_times, values))
 
 
@@ -136,8 +150,8 @@ def convert_gsyn(gsyn_exc, gsyn_inh):
     all_times = np.tile(times, len(ids))
     neurons = np.repeat(ids, len(times))
     idlist = list(range(len(ids)))
-    exc_np = np.concatenate(list(map(lambda x: exc[:, x], idlist)))
-    inh_np = np.concatenate(list(map(lambda x: inh[:, x], idlist)))
+    exc_np = np.concatenate([exc[:, x] for x in idlist])
+    inh_np = np.concatenate([inh[:, x] for x in idlist])
     return np.column_stack((neurons, all_times, exc_np, inh_np))
 
 
@@ -150,10 +164,10 @@ def convert_spiketrains(spiketrains):
     if len(spiketrains) == 0:
         return np.empty(shape=(0, 2))
 
-    neurons = np.concatenate(
-        list(map(lambda x: np.repeat(x.annotations['source_index'], len(x)),
-             spiketrains)))
-    spikes = np.concatenate(list(map(lambda x: x.magnitude, spiketrains)))
+    neurons = np.concatenate([
+        np.repeat(x.annotations['source_index'], len(x))
+        for x in spiketrains])
+    spikes = np.concatenate([x.magnitude for x in spiketrains])
     return np.column_stack((neurons, spikes))
 
 

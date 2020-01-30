@@ -1,3 +1,18 @@
+# Copyright (c) 2017-2019 The University of Manchester
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import spynnaker8 as p
 from p8_integration_tests.base_test_case import BaseTestCase
 
@@ -21,7 +36,7 @@ def do_run():
         p.StaticSynapse(weight=1, delay=1), receptor_type="excitatory")
     p.Projection(
         pop_src1, populations[0], p.OneToOneConnector(),
-        p.StaticSynapse(weight=1, delay=100), receptor_type="inhibitory")
+        p.StaticSynapse(weight=1, delay=10), receptor_type="inhibitory")
 
     populations[0].record("all")
     p.run(runtime)

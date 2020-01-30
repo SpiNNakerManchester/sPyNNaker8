@@ -1,3 +1,18 @@
+# Copyright (c) 2017-2019 The University of Manchester
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import spynnaker8 as sim
 from p8_integration_tests.base_test_case import BaseTestCase
 
@@ -55,13 +70,8 @@ class TestAllToAllConnector(BaseTestCase):
             synapse_type=synapse_type)
         weights = projection.get(["weight"], "list")
         sim.run(0)
-        try:
-            length = len(weights)
-            self.assertEqual(3, length)
-        except Exception:
-            sim.end()
-            self.known_issue(
-                "https://github.com/SpiNNakerManchester/sPyNNaker/issues/613")
+        length = len(weights)
+        self.assertEqual(9, length)
         sim.end()
 
     def test_get_before_run(self):
@@ -84,3 +94,19 @@ class TestAllToAllConnector(BaseTestCase):
 
     def test_using_static_synapse_singles(self):
         self.runsafe(self.using_static_synapse_singles)
+
+    def using_population_views(self):
+        sim.setup(timestep=1.0)
+        input = sim.Population(4, sim.SpikeSourceArray([0]), label="input")
+        pop = sim.Population(4, sim.IF_curr_exp(), label="pop")
+        conn = sim.Projection(input[1:3], pop[2:4], sim.AllToAllConnector(),
+                              sim.StaticSynapse(weight=0.5, delay=2))
+        sim.run(1)
+        weights = conn.get(['weight', 'delay'], 'list')
+        sim.end()
+        target = [(1, 2, 0.5, 2.), (1, 3, 0.5, 2.), (2, 2, 0.5, 2.),
+                  (2, 3, 0.5, 2.)]
+        self.assertEqual(weights.tolist(), target)
+
+    def test_using_population_views(self):
+        self.runsafe(self.using_population_views)

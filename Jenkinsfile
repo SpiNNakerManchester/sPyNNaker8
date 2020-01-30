@@ -1,3 +1,19 @@
+/*
+# Copyright (c) 2017-2019 The University of Manchester
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 pipeline {
     agent {
         docker { image 'python3.6' }
@@ -40,6 +56,7 @@ pipeline {
                 // scripts
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/IntroLab.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/PyNN8Examples.git'
+                sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/sPyNNaker8NewModelTemplate.git'
                 // Java dependencies
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/JavaSpiNNaker'
             }
@@ -58,6 +75,7 @@ pipeline {
                 sh 'make -C SpiNNFrontEndCommon/c_common'
                 sh 'make -C SpiNNFrontEndCommon/c_common install'
                 sh 'make -C sPyNNaker/neural_modelling'
+                sh 'make -C sPyNNaker8NewModelTemplate/c_models'
                 // Python install
                 sh 'cd SpiNNMachine && python setup.py develop'
                 sh 'cd SpiNNStorageHandlers && python setup.py develop'
@@ -68,6 +86,7 @@ pipeline {
                 sh 'cd SpiNNFrontEndCommon && python setup.py develop'
                 sh 'cd sPyNNaker && python setup.py develop'
                 sh 'cd sPyNNaker8 && python ./setup.py develop'
+                sh 'cd sPyNNaker8NewModelTemplate && python ./setup.py develop'
                 sh 'python -m spynnaker8.setup_pynn'
                 // Test requirements
                 sh 'pip install -r SpiNNMachine/requirements-test.txt'
@@ -80,7 +99,8 @@ pipeline {
                 sh 'pip install -r sPyNNaker/requirements-test.txt'
                 sh 'pip install -r sPyNNaker8/requirements-test.txt'
                 // Additional requirements for testing here
-                sh 'pip install python-coveralls "coverage>=4.4"'
+                // coverage version capped due to https://github.com/nedbat/coveragepy/issues/883
+                sh 'pip install python-coveralls "coverage>=4.4,<5.0.0"'
                 sh 'pip install pytest-instafail pytest-xdist'
                 // Java install
                 sh 'mvn -f JavaSpiNNaker package'
@@ -96,6 +116,7 @@ pipeline {
                 sh 'echo "[Java]" >> ~/.spynnaker.cfg'
                 sh 'echo "use_java = True" >> ~/.spynnaker.cfg'
                 sh 'echo "java_call=/usr/bin/java" >> ~/.spynnaker.cfg'
+                sh 'echo "java_properties=-Dspinnaker.parallel_tasks=10" >> ~/.spynnaker.cfg'
                 sh 'printf "java_spinnaker_path=" >> ~/.spynnaker.cfg'
                 sh 'pwd >> ~/.spynnaker.cfg'
                 // Prepare coverage
@@ -115,7 +136,7 @@ pipeline {
                 run_pytest('SpiNNMan/unittests SpiNNMan/integration_tests', 1200, 'SpiNNMan', 'auto')
                 run_pytest('PACMAN/unittests', 1200, 'PACMAN', 'auto')
                 run_pytest('spalloc/tests', 1200, 'spalloc', '1')
-                run_pytest('DataSpecification/unittests DataSpecification/integration_tests', 1200, 'DataSpecification', 'auto')
+                run_pytest('DataSpecification/unittests', 1200, 'DataSpecification', 'auto')
                 run_pytest('SpiNNFrontEndCommon/unittests SpiNNFrontEndCommon/fec_integration_tests', 1200, 'SpiNNFrontEndCommon', 'auto')
                 run_pytest('sPyNNaker/unittests', 1200, 'sPyNNaker', 'auto')
                 run_pytest('sPyNNaker8/unittests', 1200, 'sPyNNaker8', 'auto')
@@ -124,6 +145,12 @@ pipeline {
         stage('Test') {
             steps {
                 run_pytest('sPyNNaker8/p8_integration_tests/quick_test/', 1200, 'sPyNNaker8_Integration', 'auto')
+            }
+        }
+        stage('Run new Model Example') {
+            steps {
+                run_pytest('sPyNNaker8/p8_integration_tests/test_new_model_templates', 1200, 'new_model_example', 'auto')
+                run_pytest('sPyNNaker8NewModelTemplate/nmt_integration_tests', 1200, 'nmt_integration_tests', 'auto')
             }
         }
         stage('Reports') {

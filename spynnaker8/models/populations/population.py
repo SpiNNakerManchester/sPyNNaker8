@@ -1,8 +1,26 @@
+# Copyright (c) 2017-2019 The University of Manchester
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import logging
+import numpy
 import neo
 import inspect
 from six import iteritems, string_types
 from pyNN import descriptions
+from pyNN.random import NumpyRNG
+from spinn_utilities.logger_utils import warn_once
 from spinn_front_end_common.utilities import globals_variables
 from spinn_front_end_common.utilities.exceptions import ConfigurationException
 from spynnaker.pyNN.exceptions import InvalidParameterType
@@ -36,11 +54,10 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
                 model = cellclass()
             else:
                 model = cellclass(**cellparams)
-        else:
-            if cellparams is not None:
-                raise ConfigurationException(
-                    "cellclass is an instance which includes params so "
-                    "cellparams must be None")
+        elif cellparams:
+            raise ConfigurationException(
+                "cellclass is an instance which includes params so "
+                "cellparams must be None")
 
         self._celltype = model
 
@@ -106,11 +123,16 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         :type to_file: a Neo IO instance
         :param sampling_interval: a value in milliseconds, and an integer\
             multiple of the simulation timestep.
+        :type sampling_interval: int
+        :param indexes: The indexes of neurons to record from.\
+        This is none Standard PyNN and equivelent to creating a view with\
+        these indexes and asking the View to record.
         """
+        # pylint: disable=arguments-differ
         if indexes is not None:
-            logger.warn(
-                "record indexes parameter is non-standard PyNN, so may not "
-                "be portable to other simulators. "
+            warn_once(
+                logger, "record indexes parameter is non-standard PyNN, "
+                "so may not be portable to other simulators. "
                 "It is now deprecated and replaced with views")
         self._record_with_indexes(
             variables, to_file, sampling_interval, indexes)
@@ -129,7 +151,8 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
                     "variables=None turns off recording,"
                     "while sampling_interval!=None implies turn on recording")
             if indexes is not None:
-                logger.warning(
+                warn_once(
+                    logger,
                     "View.record with variable None is non-standard PyNN. "
                     "Only the neurons in the view have their record turned "
                     "off. Other neurons already set to record will remain "
@@ -141,9 +164,9 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         elif isinstance(variables, string_types):
             # handle special case of 'all'
             if variables == "all":
-                logger.warning(
-                    'record("all") is non-standard PyNN, and therefore may '
-                    'not be portable to other simulators.')
+                warn_once(
+                    logger, 'record("all") is non-standard PyNN, and '
+                    'therefore may not be portable to other simulators.')
 
                 # get all possible recordings for this vertex
                 variables = self._get_all_possible_recordable_variables()
@@ -158,6 +181,18 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         else:  # list of variables, so just iterate though them
             for variable in variables:
                 self._record(variable, sampling_interval, to_file, indexes)
+
+    def sample(self, n, rng=None):
+        """ Randomly sample `n` cells from the Population, and return a\
+            PopulationView object.
+        """
+        if not rng:
+            rng = NumpyRNG()
+        indices = rng.permutation(
+            numpy.arange(len(self), dtype=numpy.int))[0:n]
+        return PopulationView(
+            self, indices,
+            label="Random sample size {} from {}".format(n, self.label))
 
     def write_data(self, io, variables='all', gather=True, clear=False,
                    annotations=None):
@@ -179,8 +214,9 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         """
         # pylint: disable=too-many-arguments
         if not gather:
-            logger.warning("sPyNNaker only supports gather=True. We will run "
-                           "as if gather was set to True.")
+            logger.warning(
+                logger, "sPyNNaker only supports gather=True. We will run "
+                "as if gather was set to True.")
 
         if isinstance(io, string_types):
             io = neo.get_io(io)
@@ -207,13 +243,13 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
             "structure": None,
             "size": self.size,
             "size_local": self.size,
-            "first_id": self._first_id,
-            "last_id": self._last_id,
+            "first_id": self.first_id,
+            "last_id": self.last_id,
         }
         context.update(self._annotations)
         if self.size > 0:
             context.update({
-                "local_first_id": self._first_id,
+                "local_first_id": self.first_id,
                 "cell_parameters": {}})
         if self._structure:
             context["structure"] = self._structure.describe(template=None)
@@ -253,8 +289,13 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         :rtype: neo.Block
         """
         if not gather:
-            logger.warning("sPyNNaker only supports gather=True. We will run "
-                           "as if gather was set to True.")
+            logger.warning(
+                logger, "sPyNNaker only supports gather=True. We will run "
+                "as if gather was set to True.")
+        if annotations is not None:
+            warn_once(
+                logger, "Annoations Parameter is not standard PyNN so may not "
+                        "be supported by all platformd.")
 
         return self._extract_neo_block(variables, None, clear, annotations)
 
@@ -289,10 +330,10 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
             Exception will be raised.
         :return: numpy array of the data
         """
-        logger.warning(
-            "This call is non-standard PyNN and therefore may not be "
-            "portable to other simulators. Nor do we guarantee that this "
-            "function will exist in future releases.")
+        warn_once(
+            logger, "spinnaker_get_data is non-standard PyNN and therefore "
+            "may not be portable to other simulators. Nor do we guarantee "
+            "that this function will exist in future releases.")
         if isinstance(variable, list):
             if len(variable) == 1:
                 variable = variable[0]
@@ -303,7 +344,8 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
             return self._get_spikes()
         return self._get_recorded_pynn7(variable)
 
-    def get_spike_counts(self, gather=True):
+    def get_spike_counts(self,  # pylint: disable=arguments-differ
+                         gather=True):
         """ Return the number of spikes for each neuron.
         """
         spikes = self._get_spikes()
@@ -317,15 +359,15 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         """
         return self._get_variable_unit(variable)
 
-    def set(self, **kwargs):
-        for parameter, value in iteritems(kwargs):
+    def set(self, **parameters):
+        for parameter, value in iteritems(parameters):
             try:
                 super(Population, self).set(parameter, value)
             except InvalidParameterType:
                 super(Population, self)._initialize(parameter, value)
 
     def tset(self, **kwargs):
-        logger.warn(
+        logger.warning(
             "This function is deprecated; call pop.set(...) instead")
         for parameter, value in iteritems(kwargs):
             try:
@@ -365,6 +407,7 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         if globals_variables.get_not_running_simulator().has_ran \
                 and not self._vertex_changeable_after_run:
             raise Exception("Population does not support changes after run")
+        self._read_parameters_before_set()
         self._vertex.set_initial_value(variable, value, selector)
 
     # NON-PYNN API CALL
@@ -374,11 +417,6 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         if not self._vertex_population_initializable:
             raise KeyError("Population does not support the initialisation")
         return self._vertex.get_initial_values(selector)
-
-    def get(self, parameter_names, gather=False, simplify=True):
-        if simplify is not True:
-            logger.warn("The simplify value is ignored if not set to true")
-        return PyNNPopulationCommon.get(self, parameter_names, gather)
 
     @property
     def positions(self):

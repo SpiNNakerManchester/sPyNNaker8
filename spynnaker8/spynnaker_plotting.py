@@ -1,3 +1,18 @@
+# Copyright (c) 2017-2019 The University of Manchester
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 """
 Plotting tools to be used together with
 https://github.com/NeuralEnsemble/PyNN/blob/master/pyNN/utility/plotting.py
@@ -14,6 +29,7 @@ except ImportError:
     matplotlib_missing = True
 from spynnaker8.utilities.version_util import pynn8_syntax
 if pynn8_syntax:
+    # pylint: disable=no-name-in-module
     from neo import AnalogSignalArray as AnalogSignalType  # @UnresolvedImport
 else:
     from neo import AnalogSignal as AnalogSignalType  # @Reimport
@@ -78,10 +94,9 @@ def plot_spiketrains(ax, spiketrains, label='', **options):
     """
     ax.set_xlim(0, spiketrains[0].t_stop / ms)
     handle_options(ax, options)
-    neurons = np.concatenate(map(lambda x:
-                                 np.repeat(x.annotations['source_index'],
-                                           len(x)),
-                                 spiketrains))
+    neurons = np.concatenate(
+        [np.repeat(x.annotations['source_index'], len(x))
+         for x in spiketrains])
     spike_times = np.concatenate(spiketrains, axis=0)
     plot_spikes(ax, spike_times, neurons, label=label, **options)
 
@@ -154,7 +169,7 @@ def heat_plot_neo(ax, signal_array, label='', **options):
     all_times = np.tile(times, n_neurons)
     neurons = np.repeat(xs, len(times))
     magnitude = signal_array.magnitude
-    values = np.concatenate(map(lambda x: magnitude[:, x], xs))
+    values = np.concatenate([magnitude[:, x] for x in xs])
     heat_plot(ax, neurons, all_times, values, label=label, **options)
 
 

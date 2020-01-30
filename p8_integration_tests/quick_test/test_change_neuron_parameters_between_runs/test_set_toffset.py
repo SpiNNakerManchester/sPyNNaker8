@@ -1,3 +1,18 @@
+# Copyright (c) 2017-2019 The University of Manchester
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import numpy
 import spynnaker.plot_utils as plot_utils
 import spynnaker8 as p
@@ -66,12 +81,8 @@ class TestSetTOffset(BaseTestCase):
         n_cores = 3
         neo = do_run(n_neurons, n_cores, 1, 2)
         spiketrains = neo.segments[0].spiketrains
-        try:
-            for spiketrain in spiketrains:
-                assert numpy.array_equal(spiketrain.magnitude, self.expected)
-        except AssertionError:
-            self.known_issue(
-                "https://github.com/SpiNNakerManchester/sPyNNaker/issues/603")
+        for spiketrain in spiketrains:
+            assert numpy.array_equal(spiketrain.magnitude, self.expected)
 
     def test_three_cores(self):
         self.runsafe(self.three_cores)
