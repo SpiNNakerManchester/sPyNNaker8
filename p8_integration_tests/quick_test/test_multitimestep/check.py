@@ -9,7 +9,6 @@ def get_expected_spike_arrival(ssa_spike_time, ssa_timestep):
     input_spike_in_us = ssa_spike_time * 1000
     rounded_input_in_us = ssa_timestep * int(
         math.ceil(input_spike_in_us / ssa_timestep))
-    rounded_input_spike_in_ms = rounded_input_in_us / 1000
 
     # Spike sent by ssa at the end of the timestep
     return rounded_input_in_us + ssa_timestep
@@ -38,13 +37,10 @@ def get_expected_spike(index, estimate_arrival_in_us, delay, if_curr_timestep):
     # round up to next timestep
     calc_spike_rounded = if_curr_timestep * int(
         math.ceil(calc_spike_in_us / if_curr_timestep))
-    print(if_curr_timestep, calc_arrival_in_steps, calc_arrival_in_us, delay_in_us , calc_spike_in_us, calc_spike_rounded)
+    print(if_curr_timestep, calc_arrival_in_steps, calc_arrival_in_us,
+          delay_in_us, calc_spike_in_us, calc_spike_rounded)
     return calc_spike_rounded / 1000
 
-
-def lcm(sys_timestep, if_curr_timestep ):
-    lcm_timestep = lcm(int(sys_timestep * 1000),
-                       ssa_timestep, if_curr_timestep)
 
 ssa_spike_time = 4
 ssa_timestep = 2200
@@ -57,8 +53,8 @@ input = sim.Population(
 )
 input.record("spikes")
 pop_1 = sim.Population(9, MultiIFCurrExpBase(), label="pop_1")
-#pop_1 = sim.Population(9, sim.IF_curr_exp(), label="pop_1")
-pop_1.record(["spikes","v"])
+# pop_1 = sim.Population(9, sim.IF_curr_exp(), label="pop_1")
+pop_1.record(["spikes", "v"])
 
 proj = sim.Projection(input, pop_1, sim.AllToAllConnector(),
                       synapse_type=sim.StaticSynapse(weight=5, delay=delay))
@@ -76,6 +72,7 @@ v = neo.segments[0].filter(name='v')[0]
 print(v)
 sim.end()
 
+# Estimates do nto work due to the timeing sqews not sure worth fixing
 estimate_arrival_in_us = get_expected_spike_arrival(
     ssa_spike_time, ssa_timestep)
 print(estimate_arrival_in_us)
@@ -86,11 +83,3 @@ for i in range(len(pop_1._vertex.timesteps_in_us)):
         i, estimate_arrival_in_us, delay, if_curr_timesteps[i]))
 
 print(calc_spike_in_ms)
-
-
-
-"""
-1000 = 17
-2000 = 16
-3000 = 15
-"""
