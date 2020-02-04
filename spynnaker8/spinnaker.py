@@ -14,7 +14,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
-import math
 from lazyarray import __version__ as lazyarray_version
 from quantities import __version__ as quantities_version
 from neo import __version__ as neo_version
@@ -157,19 +156,6 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
         :type duration_ms: int or float
         """
 
-        # Convert dt into microseconds and divide by
-        # realtime proportion to get hardware timestep
-        hardware_timestep_us = int(round(
-            float(self.machine_time_step) / float(self.timescale_factor)))
-
-        # Determine how long simulation is in timesteps
-        duration_timesteps = int(math.ceil(
-            float(duration_ms) / float(self.dt)))
-
-        log.info(
-            "Simulating for {} {}ms timesteps using a hardware timestep "
-            "of {}us", duration_timesteps, self.dt, hardware_timestep_us)
-
         super(SpiNNaker, self).run(duration_ms)
 
     @property
@@ -219,7 +205,7 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 
     @property
     def dt(self):
-        """ The machine time step.
+        """ The machine time step in milliseconds
 
         :return: the machine time step
         """
@@ -228,15 +214,15 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 
     @dt.setter
     def dt(self, new_value):
-        """ The machine time step
+        """ The machine time step in milliseconds
 
-        :param new_value: new value for machine time step
+        :param new_value: new value for machine time step in microseconds
         """
         self.machine_time_step = new_value * MICRO_TO_MILLISECOND_CONVERSION
 
     @property
     def t(self):
-        """ The current simulation time
+        """ The current simulation time in milliseconds
 
         :return: the current runtime already executed
         """
