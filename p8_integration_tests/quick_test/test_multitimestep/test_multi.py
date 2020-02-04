@@ -16,8 +16,8 @@
 from __future__ import division
 import spynnaker8 as sim
 from p8_integration_tests.base_test_case import BaseTestCase
-from p8_integration_tests.quick_test.test_multitimestep.multi_if_curr_exp_base import \
-    MultiIFCurrExpBase
+from p8_integration_tests.quick_test.test_multitimestep.\
+    multi_if_curr_exp_base import MultiIFCurrExpBase
 
 
 class TestMulti(BaseTestCase):
@@ -33,8 +33,9 @@ class TestMulti(BaseTestCase):
         pop_1 = sim.Population(9, MultiIFCurrExpBase(), label="pop_1")
         pop_1.record(["spikes", "v"])
 
-        proj = sim.Projection(input, pop_1, sim.AllToAllConnector(),
-                              synapse_type=sim.StaticSynapse(weight=5, delay=6))
+        proj = sim.Projection(
+            input, pop_1, sim.AllToAllConnector(),
+            synapse_type=sim.StaticSynapse(weight=5, delay=6))
         sim.run(33)
 
         proj.get("delay", "list")
@@ -51,4 +52,3 @@ class TestMulti(BaseTestCase):
 
     def test_multi(self):
         self.runsafe(self.do_multi)
-
