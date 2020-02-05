@@ -87,16 +87,21 @@ class PopulationBase(object):
         """ Return a Neo Block containing the data(spikes, state variables)\
             recorded from the Population.
 
-        :param variables: either a single variable name or a list of variable\
-            names. Variables must have been previously recorded,\
-            otherwise an Exception will be raised.
+        :param variables:
+            Either a single variable name or a list of variable names.
+            Variables must have been previously recorded, otherwise an
+            Exception will be raised.
         :type variables: str or list(str)
-        :param bool gather: For parallel simulators, if this is True, all data\
-            will be gathered to all nodes and the Neo Block will contain data\
-            from all nodes. Otherwise, the Neo Block will contain only data\
+        :param bool gather: For parallel simulators, if this is True, all data
+            will be gathered to all nodes and the Neo Block will contain data
+            from all nodes. Otherwise, the Neo Block will contain only data
             from the cells simulated on the local node.
-        :param bool clear: If this is True, recorded data will be deleted from\
-            the Population.
+
+            .. note::
+                SpiNNaker always gathers.
+
+        :param bool clear:
+            If this is True, recorded data will be deleted from the Population.
         :param annotations: annotations to put on the neo block
         :type annotations: None or dict(str, ...)
         """
@@ -118,10 +123,15 @@ class PopulationBase(object):
 
         The dict keys are neuron IDs, not indices.
 
-        :param bool gather: For parallel simulators, if this is True, all data\
-            will be gathered to all nodes and the Neo Block will contain data\
-            from all nodes. Otherwise, the Neo Block will contain only data\
-            from the cells simulated on the local node.
+        :param bool gather:
+            For parallel simulators, if this is True, all data will be gathered
+            to all nodes and the Neo Block will contain data from all nodes.
+            Otherwise, the Neo Block will contain only data from the cells
+            simulated on the local node.
+
+            .. note::
+                SpiNNaker always gathers.
+
         :rtype: dict(int, int)
         """
 
@@ -182,10 +192,15 @@ class PopulationBase(object):
     def mean_spike_count(self, gather=True):
         """ Returns the mean number of spikes per neuron.
 
-        :param bool gather: For parallel simulators, if this is True, all data\
-            will be gathered to all nodes and the Neo Block will contain data\
-            from all nodes. Otherwise, the Neo Block will contain only data\
-            from the cells simulated on the local node.
+        :param bool gather:
+            For parallel simulators, if this is True, all data will be gathered
+            to all nodes and the Neo Block will contain data from all nodes.
+            Otherwise, the Neo Block will contain only data from the cells
+            simulated on the local node.
+
+            .. note::
+                SpiNNaker always gathers.
+
         :rtype: float
         """
         if not gather:
@@ -240,15 +255,19 @@ class PopulationBase(object):
             a Neo IO instance, or a string for where to put a Neo instance
         :type io: ~neo.io or ~neo.rawio or str
         :param variables:
-            either a single variable name or a list of variable names.\
-            Variables must have been previously recorded, otherwise an\
+            either a single variable name or a list of variable names.
+            Variables must have been previously recorded, otherwise an
             Exception will be raised.
         :type variables: str or list(str)
-        :param bool gather: For parallel simulators, if this is True, all data\
-            will be gathered to all nodes and the Neo Block will contain data\
-            from all nodes. Otherwise, the Neo Block will contain only data\
-            from the cells simulated on the local node. This is pointless on\
+        :param bool gather: For parallel simulators, if this is True, all data
+            will be gathered to all nodes and the Neo Block will contain data
+            from all nodes. Otherwise, the Neo Block will contain only data
+            from the cells simulated on the local node. This is pointless on
             sPyNNaker.
+
+            .. note::
+                SpiNNaker always gathers.
+
         :param bool clear:
             clears the storage data if set to true after reading it back
         :param annotations: annotations to put on the Neo block
@@ -323,14 +342,14 @@ class PopulationBase(object):
         """ Record the specified variable or variables for all cells in the\
             Population or view.
 
-        :param variables: either a single variable name or a list of variable\
-            names. For a given celltype class, `celltype.recordable` contains\
+        :param variables: either a single variable name or a list of variable
+            names. For a given celltype class, `celltype.recordable` contains
             a list of variables that can be recorded for that celltype.
         :type variables: str or list(str)
-        :param to_file: a file to automatically record to (optional).\
+        :param to_file: a file to automatically record to (optional).
             `write_data()` will be automatically called when `end()` is called.
         :type to_file: ~neo.io or ~neo.rawio or str
-        :param int sampling_interval: a value in milliseconds, and an integer\
+        :param int sampling_interval: a value in milliseconds, and an integer
             multiple of the simulation timestep.
         """
 
@@ -340,7 +359,7 @@ class PopulationBase(object):
             Deprecated. Use `record(['gsyn_exc', 'gsyn_inh'])` instead.
 
         .. note::
-            Method signature is the PyNN 0.7 one\
+            Method signature is the PyNN 0.7 one
             with the extra non-PyNN `sampling_interval` and `indexes`
         """
         logger.warning(

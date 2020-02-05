@@ -257,21 +257,21 @@ class PopulationView(PopulationBase):
         """ Return a Neo Block containing the data(spikes, state variables)\
             recorded from the Population.
 
-        :param variables: Either a single variable name or a list of variable\
-            names. Variables must have been previously recorded, otherwise an\
+        :param variables: Either a single variable name or a list of variable
+            names. Variables must have been previously recorded, otherwise an
             Exception will be raised.
         :type variables: str or list(str)
-        :param bool gather: For parallel simulators, if gather is True, all\
-            data will be gathered to all nodes and the Neo Block will contain\
-            data from all nodes. \
-            Otherwise, the Neo Block will contain only data from the cells\
+        :param bool gather: For parallel simulators, if gather is True, all
+            data will be gathered to all nodes and the Neo Block will contain
+            data from all nodes.
+            Otherwise, the Neo Block will contain only data from the cells
             simulated on the local node.
 
             .. note::
                 SpiNNaker always gathers.
 
-        :param bool clear: If True, recorded data will be deleted from the\
-            Population.
+        :param bool clear:
+            If True, recorded data will be deleted from the Population.
         :param annotations: annotations to put on the neo block
         :type annotations: dict(str, ...)
         :rtype: ~neo.core.Block
@@ -296,6 +296,9 @@ class PopulationView(PopulationBase):
             Implementation of this method is different to Population as the
             Populations uses PyNN 7 version of the get_spikes method which
             does not support indexes.
+
+        .. note::
+            SpiNNaker always gathers.
 
         :rtype: dict(int,int)
         """
@@ -368,19 +371,19 @@ class PopulationView(PopulationBase):
         """ Record the specified variable or variables for all cells in the\
             Population or view.
 
-        :param variables: either a single variable name, or a list of variable\
-            names, or ``all`` to record everything. For a given celltype\
+        :param variables: either a single variable name, or a list of variable
+            names, or ``all`` to record everything. For a given celltype
             class, celltype.recordable contains a\
             list of variables that can be recorded for that celltype.
         :type variables: str or list(str)
         :param to_file:
-            If specified, should be a Neo IO instance and\
-            :py:meth:`write_data`\
+            If specified, should be a Neo IO instance and
+            :py:meth:`write_data`
             will be automatically called when `sim.end()` is called.
         :type to_file: ~neo.io or ~neo.rawio or str
         :param int sampling_interval:
-            should be a value in milliseconds, and an integer\
-            multiple of the simulation timestep.
+            should be a value in milliseconds, and an integer multiple of the
+            simulation timestep.
         """
         self.__population._record_with_indexes(
             variables, to_file, sampling_interval, self.__indexes)
@@ -414,9 +417,9 @@ class PopulationView(PopulationBase):
         Here, a "single value" may be either a single number or a list /\
         array of numbers (e.g. for spike times).
 
-        Values should be expressed in the standard PyNN units\
-            (i.e. millivolts, nanoamps, milliseconds, microsiemens,\
-            nanofarads, event per second).
+        Values should be expressed in the standard PyNN units (i.e. \
+        millivolts, nanoamps, milliseconds, microsiemens, nanofarads, \
+        event per second).
 
         Examples::
 
@@ -435,18 +438,22 @@ class PopulationView(PopulationBase):
 
         :param io: a Neo IO instance
         :type io: ~neo.io or ~neo.rawio or str
-        :param variables: either a single variable name or a list of variable\
-            names. These must have been previously recorded, otherwise an\
+        :param variables: either a single variable name or a list of variable
+            names. These must have been previously recorded, otherwise an
             Exception will be raised.
         :type variables: str or list(str)
-        :param bool gather: For parallel simulators, if this is True, all\
-            data will be gathered to the master node and a single output file\
-            created there. Otherwise, a file will be written on each node,\
+        :param bool gather: For parallel simulators, if this is True, all
+            data will be gathered to the master node and a single output file
+            created there. Otherwise, a file will be written on each node,
             containing only data from the cells simulated on that node.
-        :param bool clear: If this is True, recorded data will be deleted from\
-            the Population.
-        :param annotations: should be a dict containing simple data types such\
-            as numbers and strings. The contents will be written into the\
+
+            .. note::
+                SpiNNaker always gathers.
+
+        :param bool clear:
+            If this is True, recorded data will be deleted from the Population.
+        :param annotations: should be a dict containing simple data types such
+            as numbers and strings. The contents will be written into the
             output data file as metadata.
         :type annotations: dict(str, ...)
         """

@@ -47,7 +47,7 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         :param int size: The number of neurons in the population
         :param cellclass: The implementation of the individual neurons.
         :type cellclass: type or ~spynnaker.pyNN.models.AbstractPyNNModel
-        :param dict cellparams: Parameters to pass to ``cellclass`` if it\
+        :param dict cellparams: Parameters to pass to ``cellclass`` if it
             is a class to instantiate.
         :param ~pyNN.space.BaseStructure structure:
         :param dict(str,float) initial_values:
@@ -55,8 +55,8 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         :param str label: A label for the population
         :param list(~pacman.model.constraints.AbstractConstraint) constraints:
             Any constraints on how the population is deployed to SpiNNaker.
-        :param additional_parameters: Additional parameters to pass to the\
-            vertex creation function.
+        :param additional_parameters:
+            Additional parameters to pass to the vertex creation function.
         :type additional_parameters: dict(str, ...)
         """
         # pylint: disable=too-many-arguments
@@ -140,18 +140,18 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         """ Record the specified variable or variables for all cells in the\
             Population or view.
 
-        :param variables: either a single variable name or a list of variable\
-            names. For a given celltype class, `celltype.recordable` contains\
+        :param variables: either a single variable name or a list of variable
+            names. For a given celltype class, `celltype.recordable` contains
             a list of variables that can be recorded for that celltype.
         :type variables: str or list(str)
-        :param to_file: a file to automatically record to (optional).\
-            :py:meth:`write_data` will be automatically called when\
+        :param to_file: a file to automatically record to (optional).
+            :py:meth:`write_data` will be automatically called when
             `sim.end()` is called.
         :type to_file: ~neo.io or ~neo.rawio or str
-        :param int sampling_interval: a value in milliseconds, and an integer\
+        :param int sampling_interval: a value in milliseconds, and an integer
             multiple of the simulation timestep.
-        :param indexes: The indexes of neurons to record from.\
-            This is non-standard PyNN and equivalent to creating a view with\
+        :param indexes: The indexes of neurons to record from.
+            This is non-standard PyNN and equivalent to creating a view with
             these indexes and asking the View to record.
         :type indexes: None or list(int)
         """
@@ -235,11 +235,15 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
             a Neo IO instance, or a string for where to put a neo instance
         :type io: ~neo.io or ~neo.rawio or str
         :param variables:
-            either a single variable name or a list of variable names.\
-            Variables must have been previously recorded, otherwise an\
+            either a single variable name or a list of variable names.
+            Variables must have been previously recorded, otherwise an
             Exception will be raised.
         :type variables: str or list(str)
-        :param bool gather: pointless on sPyNNaker
+        :param bool gather: Whether to bring all relevant data together.
+
+            .. note::
+                SpiNNaker always gathers.
+
         :param bool clear:
             clears the storage data if set to true after reading it back
         :param annotations: annotations to put on the neo block
@@ -307,11 +311,11 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         """ Return a Neo `Block` containing the data\
             (spikes, state variables) recorded from the Assembly.
 
-        :param variables: either a single variable name or a list of variable\
+        :param variables: either a single variable name or a list of variable
             names. Variables must have been previously recorded, otherwise an
             Exception will be raised.
         :type variables: str or list(str)
-        :param bool gather: Whether to collect data from all MPI nodes or\
+        :param bool gather: Whether to collect data from all MPI nodes or
             just the current node.
 
             .. note::
@@ -340,12 +344,12 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         """ Return a Neo `Block` containing the data\
             (spikes, state variables) recorded from the Assembly.
 
-        :param variables: either a single variable name or a list of variable\
+        :param variables: either a single variable name or a list of variable
             names. Variables must have been previously recorded, otherwise an
             Exception will be raised.
         :type variables: str or list(str)
-        :param list(int) indexes: List of neuron indexes to include in the\
-            data. Clearly only neurons recording will actually have any data.\
+        :param list(int) indexes: List of neuron indexes to include in the
+            data. Clearly only neurons recording will actually have any data.
             If None will be taken as all recording as in :meth:`get_data`
         :param bool clear: Whether recorded data will be deleted.
         :param annotations: annotations to put on the neo block
@@ -359,8 +363,8 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
             the neo based object
 
         :param variable:
-            either a single variable name or a list of variable names.\
-            Variables must have been previously recorded, otherwise an\
+            either a single variable name or a list of variable names.
+            Variables must have been previously recorded, otherwise an
             Exception will be raised.
         :type variable: str or list(str)
         :return: array of the data
@@ -428,8 +432,8 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
           mapping functions, where a mapping function accepts a single\
           argument (the cell index) and returns a single number.
 
-        Values should be expressed in the standard PyNN units(\
-        i.e. millivolts, nanoamps, milliseconds, microsiemens, nanofarads,\
+        Values should be expressed in the standard PyNN units (i.e. \
+        millivolts, nanoamps, milliseconds, microsiemens, nanofarads,\
         event per second).
 
         Examples::
@@ -487,7 +491,7 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
     def positions(self):
         """ Return the position array for structured populations.
 
-        :return: a 2D array, one row per cell. \
+        :return: a 2D array, one row per cell.
             Each row is three long, for X,Y,Z
         :rtype: ~numpy.ndarray
         """

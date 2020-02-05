@@ -33,19 +33,19 @@ class DistanceDependentProbabilityConnector(
             verbose=False, n_connections=None, rng=None, callback=None):
         """
         :param str d_expression:
-            the right-hand side of a valid python expression for\
-            probability, involving `d`, e.g. ``"exp(-abs(d))"``, or ``"d<3"``,\
-            that can be parsed by :py:func:`eval`, that computes the distance\
+            the right-hand side of a valid python expression for
+            probability, involving `d`, e.g. ``"exp(-abs(d))"``, or ``"d<3"``,
+            that can be parsed by :py:func:`eval`, that computes the distance
             dependent distribution
         :param bool allow_self_connections:
-            if the connector is used to connect a\
-            Population to itself, this flag determines whether a neuron is\
-            allowed to connect to itself, or only to other neurons in the\
+            if the connector is used to connect a
+            Population to itself, this flag determines whether a neuron is
+            allowed to connect to itself, or only to other neurons in the
             Population.
-        :param bool safe: if True, check that weights and delays have valid\
+        :param bool safe: if True, check that weights and delays have valid
             values. If False, this check is skipped.
         :param bool verbose:
-            Whether to output extra information about the connectivity to a\
+            Whether to output extra information about the connectivity to a
             CSV file
         :param int n_connections:
             The number of efferent synaptic connections per neuron.

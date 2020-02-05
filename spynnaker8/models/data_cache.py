@@ -40,6 +40,7 @@ class DataCache(object):
         """
         :param str label: cache label
         :param description: cache description
+        :type description: str or dict
         :param int segment_number: cache segment number
         :param float recording_start_time:
             when this cache was started in recording space.

@@ -28,10 +28,10 @@ class CSAConnector(CommonCSAConnector):
         """
         :param cset: a connection set description
         :type cset: csa.connset.CSet
-        :param bool safe: if True, check that weights and delays have valid\
+        :param bool safe: if True, check that weights and delays have valid
             values. If False, this check is skipped.
         :param bool verbose:
-            Whether to output extra information about the connectivity to a\
+            Whether to output extra information about the connectivity to a
             CSV file
         :param callable callback: Ignored
         """
