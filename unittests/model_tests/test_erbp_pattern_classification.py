@@ -34,14 +34,14 @@ def main(argv):
     parser.add_argument('--cooloff', help='Simtime between samples', type=float, default=100.)
     # Important network hyperparameters
     parser.add_argument('--w_error_gain', help='Gain for feedback alignment (error synapses)', type=float, default=10.)
-    parser.add_argument('--l_rate', help='Learning rate e-prop', type=float, default=0.01)
+    parser.add_argument('--l_rate', help='Learning rate e-prop', type=float, default=0.2)
     parser.add_argument('--i_offset', help='DC input to neurons', type=float, default=1.)
     parser.add_argument('--neuron_tau_err', help='Error time constant in the neurons', type=float, default=1000.)
     parser.add_argument('--synapse_tau_err', help='Error time constant in the synapse', type=float, default=20.)
     parser.add_argument('--error_neuron_tau_m', help='Membrane potential time constant of error neurons', type=float, default=1000.)
 
     args = parser.parse_args()
-    np.random.seed(123456)
+    np.random.seed(1234)
 
     timestep = 1
     pyNN.setup(timestep, min_delay=1.0, max_delay=144.0)  # simulation timestep (ms)
@@ -371,6 +371,23 @@ def main(argv):
     # Plot
     Figure(*panels, marker=u'|', sharex=True)
     plt.savefig("classification_results.png", dpi=300, bbox_inches='tight')
+
+    # Plot the test
+    duration = (args.simtime + args.cooloff) * args.nclass
+    import quantities as pq
+    t_stop = network_spikes.values()[0].segments[0].t_stop
+     # plot the last seconds of recordings
+    xlim = ((t_stop - duration * pq.ms).item(),
+            t_stop.item())
+
+    panels = [
+        Panel(spikes.segments[0].spiketrains,
+              yticks=True, markersize=1, data_labels=[name],
+              xlim=xlim)
+        for name, spikes in network_spikes.items()
+    ]
+    Figure(*panels, marker=u'|', sharex=True)
+    plt.savefig("classification_results_test.png", dpi=300, bbox_inches='tight')
 
     pyNN.end()
     print("job done")
