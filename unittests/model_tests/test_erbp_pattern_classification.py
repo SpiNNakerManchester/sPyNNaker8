@@ -108,7 +108,7 @@ def main(argv):
                                     label="err_pop_neg")
 
     # Learning rule parameters
-    w_err_feedback = 0.01
+    w_err_feedback = 0.002
     make_feedback_dist = lambda err: pyNN.RandomDistribution(
         distribution='normal_clipped', mu=err, sigma=err,
         low=0.0, high=2*err)
@@ -166,7 +166,7 @@ def main(argv):
             pop_out,
             pyNN.AllToAllConnector(),
             synapse_type=get_erbp_learning_rule(w_hid_to_out,
-                                                l_rate=5 * args.l_rate),
+                                                l_rate=10 * args.l_rate),
             receptor_type="excitatory")
 
         hid_out_inh_synapse = pyNN.Projection(
@@ -174,7 +174,7 @@ def main(argv):
             pop_out,
             pyNN.AllToAllConnector(),
             synapse_type=get_erbp_learning_rule(0.5 * w_hid_to_out,
-                                                l_rate=5 * args.l_rate),
+                                                l_rate=10 * args.l_rate),
             receptor_type="inhibitory")
 
         if args.use_recurrences:
@@ -208,20 +208,20 @@ def main(argv):
             receptor_type="exc_err")
     else:
         # Create projection from input to hidden neuron using learning rule
-        vis_hid_synapse_plastic = pyNN.Projection(
+        hid_out_synapse = pyNN.Projection(
             pop_vis,
             pop_out,
             pyNN.AllToAllConnector(),
             synapse_type=get_erbp_learning_rule(w_vis_to_hid,
-                                                l_rate=5 * args.l_rate),
+                                                l_rate=10 * args.l_rate),
             receptor_type="excitatory")
 
-        vis_hid_inh_synapse_plastic = pyNN.Projection(
+        hid_out_inh_synapse = pyNN.Projection(
             pop_vis,
             pop_out,
             pyNN.AllToAllConnector(),
             synapse_type=get_erbp_learning_rule(0.5 * w_vis_to_hid,
-                                                l_rate=5 * args.l_rate),
+                                                l_rate=10 * args.l_rate),
             receptor_type="inhibitory")
 
     error_pos_out_synapse = pyNN.Projection(
@@ -317,7 +317,7 @@ def main(argv):
         return all_accuracies
 
     def retrieve_weights():
-        return vis_hid_synapse_plastic.getWeights()
+        return hid_out_synapse.getWeights()
 
     def run_sample(input_rates, label_idx=None):
         pop_vis.set(rate=input_rates)
