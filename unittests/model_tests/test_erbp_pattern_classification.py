@@ -25,20 +25,20 @@ def main(argv):
     parser = argparse.ArgumentParser()
 
     parser.add_argument('--nvis', help='Number of visual neurons', type=int, default=20)
-    parser.add_argument('--nhid', help='Number of first hidden layer neurons', type=int, default=100)
+    parser.add_argument('--nhid', help='Number of first hidden layer neurons', type=int, default=200)
     parser.add_argument('--use_hidden', help='Whether to use a hidden layer', action='store_true')
+    parser.add_argument('--use_recurrences', help='Whether to use recurrences', action='store_true')
     parser.add_argument('--clean_patterns', help='Whether input patterns are clean or random', action='store_true')
     parser.add_argument('--learn_epoch', help='Number of learning epoch', type=int, default=3)
     parser.add_argument('--simtime', help='Simulation time of an epoch', type=float, default=700.)
     parser.add_argument('--nclass', help='Number of class', type=int, default=3)
     parser.add_argument('--cooloff', help='Simtime between samples', type=float, default=100.)
     # Important network hyperparameters
-    parser.add_argument('--w_error_gain', help='Gain for feedback alignment (error synapses)', type=float, default=10.)
-    parser.add_argument('--l_rate', help='Learning rate e-prop', type=float, default=0.2)
+    parser.add_argument('--l_rate', help='Learning rate e-prop', type=float, default=0.01)
     parser.add_argument('--i_offset', help='DC input to neurons', type=float, default=1.)
-    parser.add_argument('--neuron_tau_err', help='Error time constant in the neurons', type=float, default=1000.)
+    parser.add_argument('--neuron_tau_err', help='Error time constant in the neurons', type=float, default=0.2) # label spikes at high frequency
     parser.add_argument('--synapse_tau_err', help='Error time constant in the synapse', type=float, default=20.)
-    parser.add_argument('--error_neuron_tau_m', help='Membrane potential time constant of error neurons', type=float, default=1000.)
+    parser.add_argument('--error_neuron_tau_m', help='Membrane potential time constant of error neurons', type=float, default=20.)
 
     args = parser.parse_args()
     np.random.seed(1234)
@@ -58,10 +58,13 @@ def main(argv):
     neuron_params_out = dict(neuron_params_hid)
 
     highest_input_spike_rate = 50.
-    def random_rates(threshold_low_rates=True):
+    def random_rates(threshold_low_rates=False):
         input_rate_patterns = (np.random.sample(args.nclass * args.nvis) * highest_input_spike_rate).reshape(args.nclass, args.nvis)
         if threshold_low_rates:
             input_rate_patterns[input_rate_patterns < 10] = 0.
+        for i in range(args.nclass):
+            # make sure all class have the same max rate
+            input_rate_patterns[i][np.where(input_rate_patterns[i] == input_rate_patterns[i].max())] = highest_input_spike_rate
         return np.around(input_rate_patterns - 0.5, decimals=0)
 
     def clean_classes():
@@ -75,6 +78,7 @@ def main(argv):
         input_rate_patterns = clean_classes()
     else:
         input_rate_patterns = random_rates()
+
     label_spike_rate = 60
 
     # Input neuron population
@@ -104,15 +108,22 @@ def main(argv):
                                     label="err_pop_neg")
 
     # Learning rule parameters
-    w_err_to_hid = np.random.sample(args.nclass * args.nhid) * args.w_error_gain
-    w_err_to_out = 1. * args.w_error_gain
+    w_err_feedback = 0.01
+    make_feedback_dist = lambda err: pyNN.RandomDistribution(
+        distribution='normal_clipped', mu=err, sigma=err,
+        low=0.0, high=2*err)
+
+    w_err_hid_exc = make_feedback_dist(w_err_feedback)
+    w_err_hid_inh = make_feedback_dist(w_err_feedback)
+    w_err_out_exc = make_feedback_dist(w_err_feedback)
+    w_err_out_inh = make_feedback_dist(w_err_feedback)
 
     w_label_to_err = 5.
     w_out_to_err = w_label_to_err
 
     w_vis_to_hid = 0.2
     w_hid_to_hid = 0.2
-    w_hid_to_out = 0.2
+    w_hid_to_out = 0.6
 
     def get_erbp_learning_rule(init_weight_factor=0.2, tau_err=args.synapse_tau_err, l_rate=args.l_rate, reg_rate=0., is_readout=False):
         weight_dist = pyNN.RandomDistribution(
@@ -139,7 +150,7 @@ def main(argv):
             pop_vis,
             pop_hidden,
             pyNN.AllToAllConnector(),
-            synapse_type=get_erbp_learning_rule(w_vis_to_hid, reg_rate=1.),
+            synapse_type=get_erbp_learning_rule(w_vis_to_hid),
             receptor_type="excitatory")
 
         # Create projection from input to hidden neuron using learning rule
@@ -147,21 +158,7 @@ def main(argv):
             pop_vis,
             pop_hidden,
             pyNN.AllToAllConnector(),
-            synapse_type=get_erbp_learning_rule(0.5 * w_vis_to_hid, reg_rate=1.),
-            receptor_type="inhibitory")
-
-        hid_rec_synapse = pyNN.Projection(
-            pop_hidden,
-            pop_hidden,
-            pyNN.AllToAllConnector(),
-            synapse_type=get_erbp_learning_rule(w_hid_to_hid),
-            receptor_type="excitatory")
-
-        hid_rec_inh_synapse = pyNN.Projection(
-            pop_hidden,
-            pop_hidden,
-            pyNN.AllToAllConnector(),
-            synapse_type=get_erbp_learning_rule(w_hid_to_hid),
+            synapse_type=get_erbp_learning_rule(0.5 * w_vis_to_hid),
             receptor_type="inhibitory")
 
         hid_out_synapse = pyNN.Projection(
@@ -169,30 +166,45 @@ def main(argv):
             pop_out,
             pyNN.AllToAllConnector(),
             synapse_type=get_erbp_learning_rule(w_hid_to_out,
-                                                is_readout=True, l_rate=5 * args.l_rate),
+                                                l_rate=5 * args.l_rate),
             receptor_type="excitatory")
 
         hid_out_inh_synapse = pyNN.Projection(
             pop_hidden,
             pop_out,
             pyNN.AllToAllConnector(),
-            synapse_type=get_erbp_learning_rule(w_hid_to_out,
-                                                is_readout=True, l_rate=5 * args.l_rate),
+            synapse_type=get_erbp_learning_rule(0.5 * w_hid_to_out,
+                                                l_rate=5 * args.l_rate),
             receptor_type="inhibitory")
+
+        if args.use_recurrences:
+            hid_rec_synapse = pyNN.Projection(
+                pop_hidden,
+                pop_hidden,
+                pyNN.AllToAllConnector(),
+                synapse_type=get_erbp_learning_rule(w_hid_to_hid),
+                receptor_type="excitatory")
+
+            hid_rec_inh_synapse = pyNN.Projection(
+                pop_hidden,
+                pop_hidden,
+                pyNN.AllToAllConnector(),
+                synapse_type=get_erbp_learning_rule(w_hid_to_hid),
+                receptor_type="inhibitory")
 
         # Create static dendritic projection from error to hidden neuron
         error_pos_hid_synapse = pyNN.Projection(
             pop_error_pos,
             pop_hidden,
             pyNN.AllToAllConnector(),
-            pyNN.StaticSynapse(weight=w_err_to_hid, delay=timestep),
+            pyNN.StaticSynapse(weight=w_err_hid_inh, delay=timestep),
             receptor_type="inh_err")
 
         error_neg_hid_synapse = pyNN.Projection(
             pop_error_neg,
             pop_hidden,
             pyNN.AllToAllConnector(),
-            pyNN.StaticSynapse(weight=w_err_to_hid, delay=timestep),
+            pyNN.StaticSynapse(weight=w_err_hid_exc, delay=timestep),
             receptor_type="exc_err")
     else:
         # Create projection from input to hidden neuron using learning rule
@@ -200,30 +212,30 @@ def main(argv):
             pop_vis,
             pop_out,
             pyNN.AllToAllConnector(),
-            synapse_type=get_erbp_learning_rule(w_hid_to_out,
-                                                is_readout=True, l_rate=5 * args.l_rate),
+            synapse_type=get_erbp_learning_rule(w_vis_to_hid,
+                                                l_rate=5 * args.l_rate),
             receptor_type="excitatory")
 
         vis_hid_inh_synapse_plastic = pyNN.Projection(
             pop_vis,
             pop_out,
             pyNN.AllToAllConnector(),
-            synapse_type=get_erbp_learning_rule(0.5 * w_hid_to_out,
-                                                is_readout=True, l_rate=5 * args.l_rate),
+            synapse_type=get_erbp_learning_rule(0.5 * w_vis_to_hid,
+                                                l_rate=5 * args.l_rate),
             receptor_type="inhibitory")
 
     error_pos_out_synapse = pyNN.Projection(
         pop_error_pos,
         pop_out,
         pyNN.OneToOneConnector(),
-        pyNN.StaticSynapse(weight=w_err_to_out, delay=timestep),
+        pyNN.StaticSynapse(weight=w_err_out_inh, delay=timestep),
         receptor_type="inh_err")
 
     error_neg_out_synapse = pyNN.Projection(
         pop_error_neg,
         pop_out,
         pyNN.OneToOneConnector(),
-        pyNN.StaticSynapse(weight=w_err_to_out, delay=timestep),
+        pyNN.StaticSynapse(weight=w_err_out_exc, delay=timestep),
         receptor_type="exc_err")
 
     out_error_neg_synapse = pyNN.Projection(
@@ -267,7 +279,6 @@ def main(argv):
         pyNN.OneToOneConnector(),
         pyNN.StaticSynapse(weight=w_out_to_err, delay=timestep),
         receptor_type="excitatory")
-
 
     # Setup recording
     pop_vis.record('spikes')
@@ -373,7 +384,7 @@ def main(argv):
     plt.savefig("classification_results.png", dpi=300, bbox_inches='tight')
 
     # Plot the test
-    duration = (args.simtime + args.cooloff) * args.nclass
+    duration = (args.simtime + args.cooloff) * args.nclass * 2
     import quantities as pq
     t_stop = network_spikes.values()[0].segments[0].t_stop
      # plot the last seconds of recordings
