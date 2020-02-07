@@ -17,6 +17,14 @@ import os
 import pacman.operations.algorithm_reports.reports as reports_names
 from pacman.operations.algorithm_reports.network_specification import \
     NetworkSpecification
+from pacman.operations.algorithm_reports.write_json_machine import (
+    MACHINE_FILENAME)
+from pacman.operations.algorithm_reports.write_json_machine_graph import (
+    MACHINE_GRAPH_FILENAME)
+from pacman.operations.algorithm_reports.write_json_placements import (
+    PLACEMENTS_FILENAME)
+from pacman.operations.algorithm_reports.write_json_routing_tables import (
+    ROUTING_TABLES_FILENAME)
 from spinn_front_end_common.utilities import globals_variables
 from spinn_front_end_common.utilities.report_functions.\
     routing_table_from_machine_report import _FOLDER_NAME as \
@@ -76,6 +84,12 @@ class CheckDebug(BaseTestCase):
             # write_board_chip_report
             BoardChipReport.AREA_CODE_REPORT_NAME,
             ]
+        jsons = [
+            MACHINE_GRAPH_FILENAME,
+            MACHINE_FILENAME,
+            PLACEMENTS_FILENAME,
+            ROUTING_TABLES_FILENAME
+        ]
 
         sim.setup(1.0)
         configs = globals_variables.get_simulator()._config
@@ -95,10 +109,18 @@ class CheckDebug(BaseTestCase):
             sim.run(0)
         sim.run(1000)
         pop.get_data("v")
+
+        # Must get the directories before sim.end
         report_directory = globals_variables.get_simulator().\
             _report_default_directory
+        json_directory = globals_variables.get_simulator(). \
+            _json_folder
         sim.end()
 
         found = os.listdir(report_directory)
         for report in reports:
             self.assertIn(report, found)
+
+        found = os.listdir(json_directory)
+        for json in jsons:
+            self.assertIn(json, found)
