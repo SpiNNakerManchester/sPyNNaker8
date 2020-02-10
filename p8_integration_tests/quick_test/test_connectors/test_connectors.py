@@ -238,6 +238,24 @@ class ConnectorsTest(BaseTestCase):
     def test_onetoone_population_views(self):
         self.runsafe(self.onetoone_population_views)
 
+    def onetoone_multicore_population_views(self):
+        sim.setup(timestep=1.0)
+        sim.set_number_of_neurons_per_core(sim.IF_curr_exp, 10)
+        sim.set_number_of_neurons_per_core(sim.SpikeSourceArray, 10)
+        input = sim.Population(14, sim.SpikeSourceArray([0]), label="input")
+        pop = sim.Population(17, sim.IF_curr_exp(), label="pop")
+        conn = sim.Projection(input[6:12], pop[9:16], sim.OneToOneConnector(),
+                              sim.StaticSynapse(weight=0.5, delay=2))
+        sim.run(1)
+        weights = conn.get(['weight', 'delay'], 'list')
+        sim.end()
+        target = [(6, 9, 0.5, 2.), (7, 10, 0.5, 2.), (8, 11, 0.5, 2.),
+                  (9, 12, 0.5, 2.), (10, 13, 0.5, 2.), (11, 14, 0.5, 2.)]
+        self.assertEqual(weights.tolist(), target)
+
+    def test_onetoone_multicore_population_views(self):
+        self.runsafe(self.onetoone_multicore_population_views)
+
     def fixedprob_population_views(self):
         sim.setup(timestep=1.0)
         input = sim.Population(4, sim.SpikeSourceArray([0]), label="input")
