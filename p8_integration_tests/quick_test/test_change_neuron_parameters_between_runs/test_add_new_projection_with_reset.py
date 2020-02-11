@@ -26,8 +26,8 @@ class TestAddNewProjectionWithReset(BaseTestCase):
         layer = p.Population(1, p.IF_curr_exp(), label="layer")
         output = p.Population(1, p.IF_curr_exp(), label="output")
 
-        inp_to_layer = p.Projection(inp, layer, p.AllToAllConnector(),
-                                    p.StaticSynapse(weight=5, delay=2))
+        p.Projection(inp, layer, p.AllToAllConnector(),
+                     p.StaticSynapse(weight=5, delay=2))
 
         p.run(100)
 
@@ -46,4 +46,3 @@ class TestAddNewProjectionWithReset(BaseTestCase):
 
     def test_projection_with_reset(self):
         self.runsafe(self.projection_with_reset)
-
