@@ -67,9 +67,6 @@ pipeline {
                 NEURAL_MODELLING_DIRS = "${workspace}/sPyNNaker/neural_modelling"
             }
             steps {
-                // Additional requirements for testing here
-                sh 'pip install python-coveralls "coverage>=4.4,<5.0.0"'
-                sh 'pip install pytest-instafail pytest-xdist'
                 // Install SpiNNUtils first as needed for C build
                 sh 'cd SpiNNUtils && python setup.py develop'
                 // C Build next as builds files to be installed in Python
@@ -101,6 +98,10 @@ pipeline {
                 sh 'pip install -r SpiNNFrontEndCommon/requirements-test.txt'
                 sh 'pip install -r sPyNNaker/requirements-test.txt'
                 sh 'pip install -r sPyNNaker8/requirements-test.txt'
+                // Additional requirements for testing here
+                // coverage version capped due to https://github.com/nedbat/coveragepy/issues/883
+                sh 'pip install python-coveralls "coverage>=4.4,<5.0.0"'
+                sh 'pip install pytest-instafail pytest-xdist'
                 // Java install
                 sh 'mvn -f JavaSpiNNaker package'
             }
