@@ -18,7 +18,7 @@ Plotting tools to be used together with
 https://github.com/NeuralEnsemble/PyNN/blob/master/pyNN/utility/plotting.py
 """
 
-from neo import SpikeTrain, Block, Segment
+from neo import SpikeTrain, Block, Segment, AnalogSignal
 import numpy as np
 from quantities import ms
 try:
@@ -27,12 +27,6 @@ try:
     _matplotlib_missing = False
 except ImportError:
     _matplotlib_missing = True
-from spynnaker8.utilities.version_util import pynn8_syntax
-if pynn8_syntax:
-    # pylint: disable=no-name-in-module
-    from neo import AnalogSignalArray as AnalogSignalType  # @UnresolvedImport
-else:
-    from neo import AnalogSignal as AnalogSignalType  # @Reimport
 
 
 def _handle_options(ax, options):
@@ -187,10 +181,7 @@ def plot_segment(axes, segment, label='', **options):
     :param str label: Label for the graph
     :param options: plotting options
     """
-    if pynn8_syntax:
-        analogsignals = segment.analogsignalarrays
-    else:
-        analogsignals = segment.analogsignals
+    analogsignals = segment.analogsignals
     if "name" in options:
         name = options.pop("name")
         if name == 'spikes':
@@ -277,9 +268,9 @@ class SpynnakerPanel(object):
 
             if isinstance(datum, list):
                 self.__plot_list(axes, datum, label, properties)
-            # AnalogSignalArray / AnalogSignal is also a ndarray
-            # but data format different! We import them as a single name here
-            elif isinstance(datum, AnalogSignalType):
+            # AnalogSignal is also a ndarray, but data format different!
+            # We import them as a single name here
+            elif isinstance(datum, AnalogSignal):
                 heat_plot_neo(axes, datum, label=label, **properties)
             elif isinstance(datum, np.ndarray):
                 self.__plot_array(axes, datum, label, properties)

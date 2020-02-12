@@ -31,7 +31,6 @@ from spynnaker.pyNN.utilities.constants import (
     SPIKES, MEMBRANE_POTENTIAL, GSYN_EXCIT, GSYN_INHIB)
 from spynnaker.pyNN.exceptions import InvalidParameterType
 from .data_cache import DataCache
-from spynnaker8.utilities.version_util import pynn8_syntax
 
 logger = FormatAdapter(logging.getLogger(__name__))
 
@@ -391,36 +390,22 @@ class Recorder(RecordingCommon):
             signal_array = signal_array[:, map_indexes]
 
         ids = list(map(self._population.index_to_id, indexes))
-        if pynn8_syntax:
-            data_array = neo.AnalogSignalArray(
-                signal_array,
-                units=units,
-                t_start=t_start,
-                sampling_period=sampling_period,
-                name=variable,
-                source_population=label,
-                channel_index=indexes,
-                source_ids=ids)
-            data_array.shape = (data_array.shape[0], data_array.shape[1])
-            segment.analogsignalarrays.append(data_array)
-        else:
-            data_array = neo.AnalogSignal(
-                signal_array,
-                units=units,
-                t_start=t_start,
-                sampling_period=sampling_period,
-                name=variable,
-                source_population=label,
-                source_ids=ids)
-            channel_index = _get_channel_index(indexes, block)
-            data_array.channel_index = channel_index
-            data_array.shape = (data_array.shape[0], data_array.shape[1])
-            segment.analogsignals.append(data_array)
-            channel_index.analogsignals.append(data_array)
+        data_array = neo.AnalogSignal(
+            signal_array,
+            units=units,
+            t_start=t_start,
+            sampling_period=sampling_period,
+            name=variable,
+            source_population=label,
+            source_ids=ids)
+        channel_index = _get_channel_index(indexes, block)
+        data_array.channel_index = channel_index
+        data_array.shape = (data_array.shape[0], data_array.shape[1])
+        segment.analogsignals.append(data_array)
+        channel_index.analogsignals.append(data_array)
 
 
 def _get_channel_index(ids, block):
-    # Note this code is only called if not pynn8_syntax
     for channel_index in block.channel_indexes:
         if numpy.array_equal(channel_index.index, ids):
             return channel_index
@@ -443,23 +428,3 @@ def _convert_extracted_data_into_neo_expected_format(
         for index in indexes]
     processed_data = numpy.vstack(processed_data).T
     return processed_data
-
-
-def _add_pynn9_signal_chunk(
-        segment, processed_data, units, t_start, sampling_period, variable,
-        label, ids, block):
-    # pylint: disable=too-many-arguments
-    source_ids = numpy.fromiter(ids, dtype=int)
-    data_array = neo.AnalogSignal(
-        processed_data,
-        units=units,
-        t_start=t_start,
-        sampling_period=sampling_period,
-        name=variable,
-        source_population=label,
-        source_ids=source_ids)
-    channel_index = _get_channel_index(ids, block)
-    data_array.channel_index = channel_index
-    data_array.shape = (data_array.shape[0], data_array.shape[1])
-    segment.analogsignals.append(data_array)
-    channel_index.analogsignals.append(data_array)
