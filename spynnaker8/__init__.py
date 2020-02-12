@@ -136,7 +136,6 @@ from spynnaker8.models.projection import Projection as SpiNNakerProjection
 
 from spynnaker8 import external_devices
 from spynnaker8 import extra_models
-from spynnaker8.utilities.version_util import pynn8_syntax
 
 # big stuff
 from spynnaker8.spinnaker import SpiNNaker
@@ -341,12 +340,8 @@ def setup(timestep=_pynn_control.DEFAULT_TIMESTEP,
         max_delay = SPYNNAKER_AUTO_MAX_DELAY * timestep
 
     # pylint: disable=too-many-arguments, too-many-function-args
-    if pynn8_syntax:
-        # setup PyNN common stuff
-        pynn_common.setup(timestep, min_delay, max_delay, **extra_params)
-    else:
-        # setup PyNN common stuff
-        pynn_common.setup(timestep, min_delay, **extra_params)
+    # setup PyNN common stuff
+    pynn_common.setup(timestep, min_delay, **extra_params)
 
     # create stuff simulator
     if globals_variables.has_simulator():
