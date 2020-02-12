@@ -14,7 +14,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # from __future__ import print_function
-from spynnaker8.utilities.version_util import pynn8_syntax
 
 
 def compare_spiketrain(spiketrain1, spiketrain2, same_length=True):
@@ -103,12 +102,8 @@ def compare_analogsignal(as1, as2, same_length=True):
     :type same_length: bool
     :raises AssertionError: If the analogsignalarrays are not equal
     """
-    if pynn8_syntax:
-        as1_index = as1.channel_index
-        as2_index = as2.channel_index
-    else:
-        as1_index = as1.channel_index.index
-        as2_index = as2.channel_index.index
+    as1_index = as1.channel_index.index
+    as2_index = as2.channel_index.index
 
     if as1.name != as2.name:
         raise AssertionError(
@@ -177,12 +172,8 @@ def compare_segments(seg1, seg2, same_data=True, same_length=True):
     """
     compare_spiketrains(
         seg1.spiketrains, seg2.spiketrains, same_data, same_length)
-    if pynn8_syntax:
-        seg1_analogsignals = seg1.analogsignalarrays
-        seg2_analogsignals = seg2.analogsignalarrays
-    else:
-        seg1_analogsignals = seg1.analogsignals
-        seg2_analogsignals = seg2.analogsignals
+    seg1_analogsignals = seg1.analogsignals
+    seg2_analogsignals = seg2.analogsignals
 
     if same_data and len(seg1_analogsignals) != len(seg2_analogsignals):
         raise AssertionError(
