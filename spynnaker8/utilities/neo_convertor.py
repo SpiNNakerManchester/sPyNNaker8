@@ -15,7 +15,6 @@
 
 from quantities import ms
 import numpy as np
-from spynnaker8.utilities.version_util import pynn8_syntax
 
 
 def convert_analog_signal(signal_array, time_unit=ms):
@@ -25,10 +24,7 @@ def convert_analog_signal(signal_array, time_unit=ms):
     :param time_unit: Data time unit for time index
     :rtype: ndarray
     """
-    if pynn8_syntax:
-        ids = signal_array.channel_index.astype(int)
-    else:
-        ids = signal_array.channel_index.index.astype(int)
+    ids = signal_array.channel_index.index.astype(int)
     xs = range(len(ids))
     if time_unit == ms:
         times = signal_array.times.magnitude
