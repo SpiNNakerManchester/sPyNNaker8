@@ -14,6 +14,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import six
+
+from data_specification.enums import DataType
 from spynnaker.pyNN.models.common import NeuronRecorder
 import spynnaker8 as sim
 from p8_integration_tests.base_test_case import BaseTestCase
