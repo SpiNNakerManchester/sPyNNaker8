@@ -26,11 +26,8 @@ from spalloc.job import JobDestroyedError
 from spinn_front_end_common.utilities import globals_variables
 import numpy
 
+p8_integration_factor = float(os.environ.get('P8_INTEGRATION_FACTOR', "1"))
 random.seed(os.environ.get('P8_INTEGRATION_SEED', None))
-if os.environ.get('CONTINUOUS_INTEGRATION', 'false').lower() == 'true':
-    max_tries = 3
-else:
-    max_tries = 1
 
 
 def calculate_stdp_times(pre_spikes, post_spikes, plastic_delay):
@@ -76,6 +73,12 @@ class BaseTestCase(unittest.TestCase):
         # Remove random effect for testing
         # Set test_seed to None to allow random
         self._test_seed = 1
+
+        factor = random.random()
+        if factor > p8_integration_factor:
+            raise SkipTest("Test skipped by random number {} above "
+                           "P8_INTEGRATION_FACTOR {}".format(
+                               factor, p8_integration_factor))
 
         globals_variables.unset_simulator()
         class_file = sys.modules[self.__module__].__file__
@@ -191,7 +194,7 @@ class BaseTestCase(unittest.TestCase):
                     destroyed_file.write("\n")
                 retries += 1
                 globals_variables.unset_simulator()
-                if retries >=  max_tries:
+                if retries >= 3:
                     raise ex
             except SpinnmanException as ex:
                 class_file = sys.modules[self.__module__].__file__
@@ -202,7 +205,7 @@ class BaseTestCase(unittest.TestCase):
                     exc_file.write("\n")
                 retries += 1
                 globals_variables.unset_simulator()
-                if retries >= max_tries:
+                if retries >= 3:
                     raise ex
             print("")
             print("==========================================================")
