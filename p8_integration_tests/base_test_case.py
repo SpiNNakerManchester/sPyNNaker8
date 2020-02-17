@@ -191,7 +191,7 @@ class BaseTestCase(unittest.TestCase):
                     destroyed_file.write("\n")
                 retries += 1
                 globals_variables.unset_simulator()
-                if retries >=  max_tries:
+                if retries >= max_tries:
                     raise ex
             except SpinnmanException as ex:
                 class_file = sys.modules[self.__module__].__file__

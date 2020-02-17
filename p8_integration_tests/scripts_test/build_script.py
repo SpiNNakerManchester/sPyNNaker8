@@ -32,8 +32,9 @@ def add_scripts(a_dir, prefix_len, test_file, exceptions, broken):
             test_file.write(name)
             test_file.write("(self):\n        self.check_script(\"")
             the_path = os.path.abspath(script_path)
+            # As the paths are written to strings in files Windows needs help!
             if platform.system() == "Windows":
-                the_path= the_path.replace("\\","/")
+                the_path = the_path.replace("\\", "/")
             test_file.write(the_path)
             if a_script in broken:
                 test_file.write("\", True)\n\n    def test_")
@@ -71,6 +72,7 @@ if __name__ == '__main__':
     examples_header = os.path.join(tests_dir, "examples_header.py")
     copyfile(examples_header, examples_script)
     exceptions = ["pushbot_ethernet_example.py"]
+    # Lazy boolean distinction based on presence or absence of a parameter
     if len(sys.argv) > 1:  # 1 is the script name
         # Skip the known long ones
         exceptions.append("stdp_triplet.py")
