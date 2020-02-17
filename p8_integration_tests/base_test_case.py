@@ -148,9 +148,19 @@ class BaseTestCase(unittest.TestCase):
         return "".join(results)
 
     def get_provenance_files(self):
-        provenance_file_path = globals_variables.get_simulator() \
-            ._provenance_file_path
+        provenance_file_path = (
+            globals_variables.get_simulator()._provenance_file_path)
         return os.listdir(provenance_file_path)
+
+    def get_system_iobuf_files(self):
+        system_iobuf_file_path = (
+            globals_variables.get_simulator()._system_provenance_file_path)
+        return os.listdir(system_iobuf_file_path)
+
+    def get_app_iobuf_files(self):
+        app_iobuf_file_path = (
+            globals_variables.get_simulator()._app_provenance_file_path)
+        return os.listdir(app_iobuf_file_path)
 
     def get_run_time_of_BufferExtractor(self):
         return self.get_provenance("Execution", "BufferExtractor")
