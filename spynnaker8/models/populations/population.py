@@ -39,7 +39,8 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
     def __init__(
             self, size, cellclass, cellparams=None, structure=None,
             initial_values=None, label=None, constraints=None,
-            additional_parameters=None):
+            additional_parameters=None, in_partitions=None,
+            out_partitions=None):
         # pylint: disable=too-many-arguments
 
         # hard code initial values as required
@@ -65,7 +66,8 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
             spinnaker_control=globals_variables.get_simulator(),
             size=size, label=label, constraints=constraints,
             model=model, structure=structure, initial_values=initial_values,
-            additional_parameters=additional_parameters)
+            additional_parameters=additional_parameters,
+            in_partitions=in_partitions, out_partitions=out_partitions)
         Recorder.__init__(self, population=self)
 
         # annotations used by neo objects
