@@ -76,7 +76,9 @@ if __name__ == '__main__':
     # Lazy boolean distinction based on presence or absence of a parameter
     if len(sys.argv) > 1:  # 1 is the script name
         # Skip the known long ones
+        print("Exception")
         exceptions.append("stdp_triplet.py")
+    print("Ready to do examples")
     with open(examples_script, "a") as examples_file:
         examples_file.write("# flake8: noqa\n")
         add_scripts(examples_dir, len(examples_dir)+1, examples_file,
