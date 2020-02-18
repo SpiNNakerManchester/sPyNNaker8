@@ -128,14 +128,10 @@ pipeline {
                 sh 'mkdir junit/'
             }
         }
-        stage('Build scripts') {
+        stage('Run  scripts') {
             steps {
-                sh 'python sPyNNaker8/p8_integration_tests/scripts_test/build_script2.py'
-            }
-        }
-        stage('Run scripts') {
-            steps {
-                run_pytest('sPyNNaker8/p8_integration_tests/scripts_test', 1200, 'sPyNNaker8Scripts')
+                sh 'python sPyNNaker8/p8_integration_tests/scripts_test/build_script.py short'
+                run_pytest('sPyNNaker8/p8_integration_tests/scripts_test', 1200, 'sPyNNaker8Scripts', 'auto')
             }
         }
         stage('Unit Tests') {
