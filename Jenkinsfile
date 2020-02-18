@@ -130,7 +130,7 @@ pipeline {
         }
         stage('Build scripts') {
             steps {
-                sh 'python sPyNNaker8/p8_integration_tests/scripts_test/build_script2.py short'
+                sh 'python sPyNNaker8/p8_integration_tests/scripts_test/build_script2.py'
             }
         }
         stage('Run scripts') {
