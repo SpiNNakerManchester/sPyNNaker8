@@ -24,11 +24,7 @@ pipeline {
     stages {
         stage('Clean and Checkout') {
             steps {
-                sh 'rm -rf ${WORKSPACE}/*'
-                sh 'rm -rf ${WORKSPACE}/.[a-zA-Z0-9]*'
-                dir('sPyNNaker8') {
-                    checkout scm
-                }
+               JenkinsTools.clean_and_checkout()
             }
         }
         stage('Before Install') {
