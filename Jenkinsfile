@@ -15,5 +15,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-JenkinsPipeline{branch = "${env.BRANCH_NAME}"
-                threads = 'auto'}
+node{
+
+def common = load “jenkins_stuff.groovy”
+
+common.foo()
+
+}
