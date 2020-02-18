@@ -15,7 +15,13 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 */
-def call(Map pipelineParams) {
+def call(body) {
+
+    def pipelineParams= [:]
+    body.resolveStrategy = Closure.DELEGATE_FIRST
+    body.delegate = pipelineParams
+    body()
+
     pipeline {
         agent {
             docker { image 'python3.6' }
