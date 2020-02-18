@@ -47,6 +47,7 @@ def add_scripts(a_dir, prefix_len, test_file, exceptions, broken):
 
 
 if __name__ == '__main__':
+    print("Start building Scripts")
     tests_dir = os.path.dirname(__file__)
     p8_integration_tests_dir = os.path.dirname(tests_dir)
     spynnaker8_dir = os.path.dirname(p8_integration_tests_dir)
@@ -83,3 +84,4 @@ if __name__ == '__main__':
                     ["synfire_if_curr_exp_large_array.py",
                      "vogels_2011.py",
                      "vogels_2011_live.py"])
+    print("Done building Scripts")
