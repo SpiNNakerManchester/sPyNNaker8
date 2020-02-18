@@ -53,12 +53,13 @@ pipeline {
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/spinn_common.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/SpiNNFrontEndCommon.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/sPyNNaker.git'
+                // Java dependencies
+                sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/JavaSpiNNaker'
                 // scripts
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/IntroLab.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/PyNN8Examples.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/sPyNNaker8NewModelTemplate.git'
-                // Java dependencies
-                sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/JavaSpiNNaker'
+                sh 'support/gitclone.sh git@github.com:SpiNNakerManchester/microcircuit_model.git'
             }
         }
         stage('Install') {
@@ -126,6 +127,12 @@ pipeline {
                 sh 'echo "# Empty config" >  ~/.spinnaker.cfg'
                 // Create a directory for test outputs
                 sh 'mkdir junit/'
+            }
+        }
+        stage('Run scripts') {
+            steps {
+                sh 'python sPyNNaker8/p8_integration_tests/scripts_test/build_script.py'
+                run_pytest('sPyNNaker8/p8_integration_tests/scripts_test', 3600, 'sPyNNaker8Scripts', 1)
             }
         }
         stage('Unit Tests') {
