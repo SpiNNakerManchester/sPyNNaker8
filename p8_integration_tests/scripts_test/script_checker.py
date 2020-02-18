@@ -14,6 +14,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from p8_integration_tests.base_test_case import BaseTestCase
+import os
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt  # noqa: E401
@@ -31,6 +32,8 @@ class ScriptChecker(BaseTestCase):
             plt.show = self.mockshow
         from runpy import run_path
         try:
+            path = os.path.dirname(os.path.abspath(script))
+            os.chdir(path)
             run_path(script)
             self.report(script, "scripts_ran_successfully")
         except Exception as ex:
