@@ -16,4 +16,4 @@
 */
 
 JenkinsPipeline(branch: "${env.BRANCH_NAME}",
-                pipelineParams.threads)
+                threads: 'auto')
