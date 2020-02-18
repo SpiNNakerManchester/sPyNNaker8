@@ -132,7 +132,7 @@ pipeline {
         stage('Run scripts') {
             steps {
                 sh 'python sPyNNaker8/p8_integration_tests/scripts_test/build_script.py shorter'
-                run_pytest('sPyNNaker8/p8_integration_tests/scripts_test', 3600, 'sPyNNaker8Scripts', 1)
+                run_pytest('sPyNNaker8/p8_integration_tests/scripts_test', 3600, 'sPyNNaker8Scripts', '1')
             }
         }
         stage('Unit Tests') {
