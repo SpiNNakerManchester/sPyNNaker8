@@ -36,11 +36,10 @@ class ScriptChecker(BaseTestCase):
             path = os.path.dirname(os.path.abspath(script))
             os.chdir(path)
             start = time.time()
-            print("running ", script)
             run_path(script)
             duration = time.time() - start
-            print("took {} seconds ".format(duration))
-            self.report(script, "scripts_ran_successfully in {}".format(duration))
+            self.report("{} for {}".format(duration, script),
+                        "scripts_ran_successfully")
         except Exception as ex:
             if broken:
                 self.report(
