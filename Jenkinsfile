@@ -129,6 +129,12 @@ pipeline {
                 sh 'mkdir junit/'
             }
         }
+        stage('Run example scrits') {
+            steps {
+                sh 'python sPyNNaker8/p8_integration_tests/scripts_test/build_script.py shorter'
+                run_pytest('sPyNNaker8/p8_integration_tests/scripts_test', 3600, 'sPyNNaker8Scripts', '1')
+            }
+        }
         stage('Unit Tests') {
             steps {
                 run_pytest('SpiNNUtils/unittests', 1200, 'SpiNNUtils', 'auto')
@@ -146,12 +152,6 @@ pipeline {
         stage('Test') {
             steps {
                 run_pytest('sPyNNaker8/p8_integration_tests/quick_test/', 1200, 'sPyNNaker8_Integration', 'auto')
-            }
-        }
-        stage('Run scripts') {
-            steps {
-                sh 'python sPyNNaker8/p8_integration_tests/scripts_test/build_script.py shorter'
-                run_pytest('sPyNNaker8/p8_integration_tests/scripts_test', 3600, 'sPyNNaker8Scripts', '1')
             }
         }
         stage('Run new Model Example') {
