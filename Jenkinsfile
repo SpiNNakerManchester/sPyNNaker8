@@ -129,6 +129,12 @@ pipeline {
                 sh 'mkdir junit/'
             }
         }
+        stage('cb min Test') {
+            steps {
+                run_pytest('sPyNNaker8/p8_integration_tests/quick_test/quick_test/test_ignores', 1200, 'cb_temp', 'auto')
+            }
+        }
+
         stage('Run scripts') {
             steps {
                 sh 'python sPyNNaker8/p8_integration_tests/scripts_test/build_script.py shorter'
