@@ -153,12 +153,6 @@ pipeline {
                 run_pytest('sPyNNaker8NewModelTemplate/nmt_integration_tests', 1200, 'nmt_integration_tests', 'auto')
             }
         }
-        stage('Run scripts') {
-            steps {
-                sh 'python sPyNNaker8/p8_integration_tests/scripts_test/build_script.py short'
-                run_pytest('sPyNNaker8/p8_integration_tests/scripts_test', 1200, 'sPyNNaker8Scripts')
-            }
-        }
         stage('Reports') {
             steps {
                 sh 'find . -maxdepth 3 -type f -wholename "*/reports/*" -print -exec cat \\{\\}  \\;'
