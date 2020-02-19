@@ -24,9 +24,9 @@ class KernelConnector(CommonKernelConnector):
     Connect every post(row, col) neuron to many pre(row, col, kernel) through\
     a (kernel) set of weights and/or delays.
 
-    .. todo::
-        Should these include `allow_self_connections` and `with_replacement`?
+    .. admonition:: TODO
 
+        Should these include `allow_self_connections` and `with_replacement`?
     """
     __slots__ = []
 
@@ -68,7 +68,11 @@ class KernelConnector(CommonKernelConnector):
             Starting row/col for post sampling :math:`\Leftrightarrow`
             :math:`(\mathsf{offset}_x, \mathsf{offset}_y)`
         :param bool safe:
+            Whether to check that weights and delays have valid values. If
+            False, this check is skipped.
         :param bool verbose:
+            Whether to output extra information about the connectivity to a
+            CSV file
         """
         # pylint: disable=too-many-arguments
         super(KernelConnector, self).__init__(

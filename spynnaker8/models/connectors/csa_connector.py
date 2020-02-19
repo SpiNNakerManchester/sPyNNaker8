@@ -33,7 +33,11 @@ class CSAConnector(CommonCSAConnector):
         :param bool verbose:
             Whether to output extra information about the connectivity to a
             CSV file
-        :param callable callback: Ignored
+        :param callable callback:
+            if given, a callable that display a progress bar on the terminal.
+
+            .. note::
+                Not supported by sPyNNaker.
         """
         # pylint: disable=too-many-arguments
         super(CSAConnector, self).__init__(
