@@ -24,28 +24,26 @@ class KernelConnector(CommonKernelConnector):
     Connect every post(row, col) neuron to many pre(row, col, kernel) through\
     a (kernel) set of weights and/or delays.
 
-    .. note::
-        TODO: should these include `allow_self_connections` and \
-        `with_replacement`?
+    .. admonition:: TODO
+
+        Should these include `allow_self_connections` and `with_replacement`?
     """
     __slots__ = []
 
     def __init__(
             self, shape_pre, shape_post, shape_kernel, weight_kernel=None,
-            delay_kernel=None, shape_common=None, pre_sample_steps=None,
-            pre_start_coords=None, post_sample_steps=None,
-            post_start_coords=None, safe=True, space=None, verbose=False):
+            delay_kernel=None, shape_common=None,
+            pre_sample_steps_in_post=None, pre_start_coords_in_post=None,
+            post_sample_steps_in_pre=None, post_start_coords_in_pre=None,
+            safe=True, verbose=False):
         r"""
-        :param shape_pre:
+        :param tuple(int,int) shape_pre:
             2D shape of the pre population (rows/height, cols/width, usually
             the input image shape)
-        :type shape_pre: list(int) or tuple(int,int)
-        :param shape_post:
+        :param tuple(int,int) shape_post:
             2D shape of the post population (rows/height, cols/width)
-        :type shape_post: list(int) or tuple(int,int)
-        :param shape_kernel:
+        :param tuple(int,int) shape_kernel:
             2D shape of the kernel (rows/height, cols/width)
-        :type shape_kernel: list(int) or tuple(int,int)
         :param weight_kernel: (optional)
             2D matrix of size shape_kernel describing the weights
         :type weight_kernel: ~numpy.ndarray or ~pyNN.random.NumpyRNG
@@ -54,33 +52,31 @@ class KernelConnector(CommonKernelConnector):
             2D matrix of size shape_kernel describing the delays
         :type delay_kernel: ~numpy.ndarray or ~pyNN.random.NumpyRNG
             or int or float or list(int) or list(float) or None
-        :param shape_common: (optional)
+        :param tuple(int,int) shape_common: (optional)
             2D shape of common coordinate system (for both pre and post,
             usually the input image sizes)
-        :type shape_common: list(int) or tuple(int,int) or None
-        :param pre_sample_steps: (optional)
+        :param tuple(int,int) pre_sample_steps_in_post: (optional)
             Sampling steps/jumps for pre pop :math:`\Leftrightarrow`
-            :math:`((\mathsf{start}_x, \mathsf{end}_x, \mathsf{step}_x),
-            (\mathsf{start}_y, \mathsf{end}_y, \mathsf{step}_y))`
-        :type pre_sample_steps: None or list(tuple(int,int,int))
-        :param pre_start_coords: (optional)
+            :math:`(\mathsf{step}_x, \mathsf{step}_y)`
+        :param tuple(int,int) pre_start_coords_in_post: (optional)
             Starting row/col for pre sampling :math:`\Leftrightarrow`
-            :math:`((\mathsf{start}_x, \mathsf{end}_x, \mathsf{step}_x),
-            (\mathsf{start}_y, \mathsf{end}_y, \mathsf{step}_y))`
-        :type pre_start_coords: None or list(tuple(int,int,int))
-        :param post_sample_steps: (optional)
+            :math:`(\mathsf{offset}_x, \mathsf{offset}_y)`
+        :param tuple(int,int) post_sample_steps_in_pre: (optional)
             Sampling steps/jumps for post pop :math:`\Leftrightarrow`
-            :math:`((\mathsf{start}_x, \mathsf{end}_x, \mathsf{step}_x),
-            (\mathsf{start}_y, \mathsf{end}_y, \mathsf{step}_y))`
-        :type post_sample_steps: None or list(tuple(int,int,int))
-        :param post_start_coords: (optional)
+            :math:`(\mathsf{step}_x, \mathsf{step}_y)`
+        :param tuple(int,int) post_start_coords_in_pre: (optional)
             Starting row/col for post sampling :math:`\Leftrightarrow`
-            :math:`((\mathsf{start}_x, \mathsf{end}_x, \mathsf{step}_x),
-            (\mathsf{start}_y, \mathsf{end}_y, \mathsf{step}_y))`
-        :type post_start_coords: None or list(tuple(int,int,int))
+            :math:`(\mathsf{offset}_x, \mathsf{offset}_y)`
+        :param bool safe:
+            Whether to check that weights and delays have valid values. If
+            False, this check is skipped.
+        :param bool verbose:
+            Whether to output extra information about the connectivity to a
+            CSV file
         """
         # pylint: disable=too-many-arguments
         super(KernelConnector, self).__init__(
             shape_pre, shape_post, shape_kernel, weight_kernel,
-            delay_kernel, shape_common, pre_sample_steps, pre_start_coords,
-            post_sample_steps, post_start_coords, safe, space, verbose)
+            delay_kernel, shape_common, pre_sample_steps_in_post,
+            pre_start_coords_in_post, post_sample_steps_in_pre,
+            post_start_coords_in_pre, safe, verbose)
