@@ -15,6 +15,7 @@
 
 from p8_integration_tests.base_test_case import BaseTestCase
 import os
+import time
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt  # noqa: E401
@@ -34,8 +35,12 @@ class ScriptChecker(BaseTestCase):
         try:
             path = os.path.dirname(os.path.abspath(script))
             os.chdir(path)
+            start = time.time()
+            print("running ", script)
             run_path(script)
-            self.report(script, "scripts_ran_successfully")
+            duration = time.time() - start
+            print("took {} seconds ".format(duration))
+            self.report(script, "scripts_ran_successfully in {}".format(duration))
         except Exception as ex:
             if broken:
                 self.report(
