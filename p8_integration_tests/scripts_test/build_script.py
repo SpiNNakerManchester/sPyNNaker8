@@ -14,9 +14,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-import platform
 from shutil import copyfile
-import sys
 
 
 def add_scripts(a_dir, prefix_len, test_file, exceptions, broken):
@@ -27,14 +25,13 @@ def add_scripts(a_dir, prefix_len, test_file, exceptions, broken):
         if os.path.isdir(script_path) and not a_script.startswith("."):
             add_scripts(script_path, prefix_len, test_file, exceptions, broken)
         if a_script.endswith(".py"):
+            print(script_path)
             name = script_path[prefix_len:-3].replace(os.sep, "_")
+            print(name)
             test_file.write("\n    def ")
             test_file.write(name)
             test_file.write("(self):\n        self.check_script(\"")
-            the_path = os.path.abspath(script_path)
-            if platform.system() == "Windows":
-                the_path= the_path.replace("\\","/")
-            test_file.write(the_path)
+            test_file.write(os.path.abspath(script_path))
             if a_script in broken:
                 test_file.write("\", True)\n\n    def test_")
             else:
@@ -70,14 +67,10 @@ if __name__ == '__main__':
     examples_script = os.path.join(tests_dir, "examples_auto_test.py")
     examples_header = os.path.join(tests_dir, "examples_header.py")
     copyfile(examples_header, examples_script)
-    exceptions = ["pushbot_ethernet_example.py"]
-    if len(sys.argv) > 1:  # 1 is the script name
-        # Skip the known long ones
-        exceptions.append("stdp_triplet.py")
     with open(examples_script, "a") as examples_file:
         examples_file.write("# flake8: noqa\n")
         add_scripts(examples_dir, len(examples_dir)+1, examples_file,
-                    exceptions,
+                    ["pushbot_ethernet_example.py"],
                     ["synfire_if_curr_exp_large_array.py",
                      "vogels_2011.py",
                      "vogels_2011_live.py"])
