@@ -47,14 +47,13 @@ class TestKernelConnector(BaseTestCase):
         weight_kernel = np.asarray(weight_list)
         delay_kernel = np.asarray(delay_list)
 
-        kernel_connector = sim.KernelConnector(shape_pre, shape_post,
-                                               shape_kernel,
-                                               weight_kernel=weight_kernel,
-                                               delay_kernel=delay_kernel,
-                                               pre_sample_steps=pre_step,
-                                               post_sample_steps=post_step,
-                                               pre_start_coords=pre_start,
-                                               post_start_coords=post_start)
+        kernel_connector = sim.KernelConnector(
+            shape_pre, shape_post, shape_kernel,
+            weight_kernel=weight_kernel, delay_kernel=delay_kernel,
+            pre_sample_steps_in_post=pre_step,
+            post_sample_steps_in_pre=post_step,
+            pre_start_coords_in_post=pre_start,
+            post_start_coords_in_pre=post_start)
 
         c2 = sim.Projection(input_pop, pop, kernel_connector,
                             sim.StaticSynapse(weight=weights, delay=delays))
