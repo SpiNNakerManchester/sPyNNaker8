@@ -58,7 +58,7 @@ if __name__ == '__main__':
     introlab_script = os.path.join(tests_dir, "intro_labs_auto_test.py")
     introlab_header = os.path.join(tests_dir, "intro_labs_header.py")
     copyfile(introlab_header, introlab_script)
-    exceptions =  ["sudoku.py"]
+    exceptions = ["sudoku.py"]
     # Lazy boolean distinction based on presence or absence of a parameter
     if len(sys.argv) > 1:  # 1 is the script name
         # Skip the known long ones
@@ -84,7 +84,6 @@ if __name__ == '__main__':
         exceptions.append("balanced_random_live_rate")  # 125 seconds
         exceptions.append("stdp_curve.py")  # 118 seconds
         exceptions.append("stdp_curve_cond.py")  # 121 seconds
-
 
     with open(examples_script, "a") as examples_file:
         examples_file.write("# flake8: noqa\n")
