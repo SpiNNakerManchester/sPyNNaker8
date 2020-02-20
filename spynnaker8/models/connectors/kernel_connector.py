@@ -40,10 +40,10 @@ class KernelConnector(CommonKernelConnector):
     :param shape_common (optional):\
         2D shape of common coordinate system (for both pre and post, \
         usually the input image sizes)
-    :param pre/post_sample_steps (optional):\
+    :param pre/post_sample_steps_in_post/pre (optional):\
         Sampling steps/jumps for pre/post pop <=> (startX, endX, _stepX_)
         None or 2-item array
-    :param pre/post_start_coords (optional):\
+    :param pre/post_start_coords_in_post/pre (optional):\
         Starting row/col for pre/post sampling <=> (_startX_, endX, stepX)
         None or 2-item array
     """
@@ -51,11 +51,13 @@ class KernelConnector(CommonKernelConnector):
 
     def __init__(
             self, shape_pre, shape_post, shape_kernel, weight_kernel=None,
-            delay_kernel=None, shape_common=None, pre_sample_steps=None,
-            pre_start_coords=None, post_sample_steps=None,
-            post_start_coords=None, safe=True, space=None, verbose=False):
+            delay_kernel=None, shape_common=None,
+            pre_sample_steps_in_post=None, pre_start_coords_in_post=None,
+            post_sample_steps_in_pre=None, post_start_coords_in_pre=None,
+            safe=True, space=None, verbose=False):
         # pylint: disable=too-many-arguments
         super(KernelConnector, self).__init__(
             shape_pre, shape_post, shape_kernel, weight_kernel,
-            delay_kernel, shape_common, pre_sample_steps, pre_start_coords,
-            post_sample_steps, post_start_coords, safe, space, verbose)
+            delay_kernel, shape_common, pre_sample_steps_in_post,
+            pre_start_coords_in_post, post_sample_steps_in_pre,
+            post_start_coords_in_pre, safe, space, verbose)
