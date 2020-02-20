@@ -138,7 +138,7 @@ class BaseTestCase(unittest.TestCase):
                 "SELECT description_name AS description, the_value AS 'value' "
                 "FROM provenance_view WHERE source_name = 'pacman' AND "
                 "description_name LIKE ?", ("%" + detail_name, )):
-            results.append(row["description"] + ": " + row["value"] + "\n")
+            results.append("{}: {}\n".format(row["description"], row["value"]))
         return "".join(results)
 
     def get_provenance_files(self):
