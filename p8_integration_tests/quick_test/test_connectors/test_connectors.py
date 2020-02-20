@@ -252,7 +252,7 @@ class ConnectorsTest(BaseTestCase):
         weights = conn.get(['weight', 'delay'], 'list')
         machine_graph = globals_variables.get_simulator()._machine_graph
         projection_edges = [edge for edge in machine_graph.edges if (
-            edge.label=='machine_edge_fortest')]
+            edge.label == 'machine_edge_fortest')]
         sim.end()
         # Check the connections are correct
         target = [(6, 9, 0.5, 2.), (7, 10, 0.5, 2.), (8, 11, 0.5, 2.),
