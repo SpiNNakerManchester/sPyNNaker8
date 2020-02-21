@@ -13,7 +13,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from lxml import etree
 import os
 import random
 import sys
@@ -25,6 +24,7 @@ from spinnman.exceptions import SpinnmanException
 from spalloc.job import JobDestroyedError
 from spinn_front_end_common.utilities import globals_variables
 import numpy
+import sqlite3
 
 random.seed(os.environ.get('P8_INTEGRATION_SEED', None))
 if os.environ.get('CONTINUOUS_INTEGRATION', 'false').lower() == 'true':
@@ -127,20 +127,18 @@ class BaseTestCase(unittest.TestCase):
         with open(report_path, "a") as report_file:
             report_file.write(message)
 
-    def get_provenance(self, main_name, detail_name):
+    def get_provenance(self, _main_name, detail_name):
         provenance_file_path = globals_variables.get_simulator() \
             ._provenance_file_path
-        xml_path = os.path.join(provenance_file_path, "pacman.xml")
-        xml_root = etree.parse(xml_path)
+        prov_file = os.path.join(provenance_file_path, "provenance.sqlite3")
+        prov_db = sqlite3.connect(prov_file)
+        prov_db.row_factory = sqlite3.Row
         results = []
-        for element in xml_root.findall("provenance_data_items"):
-            if main_name in element.get('name'):
-                for sub_element in element.findall("provenance_data_item"):
-                    if detail_name in sub_element.get('name'):
-                        results.append(sub_element.get('name'))
-                        results.append(": ")
-                        results.append(sub_element.text)
-                        results.append("\n")
+        for row in prov_db.execute(
+                "SELECT description_name AS description, the_value AS 'value' "
+                "FROM provenance_view WHERE source_name = 'pacman' AND "
+                "description_name LIKE ?", ("%" + detail_name, )):
+            results.append("{}: {}\n".format(row["description"], row["value"]))
         return "".join(results)
 
     def get_provenance_files(self):
