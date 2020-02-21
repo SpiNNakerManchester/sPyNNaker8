@@ -101,7 +101,10 @@ from spynnaker8.models.synapse_dynamics.timing_dependence\
 #     SpikePairRulePredictive
 from spynnaker8.models.synapse_dynamics.timing_dependence\
     .timing_dependence_spike_pair_dual import TimingDependenceSpikePairDual as \
-    SpikePairDualRule
+    SpikePairRuleDual
+from spynnaker8.models.synapse_dynamics.timing_dependence\
+    .timing_dependence_spike_pair_dual_v_dep import TimingDependenceSpikePairDualVDep as \
+    SpikePairRuleDualVDep
 from spynnaker.pyNN.models.neuron.structural_plasticity.synaptogenesis\
     .partner_selection import LastNeuronSelection
 from spynnaker.pyNN.models.neuron.structural_plasticity.synaptogenesis\
@@ -177,7 +180,8 @@ __all__ = [
     'StaticSynapse',
     # plastic stuff
     'STDPMechanism', 'AdditiveWeightDependence', 'AdditiveWeightDependencePredictive',
-    'MultiplicativeWeightDependence', 'SpikePairRule', 'SpikePairRulePredictive', 'SpikePairRuleDual'
+    'MultiplicativeWeightDependence', 'SpikePairRule', 'SpikePairRulePredictive',
+    'SpikePairRuleDual', 'SpikePairRuleDualVDep'
 
     # Structural plasticity by Petrut Bogdan
     'StructuralMechanismStatic', 'StructuralMechanismSTDP',
