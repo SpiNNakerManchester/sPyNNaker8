@@ -21,38 +21,39 @@ from p8_integration_tests.base_test_case import BaseTestCase
 
 class TestIobuffMultirun(BaseTestCase):
 
-    def check_size(self, prov_path, vertex_placement):
+    def check_size(self, prov_path, placement):
         iofile = os.path.join(
             prov_path,
             "iobuf_for_chip_{}_{}_processor_id_{}.txt".format(
-                vertex_placement.x, vertex_placement.y, vertex_placement.p))
+                placement.x, placement.y, placement.p))
         return os.path.getsize(iofile)
 
     def do_run(self):
         sim.setup(timestep=1.0, min_delay=1.0, max_delay=144.0)
         prov_path = globals_variables.get_simulator()._app_provenance_file_path
-        sim.Population(10, sim.IF_curr_exp(), label='pop_1')
+        pop = sim.Population(10, sim.IF_curr_exp(), label='pop_1')
         sim.run(50)
+
+        graph_mapper = globals_variables.get_simulator()._graph_mapper
         placements = globals_variables.get_simulator()._placements
-        vertex_placement = None
-        for placement in placements:
-            if placement.vertex.label == "pop_1:0:9":
-                vertex_placement = placement
-        size1 = self.check_size(prov_path, vertex_placement)
+        machine_verts = list(graph_mapper.get_machine_vertices(pop._vertex))
+        placement = placements.get_placement_of_vertex(machine_verts[0])
+
+        size1 = self.check_size(prov_path, placement)
         sim.run(50)
-        size2 = self.check_size(prov_path, vertex_placement)
+        size2 = self.check_size(prov_path, placement)
         self.assertGreater(size2, size1)
         sim.run(50)
-        size3 = self.check_size(prov_path, vertex_placement)
+        size3 = self.check_size(prov_path, placement)
         self.assertGreater(size3, size2)
 
         # Soft reset so same provenance
         sim.reset()
         sim.run(50)
-        size4 = self.check_size(prov_path, vertex_placement)
+        size4 = self.check_size(prov_path, placement)
         self.assertGreater(size4, size3)
         sim.run(50)
-        size5 = self.check_size(prov_path, vertex_placement)
+        size5 = self.check_size(prov_path, placement)
         self.assertGreater(size5, size4)
 
         # hard reset so new provenance
@@ -62,15 +63,15 @@ class TestIobuffMultirun(BaseTestCase):
         prov_patha = \
             globals_variables.get_simulator()._app_provenance_file_path
         self.assertNotEqual(prov_path, prov_patha)
-        size6 = self.check_size(prov_patha, vertex_placement)
+        size6 = self.check_size(prov_patha, placement)
         # Should write the same thing again
         self.assertEqual(size1, size6)
         sim.end()
 
         # Should not add anything on end.
-        size7 = self.check_size(prov_path, vertex_placement)
+        size7 = self.check_size(prov_path, placement)
         self.assertEqual(size5, size7)
-        size8 = self.check_size(prov_patha, vertex_placement)
+        size8 = self.check_size(prov_patha, placement)
         self.assertEqual(size8, size6)
 
     def test_do_run(self):
