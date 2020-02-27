@@ -36,7 +36,7 @@ logger = logging.getLogger(__name__)
 
 
 class Population(PyNNPopulationCommon, Recorder, PopulationBase):
-    """ PyNN 0.8/0.9 population object.
+    """ PyNN  0.9 population object.
     """
 
     def __init__(

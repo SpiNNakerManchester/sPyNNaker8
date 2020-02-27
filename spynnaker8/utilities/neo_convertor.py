@@ -18,7 +18,7 @@ import numpy as np
 
 
 def convert_analog_signal(signal_array, time_unit=ms):
-    """ Converts part of a NEO object into told spynnaker7 format
+    """ Converts part of a NEO object into old spynnaker7 format
 
     :param ~neo.core.AnalogSignal signal_array: Extended Quantities object
     :param quantities.unitquantity.UnitTime time_unit:
