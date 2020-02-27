@@ -296,16 +296,16 @@ class Recorder(RecordingCommon):
         for variable in variables:
             if variable == SPIKES:
                 self._population._vertex.clear_spike_recording(
-                    sim.buffer_manager, sim.placements)
+                    sim.buffer_manager, sim.placements, sim.graph_mapper)
             elif variable == MEMBRANE_POTENTIAL:
                 self._population._vertex.clear_v_recording(
-                    sim.buffer_manager, sim.placements)
+                    sim.buffer_manager, sim.placements, sim.graph_mapper)
             elif variable == GSYN_EXCIT:
                 self._population._vertex.clear_gsyn_inhibitory_recording(
-                    sim.buffer_manager, sim.placements)
+                    sim.buffer_manager, sim.placements, sim.graph_mapper)
             elif variable == GSYN_INHIB:
                 self._population._vertex.clear_gsyn_excitatory_recording(
-                    sim.buffer_manager, sim.placements)
+                    sim.buffer_manager, sim.placements, sim.graph_mapper)
             else:
                 raise InvalidParameterType(
                     "The variable {} is not a recordable value".format(
