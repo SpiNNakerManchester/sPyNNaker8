@@ -21,24 +21,28 @@ from p8_integration_tests.base_test_case import BaseTestCase
 def do_run():
     p.setup(timestep=1, min_delay=1, max_delay=15)
 
-    spiker = p.Population(1, p.SpikeSourceArray(spike_times=[[5, 25]]),
-                          label='inputSSA_1')
+    p.Population(1, p.SpikeSourceArray(spike_times=[[5, 25]]),
+                 label='inputSSA')
 
-    if_pop = p.Population(1, p.IF_cond_exp(), label='pop_1')
+    if_pop = p.Population(1, p.IF_cond_exp(), label='pop')
 
     if_pop.record("spikes")
     if_pop.record("v")
 
     runtime = 30
+
     # Create projection with delay such that the second spike occurs after
     # the run has finished
+    weight = 5.0
+    delay = 7
     p.Projection(spiker, if_pop, p.OneToOneConnector(),
-                 synapse_type=p.StaticSynapse(weight=5.0, delay=7),
+                 synapse_type=p.StaticSynapse(weight=weight, delay=delay),
                  receptor_type="excitatory", source=None, space=None)
 
     p.run(runtime)
     all1 = if_pop.get_data(["spikes", "v"])
 
+    # Reset (to time=0) and run again
     p.reset()
     p.run(runtime)
     all2 = if_pop.get_data(["spikes", "v"])
