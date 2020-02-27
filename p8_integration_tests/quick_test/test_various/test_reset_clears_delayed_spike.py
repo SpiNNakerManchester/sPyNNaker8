@@ -21,8 +21,8 @@ from p8_integration_tests.base_test_case import BaseTestCase
 def do_run():
     p.setup(timestep=1, min_delay=1, max_delay=15)
 
-    p.Population(1, p.SpikeSourceArray(spike_times=[[5, 25]]),
-                 label='inputSSA')
+    spiker = p.Population(1, p.SpikeSourceArray(spike_times=[[5, 25]]),
+                          label='inputSSA')
 
     if_pop = p.Population(1, p.IF_cond_exp(), label='pop')
 
