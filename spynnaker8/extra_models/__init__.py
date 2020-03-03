@@ -21,7 +21,8 @@ from spynnaker8.models.synapse_dynamics.timing_dependence import (
     TimingDependenceVogels2011 as
     Vogels2011Rule,
     TimingDependencePfisterSpikeTriplet as
-    PfisterSpikeTriplet)
+    PfisterSpikeTriplet
+    )
 from spynnaker8.models.synapse_dynamics.weight_dependence import (
     WeightDependenceAdditiveTriplet)
 from spynnaker.pyNN.models.neuron.builds import (
@@ -30,6 +31,10 @@ from spynnaker.pyNN.models.neuron.builds import (
     IF_curr_dual_exp, IzkCondExpBase as
     Izhikevich_cond, IFCurrExpSEMDBase as
     IF_curr_exp_sEMD, EPropAdaptive, StoreRecallReadout, SinusoidReadout)
+
+
+from spynnaker.pyNN.models.neuron.plasticity.stdp.timing_dependence import TimingDependenceEprop
+from spynnaker.pyNN.models.neuron.plasticity.stdp.weight_dependence import WeightDependenceEpropReg
 
 __all__ = [
     # sPyNNaker 8 models
@@ -41,4 +46,5 @@ __all__ = [
     'WeightDependenceAdditiveTriplet',
     'PfisterSpikeTriplet',
     'SpikeNearestPairRule',
-    'RecurrentRule', 'Vogels2011Rule']
+    'RecurrentRule', 'Vogels2011Rule',
+    'TimingDependenceEprop', "WeightDependenceEpropReg"]

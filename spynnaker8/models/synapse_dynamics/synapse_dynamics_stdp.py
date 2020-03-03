@@ -37,9 +37,9 @@ class SynapseDynamicsSTDP(_BaseClass):
         # move data from timing to weight dependence over as needed to reflect
         # standard structure underneath
 
-        a_plus = timing_dependence.A_plus
-        a_minus = timing_dependence.A_minus
-        weight_dependence.set_a_plus_a_minus(a_plus=a_plus, a_minus=a_minus)
+#         a_plus = timing_dependence.A_plus
+#         a_minus = timing_dependence.A_minus
+#         weight_dependence.set_a_plus_a_minus(a_plus=a_plus, a_minus=a_minus)
 
         if delay is None:
             delay = globals_variables.get_simulator().min_delay
