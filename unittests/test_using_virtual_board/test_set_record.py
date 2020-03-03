@@ -140,10 +140,16 @@ class TestSetRecord(BaseTestCase):
 
     # These test are currently directly on NeuronRecorder as no pynn way
     # to do this
-
     def test_turn_off_some_indexes(self):
+        data_types = {
+            "v": DataType.S1615,
+            "gsyn_exc": DataType.S1615,
+            "gsyn_inh": DataType.S1615
+        }
+
         recorder = NeuronRecorder(
             allowed_variables=["spikes", "v", "gsyn_exc", "gsyn_inh"],
+            data_types=data_types, bitfield_variables=[],
             min_id=0, max_id=5, timestep_in_us=1000)
         recorder.set_recording("spikes", True)
         self.assertListEq(["spikes"], recorder.recording_variables)
