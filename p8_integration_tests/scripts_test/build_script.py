@@ -67,7 +67,6 @@ if __name__ == '__main__':
         introlab_file.write("# flake8: noqa\n")
         add_scripts(introlab_dir, len(introlab_dir)+1, introlab_file,
                     exceptions, [])
-
     examples_dir = os.path.join(spynnaker8_dir, "PyNN8Examples")
     # Jenkins appears to place PyNN8Examples here
     if not os.path.exists(examples_dir):
@@ -81,14 +80,12 @@ if __name__ == '__main__':
     if len(sys.argv) > 1:  # 1 is the script name
         # Skip the known long ones
         exceptions.append("stdp_triplet.py")
-        exceptions.append("balanced_random_live_rate")  # 125 seconds
+        exceptions.append("balanced_random_live_rate.py")  # 125 seconds
         exceptions.append("stdp_curve.py")  # 118 seconds
         exceptions.append("stdp_curve_cond.py")  # 121 seconds
+        exceptions.append("vogels_2011.py")  # 698 seconds
 
     with open(examples_script, "a") as examples_file:
         examples_file.write("# flake8: noqa\n")
         add_scripts(examples_dir, len(examples_dir)+1, examples_file,
-                    exceptions,
-                    ["synfire_if_curr_exp_large_array.py",
-                     "vogels_2011.py",
-                     "vogels_2011_live.py"])
+                    exceptions, [])
