@@ -79,7 +79,7 @@ if __name__ == '__main__':
     # Lazy boolean distinction based on presence or absence of a parameter
     if len(sys.argv) > 1:  # 1 is the script name
         # Skip the known long ones
-        # exceptions.append("stdp_triplet.py")
+        exceptions.append("stdp_triplet.py")
         # exceptions.append("balanced_random_live_rate.py")  # 125 seconds
         # exceptions.append("stdp_curve.py")  # 118 seconds
         # exceptions.append("stdp_curve_cond.py")  # 121 seconds
