@@ -37,7 +37,8 @@ class TestMicrocircuit(ScriptChecker):
         sys.path.append(microcircuit_dir)
         microcircuit_script = os.path.join(
             microcircuit_dir, "microcircuit.py")
-        os.makedirs("results")
+        if not os.path.exists("results"):
+            os.makedirs("results")
         self.check_script(microcircuit_script, False)
         for result_file in [
                 "spikes_L23E.pkl", "spikes_L23I.pkl",

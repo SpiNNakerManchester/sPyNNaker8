@@ -16,6 +16,7 @@
 import spynnaker8 as p
 from p8_integration_tests.base_test_case import BaseTestCase
 from pyNN.utility.plotting import Figure, Panel
+from pyNN.random import NumpyRNG
 import matplotlib.pyplot as plt
 from spynnaker8.utilities import neo_convertor
 
@@ -64,7 +65,9 @@ def do_run(plot):
     # Connectors
     degree = 2.0
     rewiring = 0.4
-    small_world_connector = p.SmallWorldConnector(degree, rewiring)
+    rng = NumpyRNG(seed=1)
+
+    small_world_connector = p.SmallWorldConnector(degree, rewiring, rng=rng)
 
     # Projection for small world grid
     sw_pro = p.Projection(small_world, small_world, small_world_connector,
@@ -130,7 +133,6 @@ class SmallWorldConnectorTest(BaseTestCase):
         three_step_connected = self.next_connected(
             two_step_connected, single_connected)
 
-        # There is a minor chance this fails so if it ever does add a skip
         for i in range(25):
             self.assertEqual(25, len(three_step_connected[i]))
 
@@ -150,6 +152,7 @@ class SmallWorldConnectorTest(BaseTestCase):
 
 
 if __name__ == '__main__':
-    v, spikes = do_run(plot=True)
+    v, spikes, weights = do_run(plot=True)
     print(len(neo_convertor.convert_data(v, name='v')))
     print(len(neo_convertor.convert_data(spikes, name='spikes')))
+    print(len(weights))
