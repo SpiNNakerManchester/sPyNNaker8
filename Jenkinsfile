@@ -53,12 +53,13 @@ pipeline {
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/spinn_common.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/SpiNNFrontEndCommon.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/sPyNNaker.git'
+                // Java dependencies
+                sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/JavaSpiNNaker'
                 // scripts
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/IntroLab.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/PyNN8Examples.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/sPyNNaker8NewModelTemplate.git'
-                // Java dependencies
-                sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/JavaSpiNNaker'
+                sh 'support/gitclone.sh git@github.com:SpiNNakerManchester/microcircuit_model.git'
             }
         }
         stage('Install') {
@@ -151,6 +152,14 @@ pipeline {
             steps {
                 run_pytest('sPyNNaker8/p8_integration_tests/test_new_model_templates', 1200, 'new_model_example', 'auto')
                 run_pytest('sPyNNaker8NewModelTemplate/nmt_integration_tests', 1200, 'nmt_integration_tests', 'auto')
+            }
+        }
+        stage('Run example scrits') {
+            steps {
+                sh 'python sPyNNaker8/p8_integration_tests/scripts_test/build_script.py shorter'
+                run_pytest('sPyNNaker8/p8_integration_tests/scripts_test/examples_auto_test.py/', 1200, 'sPyNNaker8Scripts', '1')
+                run_pytest('sPyNNaker8/p8_integration_tests/scripts_test/intro_labs_auto_test.py', 1200, 'sPyNNaker8Scripts', '1')
+                // Not sPyNNaker8/p8_integration_tests/scripts_test/test_microcircuit.py as it takes 1558  seconds
             }
         }
         stage('Reports') {
