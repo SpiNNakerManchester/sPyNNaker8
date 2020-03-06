@@ -129,6 +129,11 @@ pipeline {
                 sh 'mkdir junit/'
             }
         }
+        stage('Bug') {
+            steps {
+                run_pytest('sPyNNaker8/p8_integration_tests/bug/', 1200, 'bug', 'auto')
+            }
+        }
         stage('Unit Tests') {
             steps {
                 run_pytest('SpiNNUtils/unittests', 1200, 'SpiNNUtils', 'auto')
