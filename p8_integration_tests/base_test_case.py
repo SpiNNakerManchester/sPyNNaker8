@@ -122,7 +122,11 @@ class BaseTestCase(unittest.TestCase):
         test_dir = os.path.dirname(p8_integration_tests_directory)
         report_dir = os.path.join(test_dir, "reports")
         if not os.path.exists(report_dir):
-            os.makedirs(report_dir)
+            # It might now exist if run in parallel
+            try:
+                os.makedirs(report_dir)
+            except Exception:
+                pass
         report_path = os.path.join(report_dir, file_name)
         with open(report_path, "a") as report_file:
             report_file.write(message)
