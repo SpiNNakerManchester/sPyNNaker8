@@ -17,7 +17,7 @@ import spynnaker8 as sim
 from p8_integration_tests.base_test_case import BaseTestCase
 
 
-class TinyTest(BaseTestCase):
+class TestTiny(BaseTestCase):
     def check_run(self):
         sim.setup(timestep=1.0)
         simtime = 10
