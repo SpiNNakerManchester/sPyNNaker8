@@ -214,11 +214,9 @@ class BaseTestCase(unittest.TestCase):
             print("")
             time.sleep(retry_delay)
 
-    def report_dir(self):
-        return globals_variables.get_simulator()._report_default_directory
-
     def get_placements(self, label):
-        report_default_directory = self.report_dir()
+        report_default_directory = globals_variables.get_simulator() \
+            ._report_default_directory
         placement_path = os.path.join(
             report_default_directory, "placement_by_vertex_using_graph.rpt")
         placements = []
