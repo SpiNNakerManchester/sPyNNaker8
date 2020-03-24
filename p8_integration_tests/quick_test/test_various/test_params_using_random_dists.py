@@ -13,7 +13,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from pyNN.random import RandomDistribution, NumpyRNG
+from pyNN.random import NumpyRNG
 import spynnaker8 as p
 from p8_integration_tests.base_test_case import BaseTestCase
 
@@ -24,7 +24,7 @@ class ParamsUsingRandomDists(BaseTestCase):
         nNeurons = 2
         p.setup(timestep=1.0, min_delay=1.0, max_delay=32.0)
 
-        rng=NumpyRNG(seed=85524)
+        rng = NumpyRNG(seed=85524)
         cm = p.RandomDistribution('uniform_int', [1, 4], rng=rng)
         i_off = p.RandomDistribution('poisson', lambda_=3, rng=rng)
         tau_m = p.RandomDistribution('gamma', [1.0, 1.0], rng=rng)
