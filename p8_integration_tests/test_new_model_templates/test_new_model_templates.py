@@ -33,9 +33,29 @@ class TestNewModelTemplates(ScriptChecker):
             parent_dir = os.path.dirname(spynnaker8_dir)
             template_dir = os.path.join(
                 parent_dir, "sPyNNaker8NewModelTemplate")
-        # Get the microcircuit sub directory
+        # Get the examples sub directory
         template_dir = os.path.join(template_dir, "examples")
         sys.path.append(template_dir)
         example_script = os.path.join(
             template_dir, "my_example.py")
+        self.check_script(example_script, False)
+
+    def test_my_semd_example(self):
+        self.runsafe(self.my_semd_example)
+
+    def my_semd_example(self):
+        tests_dir = os.path.dirname(__file__)
+        p8_integration_tests_dir = os.path.dirname(tests_dir)
+        spynnaker8_dir = os.path.dirname(p8_integration_tests_dir)
+        template_dir = os.path.join(
+            spynnaker8_dir, "sPyNNaker8NewModelTemplate")
+        if not os.path.exists(template_dir):
+            parent_dir = os.path.dirname(spynnaker8_dir)
+            template_dir = os.path.join(
+                parent_dir, "sPyNNaker8NewModelTemplate")
+        # Get the examples sub directory
+        template_dir = os.path.join(template_dir, "examples")
+        sys.path.append(template_dir)
+        example_script = os.path.join(
+            template_dir, "my_sEMD_example.py")
         self.check_script(example_script, False)

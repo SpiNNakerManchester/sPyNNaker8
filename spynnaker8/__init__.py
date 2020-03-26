@@ -113,6 +113,9 @@ from spynnaker.pyNN.models.neuron.builds.if_curr_exp_base import \
 from spynnaker.pyNN.models.neuron.builds.if_curr_alpha import \
     IFCurrAlpha as IF_curr_alpha
 # noinspection PyUnresolvedReferences
+from spynnaker.pyNN.models.neuron.builds.if_curr_delta import \
+    IFCurrDelta as IF_curr_delta
+# noinspection PyUnresolvedReferences
 from spynnaker.pyNN.models.neuron.builds.izk_curr_exp_base import \
     IzkCurrExpBase as Izhikevich
 # noinspection PyUnresolvedReferences
@@ -136,13 +139,18 @@ from spynnaker8.models.projection import Projection as SpiNNakerProjection
 
 from spynnaker8 import external_devices
 from spynnaker8 import extra_models
-from spynnaker8.utilities.version_util import pynn8_syntax
 
 # big stuff
 from spynnaker8.spinnaker import SpiNNaker
 from spinn_utilities.log import FormatAdapter
 
 import logging
+
+#: The timestep to use of "auto" is specified as a timestep
+SPYNNAKER_AUTO_TIMESTEP = 1.0
+
+#: The number of timesteps of delay to use as max_delay if "auto" is specified
+SPYNNAKER_AUTO_MAX_DELAY = 144
 
 logger = FormatAdapter(logging.getLogger(__name__))
 
@@ -168,7 +176,7 @@ __all__ = [
     'LastNeuronSelection', 'RandomSelection',
     'DistanceDependentFormation', 'RandomByWeightElimination',
     # neuron stuff
-    'IF_cond_exp', 'IF_curr_exp', "IF_curr_alpha",
+    'IF_cond_exp', 'IF_curr_exp', "IF_curr_alpha", "IF_curr_delta",
     'Izhikevich', 'SpikeSourceArray', 'SpikeSourcePoisson',
     # pops
     'Assembly', 'Population', 'PopulationView',
@@ -326,18 +334,28 @@ def setup(timestep=_pynn_control.DEFAULT_TIMESTEP,
     :raises ConfigurationException if both n_chips_required and
         n_boards_required are used.
     """
+    # Check for "auto" values
+    if timestep == "auto":
+        timestep = SPYNNAKER_AUTO_TIMESTEP
+    if min_delay == "auto":
+        min_delay = timestep
+    if max_delay == "auto":
+        max_delay = SPYNNAKER_AUTO_MAX_DELAY * timestep
+
     # pylint: disable=too-many-arguments, too-many-function-args
-    if pynn8_syntax:
-        # setup PyNN common stuff
-        pynn_common.setup(timestep, min_delay, max_delay, **extra_params)
-    else:
-        # setup PyNN common stuff
-        pynn_common.setup(timestep, min_delay, **extra_params)
+    # setup PyNN common stuff
+    pynn_common.setup(timestep, min_delay, **extra_params)
 
     # create stuff simulator
     if globals_variables.has_simulator():
+        logger.warning("Calling setup a second time causes the previous "
+                       "simulator to be stopped and cleared.")
         # if already exists, kill and rebuild
-        globals_variables.get_simulator().clear()
+        try:
+            globals_variables.get_simulator().clear()
+        except Exception:
+            logger.exception("Error forcing previous simulation to clear")
+            globals_variables.unset_simulator()
 
     # add default label if needed
     if graph_label is None:
@@ -580,7 +598,7 @@ def get_time_step():
     """
     if not globals_variables.has_simulator():
         raise ConfigurationException(FAILED_STATE_MSG)
-    return float(__pynn["get_time_step"]()) / 1000.0
+    return float(__pynn["get_time_step"]())
 
 
 def initialize(cells, **initial_values):

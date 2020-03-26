@@ -12,16 +12,3 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-SpiNNUtilities >= 1!5.1.1, < 1!6.0.0
-SpiNNMachine >= 1!5.1.1, < 1!6.0.0
-SpiNNMan >= 1!5.1.1, < 1!6.0.0
-SpiNNStorageHandlers >= 1!5.1.1, < 1!6.0.0
-SpiNNaker_PACMAN >= 1!5.1.1, < 1!6.0.0
-SpiNNaker_DataSpecification >= 1!5.1.1, < 1!6.0.0
-spalloc >= 2.0.2, < 3.0.0
-SpiNNFrontEndCommon >= 1!5.1.1, < 1!6.0.0
-sPyNNaker >= 1!5.1.1, < 1!6.0.0
-lazyarray >= 0.2.9, <= 0.4.0
-quantities >= 0.12.1
-# csa  # needed but excluded due to readthedocs

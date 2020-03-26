@@ -15,8 +15,10 @@
 
 import numpy
 import spynnaker8 as sim
+from spinn_front_end_common.utilities import globals_variables
 from spynnaker.pyNN.exceptions import SpynnakerException
 from p8_integration_tests.base_test_case import BaseTestCase
+from pyNN.random import NumpyRNG
 
 SOURCES = 5
 DESTINATIONS = 10
@@ -221,3 +223,62 @@ class ConnectorsTest(BaseTestCase):
 
     def test_multiple_connectors(self):
         self.runsafe(self.multiple_connectors)
+
+    def onetoone_population_views(self):
+        sim.setup(timestep=1.0)
+        input = sim.Population(4, sim.SpikeSourceArray([0]), label="input")
+        pop = sim.Population(4, sim.IF_curr_exp(), label="pop")
+        conn = sim.Projection(input[1:3], pop[2:4], sim.OneToOneConnector(),
+                              sim.StaticSynapse(weight=0.5, delay=2))
+        sim.run(1)
+        weights = conn.get(['weight', 'delay'], 'list')
+        sim.end()
+        target = [(1, 2, 0.5, 2.), (2, 3, 0.5, 2.)]
+        self.assertEqual(weights.tolist(), target)
+
+    def test_onetoone_population_views(self):
+        self.runsafe(self.onetoone_population_views)
+
+    def onetoone_multicore_population_views(self):
+        sim.setup(timestep=1.0)
+        sim.set_number_of_neurons_per_core(sim.IF_curr_exp, 10)
+        sim.set_number_of_neurons_per_core(sim.SpikeSourceArray, 10)
+        input = sim.Population(14, sim.SpikeSourceArray([0]), label="input")
+        pop = sim.Population(17, sim.IF_curr_exp(), label="pop")
+        conn = sim.Projection(input[6:12], pop[9:16], sim.OneToOneConnector(),
+                              sim.StaticSynapse(weight=0.5, delay=2),
+                              label="test")
+        sim.run(1)
+        weights = conn.get(['weight', 'delay'], 'list')
+        machine_graph = globals_variables.get_simulator()._machine_graph
+        projection_edges = [edge for edge in machine_graph.edges if (
+            edge.label == 'machine_edge_fortest')]
+        sim.end()
+        # Check the connections are correct
+        target = [(6, 9, 0.5, 2.), (7, 10, 0.5, 2.), (8, 11, 0.5, 2.),
+                  (9, 12, 0.5, 2.), (10, 13, 0.5, 2.), (11, 14, 0.5, 2.)]
+        self.assertEqual(weights.tolist(), target)
+        # In this instance there should be three MachineEdges: one of the four
+        # possible at the start should have been filtered out
+        self.assertEqual(len(projection_edges), 3)
+
+    def test_onetoone_multicore_population_views(self):
+        self.runsafe(self.onetoone_multicore_population_views)
+
+    def fixedprob_population_views(self):
+        sim.setup(timestep=1.0)
+        input = sim.Population(4, sim.SpikeSourceArray([0]), label="input")
+        pop = sim.Population(4, sim.IF_curr_exp(), label="pop")
+        rng = NumpyRNG(seed=1)
+        conn = sim.Projection(input[1:3], pop[2:4],
+                              sim.FixedProbabilityConnector(0.5, rng=rng),
+                              sim.StaticSynapse(weight=0.5, delay=2))
+        sim.run(1)
+        weights = conn.get(['weight', 'delay'], 'list')
+        sim.end()
+        # The fixed seed means this gives the same answer each time
+        target = [(1, 3, 0.5, 2.), (2, 2, 0.5, 2.)]
+        self.assertEqual(weights.tolist(), target)
+
+    def test_fixedprob_population_views(self):
+        self.runsafe(self.fixedprob_population_views)
