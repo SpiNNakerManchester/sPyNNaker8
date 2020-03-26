@@ -61,6 +61,16 @@ if os.environ.get('READTHEDOCS', None) != 'True':
     install_requires.append('scipy')
     install_requires.append('csa')
 
+long_description = {}
+this_directory = os.path.abspath(os.path.dirname(__file__))
+try:
+    with open(os.path.join(this_directory, 'README.md')) as f:
+        long_description["long_description"] = f.read()
+        long_description["long_description_content_type"] = "text/markdown"
+except IOError:
+    # If we can't read the long description, so be it; it's not a fatal error
+    pass
+
 setup(
     name="sPyNNaker8",
     version=__version__,
@@ -92,5 +102,6 @@ setup(
     package_data=package_data,
     install_requires=install_requires,
     maintainer="SpiNNakerTeam",
-    maintainer_email="spinnakerusers@googlegroups.com"
+    maintainer_email="spinnakerusers@googlegroups.com",
+    **long_description
 )
