@@ -14,9 +14,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import configparser
-import numpy
 from spinn_front_end_common.utilities import globals_variables
-from spynnaker8 import RandomDistribution
 
 
 class MockPopulation(object):
@@ -70,18 +68,6 @@ class MockSynapseInfo(object):
         return self._delays
 
 
-class MockRNG(object):
-
-    def __init__(self):
-        self._rng = numpy.random.RandomState()
-
-    def next(self, n):
-        return self._rng.uniform(size=n)
-
-    def __getattr__(self, name):
-        return getattr(self._rng, name)
-
-
 class MockSimulator(object):
 
     def __init__(self):
@@ -99,15 +85,6 @@ class MockSimulator(object):
                                   "enable_buffered_recording": "False"}
         self.config["MasterPopTable"] = {"generator": "BinarySearch"}
         self.config["Reports"] = {"n_profile_samples": 0}
-
-    def is_a_pynn_random(self, values):
-        return isinstance(values, MockRNG)
-
-    def get_pynn_NumpyRNG(self):
-        return MockRNG
-
-    def get_random_distribution(self):
-        return RandomDistribution
 
     def add_population(self, pop):
         pass
