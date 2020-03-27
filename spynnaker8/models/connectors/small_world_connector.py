@@ -27,7 +27,8 @@ class SmallWorldConnector(_BaseClass):
 
     def __init__(
             self, degree, rewiring, allow_self_connections=True,
-            safe=True, verbose=False, n_connections=None):
+            n_connections=None, rng=None, safe=True, callback=None,
+            verbose=False):
         """
         :param float degree:
             the region length where nodes will be connected locally
@@ -36,19 +37,23 @@ class SmallWorldConnector(_BaseClass):
             if the connector is used to connect a Population to itself, this
             flag determines whether a neuron is allowed to connect to itself,
             or only to other neurons in the Population.
-        :param bool safe:
-            Whether to check that weights and delays have valid values.
-            If False, this check is skipped.
-        :param bool verbose:
-            Whether to output extra information about the connectivity to a
-            CSV file
         :param n_connections:
             if specified, the number of efferent synaptic connections per
             neuron
         :type n_connections: int or None
+        :param rng: random number generator
+        :type rng: ~pyNN.random.NumpyRNG or None
+        :param bool safe:
+            Whether to check that weights and delays have valid values.
+            If False, this check is skipped.
+        :param callable callback: For PyNN compatibility only.
+        :param bool verbose:
+            Whether to output extra information about the connectivity to a
+            CSV file
         """
         # pylint: disable=too-many-arguments
         super(SmallWorldConnector, self).__init__(
             degree=degree, rewiring=rewiring,
             allow_self_connections=allow_self_connections,
-            safe=safe, verbose=verbose, n_connections=n_connections)
+            n_connections=n_connections, rng=rng, safe=safe, callback=callback,
+            verbose=verbose)

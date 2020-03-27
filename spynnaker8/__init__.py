@@ -370,8 +370,14 @@ def setup(timestep=_pynn_control.DEFAULT_TIMESTEP,
 
     # create stuff simulator
     if globals_variables.has_simulator():
+        logger.warning("Calling setup a second time causes the previous "
+                       "simulator to be stopped and cleared.")
         # if already exists, kill and rebuild
-        globals_variables.get_simulator().clear()
+        try:
+            globals_variables.get_simulator().clear()
+        except Exception:
+            logger.exception("Error forcing previous simulation to clear")
+            globals_variables.unset_simulator()
 
     # add default label if needed
     if graph_label is None:

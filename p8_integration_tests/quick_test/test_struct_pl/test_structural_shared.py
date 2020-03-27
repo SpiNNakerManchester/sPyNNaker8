@@ -82,9 +82,9 @@ def structural_shared():
     assert(len(conns_4) == 0)
 
 
-class TestStructuralWithSTDP(BaseTestCase):
+class TestStructuralShared(BaseTestCase):
 
-    def test_structural_without_stdp(self):
+    def test_structural_shared(self):
         self.runsafe(structural_shared)
 
 
