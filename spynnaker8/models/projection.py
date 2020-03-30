@@ -50,6 +50,22 @@ class Projection(PyNNProjectionCommon):
             self, pre_synaptic_population, post_synaptic_population,
             connector, synapse_type=None, source=None,
             receptor_type=None, space=None, label=None):
+        """
+        :param ~spynnaker8.models.populations.PopulationBase \
+                pre_synaptic_population:
+        :param ~spynnaker8.models.populations.PopulationBase \
+                post_synaptic_population:
+        :param connector:
+        :type connector:
+            ~spynnaker.pyNN.models.neural_projections.connectors.AbstractConnector
+        :param synapse_type:
+        :type synapse_type:
+            ~spynnaker.pyNN.models.neuron.synapse_dynamics.AbstractStaticSynapseDynamics
+        :param None source: Unsupported; must be None
+        :param str receptor_type:
+        :param ~pyNN.space.Space space:
+        :param str label:
+        """
         # pylint: disable=too-many-arguments
         if source is not None:
             raise InvalidParameterType(
@@ -111,28 +127,28 @@ class Projection(PyNNProjectionCommon):
 
     def _check_population_param(self, param, connector):
         if isinstance(param, Population):
-            return  # Projections work from Populations
-        if isinstance(param, PopulationView):
-            if isinstance(connector, AbstractConnectorSupportsViewsOnMachine):
-                # Check whether the array is contiguous or not
-                inds = param._indexes
-                if (inds == tuple(range(inds[0], inds[-1] + 1))):
-                    return
-                else:
-                    raise NotImplementedError(
-                        "Projections over views only work on contiguous "
-                        "arrays, e.g. view = pop[n:m], not view = pop[n,m]")
-            else:
-                raise NotImplementedError(
-                    "Projections over views not currently supported with "
-                    "the {}".format(connector))
-        raise ConfigurationException("Unexpected parameter type {}. Expected "
-                                     "Population".format(type(param)))
+            return  # Projections definitely work from Populations
+        if not isinstance(param, PopulationView):
+            raise ConfigurationException(
+                "Unexpected parameter type {}. Expected Population".format(
+                    type(param)))
+        if not isinstance(connector, AbstractConnectorSupportsViewsOnMachine):
+            raise NotImplementedError(
+                "Projections over views not currently supported with the {}"
+                .format(connector))
+        # Check whether the array is contiguous or not
+        inds = param._indexes
+        if inds != tuple(range(inds[0], inds[-1] + 1)):
+            raise NotImplementedError(
+                "Projections over views only work on contiguous arrays, "
+                "e.g. view = pop[n:m], not view = pop[n,m]")
+        # Projection is compatible
 
     def __len__(self):
         raise NotImplementedError
 
     def set(self, **attributes):
+        """ NOT IMPLEMENTED """
         raise NotImplementedError
 
     def get(self, attribute_names, format,  # @ReservedAssignment
@@ -141,12 +157,17 @@ class Projection(PyNNProjectionCommon):
 
         :param attribute_names: list of attributes to gather
         :type attribute_names: str or iterable(str)
-        :param format: "list" or "array"
-        :param gather: gather over all nodes (defaulted to true on SpiNNaker)
-        :param with_address: True if the source and target are to be included
-        :param multiple_synapses:\
-            What to do with the data if format="array" and if the multiple\
-            source-target pairs with the same values exist.  Currently only\
+        :param str format: ``"list"`` or ``"array"``
+        :param bool gather: gather over all nodes
+
+            .. note::
+                SpiNNaker always gathers.
+
+        :param bool with_address:
+            True if the source and target are to be included
+        :param str multiple_synapses:
+            What to do with the data if format="array" and if the multiple
+            source-target pairs with the same values exist.  Currently only
             "last" is supported
         :return: values selected
         """
@@ -159,8 +180,7 @@ class Projection(PyNNProjectionCommon):
 
     def _get_data(
             self, attribute_names, format,  # @ReservedAssignment
-            with_address, multiple_synapses='last',
-            notify=None):
+            with_address, multiple_synapses='last', notify=None):
         """ Internal data getter to add notify option
         """
         # pylint: disable=too-many-arguments
@@ -205,17 +225,20 @@ class Projection(PyNNProjectionCommon):
 
     def getWeights(self, format='list',  # @ReservedAssignment
                    gather=True):
+        """ DEPRECATED """
         logger.warning("getWeights is deprecated.  Use get('weight') instead")
         return self.get('weight', format, gather, with_address=False)
 
     def getDelays(self, format='list',  # @ReservedAssignment
                   gather=True):
+        """ DEPRECATED """
         logger.warning("getDelays is deprecated.  Use get('delay') instead")
         return self.get('delay', format, gather, with_address=False)
 
     def getSynapseDynamics(self, parameter_name,
                            format='list',  # @ReservedAssignment
                            gather=True):
+        """ DEPRECATED """
         logger.warning(
             "getSynapseDynamics is deprecated. Use get(parameter_name)"
             " instead")
@@ -223,6 +246,7 @@ class Projection(PyNNProjectionCommon):
 
     def saveConnections(self, file,  # @ReservedAssignment
                         gather=True, compatible_output=True):
+        """ DEPRECATED """
         if not compatible_output:
             logger.warning("SpiNNaker only supports compatible_output=True.")
         logger.warning(
@@ -231,13 +255,16 @@ class Projection(PyNNProjectionCommon):
 
     def printWeights(self, file, format='list',  # @ReservedAssignment
                      gather=True):
+        """ DEPRECATED """
         logger.warning(
             "printWeights is deprecated. Use save('weight') instead")
         self.save('weight', file, format, gather)
 
     def printDelays(self, file, format='list',  # @ReservedAssignment
                     gather=True):
-        """ Print synaptic weights to file. In the array format, zeros are\
+        """ DEPRECATED
+
+            Print synaptic weights to file. In the array format, zeros are\
             printed for non-existent connections.
         """
         logger.warning("printDelays is deprecated. Use save('delay') instead")
@@ -245,7 +272,9 @@ class Projection(PyNNProjectionCommon):
 
     def weightHistogram(self, min=None, max=None,  # @ReservedAssignment
                         nbins=10):
-        """ Return a histogram of synaptic weights.\
+        """ DEPRECATED
+
+            Return a histogram of synaptic weights.\
             If min and max are not given, the minimum and maximum weights are\
             calculated automatically.
         """
@@ -278,6 +307,18 @@ class Projection(PyNNProjectionCommon):
             Values will be expressed in the standard PyNN units (i.e., \
             millivolts, nanoamps, milliseconds, microsiemens, nanofarads, \
             event per second).
+
+        :param attribute_names:
+        :type attribute_names: str or list(str)
+        :param file:
+        :type file: str or file
+        :param str format:
+        :param bool gather: Ignored
+
+            .. note::
+                SpiNNaker always gathers.
+
+        :param bool with_address:
         """
         if not gather:
             warn_once(
@@ -299,14 +340,25 @@ class Projection(PyNNProjectionCommon):
 
     @property
     def pre(self):
+        """ The pre-population.
+
+        :rtype: ~spynnaker8.models.populations.PopulationBase
+        """
         return self._synapse_information.pre_population
 
     @property
     def post(self):
+        """ The post-population.
+
+        :rtype: ~spynnaker8.models.populations.PopulationBase
+        """
         return self._synapse_information.post_population
 
     @property
     def label(self):
+        """
+        :rtype: str
+        """
         return self.__label
 
     def __repr__(self):

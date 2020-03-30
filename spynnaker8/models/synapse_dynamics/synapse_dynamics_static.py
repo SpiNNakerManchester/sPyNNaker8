@@ -27,6 +27,11 @@ class SynapseDynamicsStatic(_BaseClass):
     def __init__(
             self, weight=PyNNStaticSynapse.default_parameters['weight'],
             delay=None):
+        """
+        :param float weight:
+        :param delay:
+        :type delay: float or None
+        """
         if delay is None:
             delay = globals_variables.get_simulator().min_delay
         super(SynapseDynamicsStatic, self).__init__(weight, delay)

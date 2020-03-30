@@ -23,5 +23,11 @@ class WeightDependenceAdditiveTriplet(_BaseClass):
     # noinspection PyPep8Naming
     def __init__(
             self, w_min=0.0, w_max=1.0, A3_plus=0.01, A3_minus=0.01):
+        r"""
+        :param float w_min: :math:`w_\mathrm{min}`
+        :param float w_max: :math:`w_\mathrm{max}`
+        :param float A3_plus: :math:`A_3^+`
+        :param float A3_minus: :math:`A_3^-`
+        """
         super(WeightDependenceAdditiveTriplet, self).__init__(
             w_max=w_max, w_min=w_min, A3_plus=A3_plus, A3_minus=A3_minus)

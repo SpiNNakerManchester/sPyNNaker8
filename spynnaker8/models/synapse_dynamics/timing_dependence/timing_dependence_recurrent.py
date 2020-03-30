@@ -31,6 +31,15 @@ class TimingDependenceRecurrent(_BaseClass):
             mean_pre_window=_defaults['mean_pre_window'],
             mean_post_window=_defaults['mean_post_window'],
             dual_fsm=_defaults['dual_fsm'], A_plus=0.01, A_minus=0.01):
+        """
+        :param int accumulator_depression:
+        :param int accumulator_potentiation:
+        :param float mean_pre_window:
+        :param float mean_post_window:
+        :param bool dual_fsm:
+        :param float A_plus: :math:`A^+`
+        :param float A_minus: :math:`A^-`
+        """
         # pylint: disable=too-many-arguments
         super(TimingDependenceRecurrent, self).__init__(
             accumulator_depression=accumulator_depression,

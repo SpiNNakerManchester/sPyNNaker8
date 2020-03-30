@@ -20,32 +20,13 @@ from spynnaker.pyNN.models.neural_projections.connectors import (
 
 class KernelConnector(CommonKernelConnector):
     """
-    Where the pre- and post-synaptic populations are considered as a 2D array.
-    Connect every post(row, col) neuron to many pre(row, col, kernel) through
+    Where the pre- and post-synaptic populations are considered as a 2D array.\
+    Connect every post(row, col) neuron to many pre(row, col, kernel) through\
     a (kernel) set of weights and/or delays.
 
-    TODO: should these include allow_self_connections and with_replacement?
-
-    :param shape_pre:\
-        2D shape of the pre population (rows/height, cols/width, usually \
-        the input image shape)
-    :param shape_post:\
-        2D shape of the post population (rows/height, cols/width)
-    :param shape_kernel:\
-        2D shape of the kernel (rows/height, cols/width)
-    :param weight_kernel (optional):\
-        2D matrix of size shape_kernel describing the weights
-    :param delay_kernel (optional):\
-        2D matrix of size shape_kernel describing the delays
-    :param shape_common (optional):\
-        2D shape of common coordinate system (for both pre and post, \
-        usually the input image sizes)
-    :param pre/post_sample_steps_in_post/pre (optional):\
-        Sampling steps/jumps for pre/post pop <=> (startX, endX, _stepX_)
-        None or 2-item array
-    :param pre/post_start_coords_in_post/pre (optional):\
-        Starting row/col for pre/post sampling <=> (_startX_, endX, stepX)
-        None or 2-item array
+    .. note::
+        TODO: should these include `allow_self_connections` and \
+        `with_replacement`?
     """
     __slots__ = []
 
@@ -55,6 +36,50 @@ class KernelConnector(CommonKernelConnector):
             pre_sample_steps_in_post=None, pre_start_coords_in_post=None,
             post_sample_steps_in_pre=None, post_start_coords_in_pre=None,
             safe=True, space=None, verbose=False):
+        r"""
+        :param shape_pre:
+            2D shape of the pre population (rows/height, cols/width, usually
+            the input image shape)
+        :type shape_pre: list(int) or tuple(int,int)
+        :param shape_post:
+            2D shape of the post population (rows/height, cols/width)
+        :type shape_post: list(int) or tuple(int,int)
+        :param shape_kernel:
+            2D shape of the kernel (rows/height, cols/width)
+        :type shape_kernel: list(int) or tuple(int,int)
+        :param weight_kernel: (optional)
+            2D matrix of size shape_kernel describing the weights
+        :type weight_kernel: ~numpy.ndarray or ~pyNN.random.NumpyRNG
+            or int or float or list(int) or list(float) or None
+        :param delay_kernel: (optional)
+            2D matrix of size shape_kernel describing the delays
+        :type delay_kernel: ~numpy.ndarray or ~pyNN.random.NumpyRNG
+            or int or float or list(int) or list(float) or None
+        :param shape_common: (optional)
+            2D shape of common coordinate system (for both pre and post,
+            usually the input image sizes)
+        :type shape_common: list(int) or tuple(int,int) or None
+        :param pre_sample_steps: (optional)
+            Sampling steps/jumps for pre pop :math:`\Leftrightarrow`
+            :math:`((\mathsf{start}_x, \mathsf{end}_x, \mathsf{step}_x),
+            (\mathsf{start}_y, \mathsf{end}_y, \mathsf{step}_y))`
+        :type pre_sample_steps: None or list(tuple(int,int,int))
+        :param pre_start_coords: (optional)
+            Starting row/col for pre sampling :math:`\Leftrightarrow`
+            :math:`((\mathsf{start}_x, \mathsf{end}_x, \mathsf{step}_x),
+            (\mathsf{start}_y, \mathsf{end}_y, \mathsf{step}_y))`
+        :type pre_start_coords: None or list(tuple(int,int,int))
+        :param post_sample_steps: (optional)
+            Sampling steps/jumps for post pop :math:`\Leftrightarrow`
+            :math:`((\mathsf{start}_x, \mathsf{end}_x, \mathsf{step}_x),
+            (\mathsf{start}_y, \mathsf{end}_y, \mathsf{step}_y))`
+        :type post_sample_steps: None or list(tuple(int,int,int))
+        :param post_start_coords: (optional)
+            Starting row/col for post sampling :math:`\Leftrightarrow`
+            :math:`((\mathsf{start}_x, \mathsf{end}_x, \mathsf{step}_x),
+            (\mathsf{start}_y, \mathsf{end}_y, \mathsf{step}_y))`
+        :type post_start_coords: None or list(tuple(int,int,int))
+        """
         # pylint: disable=too-many-arguments
         super(KernelConnector, self).__init__(
             shape_pre, shape_post, shape_kernel, weight_kernel,
