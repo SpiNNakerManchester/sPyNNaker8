@@ -27,12 +27,7 @@ try:
     _matplotlib_missing = False
 except ImportError:
     _matplotlib_missing = True
-from spynnaker8.utilities.version_util import pynn8_syntax
-if pynn8_syntax:
-    # pylint: disable=no-name-in-module
-    from neo import AnalogSignalArray as AnalogSignalType  # @UnresolvedImport
-else:
-    from neo import AnalogSignal as AnalogSignalType  # @Reimport
+from neo import AnalogSignal as AnalogSignalType  # @Reimport
 
 
 def _handle_options(ax, options):
@@ -187,10 +182,7 @@ def plot_segment(axes, segment, label='', **options):
     :param str label: Label for the graph
     :param options: plotting options
     """
-    if pynn8_syntax:
-        analogsignals = segment.analogsignalarrays
-    else:
-        analogsignals = segment.analogsignals
+    analogsignals = segment.analogsignals
     if "name" in options:
         name = options.pop("name")
         if name == 'spikes':

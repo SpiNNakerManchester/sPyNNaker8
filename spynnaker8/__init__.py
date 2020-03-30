@@ -110,6 +110,9 @@ from spynnaker.pyNN.models.neuron.builds.if_curr_exp_base import (
 from spynnaker.pyNN.models.neuron.builds.if_curr_alpha import (
     IFCurrAlpha as IF_curr_alpha)
 # noinspection PyUnresolvedReferences
+from spynnaker.pyNN.models.neuron.builds.if_curr_delta import \
+    IFCurrDelta as IF_curr_delta
+# noinspection PyUnresolvedReferences
 from spynnaker.pyNN.models.neuron.builds.izk_curr_exp_base import (
     IzkCurrExpBase as Izhikevich)
 # noinspection PyUnresolvedReferences
@@ -133,7 +136,6 @@ from spynnaker8.models.projection import Projection as SpiNNakerProjection
 
 from spynnaker8 import external_devices
 from spynnaker8 import extra_models
-from spynnaker8.utilities.version_util import pynn8_syntax
 
 # big stuff
 from spynnaker8.spinnaker import SpiNNaker
@@ -168,7 +170,7 @@ __all__ = [
     'LastNeuronSelection', 'RandomSelection',
     'DistanceDependentFormation', 'RandomByWeightElimination',
     # neuron stuff
-    'IF_cond_exp', 'IF_curr_exp', "IF_curr_alpha",
+    'IF_cond_exp', 'IF_curr_exp', "IF_curr_alpha", "IF_curr_delta",
     'Izhikevich', 'SpikeSourceArray', 'SpikeSourcePoisson',
     # pops
     'Assembly', 'Population', 'PopulationView',
@@ -363,17 +365,19 @@ def setup(timestep=_pynn_control.DEFAULT_TIMESTEP,
         max_delay = SPYNNAKER_AUTO_MAX_DELAY * timestep
 
     # pylint: disable=too-many-arguments, too-many-function-args
-    if pynn8_syntax:
-        # setup PyNN common stuff
-        pynn_common.setup(timestep, min_delay, max_delay, **extra_params)
-    else:
-        # setup PyNN common stuff
-        pynn_common.setup(timestep, min_delay, **extra_params)
+    # setup PyNN common stuff
+    pynn_common.setup(timestep, min_delay, **extra_params)
 
     # create stuff simulator
     if globals_variables.has_simulator():
+        logger.warning("Calling setup a second time causes the previous "
+                       "simulator to be stopped and cleared.")
         # if already exists, kill and rebuild
-        globals_variables.get_simulator().clear()
+        try:
+            globals_variables.get_simulator().clear()
+        except Exception:
+            logger.exception("Error forcing previous simulation to clear")
+            globals_variables.unset_simulator()
 
     # add default label if needed
     if graph_label is None:

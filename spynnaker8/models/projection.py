@@ -23,9 +23,9 @@ from spinn_utilities.logger_utils import warn_once
 from spinn_front_end_common.utilities import globals_variables
 from spinn_front_end_common.utilities.exceptions import ConfigurationException
 from spynnaker.pyNN.exceptions import InvalidParameterType
-from spynnaker8.models.connectors import (
-    FromListConnector, OneToOneConnector, AllToAllConnector,
-    FixedProbabilityConnector)
+from spynnaker.pyNN.models.neural_projections.connectors import (
+    AbstractConnectorSupportsViewsOnMachine)
+from spynnaker8.models.connectors import FromListConnector
 from spynnaker8.models.synapse_dynamics import SynapseDynamicsStatic
 # This line has to come in this order as it otherwise causes a circular
 # dependency
@@ -132,9 +132,7 @@ class Projection(PyNNProjectionCommon):
             raise ConfigurationException(
                 "Unexpected parameter type {}. Expected Population".format(
                     type(param)))
-        if not (isinstance(connector, OneToOneConnector) or
-                isinstance(connector, AllToAllConnector) or
-                isinstance(connector, FixedProbabilityConnector)):
+        if not isinstance(connector, AbstractConnectorSupportsViewsOnMachine):
             raise NotImplementedError(
                 "Projections over views not currently supported with the {}"
                 .format(connector))
