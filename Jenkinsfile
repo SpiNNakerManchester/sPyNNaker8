@@ -101,7 +101,7 @@ pipeline {
                 sh 'pip install -r sPyNNaker8/requirements-test.txt'
                 // Additional requirements for testing here
                 // coverage version capped due to https://github.com/nedbat/coveragepy/issues/883
-                sh 'pip install python-coveralls "coverage>=4.4,<5.0.0"'
+                sh 'pip install python-coveralls "coverage>=5.0.0"'
                 sh 'pip install pytest-instafail pytest-xdist'
                 // Java install
                 sh 'mvn -f JavaSpiNNaker package'
@@ -123,6 +123,8 @@ pipeline {
                 // Prepare coverage
                 sh 'rm -f coverage.xml'
                 sh 'rm -f .coverage'
+                sh 'echo "[run]" > .coveragerc'
+                sh 'echo "parallel = True" >> .coveragerc'
                 // Prepare for unit tests
                 sh 'echo "# Empty config" >  ~/.spinnaker.cfg'
                 // Create a directory for test outputs
@@ -199,5 +201,5 @@ pipeline {
 
 def run_pytest(String tests, int timeout, String results, String threads) {
     sh 'echo "<testsuite tests="0"></testsuite>" > junit/' + results + '.xml'
-    sh 'py.test ' + tests + ' -rs -n ' + threads + ' --forked --show-progress --cov-branch --cov spynnaker8 --cov spynnaker --cov spinn_front_end_common --cov pacman --cov data_specification --cov spinnman --cov spinn_machine --cov spinn_storage_handlers --cov spalloc --cov spinn_utilities --junitxml junit/' + results + '.xml --cov-report xml:coverage.xml --cov-append --timeout ' + timeout
+    sh 'py.test ' + tests + ' -rs -n ' + threads + ' --forked --show-progress --cov-config=.coveragerc --cov-branch --cov spynnaker8 --cov spynnaker --cov spinn_front_end_common --cov pacman --cov data_specification --cov spinnman --cov spinn_machine --cov spinn_storage_handlers --cov spalloc --cov spinn_utilities --junitxml junit/' + results + '.xml --cov-report xml:coverage.xml --cov-append --timeout ' + timeout
 }
