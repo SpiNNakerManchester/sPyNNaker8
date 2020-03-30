@@ -35,7 +35,7 @@ class KernelConnector(CommonKernelConnector):
             delay_kernel=None, shape_common=None,
             pre_sample_steps_in_post=None, pre_start_coords_in_post=None,
             post_sample_steps_in_pre=None, post_start_coords_in_pre=None,
-            safe=True, verbose=False):
+            safe=True, space=None, verbose=False):
         r"""
         :param tuple(int,int) shape_pre:
             2D shape of the pre population (rows/height, cols/width, usually
@@ -70,6 +70,7 @@ class KernelConnector(CommonKernelConnector):
         :param bool safe:
             Whether to check that weights and delays have valid values. If
             False, this check is skipped.
+        :param ~pyNN.space.Space space:
         :param bool verbose:
             Whether to output extra information about the connectivity to a
             CSV file
@@ -79,4 +80,4 @@ class KernelConnector(CommonKernelConnector):
             shape_pre, shape_post, shape_kernel, weight_kernel,
             delay_kernel, shape_common, pre_sample_steps_in_post,
             pre_start_coords_in_post, post_sample_steps_in_pre,
-            post_start_coords_in_pre, safe, verbose)
+            post_start_coords_in_pre, safe, space, verbose)
