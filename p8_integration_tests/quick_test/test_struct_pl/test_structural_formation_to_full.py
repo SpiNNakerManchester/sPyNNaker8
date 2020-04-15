@@ -48,8 +48,8 @@ def structural_formation_to_full():
         prov_db.row_factory = sqlite3.Row
         rows = list(prov_db.execute(
             "SELECT the_value FROM provenance_view "
-             "WHERE source_name LIKE '%pop%' "
-             "AND description_name = 'Number_of_rewires' LIMIT 1"))
+            "WHERE source_name LIKE '%pop%' "
+            "AND description_name = 'Number_of_rewires' LIMIT 1"))
     for row in rows:
         num_rewires = row["the_value"]
 
