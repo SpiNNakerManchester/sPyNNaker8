@@ -13,6 +13,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+r"""
+Connectors are objects that describe how neurons in
+:py:class:`~spynnaker8.models.populations.Population`\ s
+are connected to each other.
+"""
+
 from .all_to_all_connector import AllToAllConnector
 from .array_connector import ArrayConnector
 from .csa_connector import CSAConnector
