@@ -39,8 +39,7 @@ from spynnaker.pyNN.models.neuron.builds import (
     IZK_cond_exp_izhikevich_neuromodulation)
 
 # Variable rate poisson
-from spynnaker.pyNN.models.spike_source.spike_source_poisson_variable \
-    import SpikeSourcePoissonVariable
+from spynnaker.pyNN.models.spike_source import SpikeSourcePoissonVariable
 
 __all__ = [
     # sPyNNaker 8 models
