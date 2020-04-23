@@ -123,7 +123,7 @@ def structural_with_stdp():
 
 class TestStructuralWithSTDP(BaseTestCase):
 
-    def test_structural_without_stdp(self):
+    def test_structural_with_stdp(self):
         self.runsafe(structural_with_stdp)
 
 

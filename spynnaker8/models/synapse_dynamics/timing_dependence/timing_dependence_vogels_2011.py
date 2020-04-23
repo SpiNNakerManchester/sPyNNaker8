@@ -27,6 +27,12 @@ class TimingDependenceVogels2011(_BaseClass):
 
     def __init__(
             self, alpha, tau=_defaults['tau'], A_plus=0.01, A_minus=0.01):
+        r"""
+        :param float alpha: :math:`\alpha`
+        :param float tau: :math:`\tau`
+        :param float A_plus: :math:`A^+`
+        :param float A_minus: :math:`A^-`
+        """
         super(TimingDependenceVogels2011, self).__init__(tau=tau, alpha=alpha)
         self.__a_plus = A_plus
         self.__a_minus = A_minus
