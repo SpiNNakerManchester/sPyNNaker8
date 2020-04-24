@@ -1,3 +1,4 @@
+from __future__ import print_function
 import spynnaker8 as p
 import numpy
 import sys
@@ -44,5 +45,5 @@ if __name__ == "__main__":
     v_01, spikes_01, v_005, spikes_005 = do_test_multistep()
 
     numpy.set_printoptions(threshold=sys.maxsize)
-    print v_01, spikes_01
-    print v_005, spikes_005
+    print(v_01, spikes_01)
+    print(v_005, spikes_005)
