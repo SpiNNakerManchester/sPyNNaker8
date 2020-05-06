@@ -38,13 +38,14 @@ def run_script():
     sim.Projection(input1, pop_1, sim.AllToAllConnector(),
                    synapse_type=sim.StaticSynapse(weight=5, delay=1))
     input2 = sim.Population(n_neurons, sim.SpikeSourcePoisson(
-        rate=100.0, seed=1),  label="Stim_Exc")
+        rate=100.0, seed=1), label="Stim_Exc")
     sim.Projection(input2, pop_1, sim.OneToOneConnector(),
                    synapse_type=sim.StaticSynapse(weight=5, delay=1))
     pop_1.record(['spikes', 'v', 'gsyn_exc', 'gsyn_inh'])
     sim.run(simtime)
 
     neo = pop_1.get_data()
+    # pylint: disable=no-member
     spikes = neo.segments[0].spiketrains
     v = neo.segments[0].filter(name='v')[0]
     exc = neo.segments[0].filter(name='gsyn_exc')[0]
@@ -64,8 +65,8 @@ def write_spikes(spikes):
 
 
 if __name__ == '__main__':
-    spikes, v, exc, inh = run_script()
-    write_spikes(spikes)
-    numpy.savetxt(v_file, v, delimiter=',')
-    numpy.savetxt(exc_file, exc, delimiter=',')
-    numpy.savetxt(inh_file, inh, delimiter=',')
+    _spikes, _v, _exc, _inh = run_script()
+    write_spikes(_spikes)
+    numpy.savetxt(v_file, _v, delimiter=',')
+    numpy.savetxt(exc_file, _exc, delimiter=',')
+    numpy.savetxt(inh_file, _inh, delimiter=',')

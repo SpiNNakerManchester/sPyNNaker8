@@ -19,9 +19,10 @@ from p8_integration_tests.base_test_case import BaseTestCase
 
 
 class TestKernelConnector(BaseTestCase):
+    # pylint: disable=expression-not-assigned
 
-    def do_run(self, psh, psw, ksh, ksw, pre_start=[0, 0], post_start=[0, 0],
-               pre_step=[1, 1], post_step=[1, 1]):
+    def do_run(self, psh, psw, ksh, ksw, pre_start=(0, 0), post_start=(0, 0),
+               pre_step=(1, 1), post_step=(1, 1)):
         sim.setup(timestep=1.0)
 
         # determine population size and runtime from the kernel sizes
