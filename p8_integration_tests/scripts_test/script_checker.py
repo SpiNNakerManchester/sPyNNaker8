@@ -17,8 +17,8 @@ from p8_integration_tests.base_test_case import BaseTestCase
 import os
 import time
 import matplotlib
-matplotlib.use('Agg')
 import matplotlib.pyplot as plt  # noqa: E401
+matplotlib.use('Agg')
 
 
 class ScriptChecker(BaseTestCase):
