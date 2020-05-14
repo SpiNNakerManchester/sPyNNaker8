@@ -1,4 +1,3 @@
-
 Changes for PyNN0.9 and Neo0.5
 ------------------------------
 This document covers only the differences noticed between PyNN0.8 and PyNN0.9, which includes a change from Neo0.4 to Neo0.5.

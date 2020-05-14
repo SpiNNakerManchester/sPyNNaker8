@@ -17,7 +17,6 @@ from p8_integration_tests.base_test_case import BaseTestCase
 import os
 import time
 import matplotlib
-import matplotlib.pyplot as plt  # noqa: E401
 matplotlib.use('Agg')
 
 
@@ -30,6 +29,7 @@ class ScriptChecker(BaseTestCase):
         plotting = "import matplotlib.pyplot" in open(script).read()
         if plotting:
             self._show = False
+            import matplotlib.pyplot as plt
             plt.show = self.mockshow
         from runpy import run_path
         try:
