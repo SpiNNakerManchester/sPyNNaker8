@@ -18,7 +18,6 @@ import os
 import time
 import matplotlib
 matplotlib.use('Agg')
-import matplotlib.pyplot as plt  # noqa: E401
 
 
 class ScriptChecker(BaseTestCase):
@@ -30,6 +29,7 @@ class ScriptChecker(BaseTestCase):
         plotting = "import matplotlib.pyplot" in open(script).read()
         if plotting:
             self._show = False
+            import matplotlib.pyplot as plt
             plt.show = self.mockshow
         from runpy import run_path
         try:
