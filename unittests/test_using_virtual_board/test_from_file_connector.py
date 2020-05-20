@@ -41,11 +41,11 @@ class TestFromFileConnector(BaseTestCase):
             self.assertEqual(from_as[0], source)
             self.assertEqual(from_as[1], dest)
             if w_index:
-                self.assertAlmostEqual(from_as[w_index], weight, 4)
+                self.assertAlmostEqual(from_as[w_index], weight, 3)
             else:
                 self.assertEqual(WEIGHT, weight)
             if d_index:
-                self.assertAlmostEqual(from_as[d_index], delay, 4)
+                self.assertAlmostEqual(from_as[d_index], delay, 3)
             else:
                 self.assertEqual(DELAY, delay)
             as_index += 1
