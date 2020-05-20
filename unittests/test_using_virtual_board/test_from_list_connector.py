@@ -40,11 +40,11 @@ class TestFromListConnector(BaseTestCase):
             if w_index:
                 self.assertAlmostEqual(from_as[w_index], weight, 3)
             else:
-                self.assertEqual(WEIGHT, weight)
+                self.assertAlmostEqual(WEIGHT, weight, 3)
             if d_index:
                 self.assertAlmostEqual(from_as[d_index], delay, 3)
             else:
-                self.assertEqual(DELAY, delay)
+                self.assertAlmostEqual(DELAY, delay, 3)
             as_index += 1
         while as_index < len(aslist):
             from_as = aslist[as_index]
