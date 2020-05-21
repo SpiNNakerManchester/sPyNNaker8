@@ -32,7 +32,7 @@ class SynapseDynamicsStructuralSTDP(STDPStructuralBaseClass):
             f_rew=CommonSP.DEFAULT_F_REW,
             initial_weight=CommonSP.DEFAULT_INITIAL_WEIGHT,
             initial_delay=CommonSP.DEFAULT_INITIAL_DELAY,
-            s_max=CommonSP.DEFAULT_S_MAX, seed=None,
+            s_max=CommonSP.DEFAULT_S_MAX, with_replacement=True, seed=None,
             weight=PyNNStaticSynapse.default_parameters['weight'], delay=None,
             backprop_delay=True):
         """
@@ -65,6 +65,11 @@ class SynapseDynamicsStructuralSTDP(STDPStructuralBaseClass):
             values
         :type initial_delay: float or tuple(float, float)
         :param int s_max: Maximum fan-in per target layer neuron
+        :param with_replacement:\
+            If set to True, a new synapse can be formed in a location where
+            a connection already exists; if False, then it must form where no
+            connection already exists
+        :type with_replacement: bool
         :param int seed: seed the random number generators
         :param float weight: The weight of connections formed by the connector
         :param delay: The delay of connections formed by the connector
@@ -87,5 +92,5 @@ class SynapseDynamicsStructuralSTDP(STDPStructuralBaseClass):
             voltage_dependence=voltage_dependence,
             dendritic_delay_fraction=dendritic_delay_fraction, f_rew=f_rew,
             initial_weight=initial_weight, initial_delay=initial_delay,
-            s_max=s_max, seed=seed, weight=weight, delay=delay,
-            backprop_delay=backprop_delay)
+            s_max=s_max, with_replacement=with_replacement, seed=seed,
+            weight=weight, delay=delay, backprop_delay=backprop_delay)
