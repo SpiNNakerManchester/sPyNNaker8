@@ -66,9 +66,9 @@ class SynapseDynamicsStructuralSTDP(STDPStructuralBaseClass):
         :type initial_delay: float or tuple(float, float)
         :param int s_max: Maximum fan-in per target layer neuron
         :param with_replacement:\
-            If set to True, a new synapse can be formed in a location where
-            a connection already exists; if False, then it must form where no
-            connection already exists
+            If set to True (default), a new synapse can be formed in a\
+            location where a connection already exists; if False, then it\
+            must form where no connection already exists
         :type with_replacement: bool
         :param int seed: seed the random number generators
         :param float weight: The weight of connections formed by the connector
