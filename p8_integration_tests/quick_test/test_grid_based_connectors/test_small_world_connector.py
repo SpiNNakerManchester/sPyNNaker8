@@ -81,6 +81,7 @@ def do_run(plot):
     spikes = small_world.get_data('spikes')
     weights = sw_pro.get('weight', 'list')
     if plot:
+        # pylint: disable=no-member
         Figure(
             # raster plot of the presynaptic neuron spike times
             Panel(spikes.segments[0].spiketrains,
@@ -152,7 +153,7 @@ class SmallWorldConnectorTest(BaseTestCase):
 
 
 if __name__ == '__main__':
-    v, spikes, weights = do_run(plot=True)
-    print(len(neo_convertor.convert_data(v, name='v')))
-    print(len(neo_convertor.convert_data(spikes, name='spikes')))
-    print(len(weights))
+    _v, _spikes, _weights = do_run(plot=True)
+    print(len(neo_convertor.convert_data(_v, name='v')))
+    print(len(neo_convertor.convert_data(_spikes, name='spikes')))
+    print(len(_weights))
