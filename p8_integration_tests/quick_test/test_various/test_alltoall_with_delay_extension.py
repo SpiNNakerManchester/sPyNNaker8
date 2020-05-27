@@ -60,9 +60,8 @@ class AllToAllWithDelayExtensionCase(BaseTestCase):
 
         wiring = sim.AllToAllConnector()
         static_synapse = sim.StaticSynapse(weight=2.5, delay=100.0)
-        connections = sim.Projection(pre_pop, post_pop, wiring,
-                                     receptor_type='excitatory',
-                                     synapse_type=static_synapse)
+        sim.Projection(pre_pop, post_pop, wiring, receptor_type='excitatory',
+                       synapse_type=static_synapse)
 
         # record post-pop spikes to check activation
         post_pop.record(['spikes'])
