@@ -75,7 +75,10 @@ if __name__ == '__main__':
     examples_script = os.path.join(tests_dir, "examples_auto_test.py")
     examples_header = os.path.join(tests_dir, "examples_header.py")
     copyfile(examples_header, examples_script)
-    exceptions = ["pushbot_ethernet_example.py"]
+    # skip pushbot (no robot attached) and struct_plasticity with
+    # neuromodulation (turned off by default due to binary size)
+    exceptions = ["pushbot_ethernet_example.py",
+                  "structural_plasticity_with_stdp_neuromodulated.py"]
     # Lazy boolean distinction based on presence or absence of a parameter
     if len(sys.argv) > 1:  # 1 is the script name
         # Skip the known long ones
