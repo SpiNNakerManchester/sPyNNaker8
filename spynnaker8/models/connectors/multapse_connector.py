@@ -17,6 +17,7 @@ import numpy
 from spynnaker.pyNN.models.neural_projections.connectors import (
     MultapseConnector as
     _BaseClass)
+from spinn_utilities.overrides import overrides
 
 
 class MultapseConnector(_BaseClass):
@@ -25,27 +26,34 @@ class MultapseConnector(_BaseClass):
     populations are obtained when the projection is connected. The number of\
     synapses is specified. when instantiated, the required number of synapses\
     is created by selecting at random from the source and target populations\
-    with replacement. Uniform selection probability is assumed.
-
-    :param n: This is the total number of synapses in the connection.
-    :type n: int
-    :param allow_self_connections:
-        Bool. Allow a neuron to connect to itself or not.
-    :type allow_self_connections: bool
-    :param with_replacement:
-        Bool. When selecting, allow a neuron to be re-selected or not.
-    :type with_replacement: bool
+    _with replacement_ (by default). Uniform selection probability is assumed.
     """
     __slots__ = []
 
     def __init__(self, n, allow_self_connections=True,
                  with_replacement=True, safe=True, verbose=False,
                  rng=None):
+        """
+        :param int n: This is the total number of synapses in the connection.
+        :param bool allow_self_connections:
+            Allow a neuron to connect to itself or not.
+        :param bool with_replacement:
+            Bool. When selecting, allow a neuron to be re-selected or not.
+        :param bool safe:
+            Whether to check that weights and delays have valid values.
+            If False, this check is skipped.
+        :param bool verbose:
+            Whether to output extra information about the connectivity to a
+            CSV file
+        :param rng: random number generator
+        :type rng: ~pyNN.random.NumpyRNG or None
+        """
         super(MultapseConnector, self).__init__(
             num_synapses=n, allow_self_connections=allow_self_connections,
             with_replacement=with_replacement, safe=safe, verbose=verbose,
             rng=rng)
 
+    @overrides(_BaseClass.get_rng_next)
     def get_rng_next(self, num_synapses, prob_connect):
         # Below is how numpy does multinomial internally...
         size = len(prob_connect)

@@ -22,33 +22,36 @@ from spynnaker.pyNN.spynnaker_simulator_interface import (
 
 @add_metaclass(AbstractBase)
 class Spynnaker8SimulatorInterface(SpynnakerSimulatorInterface):
+    """ The API exposed by the simulator itself.
+    """
 
     __slots__ = ()
 
     @abstractproperty
     def dt(self):
-        pass
+        """ The timestep, in milliseconds. """
 
     @abstractproperty
     def mpi_rank(self):
-        pass
+        """ The MPI rank of the controller node. """
 
     @abstractproperty
     def name(self):
-        pass
+        """ The name of the simulator. Used to ensure PyNN recording neo\
+            blocks are correctly labelled. """
 
     @abstractproperty
     def num_processes(self):
-        pass
+        """ The number of MPI worker processes. """
 
     @abstractproperty
     def recorders(self):
-        pass
+        """ The recorders, used by the PyNN state object. """
 
     @abstractproperty
     def segment_counter(self):
-        pass
+        """ The number of the current recording segment being generated. """
 
     @abstractproperty
     def t(self):
-        pass
+        """ The current simulation time, in milliseconds. """
