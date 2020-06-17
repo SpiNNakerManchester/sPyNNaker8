@@ -71,7 +71,7 @@ def run_script(
         else:
             view = PopulationView(pop_1, inh_rec_indexes)
             view.record(['gsyn_inh'], sampling_interval=inh_rate)
-    for i in range(run_split):
+    for _i in range(run_split):
         sim.run(simtime/run_split)
 
     if record_spikes:
@@ -126,7 +126,7 @@ def run_script(
     return spikes, v,  exc, inh
 
 
-def compare_spikearrays(this, full, tollerance=False):
+def compare_spikearrays(this, full, tolerance=False):
     if numpy.array_equal(this, full):
         return sys.maxsize
     if this[0] != full[0]:
@@ -170,7 +170,7 @@ def compare_spikearrays(this, full, tollerance=False):
 
 
 def compare_spikes(file_path, full_path, simtime, n_neurons, spike_rate=1,
-                   spike_indexes=None, tollerance=sys.maxsize):
+                   spike_indexes=None, tolerance=sys.maxsize):
     this_spikes = read_spikes(file_path, simtime, n_neurons)
     full_spikes = read_spikes(full_path, simtime, n_neurons, rate=spike_rate,
                               indexes=spike_indexes)
@@ -181,7 +181,7 @@ def compare_spikes(file_path, full_path, simtime, n_neurons, spike_rate=1,
     for this, full in zip(this_spikes, full_spikes):
         low = compare_spikearrays(this, full)
         lowest = min(lowest, low)
-    if lowest < tollerance:
+    if lowest < tolerance:
         raise Exception("Spikes different from {}".format(lowest))
     print("Spikes equal")
     return lowest
@@ -193,12 +193,12 @@ def compare_results(
         record_v=False, v_rate=None, v_indexes=None,
         record_exc=False, exc_rate=None, exc_indexes=None,
         record_inh=False, inh_rate=None, inh_indexes=None, full_prefix="",
-        tollerance=sys.maxsize):
+        tolerance=sys.maxsize):
     if record_spikes:
         file_path = os.path.join(current_file_path, "spikes.csv")
         full_path = os.path.join(current_file_path, full_prefix+"spikes.csv")
         compare_spikes(file_path, full_path, simtime, n_neurons,
-                       spike_rate, spike_indexes, tollerance)
+                       spike_rate, spike_indexes, tolerance)
     if record_v:
         file_path = os.path.join(current_file_path, "v.csv")
         full_path = os.path.join(current_file_path, full_prefix+"v.csv")
@@ -235,7 +235,7 @@ def run_and_compare_script(
         exc_get_indexes=None,
         record_inh=False, inh_rate=None, inh_rec_indexes=None,
         inh_get_indexes=None,
-        tollerance=sys.maxsize):
+        tolerance=sys.maxsize):
     full_prefix = "{}_{}_".format(simtime, n_neurons)
     if (not os.path.exists(
             os.path.join(current_file_path, full_prefix + "spikes.csv")) or
@@ -278,7 +278,7 @@ def run_and_compare_script(
         record_v=record_v, v_rate=v_rate, v_indexes=v_indexes,
         record_exc=record_exc, exc_rate=exc_rate, exc_indexes=exc_indexes,
         record_inh=record_inh, inh_rate=inh_rate, inh_indexes=inh_indexes,
-        full_prefix=full_prefix, tollerance=tollerance)
+        full_prefix=full_prefix, tolerance=tolerance)
 
 
 def write_spikes(spikes, spike_file):
@@ -373,7 +373,7 @@ class TestSampling(BaseTestCase):
             record_v=True, v_rate=3,
             record_exc=True, exc_rate=4,
             record_inh=True, inh_rate=5,
-            tollerance=simtime-2)
+            tolerance=simtime-2)
 
     def test_big_with_rec_index(self):
         simtime = 20000
@@ -482,11 +482,11 @@ class TestSampling(BaseTestCase):
 
 
 if __name__ == '__main__':
-    simtime = 20000
-    n_neurons = 500
+    _simtime = 20000
+    _n_neurons = 500
 
     run_and_compare_script(
-        simtime, n_neurons,
+        _simtime, _n_neurons,
         record_spikes=True, spike_rate=2, spike_indexes=None,
         record_v=True, v_rate=3, v_indexes=None,
         record_exc=True, exc_rate=4, exc_indexes=None,

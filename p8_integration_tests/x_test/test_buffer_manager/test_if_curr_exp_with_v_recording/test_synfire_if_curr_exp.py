@@ -47,9 +47,9 @@ class SynfireIfCurrExp(BaseTestCase):
 if __name__ == '__main__':
     synfire_run.do_run(n_neurons, neurons_per_core=neurons_per_core,
                        run_times=[runtime], record=record, record_v=record_v,
-                       record_gsyn=record_gsyn)
-    gsyn = synfire_run.get_output_pop_gsyn_exc_list()
-    v = synfire_run.get_output_pop_voltage_numpy()
-    spikes = synfire_run.get_output_pop_spikes_list()
+                       record_gsyn_exc=record_gsyn)
+    _gsyn = synfire_run.get_output_pop_gsyn_exc_list()
+    _v = synfire_run.get_output_pop_voltage_numpy()
+    _spikes = synfire_run.get_output_pop_spikes_list()
 
-    plot_utils.line_plot(v, title="v")
+    plot_utils.line_plot(_v, title="v")
