@@ -16,7 +16,6 @@
 from p8_integration_tests.base_test_case import BaseTestCase
 from p8_integration_tests.quick_test.test_onchip_compressor.many_routes \
     import do_run
-from spinn_front_end_common.utilities.exceptions import SpinnFrontEndException
 
 
 class TestPairCompressor(BaseTestCase):
