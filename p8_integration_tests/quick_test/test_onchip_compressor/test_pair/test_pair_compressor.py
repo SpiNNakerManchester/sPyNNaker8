@@ -22,9 +22,4 @@ from spinn_front_end_common.utilities.exceptions import SpinnFrontEndException
 class TestPairCompressor(BaseTestCase):
 
     def test_do_run(self):
-        try:
-            self.runsafe(do_run)
-        except SpinnFrontEndException:
-            self.known_issue(
-                "https://github.com/SpiNNakerManchester/SpiNNFrontEndCommon/"
-                "issues/618")
+        self.runsafe(do_run)
