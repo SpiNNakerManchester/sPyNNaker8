@@ -15,8 +15,10 @@
 
 import numpy
 import spynnaker8 as sim
+from spinn_front_end_common.utilities import globals_variables
 from spynnaker.pyNN.exceptions import SpynnakerException
 from p8_integration_tests.base_test_case import BaseTestCase
+from pyNN.random import NumpyRNG
 
 SOURCES = 5
 DESTINATIONS = 10
@@ -54,6 +56,7 @@ class ConnectorsTest(BaseTestCase):
         return counts
 
     def check_counts(self, counts, connections, repeats):
+        count = None
         for count in counts:
             if not repeats:
                 self.assertEqual(1, max(count))
@@ -61,7 +64,7 @@ class ConnectorsTest(BaseTestCase):
             self.assertEqual(connections, sum(count))
 
     def check_connection(self, projection, destination, connections, repeats,
-                         type, n_destinations=DESTINATIONS):
+                         conn_type, n_destinations=DESTINATIONS):
         neo = destination.get_data(["v"])
         v = neo.segments[0].filter(name="v")[0]
         weights = projection.get(["weight"], "list")
@@ -80,13 +83,13 @@ class ConnectorsTest(BaseTestCase):
         for (source, destination, _) in weights:
             self.assertLess(source, SOURCES)
             self.assertLess(destination, n_destinations)
-        if type == "post":
+        if conn_type == "post":
             self.assertEqual(connections * SOURCES, len(weights))
             self.check_counts(counts, connections, repeats)
-        elif type == "pre":
+        elif conn_type == "pre":
             self.assertEqual(connections * n_destinations, len(weights))
             self.check_counts(numpy.transpose(counts), connections, repeats)
-        elif type == "one":
+        elif conn_type == "one":
             self.assertEqual(connections, len(weights))
             last_source = -1
             for (source, destination, _) in weights:
@@ -104,23 +107,23 @@ class ConnectorsTest(BaseTestCase):
             if the_max < OVERFLOW:
                 self.assertEqual(connections, sum(map(sum, counts)))
 
-    def check_connector(self, connector, connections, repeats, type="post",
-                        n_destinations=DESTINATIONS):
+    def check_connector(self, connector, connections, repeats,
+                        conn_type="post", n_destinations=DESTINATIONS):
         sim.setup(1.0)
         # sim.set_number_of_neurons_per_core(sim.IF_curr_exp, 2)
 
-        input = sim.Population(SOURCES, sim.SpikeSourceArray(
-            spike_times=[[0], [20], [40], [60], [80]]), label="input")
+        in_pop = sim.Population(SOURCES, sim.SpikeSourceArray(
+            spike_times=[[0], [20], [40], [60], [80]]), label="in_pop")
         destination = sim.Population(
             n_destinations, sim.IF_curr_exp(
                 tau_syn_E=1, tau_refrac=0,  tau_m=1), label="destination")
         synapse_type = sim.StaticSynapse(weight=5, delay=1)
         projection = sim.Projection(
-            input, destination, connector, synapse_type=synapse_type)
+            in_pop, destination, connector, synapse_type=synapse_type)
         destination.record("v")
         sim.run(100)
         self.check_connection(
-            projection, destination, connections, repeats, type,
+            projection, destination, connections, repeats, conn_type,
             n_destinations)
         sim.end()
 
@@ -129,7 +132,7 @@ class ConnectorsTest(BaseTestCase):
         with_replacement = False
         self.check_connector(
             sim.OneToOneConnector(), connections,  with_replacement,
-            type="one")
+            conn_type="one")
 
     def test_one_to_one(self):
         self.runsafe(self.one_to_one)
@@ -140,7 +143,7 @@ class ConnectorsTest(BaseTestCase):
         with_replacement = False
         self.check_connector(
             sim.OneToOneConnector(), connections, with_replacement,
-            type="one", n_destinations=4)
+            conn_type="one", n_destinations=4)
 
     def test_one_to_one_short_destination(self):
         self.runsafe(self.one_to_one_short_destination)
@@ -151,7 +154,7 @@ class ConnectorsTest(BaseTestCase):
         self.check_connector(
             sim.FixedTotalNumberConnector(
                 connections, with_replacement=with_replacement),
-            connections,  with_replacement, type="total")
+            connections,  with_replacement, conn_type="total")
 
     def test_total_connector_with_replacement(self):
         self.runsafe(self.total_connector_with_replacement)
@@ -162,7 +165,7 @@ class ConnectorsTest(BaseTestCase):
         self.check_connector(
             sim.FixedTotalNumberConnector(
                 connections, with_replacement=with_replacement),
-            connections,  with_replacement, type="total")
+            connections,  with_replacement, conn_type="total")
 
     def test_total_connector_no_replacement(self):
         self.runsafe(self.total_connector_no_replacement)
@@ -173,7 +176,7 @@ class ConnectorsTest(BaseTestCase):
         self.check_connector(
             sim.FixedTotalNumberConnector(
                 connections, with_replacement=with_replacement),
-            connections,  with_replacement, type="total")
+            connections,  with_replacement, conn_type="total")
 
     def test_total_connector_with_replacement_many(self):
         self.runsafe(self.total_connector_with_replacement_many)
@@ -185,7 +188,7 @@ class ConnectorsTest(BaseTestCase):
             self.check_connector(
                 sim.FixedTotalNumberConnector(
                     connections, with_replacement=with_replacement),
-                connections,  with_replacement, type="total")
+                connections,  with_replacement, conn_type="total")
 
     def test_total_connector_too_many(self):
         self.runsafe(self.total_connector_too_many)
@@ -194,22 +197,22 @@ class ConnectorsTest(BaseTestCase):
         n_destinations = 5
         sim.setup(1.0)
         sim.set_number_of_neurons_per_core(sim.IF_curr_exp, 2)
-        input = sim.Population(SOURCES, sim.SpikeSourceArray(
-            spike_times=[[0], [20], [40], [60], [80]]), label="input")
+        input_pop = sim.Population(SOURCES, sim.SpikeSourceArray(
+            spike_times=[[0], [20], [40], [60], [80]]), label="input_pop")
         destination = sim.Population(
             n_destinations, sim.IF_curr_exp(
                 tau_syn_E=1, tau_refrac=0,  tau_m=1), label="destination")
         synapse_type = sim.StaticSynapse(weight=5, delay=1)
         sim.Projection(
-            input, destination, sim.OneToOneConnector(),
+            input_pop, destination, sim.OneToOneConnector(),
             synapse_type=synapse_type)
         sim.Projection(
-            input, destination, sim.AllToAllConnector(),
+            input_pop, destination, sim.AllToAllConnector(),
             synapse_type=synapse_type)
         destination.record("v")
         sim.run(100)
         neo = destination.get_data(["v"])
-        v = neo.segments[0].filter(name="v")[0]
+        v = neo.segments[0].filter(name="v")[0]  # pylint: disable=no-member
         counts = self.calc_spikes_received(v)
         for i, count in enumerate(counts):
             for j in range(n_destinations):
@@ -221,3 +224,131 @@ class ConnectorsTest(BaseTestCase):
 
     def test_multiple_connectors(self):
         self.runsafe(self.multiple_connectors)
+
+    def onetoone_population_views(self):
+        sim.setup(timestep=1.0)
+        in_pop = sim.Population(4, sim.SpikeSourceArray([0]), label="in_pop")
+        pop = sim.Population(4, sim.IF_curr_exp(), label="pop")
+        conn = sim.Projection(in_pop[1:3], pop[2:4], sim.OneToOneConnector(),
+                              sim.StaticSynapse(weight=0.5, delay=2))
+        sim.run(1)
+        weights = conn.get(['weight', 'delay'], 'list')
+        sim.end()
+        target = [(1, 2, 0.5, 2.), (2, 3, 0.5, 2.)]
+        self.assertEqual(weights.tolist(), target)
+
+    def test_onetoone_population_views(self):
+        self.runsafe(self.onetoone_population_views)
+
+    def onetoone_multicore_population_views(self):
+        sim.setup(timestep=1.0)
+        sim.set_number_of_neurons_per_core(sim.IF_curr_exp, 10)
+        sim.set_number_of_neurons_per_core(sim.SpikeSourceArray, 10)
+        in_pop = sim.Population(14, sim.SpikeSourceArray([0]), label="in_pop")
+        pop = sim.Population(17, sim.IF_curr_exp(), label="pop")
+        conn = sim.Projection(in_pop[6:12], pop[9:16], sim.OneToOneConnector(),
+                              sim.StaticSynapse(weight=0.5, delay=2),
+                              label="test")
+        sim.run(1)
+        weights = conn.get(['weight', 'delay'], 'list')
+        machine_graph = globals_variables.get_simulator()._machine_graph
+        projection_edges = [edge for edge in machine_graph.edges if (
+            edge.label == 'machine_edge_fortest')]
+        sim.end()
+        # Check the connections are correct
+        target = [(6, 9, 0.5, 2.), (7, 10, 0.5, 2.), (8, 11, 0.5, 2.),
+                  (9, 12, 0.5, 2.), (10, 13, 0.5, 2.), (11, 14, 0.5, 2.)]
+        self.assertEqual(weights.tolist(), target)
+        # In this instance there should be three MachineEdges: one of the four
+        # possible at the start should have been filtered out
+        self.assertEqual(len(projection_edges), 3)
+
+    def test_onetoone_multicore_population_views(self):
+        self.runsafe(self.onetoone_multicore_population_views)
+
+    def fixedprob_population_views(self):
+        sim.setup(timestep=1.0)
+        in_pop = sim.Population(4, sim.SpikeSourceArray([0]), label="in_pop")
+        pop = sim.Population(4, sim.IF_curr_exp(), label="pop")
+        rng = NumpyRNG(seed=1)
+        conn = sim.Projection(in_pop[1:3], pop[2:4],
+                              sim.FixedProbabilityConnector(0.5, rng=rng),
+                              sim.StaticSynapse(weight=0.5, delay=2))
+        sim.run(1)
+        weights = conn.get(['weight', 'delay'], 'list')
+        sim.end()
+        # The fixed seed means this gives the same answer each time
+        target = [(1, 3, 0.5, 2.), (2, 2, 0.5, 2.)]
+        self.assertEqual(weights.tolist(), target)
+
+    def test_fixedprob_population_views(self):
+        self.runsafe(self.fixedprob_population_views)
+
+    def fixedpre_population_views(self):
+        sim.setup(timestep=1.0)
+        in_pop = sim.Population(4, sim.SpikeSourceArray([0]), label="in_pop")
+        pop = sim.Population(4, sim.IF_curr_exp(), label="pop")
+        rng = NumpyRNG(seed=1)
+        conn = sim.Projection(in_pop[0:3], pop[1:4],
+                              sim.FixedNumberPreConnector(2, rng=rng),
+                              sim.StaticSynapse(weight=0.5, delay=2))
+        sim.run(1)
+        weights = conn.get(['weight', 'delay'], 'list')
+        sim.end()
+        # The fixed seed means this gives the same answer each time
+        target = [(0, 1, 0.5, 2.0), (0, 2, 0.5, 2.0), (0, 3, 0.5, 2.0),
+                  (1, 2, 0.5, 2.0), (2, 1, 0.5, 2.0), (2, 3, 0.5, 2.0)]
+        self.assertEqual(weights.tolist(), target)
+
+    def test_fixedpre_population_views(self):
+        self.runsafe(self.fixedpre_population_views)
+
+    def fixedpost_population_views(self):
+        sim.setup(timestep=1.0)
+        in_pop = sim.Population(4, sim.SpikeSourceArray([0]), label="in_pop")
+        pop = sim.Population(4, sim.IF_curr_exp(), label="pop")
+        rng = NumpyRNG(seed=1)
+        conn = sim.Projection(in_pop[0:3], pop[1:4],
+                              sim.FixedNumberPostConnector(2, rng=rng),
+                              sim.StaticSynapse(weight=0.5, delay=2))
+        sim.run(1)
+        weights = conn.get(['weight', 'delay'], 'list')
+        sim.end()
+        # The fixed seed means this gives the same answer each time
+        target = [(0, 2, 0.5, 2.0), (0, 3, 0.5, 2.0), (1, 1, 0.5, 2.0),
+                  (1, 3, 0.5, 2.0), (2, 1, 0.5, 2.0), (2, 2, 0.5, 2.0)]
+        self.assertEqual(weights.tolist(), target)
+
+    def test_fixedpost_population_views(self):
+        self.runsafe(self.fixedpost_population_views)
+
+    def fixedtotal_population_views(self):
+        sim.setup(timestep=1.0)
+        in_pop = sim.Population(4, sim.SpikeSourceArray([0]), label="in_pop")
+        pop = sim.Population(4, sim.IF_curr_exp(), label="pop")
+        rng = NumpyRNG(seed=1)
+        n_conns = 5
+        conn = sim.Projection(in_pop[0:3], pop[1:4],
+                              sim.FixedTotalNumberConnector(
+                                  n_conns, with_replacement=False, rng=rng),
+                              sim.StaticSynapse(weight=0.5, delay=2))
+        conn2 = sim.Projection(in_pop[0:3], pop[1:4],
+                               sim.FixedTotalNumberConnector(
+                                   n_conns, with_replacement=True, rng=rng),
+                               sim.StaticSynapse(weight=0.5, delay=2))
+        sim.run(1)
+        weights = conn.get(['weight', 'delay'], 'list')
+        weights2 = conn2.get(['weight', 'delay'], 'list')
+        sim.end()
+        # The fixed seed means this gives the same answer each time
+        target = [(0, 1, 0.5, 2.0), (0, 2, 0.5, 2.0), (1, 3, 0.5, 2.0),
+                  (2, 2, 0.5, 2.0), (2, 3, 0.5, 2.0)]
+        target2 = [(0, 3, 0.5, 2.0), (1, 1, 0.5, 2.0), (1, 2, 0.5, 2.0),
+                   (2, 1, 0.5, 2.0), (2, 3, 0.5, 2.0)]
+        self.assertEqual(weights.tolist(), target)
+        self.assertEqual(len(weights.tolist()), n_conns)
+        self.assertEqual(weights2.tolist(), target2)
+        self.assertEqual(len(weights2.tolist()), n_conns)
+
+    def test_fixedtotal_population_views(self):
+        self.runsafe(self.fixedtotal_population_views)

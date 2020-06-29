@@ -14,7 +14,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import spynnaker8 as p
-from p8_integration_tests.base_test_case import BaseTestCase
+from p8_integration_tests.base_test_case import BaseTestCase,\
+    calculate_spike_pair_additive_stdp_weight
 import numpy
 import unittest
 
@@ -91,41 +92,22 @@ class TestSTDPPairAdditive(BaseTestCase):
 
         # Get the spikes
         post_spikes = numpy.array(
+            # pylint: disable=no-member
             post_pop.get_data('spikes').segments[0].spiketrains[0].magnitude)
 
         # End the simulation as all information gathered
         p.end()
 
-        # Get the spikes and time differences that will be considered by
-        # the simulation (as the last pre-spike will be considered differently)
-        last_pre_spike = pre_spikes[-1]
-        considered_post_spikes = post_spikes[post_spikes < last_pre_spike]
-        potentiation_time_diff = numpy.ravel(numpy.subtract.outer(
-            considered_post_spikes + plastic_delay, pre_spikes[:-1]))
-        potentiation_times = (
-            potentiation_time_diff[potentiation_time_diff > 0] * -1)
-        depression_time_diff = numpy.ravel(numpy.subtract.outer(
-            considered_post_spikes + plastic_delay, pre_spikes))
-        depression_times = depression_time_diff[depression_time_diff < 0]
+        new_weight_exact = calculate_spike_pair_additive_stdp_weight(
+            pre_spikes, post_spikes, initial_weight, plastic_delay, max_weight,
+            a_plus, a_minus, tau_plus, tau_minus)
 
-        # Work out the weight according to the rules
-        potentiations = max_weight * a_plus * numpy.exp(
-            (potentiation_times / tau_plus))
-        depressions = max_weight * a_minus * numpy.exp(
-            (depression_times / tau_minus))
-        new_weight_exact = \
-            initial_weight + numpy.sum(potentiations) - numpy.sum(depressions)
-
-        # print("Pre neuron spikes at: {}".format(pre_spikes))
-        # print("Post-neuron spikes at: {}".format(post_spikes))
+        print("Pre neuron spikes at: {}".format(pre_spikes))
+        print("Post-neuron spikes at: {}".format(post_spikes))
         target_spikes = [1014,  1032, 1053]
         self.assertListEqual(list(post_spikes), target_spikes)
-        # print("Potentiation time differences: {}".format(potentiation_times))
-        # print("Depression time differences: {}".format(depression_times))
-        # print("Potentiation: {}".format(potentiations))
-        # print("Depressions: {}".format(depressions))
-        # print("New weight exact: {}".format(new_weight_exact))
-        # print("New weight SpiNNaker: {}".format(weights))
+        print("New weight exact: {}".format(new_weight_exact))
+        print("New weight SpiNNaker: {}".format(weights))
 
         self.assertTrue(numpy.allclose(weights, new_weight_exact, rtol=0.001))
 

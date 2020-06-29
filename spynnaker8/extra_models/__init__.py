@@ -30,6 +30,7 @@ from spynnaker.pyNN.models.neuron.builds import (
     IF_curr_dual_exp, IzkCondExpBase as
     Izhikevich_cond, IFCurrExpSEMDBase as
     IF_curr_exp_sEMD)
+from spynnaker.pyNN.models.spike_source import SpikeSourcePoissonVariable
 
 __all__ = [
     # sPyNNaker 8 models
@@ -40,4 +41,7 @@ __all__ = [
     'WeightDependenceAdditiveTriplet',
     'PfisterSpikeTriplet',
     'SpikeNearestPairRule',
-    'RecurrentRule', 'Vogels2011Rule']
+    'RecurrentRule', 'Vogels2011Rule',
+
+    # Variable rate Poisson
+    'SpikeSourcePoissonVariable']

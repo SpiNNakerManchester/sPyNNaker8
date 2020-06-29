@@ -53,11 +53,13 @@ pipeline {
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/spinn_common.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/SpiNNFrontEndCommon.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/sPyNNaker.git'
+                // Java dependencies
+                sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/JavaSpiNNaker'
                 // scripts
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/IntroLab.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/PyNN8Examples.git'
-                // Java dependencies
-                sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/JavaSpiNNaker'
+                sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/sPyNNaker8NewModelTemplate.git'
+                sh 'support/gitclone.sh git@github.com:SpiNNakerManchester/microcircuit_model.git'
             }
         }
         stage('Install') {
@@ -74,6 +76,7 @@ pipeline {
                 sh 'make -C SpiNNFrontEndCommon/c_common'
                 sh 'make -C SpiNNFrontEndCommon/c_common install'
                 sh 'make -C sPyNNaker/neural_modelling'
+                sh 'make -C sPyNNaker8NewModelTemplate/c_models'
                 // Python install
                 sh 'cd SpiNNMachine && python setup.py develop'
                 sh 'cd SpiNNStorageHandlers && python setup.py develop'
@@ -84,6 +87,7 @@ pipeline {
                 sh 'cd SpiNNFrontEndCommon && python setup.py develop'
                 sh 'cd sPyNNaker && python setup.py develop'
                 sh 'cd sPyNNaker8 && python ./setup.py develop'
+                sh 'cd sPyNNaker8NewModelTemplate && python ./setup.py develop'
                 sh 'python -m spynnaker8.setup_pynn'
                 // Test requirements
                 sh 'pip install -r SpiNNMachine/requirements-test.txt'
@@ -96,7 +100,8 @@ pipeline {
                 sh 'pip install -r sPyNNaker/requirements-test.txt'
                 sh 'pip install -r sPyNNaker8/requirements-test.txt'
                 // Additional requirements for testing here
-                sh 'pip install python-coveralls "coverage>=4.4"'
+                // coverage version capped due to https://github.com/nedbat/coveragepy/issues/883
+                sh 'pip install python-coveralls "coverage>=5.0.0"'
                 sh 'pip install pytest-instafail pytest-xdist'
                 // Java install
                 sh 'mvn -f JavaSpiNNaker package'
@@ -118,6 +123,8 @@ pipeline {
                 // Prepare coverage
                 sh 'rm -f coverage.xml'
                 sh 'rm -f .coverage'
+                sh 'echo "[run]" > .coveragerc'
+                sh 'echo "parallel = True" >> .coveragerc'
                 // Prepare for unit tests
                 sh 'echo "# Empty config" >  ~/.spinnaker.cfg'
                 // Create a directory for test outputs
@@ -132,6 +139,7 @@ pipeline {
                 run_pytest('SpiNNMan/unittests SpiNNMan/integration_tests', 1200, 'SpiNNMan', 'auto')
                 run_pytest('PACMAN/unittests', 1200, 'PACMAN', 'auto')
                 run_pytest('spalloc/tests', 1200, 'spalloc', '1')
+                run_pytest('DataSpecification/unittests', 1200, 'DataSpecification', 'auto')
                 run_pytest('SpiNNFrontEndCommon/unittests SpiNNFrontEndCommon/fec_integration_tests', 1200, 'SpiNNFrontEndCommon', 'auto')
                 run_pytest('sPyNNaker/unittests', 1200, 'sPyNNaker', 'auto')
                 run_pytest('sPyNNaker8/unittests', 1200, 'sPyNNaker8', 'auto')
@@ -140,6 +148,20 @@ pipeline {
         stage('Test') {
             steps {
                 run_pytest('sPyNNaker8/p8_integration_tests/quick_test/', 1200, 'sPyNNaker8_Integration', 'auto')
+            }
+        }
+        stage('Run new Model Example') {
+            steps {
+                run_pytest('sPyNNaker8/p8_integration_tests/test_new_model_templates', 1200, 'new_model_example', 'auto')
+                run_pytest('sPyNNaker8NewModelTemplate/nmt_integration_tests', 1200, 'nmt_integration_tests', 'auto')
+            }
+        }
+        stage('Run example scripts') {
+            steps {
+                sh 'python sPyNNaker8/p8_integration_tests/scripts_test/build_script.py shorter'
+                run_pytest('sPyNNaker8/p8_integration_tests/scripts_test/examples_auto_test.py', 1200, 'sPyNNaker8Scripts', 'auto')
+                run_pytest('sPyNNaker8/p8_integration_tests/scripts_test/intro_labs_auto_test.py', 1200, 'sPyNNaker8Scripts', '1')
+                // Not sPyNNaker8/p8_integration_tests/scripts_test/test_microcircuit.py as it takes 1558  seconds
             }
         }
         stage('Reports') {
@@ -179,5 +201,5 @@ pipeline {
 
 def run_pytest(String tests, int timeout, String results, String threads) {
     sh 'echo "<testsuite tests="0"></testsuite>" > junit/' + results + '.xml'
-    sh 'py.test ' + tests + ' -rs -n ' + threads + ' --forked --show-progress --cov-branch --cov spynnaker8 --cov spynnaker --cov spinn_front_end_common --cov pacman --cov data_specification --cov spinnman --cov spinn_machine --cov spinn_storage_handlers --cov spalloc --cov spinn_utilities --junitxml junit/' + results + '.xml --cov-report xml:coverage.xml --cov-append --timeout ' + timeout
+    sh 'py.test ' + tests + ' -rs -n ' + threads + ' --forked --show-progress --cov-config=.coveragerc --cov-branch --cov spynnaker8 --cov spynnaker --cov spinn_front_end_common --cov pacman --cov data_specification --cov spinnman --cov spinn_machine --cov spinn_storage_handlers --cov spalloc --cov spinn_utilities --junitxml junit/' + results + '.xml --cov-report xml:coverage.xml --cov-append --timeout ' + timeout
 }

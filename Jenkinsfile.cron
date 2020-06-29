@@ -60,6 +60,7 @@ pipeline {
                 // scripts
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/IntroLab.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/PyNN8Examples.git'
+                sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/sPyNNaker8NewModelTemplate.git'
                 sh 'support/gitclone.sh git@github.com:SpiNNakerManchester/microcircuit_model.git'
             }
         }
@@ -77,6 +78,7 @@ pipeline {
                 sh 'make -C SpiNNFrontEndCommon/c_common'
                 sh 'make -C SpiNNFrontEndCommon/c_common install'
                 sh 'make -C sPyNNaker/neural_modelling'
+                sh 'make -C sPyNNaker8NewModelTemplate/c_models'
                 // Python install
                 sh 'cd SpiNNMachine && python setup.py install'
                 sh 'cd SpiNNStorageHandlers && python setup.py install'
@@ -86,7 +88,8 @@ pipeline {
                 sh 'cd spalloc && python setup.py install'
                 sh 'cd SpiNNFrontEndCommon && python setup.py install'
                 sh 'cd sPyNNaker && python setup.py install'
-                sh 'cd sPyNNaker8 && python ./setup.py install'
+                sh 'cd sPyNNaker8 && python ./setup.py develop'
+                sh 'cd sPyNNaker8NewModelTemplate && python ./setup.py develop'
                 sh 'python -m spynnaker8.setup_pynn'
                 // Test requirements
                 sh 'pip install -r sPyNNaker8/requirements-test.txt'
@@ -114,14 +117,20 @@ pipeline {
         }
         stage('Test') {
             steps {
-                run_pytest('sPyNNaker8/p8_integration_tests/quick_test/', 1200, 'sPyNNaker8_Integration')
-                run_pytest('sPyNNaker8/p8_integration_tests/long_test/', 12000, 'sPyNNaker8_Integration_Long')
+                run_pytest_single('sPyNNaker8/p8_integration_tests/quick_test/', 1200, 'sPyNNaker8_Integration')
+                run_pytest_single('sPyNNaker8/p8_integration_tests/long_test/', 12000, 'sPyNNaker8_Integration_Long')
+            }
+        }
+        stage('Run new Model Example') {
+            steps {
+                run_pytest_single('sPyNNaker8/p8_integration_tests/test_new_model_templates', 1200, 'new_model_example')
+                run_pytest_single('sPyNNaker8NewModelTemplate/nmt_integration_tests', 1200, 'nmt_integration_tests')
             }
         }
         stage('Run scripts') {
             steps {
                 sh 'python sPyNNaker8/p8_integration_tests/scripts_test/build_script.py'
-                run_pytest('sPyNNaker8/p8_integration_tests/scripts_test', 1200, 'sPyNNaker8Scripts')
+                run_pytest_single('sPyNNaker8/p8_integration_tests/scripts_test', 3600, 'sPyNNaker8Scripts')
             }
         }
         stage('Reports') {
@@ -154,7 +163,7 @@ pipeline {
     }
 }
 
-def run_pytest(String tests, int timeout, String results) {
+def run_pytest_single(String tests, int timeout, String results) {
     sh 'echo "<testsuite tests="0"></testsuite>" > junit/' + results + '.xml'
     sh 'py.test ' + tests + ' -rs --forked --show-progress --junitxml junit/' + results + '.xml --timeout ' + timeout
 }
