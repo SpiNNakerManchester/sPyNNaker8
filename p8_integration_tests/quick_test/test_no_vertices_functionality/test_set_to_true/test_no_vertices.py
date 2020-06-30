@@ -36,4 +36,4 @@ class TestNoVertices(BaseTestCase):
 
 
 if __name__ == '__main__':
-    TestNoVertices.test_run()
+    TestNoVertices().do_run()

@@ -30,10 +30,7 @@ from spynnaker.pyNN.models.neuron.builds import (
     IF_curr_dual_exp, IzkCondExpBase as
     Izhikevich_cond, IFCurrExpSEMDBase as
     IF_curr_exp_sEMD)
-
-# Variable rate poisson
-from spynnaker.pyNN.models.spike_source.spike_source_poisson_variable \
-    import SpikeSourcePoissonVariable
+from spynnaker.pyNN.models.spike_source import SpikeSourcePoissonVariable
 
 __all__ = [
     # sPyNNaker 8 models

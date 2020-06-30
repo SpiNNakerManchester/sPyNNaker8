@@ -61,8 +61,6 @@ class CheckDebug(BaseTestCase):
             reports_names._ROUTING_TABLE_DIR,
             reports_names._C_ROUTING_TABLE_DIR,
             reports_names._COMPARED_FILENAME,
-            # write_routing_compression_checker_report
-            "routing_compression_checker_report.rpt",
             # write_routing_tables_from_machine_report
             routing_tables_from_machine_report,
             # write_memory_map_report
