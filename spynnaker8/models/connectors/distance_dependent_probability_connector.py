@@ -50,7 +50,11 @@ class DistanceDependentProbabilityConnector(
         :param int n_connections:
             The number of efferent synaptic connections per neuron.
         :param ~pyNN.random.NumpyRNG rng: random number generator
-        :param callable callback: Ignored
+        :param callable callback:
+            if given, a callable that display a progress bar on the terminal.
+
+            .. note::
+                Not supported by sPyNNaker.
         """
         # pylint: disable=too-many-arguments
         CommonDistanceDependentProbabilityConnector.__init__(

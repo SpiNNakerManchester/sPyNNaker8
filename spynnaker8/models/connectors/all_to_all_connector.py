@@ -40,7 +40,11 @@ class AllToAllConnector(CommonAllToAllConnector, PyNNAllToAllConnector):
         :param bool verbose:
             Whether to output extra information about the connectivity to a
             CSV file
-        :param callable callback: Ignored
+        :param callable callback:
+            if given, a callable that display a progress bar on the terminal.
+
+            .. note::
+                Not supported by sPyNNaker.
         """
         CommonAllToAllConnector.__init__(
             self, allow_self_connections=allow_self_connections,

@@ -46,7 +46,7 @@ def do_run():
         if "Failure to detect machine " in str(oops):
             raise SkipTest("You Need at least {} boards to run this test"
                            .format(n_boards))
-        raise (oops)
+        raise
     target_x, target_y = find_good_chip(machine, n_target)
     print(machine)
     print(target_x, target_y)
