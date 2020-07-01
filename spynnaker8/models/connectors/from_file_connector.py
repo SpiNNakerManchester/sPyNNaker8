@@ -49,11 +49,17 @@ class FromFileConnector(FromListConnector, PyNNFromFileConnector):
                 file called `filename.x`, where `x` is the MPI rank. This
                 speeds up loading connections for distributed simulations.
 
-            Always leave this as false with sPyNNaker.
+            .. note::
+                Always leave this as False with sPyNNaker, which is not
+                MPI-based.
         :param bool safe:
             Whether to check that weights and delays have valid values.
             If False, this check is skipped.
-        :param callable callback: Ignored
+        :param callable callback:
+            if given, a callable that display a progress bar on the terminal.
+
+            .. note::
+                Not supported by sPyNNaker.
         :param bool verbose:
             Whether to output extra information about the connectivity to a
             CSV file

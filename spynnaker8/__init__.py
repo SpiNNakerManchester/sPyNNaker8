@@ -110,8 +110,8 @@ from spynnaker.pyNN.models.neuron.builds.if_curr_exp_base import (
 from spynnaker.pyNN.models.neuron.builds.if_curr_alpha import (
     IFCurrAlpha as IF_curr_alpha)
 # noinspection PyUnresolvedReferences
-from spynnaker.pyNN.models.neuron.builds.if_curr_delta import \
-    IFCurrDelta as IF_curr_delta
+from spynnaker.pyNN.models.neuron.builds.if_curr_delta import (
+    IFCurrDelta as IF_curr_delta)
 # noinspection PyUnresolvedReferences
 from spynnaker.pyNN.models.neuron.builds.izk_curr_exp_base import (
     IzkCurrExpBase as Izhikevich)
@@ -375,7 +375,7 @@ def setup(timestep=_pynn_control.DEFAULT_TIMESTEP,
         # if already exists, kill and rebuild
         try:
             globals_variables.get_simulator().clear()
-        except Exception:
+        except Exception:  # pylint: disable=broad-except
             logger.exception("Error forcing previous simulation to clear")
             globals_variables.unset_simulator()
 
