@@ -50,7 +50,7 @@ class TestScripts(BaseTestCase):
         self.check_script(script)
         assert self._show
 
-    def check_directory(self, path, skips=[], broken=[]):
+    def check_directory(self, path, skips=(), broken=()):
         directory = os.path.join(self._introlab_dir, path)
         for a_script in os.listdir(directory):
             if a_script.endswith(".py"):
@@ -65,17 +65,17 @@ class TestScripts(BaseTestCase):
                         self.check_plotting_script(script)
                     else:
                         self.check_script(script)
-                except Exception as ex:
+                except Exception as ex:  # pylint: disable=broad-except
                     if "virtual machine" in str(ex):
                         self.report(script, "scripts_fails_because_on_vm")
                     elif "'ConnectionHolder'" in str(ex):
                         self.report(script, "scripts_fails_because_on_vm")
                     elif a_script in broken:
                         self.report(
-                            script, "scripts_skipped_with_unkown_issues")
+                            script, "scripts_skipped_with_unknown_issues")
                     else:
                         print("Error on {}".format(script))
-                        raise ex
+                        raise
 
     def examples(self):
         self.check_directory(

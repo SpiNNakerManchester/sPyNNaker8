@@ -21,16 +21,15 @@ from spynnaker.pyNN.models.neural_projections.connectors import (
 
 class FixedProbabilityConnector(
         CommonFixedProbabilityConnector, PyNNFixedProbabilityConnector):
-    """
+    """ For each pair of pre-post cells, the connection probability is \
+        constant.
     """
     __slots__ = []
 
     def __init__(
             self, p_connect, allow_self_connections=True, safe=True,
             verbose=False, rng=None, callback=None):
-        """ For each pair of pre-post cells, the connection probability is\
-            constant.
-
+        """
         :param float p_connect: a number between zero and one. Each potential
             connection is created with this probability.
         :param bool allow_self_connections: if the connector is used to
@@ -46,7 +45,11 @@ class FixedProbabilityConnector(
             CSV file
         :param rng: random number generator
         :type rng: ~pyNN.random.NumpyRNG or None
-        :param callable callback: Ignored
+        :param callable callback:
+            if given, a callable that display a progress bar on the terminal.
+
+            .. note::
+                Not supported by sPyNNaker.
         """
         # pylint: disable=too-many-arguments
         CommonFixedProbabilityConnector.__init__(
