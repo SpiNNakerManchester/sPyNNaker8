@@ -35,11 +35,10 @@ class TestCoresAndBinariesRecording(BaseTestCase):
         sim.run(500)
 
         app_iobuf_files = self.get_app_iobuf_files()
-        graph_mapper = globals_variables.get_simulator()._graph_mapper
         placements = globals_variables.get_simulator()._placements
         sim.end()
 
-        machine_verts = graph_mapper.get_machine_vertices(pop_1._vertex)
+        machine_verts = pop_1._vertex.machine_vertices
         data = set()
         false_data = list()
 
