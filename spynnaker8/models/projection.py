@@ -151,7 +151,7 @@ class Projection(PyNNProjectionCommon):
             raise NotImplementedError(
                 "Projections over views only work on contiguous arrays, "
                 "e.g. view = pop[n:m], not view = pop[n,m]")
-        # Projection is compatible
+        # Projection is compatible with PopulationView
 
     def _find_shared_timestep_in_us(
             self, pre_synaptic_population, post_synaptic_population):
@@ -373,7 +373,7 @@ class Projection(PyNNProjectionCommon):
     def pre(self):
         """ The pre-population.
 
-        :rtype: ~spynnaker8.models.populations.PopulationBase
+        :rtype: PopulationBase
         """
         return self._synapse_information.pre_population
 
@@ -381,7 +381,7 @@ class Projection(PyNNProjectionCommon):
     def post(self):
         """ The post-population.
 
-        :rtype: ~spynnaker8.models.populations.PopulationBase
+        :rtype: PopulationBase
         """
         return self._synapse_information.post_population
 
