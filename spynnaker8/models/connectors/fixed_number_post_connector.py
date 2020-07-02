@@ -25,7 +25,7 @@ logger = logging.getLogger(__file__)
 class FixedNumberPostConnector(CommonFixedNumberPostConnector,
                                PyNNFixedNumberPostConnector):
     """ PyNN connector that puts a fixed number of connections on each of the\
-        post neurons
+        post neurons.
     """
     __slots__ = []
 
@@ -52,7 +52,11 @@ class FixedNumberPostConnector(CommonFixedNumberPostConnector,
             are allowed
         :param rng: random number generator
         :type rng: ~pyNN.random.NumpyRNG or None
-        :param callable callback: Ignored
+        :param callable callback:
+            if given, a callable that display a progress bar on the terminal.
+
+            .. note::
+                Not supported by sPyNNaker.
         """
         # pylint: disable=too-many-arguments
         super(FixedNumberPostConnector, self).__init__(
