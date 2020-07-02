@@ -37,16 +37,19 @@ class SmallWorldConnector(_BaseClass):
             if the connector is used to connect a Population to itself, this
             flag determines whether a neuron is allowed to connect to itself,
             or only to other neurons in the Population.
-        :param bool safe:
-            Whether to check that weights and delays have valid values.
-            If False, this check is skipped.
-        :param bool verbose:
-            Whether to output extra information about the connectivity to a
-            CSV file
         :param n_connections:
             if specified, the number of efferent synaptic connections per
             neuron
         :type n_connections: int or None
+        :param rng: random number generator
+        :type rng: ~pyNN.random.NumpyRNG or None
+        :param bool safe:
+            Whether to check that weights and delays have valid values.
+            If False, this check is skipped.
+        :param callable callback: For PyNN compatibility only.
+        :param bool verbose:
+            Whether to output extra information about the connectivity to a
+            CSV file
         """
         # pylint: disable=too-many-arguments
         super(SmallWorldConnector, self).__init__(
