@@ -42,7 +42,8 @@ class TestVeryLow(BaseTestCase):
             # Needs to be larger than 1000 timesteps version
             # Number of auto-pause-resume cycles (7) determined by experiment
             self.assert_logs_messages(
-                lc.records, "*** Running simulation... ***", 'INFO', 7)
+                lc.records, "*** Running simulation... ***", 'INFO', 2,
+                allow_more=True)
 
         self.assertEqual(158, len(spikes))
         spike_checker.synfire_spike_checker(spikes, n_neurons)

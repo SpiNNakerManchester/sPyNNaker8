@@ -25,7 +25,7 @@ logger = logging.getLogger(__file__)
 class FixedNumberPreConnector(CommonFixedNumberPreConnector,
                               PyNNFixedNumberPreConnector):
     """ Connects a fixed number of pre-synaptic neurons selected at random,\
-        to all post-synaptic neurons
+        to all post-synaptic neurons.
     """
     __slots__ = []
 
@@ -51,7 +51,11 @@ class FixedNumberPreConnector(CommonFixedNumberPreConnector,
             allowed
         :param rng: random number generator
         :type rng: ~pyNN.random.NumpyRNG or None
-        :param callable callback: Ignored
+        :param callable callback:
+            if given, a callable that display a progress bar on the terminal.
+
+            .. note::
+                Not supported by sPyNNaker.
         """
         # pylint: disable=too-many-arguments
         super(FixedNumberPreConnector, self).__init__(

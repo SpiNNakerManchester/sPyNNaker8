@@ -12,6 +12,8 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+import sys
+from six import reraise
 
 # Alternative implementation for
 # https://github.com/NeuralEnsemble/PyNN/blob/master/pyNN/common/populations.py
@@ -68,32 +70,36 @@ class IDMixin(object):
                                  [self.__id])
 
     def __getattr__(self, name):
+        # pylint: disable=broad-except
         try:
             return self.__population.get_by_selector(
                 selector=self.__id, parameter_names=name)[0]
-        except Exception as ex:  # pylint: disable=broad-except
+        except Exception:
+            ei = sys.exc_info()
             try:
                 # try initialisable variable
                 return self.__population.get_initial_value(
                     selector=self.__id, variable=name)[0]
             except Exception:
                 # that failed too so raise the better original exception
-                raise ex
+                reraise(*ei)
 
     def __setattr__(self, name, value):
+        # pylint: disable=broad-except
         if name in self.__realslots__:
             object.__setattr__(self, name, value)
         else:
             try:
                 self.__population.set_by_selector(self.__id, name, value)
-            except Exception as ex:  # pylint: disable=broad-except
+            except Exception:
+                ei = sys.exc_info()
                 try:
                     # try initialisable variable
                     return self.__population.set_initial_value(
                         selector=self.__id, variable=name, value=value)
                 except Exception:
                     # that failed too so raise the better original exception
-                    raise ex
+                    reraise(*ei)
 
     def set_parameters(self, **parameters):
         """ Set cell parameters, given as a sequence of parameter=value\

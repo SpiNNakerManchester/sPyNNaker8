@@ -23,8 +23,8 @@ from spynnaker.pyNN.models.neural_projections.connectors import (
 class OneToOneConnector(CommonOneToOneConnector, PyNNOneToOneConnector):
     """
     Where the pre- and postsynaptic populations have the same size, connect\
-    cell i in the presynaptic population to cell i in the postsynaptic\
-    population for all i.
+    cell *i* in the presynaptic population to cell *i* in the postsynaptic\
+    population for all *i*.
     """
     __slots__ = []
 
@@ -34,7 +34,10 @@ class OneToOneConnector(CommonOneToOneConnector, PyNNOneToOneConnector):
             values. If False, this check is skipped.
         :param callable callback: a function that will be called with the
             fractional progress of the connection routine. An example would
-            be progress_bar.set_level.
+            be `progress_bar.set_level`.
+
+            .. note::
+                Not supported by sPyNNaker.
         """
         CommonOneToOneConnector.__init__(
             self, safe=safe, random_number_class=RandomDistribution)
