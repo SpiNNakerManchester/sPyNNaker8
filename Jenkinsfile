@@ -21,6 +21,10 @@ pipeline {
     options {
         skipDefaultCheckout true
     }
+    environment {
+        SPINN_DIRS = "${workspace}/spinnaker_tools"
+        NEURAL_MODELLING_DIRS = "${workspace}/sPyNNaker/neural_modelling"
+    }
     stages {
         stage('Clean and Checkout') {
             steps {
@@ -63,10 +67,6 @@ pipeline {
             }
         }
         stage('Install') {
-            environment {
-                SPINN_DIRS = "${workspace}/spinnaker_tools"
-                NEURAL_MODELLING_DIRS = "${workspace}/sPyNNaker/neural_modelling"
-            }
             steps {
                 // Install SpiNNUtils first as needed for C build
                 sh 'cd SpiNNUtils && python setup.py develop'
