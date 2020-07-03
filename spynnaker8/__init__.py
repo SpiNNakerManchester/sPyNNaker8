@@ -375,7 +375,7 @@ def setup(timestep=_pynn_control.DEFAULT_TIMESTEP,
         # if already exists, kill and rebuild
         try:
             globals_variables.get_simulator().clear()
-        except Exception:
+        except Exception:  # pylint: disable=broad-except
             logger.exception("Error forcing previous simulation to clear")
             globals_variables.unset_simulator()
 
