@@ -24,6 +24,7 @@ pipeline {
     environment {
         SPINN_DIRS = "${workspace}/spinnaker_tools"
         NEURAL_MODELLING_DIRS = "${workspace}/sPyNNaker/neural_modelling"
+        CONTINUOUS_INTEGRATION = "true"
     }
     stages {
         stage('Clean and Checkout') {
