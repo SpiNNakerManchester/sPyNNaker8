@@ -19,13 +19,41 @@ from spynnaker.pyNN.models.neural_projections.connectors import (
 
 
 class SmallWorldConnector(_BaseClass):
+    """ Create a connector that uses connection statistics based on the\
+        Small World network connectivity model. Note that this is typically\
+        used from a population to itself.
+    """
     __slots__ = []
 
     def __init__(
             self, degree, rewiring, allow_self_connections=True,
-            safe=True, verbose=False, n_connections=None):
+            n_connections=None, rng=None, safe=True, callback=None,
+            verbose=False):
+        """
+        :param float degree:
+            the region length where nodes will be connected locally
+        :param float rewiring: the probability of rewiring each edge
+        :param bool allow_self_connections:
+            if the connector is used to connect a Population to itself, this
+            flag determines whether a neuron is allowed to connect to itself,
+            or only to other neurons in the Population.
+        :param n_connections:
+            if specified, the number of efferent synaptic connections per
+            neuron
+        :type n_connections: int or None
+        :param rng: random number generator
+        :type rng: ~pyNN.random.NumpyRNG or None
+        :param bool safe:
+            Whether to check that weights and delays have valid values.
+            If False, this check is skipped.
+        :param callable callback: For PyNN compatibility only.
+        :param bool verbose:
+            Whether to output extra information about the connectivity to a
+            CSV file
+        """
         # pylint: disable=too-many-arguments
         super(SmallWorldConnector, self).__init__(
             degree=degree, rewiring=rewiring,
             allow_self_connections=allow_self_connections,
-            safe=safe, verbose=verbose, n_connections=n_connections)
+            n_connections=n_connections, rng=rng, safe=safe, callback=callback,
+            verbose=verbose)

@@ -28,7 +28,8 @@ logger = logging.getLogger(__name__)
 
 
 class PopulationView(PopulationBase):
-    """ A view of a subset of neurons within a :py:class:`Population`.
+    """ A view of a subset of neurons within a\
+    :py:class:`~spynnaker8.models.populations.Population`.
 
     In most ways, Populations and PopulationViews have the same behaviour,\
     i.e., they can be recorded, connected with Projections, etc. \
@@ -50,6 +51,9 @@ class PopulationView(PopulationBase):
 
     def __init__(self, parent, selector, label=None):
         """
+        :param parent: the population or view to make the view from
+        :type parent: ~spynnaker8.models.populations.Population or\
+            ~spynnaker8.models.populations.PopulationView
         :param selector: a slice or numpy mask array.\
             The mask array should either be a boolean array (ideally) of the\
             same size as the parent,\
@@ -63,6 +67,9 @@ class PopulationView(PopulationBase):
                 PopulationView(p, slice(2, 5, 2))
 
             will all create the same view.
+        :type selector: None or slice or int or list(bool) or list(int) or\
+            ~numpy.ndarray(bool) or ~numpy.ndarray(int)
+        :param str label: A label for the view
         """
         self.__parent = parent
         sized = AbstractSized(parent.size)
@@ -80,44 +87,60 @@ class PopulationView(PopulationBase):
 
     @property
     def size(self):
-        """ The total number of neurons in the Population.
+        """ The total number of neurons in the Population View.
+
+        :rtype: int
         """
         return len(self.__indexes)
 
     @property
     def label(self):
-        """ A label for the Population.
+        """ A label for the Population View.
+
+        :rtype: str
         """
         return self.__label
 
     @property
     def celltype(self):
-        """ The type of neurons making up the Population.
+        """ The type of neurons making up the underlying Population.
+
+        :rtype: ~spynnaker.pyNN.models.AbstractPyNNModel
         """
         return self.__population.celltype
 
     @property
     def initial_values(self):
         """ A dict containing the initial values of the state variables.
+
+        :rtype: dict(str, ...)
         """
         return self.__population.get_initial_values(selector=self.__indexes)
 
     @property
     def parent(self):
         """ A reference to the parent Population (that this is a view of).
+
+        :rtype: ~spynnaker8.models.populations.Population
         """
         return self.__parent
 
     @property
     def mask(self):
         """  The selector mask that was used to create this view.
+
+        :rtype: None or slice or int or list(bool) or list(int) or\
+            ~numpy.ndarray(bool) or ~numpy.ndarray(int)
         """
         return self.__mask
 
     @property
     def all_cells(self):
         """ An array containing the cell IDs of all neurons in the\
-            Population (all MPI nodes). """
+            Population (all MPI nodes).
+
+        :rtype: list(IDMixin)
+        """
         return [IDMixin(self.__population, idx) for idx in self.__indexes]
 
     @property
@@ -133,9 +156,11 @@ class PopulationView(PopulationBase):
             if index is an integer, or a subset of the cells\
             (PopulationView object), if index is a slice or array.
 
-        Note that __getitem__ is called when using[] access, e.g. p =\
-            Population(...) p[2] is equivalent to p.__getitem__(2).p[3:6] is\
-            equivalent to p.__getitem__(slice(3, 6))
+        .. note::
+            ``__getitem__`` is called when using[] access, e.g. if
+            ``p = Population(...)`` then
+            ``p[2]`` is equivalent to ``p.__getitem__(2)``, and
+            ``p[3:6]`` is equivalent to ``p.__getitem__(slice(3, 6))``
         """
         if isinstance(index, integer_types):
             return IDMixin(self.__population, index)
@@ -154,12 +179,16 @@ class PopulationView(PopulationBase):
 
     def all(self):
         """ Iterator over cell IDs (on all MPI nodes).
+
+        :rtype: iterable
         """
         for idx in self.__indexes:
             yield IDMixin(self, idx)
 
     def can_record(self, variable):
         """ Determine whether variable can be recorded from this population.
+
+        :rtype: bool
         """
         return self.__population.can_record(variable)
 
@@ -167,6 +196,8 @@ class PopulationView(PopulationBase):
     def conductance_based(self):
         """ Indicates whether the post-synaptic response is modelled as a\
             change in conductance or a change in current.
+
+        :rtype: bool
         """
         return self.__population.conductance_based
 
@@ -179,6 +210,11 @@ class PopulationView(PopulationBase):
 
         If template is None, then a dictionary containing the template\
         context will be returned.
+
+        :param str template: Template filename
+        :param engine: Template substitution engine
+        :type engine: str or ~pyNN.descriptions.TemplateEngine or None
+        :rtype: str or dict
         """
         context = {"label": self.label,
                    "parent": self.parent.label,
@@ -188,9 +224,14 @@ class PopulationView(PopulationBase):
         return descriptions.render(engine, template, context)
 
     def find_units(self, variable):
-        """
+        """ Get the units of a variable
+
         .. warning::
             NO PyNN description of this method.
+
+        :param str variable: The name of the variable
+        :return: The units of the variable
+        :rtype: str
         """
         return self.__population.find_units(variable)
 
@@ -216,22 +257,25 @@ class PopulationView(PopulationBase):
         """ Return a Neo Block containing the data(spikes, state variables)\
             recorded from the Population.
 
-        :param variables: Either a single variable name or a list of variable\
-            names. Variables must have been previously recorded, otherwise an\
+        :param variables: Either a single variable name or a list of variable
+            names. Variables must have been previously recorded, otherwise an
             Exception will be raised.
-        :param gather: For parallel simulators, if gather is True, all data\
-            will be gathered to all nodes and the Neo Block will contain data\
-            from all nodes. \
-            Otherwise, the Neo Block will contain only data from the cells\
+        :type variables: str or list(str)
+        :param bool gather: For parallel simulators, if gather is True, all
+            data will be gathered to all nodes and the Neo Block will contain
+            data from all nodes.
+            Otherwise, the Neo Block will contain only data from the cells
             simulated on the local node.
 
             .. note::
                 SpiNNaker always gathers.
 
-        :param clear: If True, recorded data will be deleted from the\
-            Population.
-         :param annotations: annotations to put on the neo block
-       """
+        :param bool clear:
+            If True, recorded data will be deleted from the Population.
+        :param annotations: annotations to put on the neo block
+        :type annotations: dict(str, ...)
+        :rtype: ~neo.core.Block
+        """
         if not gather:
             logger.warning("SpiNNaker only supports gather=True. We will run "
                            "as if gather was set to True.")
@@ -248,9 +292,15 @@ class PopulationView(PopulationBase):
 
         The dict keys are neuron IDs, not indices.
 
-        Note: Implementation of this method is different to Population as tbe
-        Populations uses PyNN 7 version of the get_spikes method which dooes
-        not support indexes.
+        .. note::
+            Implementation of this method is different to Population as the
+            Populations uses PyNN 7 version of the get_spikes method which
+            does not support indexes.
+
+        .. note::
+            SpiNNaker always gathers.
+
+        :rtype: dict(int,int)
         """
         if not gather:
             logger.warning(
@@ -271,6 +321,8 @@ class PopulationView(PopulationBase):
 
         The name "grandparent" is of course a little misleading, as it could\
         be just the parent, or the great, great, great, ..., grandparent.
+
+        :rtype: ~spynnaker8.models.populations.Population
         """
         return self.__population
 
@@ -292,13 +344,13 @@ class PopulationView(PopulationBase):
 
     def initialize(self, **initial_values):
         """ Set initial values of state variables, e.g. the membrane\
-        potential.  Values passed to initialize() may be:
+        potential.  Values passed to ``initialize()`` may be:
 
         * single numeric values (all neurons set to the same value), or
-        * RandomDistribution objects, or
+        * :py:class:`~pyNN.random.RandomDistribution` objects, or
         * lists / arrays of numbers of the same size as the population\
           mapping functions, where a mapping function accepts a single\
-          argument(the cell index) and returns a single number.
+          argument (the cell index) and returns a single number.
 
         Values should be expressed in the standard PyNN units(\
         i.e. millivolts, nanoamps, milliseconds, microsiemens, nanofarads,\
@@ -319,22 +371,30 @@ class PopulationView(PopulationBase):
         """ Record the specified variable or variables for all cells in the\
             Population or view.
 
-        :param varables: either a single variable name or a list of variable\
-            names. For a given celltype class, celltype.recordable contains a\
+        :param variables: either a single variable name, or a list of variable
+            names, or ``all`` to record everything. For a given celltype
+            class, celltype.recordable contains a\
             list of variables that can be recorded for that celltype.
-        :param to_file: \
-            If specified, should be a Neo IO instance and write_data()\
-            will be automatically called when end() is called.
-        :param sampling_interval: \
-            should be a value in milliseconds, and an integer\
-            multiple of the simulation timestep.
+        :type variables: str or list(str)
+        :param to_file:
+            If specified, should be a Neo IO instance and
+            :py:meth:`write_data`
+            will be automatically called when `sim.end()` is called.
+        :type to_file: ~neo.io or ~neo.rawio or str
+        :param int sampling_interval:
+            should be a value in milliseconds, and an integer multiple of the
+            simulation timestep.
         """
         self.__population._record_with_indexes(
             variables, to_file, sampling_interval, self.__indexes)
 
     def sample(self, n, rng=None):
-        """ Randomly sample `n` cells from the Population, and return a\
-            PopulationView object.
+        """ Randomly sample `n` cells from the Population view, and return a\
+            new PopulationView object.
+
+        :param int n: The number of cells to select
+        :param ~pyNN.random.NumpyRNG rng: Random number generator
+        :rtype: ~spynnaker8.models.populations.PopulationView
         """
         if not rng:
             rng = NumpyRNG()
@@ -349,7 +409,7 @@ class PopulationView(PopulationBase):
             Values passed to `set()` may be:
 
         * single values,
-        * RandomDistribution objects, or
+        * :py:class:`~pyNN.random.RandomDistribution` objects, or
         * lists / arrays of values of the same size as the population\
           mapping functions, where a mapping function accepts a single\
           argument (the cell index) and returns a single value.
@@ -357,9 +417,9 @@ class PopulationView(PopulationBase):
         Here, a "single value" may be either a single number or a list /\
         array of numbers (e.g. for spike times).
 
-        Values should be expressed in the standard PyNN units\
-            (i.e. millivolts, nanoamps, milliseconds, microsiemens,\
-            nanofarads, event per second).
+        Values should be expressed in the standard PyNN units (i.e. \
+        millivolts, nanoamps, milliseconds, microsiemens, nanofarads, \
+        event per second).
 
         Examples::
 
@@ -377,18 +437,25 @@ class PopulationView(PopulationBase):
             supported by Neo.
 
         :param io: a Neo IO instance
-        :param variables: either a single variable name or a list of variable\
-            names. These must have been previously recorded, otherwise an\
+        :type io: ~neo.io or ~neo.rawio or str
+        :param variables: either a single variable name or a list of variable
+            names. These must have been previously recorded, otherwise an
             Exception will be raised.
-        :param gather: For parallel simulators, if this is True, all data will\
-            be gathered to the master node and a single output file created\
-            there. Otherwise, a file will be written on each node,\
+        :type variables: str or list(str)
+        :param bool gather: For parallel simulators, if this is True, all
+            data will be gathered to the master node and a single output file
+            created there. Otherwise, a file will be written on each node,
             containing only data from the cells simulated on that node.
-        :param clear: If this is True, recorded data will be deleted from the\
-            Population.
-        :param annotations: should be a dict containing simple data types such\
-            as numbers and strings. The contents will be written into the\
+
+            .. note::
+                SpiNNaker always gathers.
+
+        :param bool clear:
+            If this is True, recorded data will be deleted from the Population.
+        :param annotations: should be a dict containing simple data types such
+            as numbers and strings. The contents will be written into the
             output data file as metadata.
+        :type annotations: dict(str, ...)
         """
         if not gather:
             logger.warning("SpiNNaker only supports gather=True. We will run "

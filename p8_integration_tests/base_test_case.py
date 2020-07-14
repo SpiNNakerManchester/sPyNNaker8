@@ -19,12 +19,12 @@ import sys
 import time
 import unittest
 from unittest import SkipTest
+import numpy
+import sqlite3
 import spinn_utilities.conf_loader as conf_loader
 from spinnman.exceptions import SpinnmanException
 from spalloc.job import JobDestroyedError
 from spinn_front_end_common.utilities import globals_variables
-import numpy
-import sqlite3
 
 random.seed(os.environ.get('P8_INTEGRATION_SEED', None))
 if os.environ.get('CONTINUOUS_INTEGRATION', 'false').lower() == 'true':
@@ -122,7 +122,11 @@ class BaseTestCase(unittest.TestCase):
         test_dir = os.path.dirname(p8_integration_tests_directory)
         report_dir = os.path.join(test_dir, "reports")
         if not os.path.exists(report_dir):
-            os.makedirs(report_dir)
+            # It might now exist if run in parallel
+            try:
+                os.makedirs(report_dir)
+            except Exception:
+                pass
         report_path = os.path.join(report_dir, file_name)
         with open(report_path, "a") as report_file:
             report_file.write(message)
@@ -189,7 +193,7 @@ class BaseTestCase(unittest.TestCase):
                 retries += 1
                 globals_variables.unset_simulator()
                 if retries >= max_tries:
-                    raise ex
+                    raise
             except SpinnmanException as ex:
                 class_file = sys.modules[self.__module__].__file__
                 with open(self.spinnman_exception_path(), "a") as exc_file:
@@ -200,7 +204,7 @@ class BaseTestCase(unittest.TestCase):
                 retries += 1
                 globals_variables.unset_simulator()
                 if retries >= max_tries:
-                    raise ex
+                    raise
             print("")
             print("==========================================================")
             print(" Will run {} again in {} seconds".format(

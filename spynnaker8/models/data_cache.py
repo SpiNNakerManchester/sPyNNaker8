@@ -24,7 +24,7 @@ class DataCache(object):
         Required because deep-copy does not work on neo Objects
 
     Stores the Data shared by all variable types at the top level\
-    and holds a cache for the variable specific data
+    and holds a cache for the variable specific data.
     """
 
     __slots__ = ("__cache",
@@ -38,12 +38,13 @@ class DataCache(object):
     def __init__(self, label, description, segment_number,
                  recording_start_time, t):
         """
-        :param label: cache label
+        :param str label: cache label
         :param description: cache description
-        :param segment_number: cache segment number
-        :param recording_start_time: \
+        :type description: str or dict
+        :param int segment_number: cache segment number
+        :param float recording_start_time:
             when this cache was started in recording space.
-        :param t: time
+        :param float t: time
         """
         # pylint: disable=too-many-arguments
         self.__label = label
@@ -89,8 +90,7 @@ class DataCache(object):
     def has_data(self, variable):
         """ Checks if data for a variable has been cached
 
-        :param variable: Name of variable
-        :type variable: str
+        :param str variable: Name of variable
         :return: True if there is cached data
         :rtype: bool
         """
@@ -99,8 +99,7 @@ class DataCache(object):
     def get_data(self, variable):
         """ Get the variable cache for the named variable
 
-        :param variable: name of variable to get cache for
-        :rtype variable: str
+        :param str variable: name of variable to get cache for
         :return: The cache data, IDs, indexes and units
         :rtype: VariableCache
         """
@@ -110,17 +109,13 @@ class DataCache(object):
                   sampling_interval):
         """ Saves the data for one variable in this segment
 
-        :param variable: name of variable data applies to
-        :type variable: str
-        :param data: raw data in sPyNNaker format
-        :type data: nparray
-        :param indexes: population indexes for which data should be returned
-        :type indexes: nparray
-        :param n_neurons: Number of neurons in the population.\
+        :param str variable: name of variable data applies to
+        :param ~numpy.ndarray data: raw data in sPyNNaker format
+        :param ~numpy.ndarray indexes:
+            population indexes for which data should be returned
+        :param int n_neurons: Number of neurons in the population.\
             Regardless of if they where recording or not.
-        :type n_neurons: int
-        :param units: the units in which the data is
-        :type units: str
+        :param str units: the units in which the data is
         :rtype: None
         """
         self.__rec_datetime = datetime.now()
