@@ -127,8 +127,10 @@ class TestStructuralWithSTDP(BaseTestCase):
     def test_structural_with_stdp(self):
         try:
             self.runsafe(structural_with_stdp)
-        except KeyError as e:
-            raise(self.skipTest("currently binary cant compile"))
+        except KeyError:
+            raise(self.skipTest(
+                "currently binary cant compile. Linked to "
+                "https://github.com/SpiNNakerManchester/sPyNNaker/issues/846"))
         except Exception as e:
             raise e
 

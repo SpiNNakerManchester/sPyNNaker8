@@ -87,8 +87,10 @@ class TestStructuralShared(BaseTestCase):
     def test_structural_shared(self):
         try:
             self.runsafe(structural_shared)
-        except KeyError as e:
-            raise(self.skipTest("currently binary cant compile"))
+        except KeyError:
+            raise(self.skipTest(
+                "currently binary cant compile, linked to "
+                "https://github.com/SpiNNakerManchester/sPyNNaker/issues/846"))
         except Exception as e:
             raise e
 
