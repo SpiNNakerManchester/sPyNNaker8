@@ -16,7 +16,6 @@ from p8_integration_tests.base_test_case import (
     BaseTestCase, calculate_spike_pair_additive_stdp_weight)
 import spynnaker8 as p
 import numpy
-from unittest import SkipTest
 
 
 def structural_with_stdp():
