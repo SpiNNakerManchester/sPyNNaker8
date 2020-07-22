@@ -18,6 +18,7 @@ from setuptools import setup
 from collections import defaultdict
 
 __version__ = None
+__version_type__ = None
 exec(open("spynnaker8/_version.py").read())
 assert __version__
 
@@ -61,6 +62,24 @@ if os.environ.get('READTHEDOCS', None) != 'True':
     install_requires.append('scipy')
     install_requires.append('csa')
 
+long_description = {}
+this_directory = os.path.abspath(os.path.dirname(__file__))
+try:
+    with open(os.path.join(this_directory, 'README.md')) as f:
+        long_description["long_description"] = f.read()
+        long_description["long_description_content_type"] = "text/markdown"
+except IOError:
+    # If we can't read the long description, so be it; it's not a fatal error
+    pass
+
+# Classifiers: https://pypi.org/classifiers/
+_status_map = {
+    "alpha": "Development Status :: 3 - Alpha",
+    "beta": "Development Status :: 4 - Beta",
+    "production": "Development Status :: 5 - Production/Stable",
+}
+assert __version_type__ in _status_map
+
 setup(
     name="sPyNNaker8",
     version=__version__,
@@ -68,12 +87,14 @@ setup(
                 "PyNN 0.9 on the SpiNNaker platform",
     author="University of Manchester",
     classifiers=[
-        "Development Status :: 3 - Alpha",
+        _status_map[__version_type__],
+
+        "Environment :: Console",
 
         "Intended Audience :: Developers",
         "Intended Audience :: Science/Research",
 
-        "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
+        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
 
         "Natural Language :: English",
 
@@ -85,12 +106,16 @@ setup(
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
+
+        "Topic :: Scientific/Engineering",
+        "Topic :: Scientific/Engineering :: Neuroscience",
     ],
-    keywords="spinnaker pynn0.9 neural simulation",
+    keywords=["spinnaker", "pynn0.9", "neural simulation"],
     url="https://github.com/SpiNNakerManchester/SpyNNaker8",
     packages=packages,
     package_data=package_data,
     install_requires=install_requires,
-    maintainer="SpiNNakerTeam",
-    maintainer_email="spinnakerusers@googlegroups.com"
+    maintainer="SpiNNaker Team",
+    maintainer_email="spinnakerusers@googlegroups.com",
+    **long_description
 )
