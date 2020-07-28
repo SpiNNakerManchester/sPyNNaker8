@@ -47,7 +47,9 @@ class FromListConnector(CommonFromListConnector):
         :type column_names: tuple(str) or list(str) or None
         :param callable callback:
             if given, a callable that display a progress bar on the terminal.
-            Ignored in sPyNNaker.
+
+            .. note::
+                Not supported by sPyNNaker.
         """
         CommonFromListConnector.__init__(
             self, conn_list=conn_list, safe=safe, verbose=verbose,

@@ -34,9 +34,8 @@ class TestIobuffMultirun(BaseTestCase):
         pop = sim.Population(10, sim.IF_curr_exp(), label='pop_1')
         sim.run(50)
 
-        graph_mapper = globals_variables.get_simulator()._graph_mapper
         placements = globals_variables.get_simulator()._placements
-        machine_verts = list(graph_mapper.get_machine_vertices(pop._vertex))
+        machine_verts = list(pop._vertex.machine_vertices)
         placement = placements.get_placement_of_vertex(machine_verts[0])
 
         size1 = self.check_size(prov_path, placement)

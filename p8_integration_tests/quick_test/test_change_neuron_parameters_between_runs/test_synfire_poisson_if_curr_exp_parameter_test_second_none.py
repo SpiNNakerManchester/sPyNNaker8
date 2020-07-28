@@ -49,13 +49,13 @@ class TestSynfirePoissonIfCurrExpParameterTestSecondNone(BaseTestCase):
                            extract_between_runs=extract_between_runs,
                            set_between_runs=set_between_runs,
                            record_input_spikes=record_input_spikes)
-        input = synfire_run.get_spike_source_spikes_numpy()
+        input_spikes = synfire_run.get_spike_source_spikes_numpy()
         spikes = synfire_run.get_output_pop_spikes_numpy()
         # Check input spikes stop
-        hist = numpy.histogram(input[:, 1], bins=[0, 5000, 10000])
+        hist = numpy.histogram(input_spikes[:, 1], bins=[0, 5000, 10000])
         self.assertEqual(0, hist[0][1])
         spike_checker.synfire_multiple_lines_spike_checker(spikes, n_neurons,
-                                                           len(input),
+                                                           len(input_spikes),
                                                            wrap_around=False)
 
     def test_second_none(self):
@@ -71,12 +71,12 @@ if __name__ == '__main__':
                        extract_between_runs=extract_between_runs,
                        set_between_runs=set_between_runs,
                        record_input_spikes=record_input_spikes)
-    gsyn = synfire_run.get_output_pop_gsyn_exc_numpy()
-    v = synfire_run.get_output_pop_voltage_numpy()
-    input = synfire_run.get_spike_source_spikes_numpy()
-    hist = numpy.histogram(input[:, 1], bins=[0, 5000, 10000])
-    print(hist[0][0], hist[0][1])
-    spikes = synfire_run.get_output_pop_spikes_numpy()
-    plot_utils.plot_spikes(input, spikes2=spikes)
-    plot_utils.heat_plot(v)
-    plot_utils.heat_plot(gsyn)
+    _gsyn = synfire_run.get_output_pop_gsyn_exc_numpy()
+    _v = synfire_run.get_output_pop_voltage_numpy()
+    _spikes_in = synfire_run.get_spike_source_spikes_numpy()
+    _hist = numpy.histogram(_spikes_in[:, 1], bins=[0, 5000, 10000])
+    print(_hist[0][0], _hist[0][1])
+    _spikes_out = synfire_run.get_output_pop_spikes_numpy()
+    plot_utils.plot_spikes([_spikes_in, _spikes_out])
+    plot_utils.heat_plot(_v)
+    plot_utils.heat_plot(_gsyn)
