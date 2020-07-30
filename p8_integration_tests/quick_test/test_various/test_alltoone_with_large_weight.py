@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from data_specification.enums import DataType
 from p8_integration_tests.base_test_case import BaseTestCase
 import spynnaker8 as sim
 
@@ -40,7 +41,9 @@ class AllToOneWithLargeWeightCase(BaseTestCase):
         sim.end()
 
         weight_sum = sum(weight[2] for weight in weight_list)
-        self.assertEqual(weight_sum, sources * weights)
+        weight_used = 1 / (
+            DataType.S1615.closest_representable_value_above(1 / weights))
+        self.assertAlmostEqual(weight_sum, sources * weight_used)
 
     def test_run(self):
         self.runsafe(self.do_run)

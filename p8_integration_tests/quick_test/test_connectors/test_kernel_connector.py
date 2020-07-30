@@ -77,8 +77,10 @@ class TestKernelConnector(BaseTestCase):
         self.assertEqual(25, len(weightsdelays))
         list10 = (1, 0, 5.0, 20.0)
         list11 = (1, 1, 7.0, 10.0)
-        [self.assertEqual(list10[i], weightsdelays[1][i]) for i in range(4)]
-        [self.assertEqual(list11[i], weightsdelays[5][i]) for i in range(4)]
+        [self.assertAlmostEqual(
+            list10[i], weightsdelays[1][i], places=3) for i in range(4)]
+        [self.assertAlmostEqual(
+            list11[i], weightsdelays[5][i], places=3) for i in range(4)]
         # NOTE: you can probably replace the above in later versions of python3
         #       with the following, but in 3.5 it generates a FutureWarning
 #         self.assertSequenceEqual(list10, weightsdelays[1])
@@ -91,8 +93,10 @@ class TestKernelConnector(BaseTestCase):
         self.assertEqual(9, len(weightsdelays))
         list01 = (0, 1, 5.0, 20.0)
         list03 = (0, 3, 7.0, 10.0)
-        [self.assertEqual(list01[i], weightsdelays[1][i]) for i in range(4)]
-        [self.assertEqual(list03[i], weightsdelays[5][i]) for i in range(4)]
+        [self.assertAlmostEqual(
+            list01[i], weightsdelays[1][i], places=3) for i in range(4)]
+        [self.assertAlmostEqual(
+            list03[i], weightsdelays[5][i], places=3) for i in range(4)]
 
     def test_nonsquarek_run(self):
         (psh, psw, ksh, ksw) = (4, 4, 1, 3)
@@ -101,8 +105,10 @@ class TestKernelConnector(BaseTestCase):
         self.assertEqual(10, len(weightsdelays))
         list10 = (1, 0, 7.0, 10.0)
         list42 = (4, 2, 5.0, 20.0)
-        [self.assertEqual(list10[i], weightsdelays[1][i]) for i in range(4)]
-        [self.assertEqual(list42[i], weightsdelays[5][i]) for i in range(4)]
+        [self.assertAlmostEqual(
+            list10[i], weightsdelays[1][i], places=3) for i in range(4)]
+        [self.assertAlmostEqual(
+            list42[i], weightsdelays[5][i], places=3) for i in range(4)]
 
     def test_bigger_nonsquarep_run(self):
         (psh, psw, ksh, ksw) = (32, 16, 3, 3)
@@ -111,5 +117,7 @@ class TestKernelConnector(BaseTestCase):
         self.assertEqual(1081, len(weightsdelays))
         list10 = (1, 0, 5.0, 20.0)
         list11 = (1, 1, 7.0, 10.0)
-        [self.assertEqual(list10[i], weightsdelays[1][i]) for i in range(4)]
-        [self.assertEqual(list11[i], weightsdelays[5][i]) for i in range(4)]
+        [self.assertAlmostEqual(
+            list10[i], weightsdelays[1][i], places=3) for i in range(4)]
+        [self.assertAlmostEqual(
+            list11[i], weightsdelays[5][i], places=3) for i in range(4)]
