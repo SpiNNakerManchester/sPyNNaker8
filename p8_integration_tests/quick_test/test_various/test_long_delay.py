@@ -1,4 +1,4 @@
-# Copyright (c) 2019-2020 The University of Manchester
+# Copyright (c) 2020 The University of Manchester
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,11 +16,6 @@
 """
 Synfirechain-like example
 """
-import unittest
-
-from testfixtures import LogCapture
-import spynnaker.plot_utils as plot_utils
-import spynnaker.spike_checker as spike_checker
 from p8_integration_tests.base_test_case import BaseTestCase
 from p8_integration_tests.scripts.synfire_run import SynfireRunner
 
