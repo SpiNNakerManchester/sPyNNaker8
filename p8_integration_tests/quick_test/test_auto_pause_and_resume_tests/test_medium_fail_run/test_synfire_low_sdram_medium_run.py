@@ -18,6 +18,7 @@ Synfirechain-like example
 """
 import unittest
 
+import numpy
 from testfixtures import LogCapture
 import spynnaker.plot_utils as plot_utils
 import spynnaker.spike_checker as spike_checker
@@ -35,13 +36,12 @@ class TestVeryLow(BaseTestCase):
     tests the run is split buy auto pause resume
     """
 
-    @unittest.skip("does not work with this size for purely the java. Python "
-                   "is fine. Needs investigating.")
     def test_more_runs(self):
         with LogCapture() as lc:
             synfire_run.do_run(n_neurons, neurons_per_core=neurons_per_core,
                                run_times=[runtime])
             spikes = synfire_run.get_output_pop_spikes_numpy()
+            numpy.savetxt("spikes.txt", spikes)
             # CB Currently eight but could change
             # Needs to be larger than 1000 timesteps version
             self.assert_logs_messages(
