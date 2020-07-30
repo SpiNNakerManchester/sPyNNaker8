@@ -24,6 +24,7 @@ runtime = 6000
 delay = 100
 synfire_run = SynfireRunner()
 
+
 class TestLongDelay(BaseTestCase):
     """
     tests the run is split buy auto pause resume
