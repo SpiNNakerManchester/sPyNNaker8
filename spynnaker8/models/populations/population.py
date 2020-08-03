@@ -330,8 +330,9 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         """
         if not gather:
             logger.warning(
-                logger, "sPyNNaker only supports gather=True. We will run "
-                "as if gather was set to True.")
+                logger, (
+                    "sPyNNaker only supports gather=True. We will run "
+                    "as if gather was set to True."))
         if annotations is not None:
             warn_once(
                 logger, "annotations parameter is not standard PyNN so may "
