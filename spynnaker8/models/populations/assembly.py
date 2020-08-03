@@ -18,6 +18,15 @@ from spinn_front_end_common.utilities import globals_variables
 
 
 class Assembly(pynn_common.Assembly):
+    """
+    A group of neurons, may be heterogeneous, in contrast to a Population
+    where all the neurons are of the same type.
+
+    :param populations: the populations or views to form the assembly out of
+    :type populations: ~spynnaker8.models.populations.Population or \
+        ~spynnaker8.models.populations.PopulationView
+    :param kwargs: may contain `label` (a string describing the assembly)
+    """
 
     @property
     def _simulator(self):

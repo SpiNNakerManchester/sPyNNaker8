@@ -12,22 +12,39 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+import sys
+from six import reraise
 
 # Alternative implementation for
 # https://github.com/NeuralEnsemble/PyNN/blob/master/pyNN/common/populations.py
 
 
 class IDMixin(object):
+    """
+    Instead of storing IDs as integers, we store them as ID objects,
+    which allows a syntax like::
+
+        p[3,4].tau_m = 20.0
+
+    where ``p`` is a Population object.
+    """
     __slots__ = ("__id", "__population")
     __realslots__ = tuple("_IDMixin" + item for item in __slots__)
 
     def __init__(self, population, id):  # pylint: disable=redefined-builtin
+        """
+        :param ~spynnaker8.models.populations.Population population:
+        :param int id:
+        """
         self.__id = id
         self.__population = population
 
     # NON-PYNN API CALLS
     @property
     def id(self):
+        """
+        :rtype: int
+        """
         return self.__id
 
     @property
@@ -35,36 +52,54 @@ class IDMixin(object):
         return self.__population
 
     def record(self, variables, to_file=None, sampling_interval=None):
+        """ Record the given variable(s) of this cell.
+
+        :param variables: either a single variable name or a list of variable
+            names. For a given celltype class, celltype.recordable contains a
+            list of variables that can be recorded for that celltype.
+        :type variables: str or list(str)
+        :param to_file:
+            If specified, should be a Neo IO instance and write_data()
+            will be automatically called when end() is called.
+        :type to_file: ~neo.io or ~neo.rawio or str
+        :param int sampling_interval:
+            should be a value in milliseconds, and an integer multiple of the
+            simulation timestep.
+        """
         self.__population.record(variables, to_file, sampling_interval,
                                  [self.__id])
 
     def __getattr__(self, name):
+        # pylint: disable=broad-except
         try:
             return self.__population.get_by_selector(
                 selector=self.__id, parameter_names=name)[0]
-        except Exception as ex:  # pylint: disable=broad-except
+        except Exception:
+            ei = sys.exc_info()
             try:
                 # try initialisable variable
                 return self.__population.get_initial_value(
                     selector=self.__id, variable=name)[0]
             except Exception:
                 # that failed too so raise the better original exception
-                raise ex
+                reraise(*ei)
 
     def __setattr__(self, name, value):
+        # pylint: disable=broad-except
         if name in self.__realslots__:
             object.__setattr__(self, name, value)
         else:
             try:
                 self.__population.set_by_selector(self.__id, name, value)
-            except Exception as ex:  # pylint: disable=broad-except
+            except Exception:
+                ei = sys.exc_info()
                 try:
                     # try initialisable variable
                     return self.__population.set_initial_value(
                         selector=self.__id, variable=name, value=value)
                 except Exception:
                     # that failed too so raise the better original exception
-                    raise ex
+                    reraise(*ei)
 
     def set_parameters(self, **parameters):
         """ Set cell parameters, given as a sequence of parameter=value\
@@ -75,6 +110,8 @@ class IDMixin(object):
 
     def get_parameters(self):
         """ Return a dict of all cell parameters.
+
+        :rtype: dict(str, ...)
         """
         results = dict()
         for name in self.celltype.get_parameter_names():
@@ -83,10 +120,16 @@ class IDMixin(object):
 
     @property
     def celltype(self):
+        """
+        :rtype: ~spynnaker.pyNN.models.AbstractPyNNModel
+        """
         return self.__population.celltype
 
     @property
     def is_standard_cell(self):
+        """
+        :rtype: bool
+        """
         raise NotImplementedError  # pragma: no cover
 
     def _set_position(self, pos):
@@ -100,6 +143,8 @@ class IDMixin(object):
             Cell positions are stored in an array in the parent Population,\
             if any, or within the ID object otherwise. Positions are generated\
             the first time they are requested and then cached.
+
+        :rtype: ~numpy.ndarray
         """
         return self.__population.positions[:, self.__id]   # pragma: no cover
 
@@ -107,25 +152,40 @@ class IDMixin(object):
 
     @property
     def local(self):
+        """ Whether this cell is local to the current MPI node.
+
+        :rtype: bool
+        """
         return self.__population.is_local(self.__id)
 
     def inject(self, current_source):
         """ Inject current from a current source object into the cell.
+
+        :param ~pyNN.neuron.standardmodels.electrodes.NeuronCurrentSource\
+            current_source:
         """
         raise NotImplementedError  # pragma: no cover
 
     def get_initial_value(self, variable):
         """ Get the initial value of a state variable of the cell.
+
+        :param str variable: The name of the variable
+        :rtype: float
         """
         return self.__population.get_initial_value(variable, self.__id)
 
     def set_initial_value(self, variable, value):
         """ Set the initial value of a state variable of the cell.
+
+        :param str variable: The name of the variable
+        :param float value: The value of the variable
         """
         self.__population.set_initial_value(variable, value, self.__id)
 
     def as_view(self):
         """ Return a PopulationView containing just this cell.
+
+        :rtype: ~spynnaker8.models.populations.PopulationView
         """
         return self.__population[self.__id]
 

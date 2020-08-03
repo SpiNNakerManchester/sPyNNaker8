@@ -94,8 +94,8 @@ class SpikesTest(BaseTestCase):
 
 
 if __name__ == '__main__':
-    nNeurons = 100  # number of neurons in each population
-    neo = do_run(nNeurons)
-    spikes = neo_convertor.convert_spikes()
-    plot_utils.plot_spikes(spikes)
-    print(spikes)
+    _n_neurons = 100  # number of neurons in each population
+    _neo = do_run(_n_neurons, 0.1)
+    _spikes = neo_convertor.convert_spikes(_neo)
+    plot_utils.plot_spikes(_spikes)
+    print(_spikes)

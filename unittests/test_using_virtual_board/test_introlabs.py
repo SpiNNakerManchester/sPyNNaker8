@@ -61,7 +61,7 @@ class TestScripts(BaseTestCase):
                         self.report(script, "scripts_fails_because_on_vm")
                     else:
                         print("Error on {}".format(script))
-                        raise ex
+                        raise
 
     def test_learning(self):
         self.check_directory("learning")

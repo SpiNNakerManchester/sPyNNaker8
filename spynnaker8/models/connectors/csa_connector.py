@@ -19,16 +19,26 @@ from spynnaker.pyNN.models.neural_projections.connectors import (
 
 
 class CSAConnector(CommonCSAConnector):
-    """
-    Create an CSA (Connection Set Algebra, Djurfeldt 2012) connector.
-
-    :param cset: a connection set description
-    :type cset: string
+    """ A CSA (*Connection Set Algebra*, Djurfeldt 2012) connector.
     """
     __slots__ = []
 
     def __init__(
             self, cset, safe=True, callback=None, verbose=False):
+        """
+        :param cset: a connection set description
+        :type cset: csa.connset.CSet
+        :param bool safe: if True, check that weights and delays have valid
+            values. If False, this check is skipped.
+        :param bool verbose:
+            Whether to output extra information about the connectivity to a
+            CSV file
+        :param callable callback:
+            if given, a callable that display a progress bar on the terminal.
+
+            .. note::
+                Not supported by sPyNNaker.
+        """
         # pylint: disable=too-many-arguments
         super(CSAConnector, self).__init__(
             cset=cset,

@@ -25,7 +25,7 @@ logger = logging.getLogger(__file__)
 class FixedNumberPreConnector(CommonFixedNumberPreConnector,
                               PyNNFixedNumberPreConnector):
     """ Connects a fixed number of pre-synaptic neurons selected at random,\
-        to all post-synaptic neurons
+        to all post-synaptic neurons.
     """
     __slots__ = []
 
@@ -33,29 +33,29 @@ class FixedNumberPreConnector(CommonFixedNumberPreConnector,
             self, n, allow_self_connections=True, safe=True, verbose=False,
             with_replacement=False, rng=None, callback=None):
         """
-        :param n: \
+        :param int n:
             number of random pre-synaptic neurons connected to post-neurons
-        :type n: int
-        :param allow_self_connections: \
-            if the connector is used to connect a Population to itself, this\
-            flag determines whether a neuron is allowed to connect to itself,\
+        :param bool allow_self_connections:
+            if the connector is used to connect a Population to itself, this
+            flag determines whether a neuron is allowed to connect to itself,
             or only to other neurons in the Population.
-        :type allow_self_connections: bool
-        :param safe: \
-            Whether to check that weights and delays have valid values.\
+        :param bool safe:
+            Whether to check that weights and delays have valid values.
             If False, this check is skipped.
-        :type safe: bool
-        :param verbose: \
-            Whether to output extra information about the connectivity to a\
+        :param bool verbose:
+            Whether to output extra information about the connectivity to a
             CSV file
-        :type verbose: bool
-        :param with_replacement:\
-            if False, once a connection is made, it can't be made again; if\
-            True, multiple connections between the same pair of neurons are\
+        :param bool with_replacement:
+            if False, once a connection is made, it can't be made again; if
+            True, multiple connections between the same pair of neurons are
             allowed
-        :type with_replacement: bool
-        :param rng:
-        :param callback:
+        :param rng: random number generator
+        :type rng: ~pyNN.random.NumpyRNG or None
+        :param callable callback:
+            if given, a callable that display a progress bar on the terminal.
+
+            .. note::
+                Not supported by sPyNNaker.
         """
         # pylint: disable=too-many-arguments
         super(FixedNumberPreConnector, self).__init__(
