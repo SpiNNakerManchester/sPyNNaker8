@@ -16,7 +16,6 @@
 """
 Synfirechain-like example
 """
-import numpy
 from testfixtures import LogCapture
 import spynnaker.plot_utils as plot_utils
 import spynnaker.spike_checker as spike_checker
