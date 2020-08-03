@@ -70,8 +70,9 @@ class TestSetRecord(BaseTestCase):
         ssp = sim.Population(2, sim.SpikeSourcePoisson(rate=100.0),
                              additional_parameters={"seed": 1})
         if_curr.record("all")
-        self.assertListEq(["spikes", "v", "gsyn_inh", "gsyn_exc"],
-                          if_curr._get_all_recording_variables())
+        self.assertListEq(
+            ["spikes", "v", "gsyn_inh", "gsyn_exc", "packet_counts"],
+            if_curr._get_all_recording_variables())
         ssa.record("all")
         self.assertListEq(["spikes"], ssa._get_all_recording_variables())
         ssp.record("all")

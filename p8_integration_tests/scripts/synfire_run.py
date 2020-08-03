@@ -16,7 +16,6 @@
 """
 Synfirechain-like example
 """
-import numpy
 from pyNN.random import NumpyRNG
 import spynnaker8 as p
 from spynnaker8 import IF_curr_exp
