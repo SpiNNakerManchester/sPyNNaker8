@@ -54,14 +54,9 @@ class TestScripts(BaseTestCase):
                 script = os.path.join(directory, a_script)
                 try:
                     self.check_script(script)
-                except Exception as ex:
-                    if "virtual machine" in str(ex):
-                        self.report(script, "scripts_fails_because_on_vm")
-                    elif "'ConnectionHolder'" in str(ex):
-                        self.report(script, "scripts_fails_because_on_vm")
-                    else:
-                        print("Error on {}".format(script))
-                        raise
+                except Exception:
+                    print("Error on {}".format(script))
+                    raise
 
     def test_learning(self):
         self.check_directory("learning")
