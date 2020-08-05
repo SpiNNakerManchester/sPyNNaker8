@@ -230,7 +230,6 @@ class SynfireRunner(object):
                 variables="gsyn_inh", sampling_interval=gsyn_inh_sampling_rate)
         if record_input_spikes or record_input_spikes_7:
             populations[1].record("spikes")
-        populations[0].record("packet_counts")
 
         results = self.__run_sim(
             run_times, populations, projections, run_count, spike_times_list,
