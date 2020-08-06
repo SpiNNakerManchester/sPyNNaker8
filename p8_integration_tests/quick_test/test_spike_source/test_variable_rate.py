@@ -218,7 +218,6 @@ def variable_rate_reset():
     print(spikes_p_2)
     numpy.savetxt("spikesp2.txt", spikes_p_2[0])
 
-
     for s1, s2, s3 in zip(spikes_1, spikes_2, spikes_p_2):
         assert(numpy.array_equal(s1, s2))
         assert(numpy.array_equal(s2, s3))
