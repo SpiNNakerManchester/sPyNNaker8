@@ -86,7 +86,6 @@ if __name__ == '__main__':
         exceptions.append("vogels_2011.py")  # 698 seconds
         # binary fail to compile
         exceptions.append("structural_plasticity_with_stdp_2d.py")
-        #
 
     with open(examples_script, "a") as examples_file:
         examples_file.write("# flake8: noqa\n")
