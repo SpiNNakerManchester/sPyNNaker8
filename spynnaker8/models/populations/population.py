@@ -252,7 +252,7 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         # pylint: disable=too-many-arguments
         if not gather:
             logger.warning(
-                logger, "sPyNNaker only supports gather=True. We will run "
+                "sPyNNaker only supports gather=True. We will run "
                 "as if gather was set to True.")
 
         if isinstance(io, string_types):
@@ -330,7 +330,7 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         """
         if not gather:
             logger.warning(
-                logger, "sPyNNaker only supports gather=True. We will run "
+                "sPyNNaker only supports gather=True. We will run "
                 "as if gather was set to True.")
         if annotations is not None:
             warn_once(
