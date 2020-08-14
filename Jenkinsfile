@@ -18,6 +18,10 @@ pipeline {
     agent {
         docker { image 'python3.6' }
     }
+    environment {
+        // This is where 'pip install --user' puts things
+        PATH = "$HOME/.local/bin:$PATH"
+    }
     options {
         skipDefaultCheckout true
     }
