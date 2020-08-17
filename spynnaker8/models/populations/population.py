@@ -401,7 +401,7 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         """
         return self._get_variable_unit(variable)
 
-    def set(self, **parameters):
+    def set(self, **parameters):  # pylint: disable=arguments-differ
         """ Set parameters of this population.
 
         :param parameters: The parameters to set.
