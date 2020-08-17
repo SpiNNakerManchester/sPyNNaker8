@@ -18,6 +18,10 @@ pipeline {
     agent {
         docker { image 'python3.6' }
     }
+    environment {
+        // This is where 'pip install --user' puts things
+        PATH = "$HOME/.local/bin:$PATH"
+    }
     options {
         skipDefaultCheckout true
     }
@@ -39,7 +43,8 @@ pipeline {
                 // remove all directories left if Jenkins ended badly
                 sh 'git clone https://github.com/SpiNNakerManchester/SupportScripts.git support'
                 sh 'pip3 install --upgrade setuptools wheel'
-                sh 'pip install --only-binary=numpy,scipy,matplotlib numpy scipy matplotlib'
+                sh 'pip install --user --upgrade pip'
+                sh 'pip install --user --only-binary=numpy,scipy,matplotlib numpy scipy matplotlib'
                 // SpiNNakerManchester internal dependencies; development mode
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/SpiNNUtils.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/SpiNNMachine.git'
