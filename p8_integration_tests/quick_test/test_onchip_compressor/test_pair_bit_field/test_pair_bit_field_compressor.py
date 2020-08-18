@@ -13,9 +13,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-__version__ = "1!5.1.1"
-__version_month__ = "November"
-__version_year__ = "2019"
-__version_day__ = "15"
-__version_name__ = "Liveware Problem"
-__version_type__ = "alpha"  # or "beta" or "production"
+from p8_integration_tests.base_test_case import BaseTestCase
+from p8_integration_tests.quick_test.test_onchip_compressor.many_routes \
+    import do_run
+
+
+class TestPairBitFieldCompressor(BaseTestCase):
+
+    def test_do_run(self):
+        self.runsafe(do_run)
