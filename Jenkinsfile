@@ -107,7 +107,7 @@ pipeline {
                 // Additional requirements for testing here
                 // coverage version capped due to https://github.com/nedbat/coveragepy/issues/883
                 sh 'pip install python-coveralls "coverage>=5.0.0"'
-                sh 'pip install pytest-instafail pytest-xdist'
+                sh 'pip install pytest-instafail "pytest-xdist==1.34.0"'
                 // Java install
                 sh 'mvn -f JavaSpiNNaker package'
             }
