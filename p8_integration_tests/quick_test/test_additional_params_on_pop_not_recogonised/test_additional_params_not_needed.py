@@ -14,19 +14,33 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import spynnaker8 as p
 from p8_integration_tests.base_test_case import BaseTestCase
+from testfixtures import LogCapture
 
 
 def a_run():
     n_neurons = 100  # number of neurons in each population
 
     p.setup(timestep=1.0, min_delay=1.0, max_delay=1.0)
-
-    p.Population(
-        n_neurons, p.IF_curr_exp(), label='pop_1',
-        additional_parameters={"bacon": "bacon"})
+    with LogCapture() as lc:
+        p.Population(
+            n_neurons, p.IF_curr_exp(), label='pop_1',
+            additional_parameters={"bacon": "bacon"})
 
 
 class PopAdditionParamsTest(BaseTestCase):
+
+    def a_run(self):
+        n_neurons = 100  # number of neurons in each population
+
+        p.setup(timestep=1.0, min_delay=1.0, max_delay=1.0)
+        with LogCapture() as lc:
+            p.Population(
+                n_neurons, p.IF_curr_exp(), label='pop_1',
+                additional_parameters={"bacon": "bacon"})
+
+            self.assert_logs_messages(
+                lc.records,
+                "additional_parameter bacon will be ignored", 'WARNING', 1)
 
     def test_a_run(self):
         self.runsafe(a_run)
