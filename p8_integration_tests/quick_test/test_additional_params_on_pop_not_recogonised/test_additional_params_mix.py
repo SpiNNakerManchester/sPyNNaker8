@@ -21,11 +21,12 @@ def a_run():
 
     p.setup(timestep=1.0, min_delay=1.0, max_delay=1.0)
 
-    p.Population(
+    pop = p.Population(
         n_neurons, p.IF_curr_exp(), label='pop_1',
         additional_parameters={
             "spikes_per_second": "bacon",
             "bacon": "bacon"})
+    assert pop._vertex.spikes_per_second == "bacon"
 
 
 class PopAdditionParamsTest(BaseTestCase):
