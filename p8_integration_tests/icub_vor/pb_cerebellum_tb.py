@@ -113,6 +113,11 @@ def save_figure(plt, name, extensions=(".png",), **kwargs):
         plt.savefig(name + ext, **kwargs)
 
 
+fig_folder = "figures/"
+# Check if the folders exist
+if not os.path.isdir(fig_folder) and not os.path.exists(fig_folder):
+    os.mkdir(fig_folder)
+
 # Record SCRIPT start time (wall clock)
 start_time = plt.datetime.datetime.now()
 
@@ -213,7 +218,6 @@ sim.set_number_of_neurons_per_core(sim.SpikeSourceArray, global_n_neurons_per_co
 sim.set_number_of_neurons_per_core(sim.IF_cond_exp, global_n_neurons_per_core)
 sim.set_number_of_neurons_per_core(sim.extra_models.IFCondExpCerebellum, global_n_neurons_per_core)
 
-
 # Sensorial Activity: input activity from vestibulus (will come from the head IMU, now it is a test bench)
 # We simulate the output of the head encoders with a sinusoidal function. Each "sensorial activity" value is derived from the
 # head position and velocity. From that value, we generate the mean firing rate of the MF neurons (later this will be an input
@@ -233,6 +237,42 @@ for t in i:
     desired_pos = -np.sin(t * 2 * np.pi) * MAX_AMPLITUDE * RELATIVE_AMPLITUDE
     _head_pos.append(desired_pos)
     _head_vel.append(desired_speed)
+
+f = plt.figure(1, figsize=(9, 9), dpi=400)
+plt.plot(_head_pos)
+plt.xlim([0, 1000])
+plt.title("Pre-computed head positions")
+plt.tight_layout()
+save_figure(plt, os.path.join(fig_folder, "head_positions"), extensions=['.png', ])
+plt.close(f)
+
+f = plt.figure(1, figsize=(9, 9), dpi=400)
+plt.plot(_head_vel)
+plt.xlim([0, 1000])
+plt.title("Pre-computed head velocities")
+plt.tight_layout()
+save_figure(plt, os.path.join(fig_folder, "head_velocities"), extensions=['.png', ])
+plt.close(f)
+
+f = plt.figure(1, figsize=(9, 9), dpi=400)
+plt.plot(((np.asarray(_head_pos) + 0.8) / 1.6))
+plt.xlim([0, 1000])
+plt.title("Head positions")
+plt.xlabel("Time (ms)")
+plt.ylabel("Proportion of max")
+plt.tight_layout()
+save_figure(plt, os.path.join(fig_folder, "head_positions_processed"), extensions=['.png', '.pdf'])
+plt.close(f)
+
+f = plt.figure(1, figsize=(9, 9), dpi=400)
+plt.plot(((np.asarray(_head_vel) + 0.8 * 2 * np.pi) / (1.6 * 2 * np.pi)))
+plt.xlim([0, 1000])
+plt.title("Head velocities")
+plt.ylabel("Proportion of max")
+plt.xlabel("Time (ms)")
+plt.tight_layout()
+save_figure(plt, os.path.join(fig_folder, "head_velocities_processed"), extensions=['.png', '.pdf'])
+plt.close(f)
 
 
 def sensorial_activity(pt):
@@ -355,13 +395,14 @@ VN_population = sim.Population(num_VN_neurons,  # number of neurons
                                sim.extra_models.IFCondExpCerebellum(**neuron_params),  # Neuron model
                                label="Vestibular Nuclei"  # identifier
                                )
-all_populations["purkinje"] = PC_population
+all_populations["vn"] = VN_population
 
 # Create GrC population
 GC_population = sim.Population(num_GC_neurons, sim.IF_curr_exp(), label='GCLayer')
 all_populations["granule"] = GC_population
 
-# generate fake error (it should be calculated from sensorial activity in error activity, but we skip it and just generate an error from -1.5 to 1.5)
+# generate fake error (it should be calculated from sensorial activity in error activity,
+# but we skip it and just generate an error from -1.5 to 1.5)
 err = -0.7  # other values to test: -0.3 0 0.3 0.7
 
 # Create CF population - fake input population that will be substituted by external input from robot
@@ -548,6 +589,7 @@ VN_transfer_func = []
 
 print("=" * 80)
 print("Running simulation for", runtime, " ms split into", samples_in_repeat, "chunks.")
+all_spikes_first_trial = {}
 # Record simulation start time (wall clock)
 sim_start_time = plt.datetime.datetime.now()
 for i in range(samples_in_repeat):
@@ -561,7 +603,11 @@ for i in range(samples_in_repeat):
     print(total_runtime)
 
     MF_population.set(rate=sensorial_activity(total_runtime)[0])
-
+    if i == 0:
+        for label, pop in all_populations.items():
+            if pop is not None:
+                print("Retrieving recordings for ", label, "...")
+                all_spikes_first_trial[label] = pop.get_data(['spikes'])
 #     sim.run(runtime*0.4)
 #
 #     CF_rates=[]
@@ -653,67 +699,11 @@ except:
     final_connectivity = []
     traceback.print_exc()
 
-# ============================  Plotting some stuff ============================
-fig_folder = "figures/"
-# Check if the folders exist
-if not os.path.isdir(fig_folder) and not os.path.exists(fig_folder):
-    os.mkdir(fig_folder)
-
-F = Figure(
-    Panel(MF_spikes.segments[0].spiketrains,
-          yticks=True, markersize=2, xlim=(0, total_runtime),
-          xlabel='MF_spikes'),
-    Panel(CF_spikes.segments[0].spiketrains,
-          yticks=True, markersize=2, xlim=(0, total_runtime),
-          xlabel='CF_spikes'),
-    Panel(GC_spikes.segments[0].spiketrains,
-          yticks=True, markersize=2, xlim=(0, total_runtime),
-          xlabel='GC_spikes'),
-    Panel(GOC_spikes.segments[0].spiketrains,
-          yticks=True, markersize=2, xlim=(0, total_runtime),
-          xlabel='GOC_spikes'),
-    Panel(PC_spikes.segments[0].spiketrains,
-          yticks=True, markersize=2, xlim=(0, total_runtime),
-          xlabel='PC_spikes'),
-    Panel(VN_spikes.segments[0].spiketrains,
-          yticks=True, markersize=2, xlim=(0, total_runtime),
-          xlabel='VN_spikes'),
-    Panel(VN_spikes.segments[0].filter(name='gsyn_inh')[0],
-          ylabel="Membrane potential (mV)", yticks=True, xlim=(0, total_runtime))
-)
-save_figure(plt, os.path.join(fig_folder, "collections"),
-            extensions=['.png', ])
-plt.show(block=False)
-
-plt.figure()
-plt.plot(mfvn_weights,
-         label='mf-vn weights (init: {})'.format(initial_weight_c))
-plt.title("mfvn_weights")
-plt.legend()
-save_figure(plt, os.path.join(fig_folder, "mfvn_weights"),
-            extensions=['.png', ])
-
-plt.figure()
-plt.title("pfpc_weights")
-plt.plot(pfpc_weights, color='orange',
-         label='pf-pc weights (init: {})'.format(initial_weight_s))
-plt.legend()
-save_figure(plt, os.path.join(fig_folder, "pfpc_weights"),
-            extensions=['.png', ])
-
-print(VN_transfer_func)
-plt.figure()
-plt.plot(VN_transfer_func)
-plt.title("vn_transfer_function")
-save_figure(plt, os.path.join(fig_folder, "VN_transfer_func"),
-            extensions=['.png', ])
-
-plt.show()
-
 sim.end()
 print("job done")
 # Report time taken
 print("Total time elapsed -- " + str(total_time))
+# ============================  Plotting some stuff ============================
 # ============================  PAB ANALYSIS ============================
 
 # Compute plot order
@@ -727,6 +717,12 @@ for pop, potential_neo_block in all_spikes.items():
         # make a copy of the spikes dict
         neo_all_spikes[pop] = potential_neo_block
         all_spikes[pop] = convert_spikes(potential_neo_block)
+
+
+for pop, potential_neo_block in all_spikes_first_trial.items():
+    if isinstance(potential_neo_block, neo.Block):
+        # make a copy of the spikes dict
+        all_spikes_first_trial[pop] = convert_spikes(potential_neo_block)
 
 # Report useful parameters
 print("=" * 80)
@@ -801,6 +797,28 @@ save_figure(plt, os.path.join(fig_folder, "raster_plots"),
             extensions=['.png', '.pdf'])
 plt.close(f)
 
+# Spikes for the first trial only
+print("Plotting spiking raster plot for all populations")
+f, axes = plt.subplots(len(all_spikes_first_trial.keys()), 1,
+                       figsize=(14, 20), sharex=True, dpi=400)
+for index, pop in enumerate(plot_order):
+    curr_ax = axes[index]
+    # spike raster
+    _times = all_spikes_first_trial[pop][:, 1]
+    _ids = all_spikes_first_trial[pop][:, 0]
+
+    curr_ax.scatter(_times,
+                    _ids,
+                    color=viridis_cmap(index / (n_plots + 1)),
+                    s=.5, rasterized=True)
+    curr_ax.set_title(pop)
+plt.xlabel("Time (ms)")
+# plt.suptitle((use_display_name(simulator)+"\n")
+f.tight_layout()
+save_figure(plt, os.path.join(fig_folder, "raster_plots_first_trial"),
+            extensions=['.png', '.pdf'])
+plt.close(f)
+
 for proj, conn in final_connectivity.items():
     f = plt.figure(1, figsize=(9, 9), dpi=400)
     plt.hist(conn[:, 2], bins=20)
@@ -810,3 +828,54 @@ for proj, conn in final_connectivity.items():
     save_figure(plt, os.path.join(fig_folder, "{}_weight_histogram".format(proj)),
                 extensions=['.png', ])
     plt.close(f)
+
+F = Figure(
+    Panel(MF_spikes.segments[0].spiketrains,
+          yticks=True, markersize=2, xlim=(0, total_runtime),
+          xlabel='MF_spikes'),
+    Panel(CF_spikes.segments[0].spiketrains,
+          yticks=True, markersize=2, xlim=(0, total_runtime),
+          xlabel='CF_spikes'),
+    Panel(GC_spikes.segments[0].spiketrains,
+          yticks=True, markersize=2, xlim=(0, total_runtime),
+          xlabel='GC_spikes'),
+    Panel(GOC_spikes.segments[0].spiketrains,
+          yticks=True, markersize=2, xlim=(0, total_runtime),
+          xlabel='GOC_spikes'),
+    Panel(PC_spikes.segments[0].spiketrains,
+          yticks=True, markersize=2, xlim=(0, total_runtime),
+          xlabel='PC_spikes'),
+    Panel(VN_spikes.segments[0].spiketrains,
+          yticks=True, markersize=2, xlim=(0, total_runtime),
+          xlabel='VN_spikes'),
+    Panel(VN_spikes.segments[0].filter(name='gsyn_inh')[0],
+          ylabel="Membrane potential (mV)", yticks=True, xlim=(0, total_runtime))
+)
+save_figure(plt, os.path.join(fig_folder, "collections"),
+            extensions=['.png', ])
+# plt.show(block=False)
+
+plt.figure()
+plt.plot(mfvn_weights,
+         label='mf-vn weights (init: {})'.format(initial_weight_c))
+plt.title("mfvn_weights")
+plt.legend()
+save_figure(plt, os.path.join(fig_folder, "mfvn_weights"),
+            extensions=['.png', ])
+
+plt.figure()
+plt.title("pfpc_weights")
+plt.plot(pfpc_weights, color='orange',
+         label='pf-pc weights (init: {})'.format(initial_weight_s))
+plt.legend()
+save_figure(plt, os.path.join(fig_folder, "pfpc_weights"),
+            extensions=['.png', ])
+
+print(VN_transfer_func)
+plt.figure()
+plt.plot(VN_transfer_func)
+plt.title("vn_transfer_function")
+save_figure(plt, os.path.join(fig_folder, "VN_transfer_func"),
+            extensions=['.png', ])
+
+# plt.show()
