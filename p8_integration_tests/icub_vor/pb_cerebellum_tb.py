@@ -254,6 +254,9 @@ plt.tight_layout()
 save_figure(plt, os.path.join(fig_folder, "head_velocities"), extensions=['.png', ])
 plt.close(f)
 
+normalised_head_pos = (np.asarray(_head_pos) + 0.8) / 1.6
+normalised_head_vel = (np.asarray(_head_vel) + 0.8 * 2 * np.pi) / (1.6 * 2 * np.pi)
+
 f = plt.figure(1, figsize=(9, 9), dpi=400)
 plt.plot(((np.asarray(_head_pos) + 0.8) / 1.6))
 plt.xlim([0, 1000])
@@ -273,6 +276,9 @@ plt.xlabel("Time (ms)")
 plt.tight_layout()
 save_figure(plt, os.path.join(fig_folder, "head_velocities_processed"), extensions=['.png', '.pdf'])
 plt.close(f)
+
+np.savetxt("normalised_head_positions.csv", normalised_head_pos, delimiter=",")
+np.savetxt("normalised_head_velocities.csv", normalised_head_vel, delimiter=",")
 
 
 def sensorial_activity(pt):
@@ -603,11 +609,7 @@ for i in range(samples_in_repeat):
     print(total_runtime)
 
     MF_population.set(rate=sensorial_activity(total_runtime)[0])
-    if i == 0:
-        for label, pop in all_populations.items():
-            if pop is not None:
-                print("Retrieving recordings for ", label, "...")
-                all_spikes_first_trial[label] = pop.get_data(['spikes'])
+
 #     sim.run(runtime*0.4)
 #
 #     CF_rates=[]
@@ -718,12 +720,6 @@ for pop, potential_neo_block in all_spikes.items():
         neo_all_spikes[pop] = potential_neo_block
         all_spikes[pop] = convert_spikes(potential_neo_block)
 
-
-for pop, potential_neo_block in all_spikes_first_trial.items():
-    if isinstance(potential_neo_block, neo.Block):
-        # make a copy of the spikes dict
-        all_spikes_first_trial[pop] = convert_spikes(potential_neo_block)
-
 # Report useful parameters
 print("=" * 80)
 print("Analysis report")
@@ -794,28 +790,6 @@ plt.xlabel("Time (ms)")
 # plt.suptitle((use_display_name(simulator)+"\n")
 f.tight_layout()
 save_figure(plt, os.path.join(fig_folder, "raster_plots"),
-            extensions=['.png', '.pdf'])
-plt.close(f)
-
-# Spikes for the first trial only
-print("Plotting spiking raster plot for all populations")
-f, axes = plt.subplots(len(all_spikes_first_trial.keys()), 1,
-                       figsize=(14, 20), sharex=True, dpi=400)
-for index, pop in enumerate(plot_order):
-    curr_ax = axes[index]
-    # spike raster
-    _times = all_spikes_first_trial[pop][:, 1]
-    _ids = all_spikes_first_trial[pop][:, 0]
-
-    curr_ax.scatter(_times,
-                    _ids,
-                    color=viridis_cmap(index / (n_plots + 1)),
-                    s=.5, rasterized=True)
-    curr_ax.set_title(pop)
-plt.xlabel("Time (ms)")
-# plt.suptitle((use_display_name(simulator)+"\n")
-f.tight_layout()
-save_figure(plt, os.path.join(fig_folder, "raster_plots_first_trial"),
             extensions=['.png', '.pdf'])
 plt.close(f)
 
