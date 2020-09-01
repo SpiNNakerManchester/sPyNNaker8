@@ -95,6 +95,7 @@ def do_run(plot):
     stim_spikes = inj_pop.get_data('spikes')
 
     if plot:
+        # pylint: disable=no-member
         Figure(
             # raster plot of the stimulus spike times
             Panel(stim_spikes.segments[0].spiketrains,
@@ -148,7 +149,7 @@ class DistanceDependentProbabilityConnectorTest(BaseTestCase):
 
 
 if __name__ == '__main__':
-    v, spikes, pre_weights, post_weights = do_run(plot=True)
-    print(len(neo_convertor.convert_spikes(spikes)))
-    print('pre_weights: ', pre_weights)
-    print('post_weights: ', post_weights)
+    _v, _spikes, _pre_weights, _post_weights = do_run(plot=True)
+    print(len(neo_convertor.convert_spikes(_spikes)))
+    print('pre_weights: ', _pre_weights)
+    print('post_weights: ', _post_weights)

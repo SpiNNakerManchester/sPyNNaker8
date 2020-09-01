@@ -13,10 +13,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from p8_integration_tests.base_test_case import BaseTestCase
+import os
+import time
 import matplotlib
+from p8_integration_tests.base_test_case import BaseTestCase
 matplotlib.use('Agg')
-import matplotlib.pyplot as plt  # noqa: E401
 
 
 class ScriptChecker(BaseTestCase):
@@ -28,15 +29,21 @@ class ScriptChecker(BaseTestCase):
         plotting = "import matplotlib.pyplot" in open(script).read()
         if plotting:
             self._show = False
+            import matplotlib.pyplot as plt
             plt.show = self.mockshow
         from runpy import run_path
         try:
+            path = os.path.dirname(os.path.abspath(script))
+            os.chdir(path)
+            start = time.time()
             run_path(script)
-            self.report(script, "scripts_ran_successfully")
-        except Exception as ex:
+            duration = time.time() - start
+            self.report("{} for {}".format(duration, script),
+                        "scripts_ran_successfully")
+        except Exception:  # pylint: disable=broad-except
             if broken:
                 self.report(
                     script, "scripts_skipped_with_unkown_issues")
             else:
                 print("Error on {}".format(script))
-                raise ex
+                raise

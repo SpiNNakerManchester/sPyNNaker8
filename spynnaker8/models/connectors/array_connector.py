@@ -18,16 +18,28 @@ from spynnaker.pyNN.models.neural_projections.connectors import (
 
 
 class ArrayConnector(CommonArrayConnector):
-    """
-    Create an array connector.
-
-    :param array: an array of integers
-    :type array: integer
+    """ Make connections using an array of integers based on the IDs\
+        of the neurons in the pre- and post-populations.
     """
     __slots__ = []
 
     def __init__(
             self, array, safe=True, callback=None, verbose=False):
+        """
+        :param array: an array of integers
+        :type array: ~numpy.ndarray(2, ~numpy.uint8)
+        :param bool safe:
+            Whether to check that weights and delays have valid values.
+            If False, this check is skipped.
+        :param callable callback:
+            if given, a callable that display a progress bar on the terminal.
+
+            .. note::
+                Not supported by sPyNNaker.
+        :param bool verbose:
+            Whether to output extra information about the connectivity to a
+            CSV file
+        """
         # pylint: disable=too-many-arguments
         super(ArrayConnector, self).__init__(
             array=array,

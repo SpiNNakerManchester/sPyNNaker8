@@ -13,7 +13,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import unittest
 import spynnaker8 as sim
 from p8_integration_tests.base_test_case import BaseTestCase
 
@@ -177,8 +176,6 @@ class TestFromListConnector(BaseTestCase):
             for j in range(2):
                 self.assertAlmostEqual(weights[i][j], target[i][j], places=3)
 
-    @unittest.skip(
-        "https://github.com/SpiNNakerManchester/sPyNNaker/issues/617")
     def test_using_static_synapse_doubles(self):
         sim.setup(timestep=1.0)
         input = sim.Population(2, sim.SpikeSourceArray([0]), label="input")

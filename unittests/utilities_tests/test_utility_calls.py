@@ -43,26 +43,6 @@ class TestUtilityCalls(unittest.TestCase):
         print("Directory created successfully. Deleting...")
         os.rmdir(test_dir)
 
-    @unittest.skip("Not implemented")
-    def test_is_conductance(self):
-        self.assertEqual(True, False, "NotImplementedError")
-
-    @unittest.skip("Not implemented")
-    def test_check_weight(self):
-        self.assertEqual(True, False, "NotImplementedError")
-
-    @unittest.skip("Not implemented")
-    def test_check_delay(self):
-        self.assertEqual(True, False, "NotImplementedError")
-
-    @unittest.skip("Not implemented")
-    def test_get_region_base_address_offset(self):
-        self.assertEqual(True, False, "Test not implemented yet")
-
-    @unittest.skip("Not implemented")
-    def test_get_ring_buffer_to_input_left_shift(self):
-        self.assertEqual(True, False, "Test not implemented yet")
-
     def test_convert_param_to_numpy_random_distribution(self):
         setup(1.0)
         random = RandomDistribution("uniform", [0, 1])
@@ -73,18 +53,6 @@ class TestUtilityCalls(unittest.TestCase):
         self.assertEqual(len(single_value), 1)
         self.assertTrue(hasattr(multi_value, "__iter__"))
         self.assertEqual(len(multi_value), 10)
-
-    @unittest.skip("Not implemented")
-    def test_convert_param_to_numpy_iterable(self):
-        self.assertEqual(True, False, "Test not implemented yet")
-
-    @unittest.skip("Not implemented")
-    def test_convert_param_to_numpy_random(self):
-        self.assertEqual(True, False, "Test not implemented yet")
-
-    @unittest.skip("Not implemented")
-    def test_convert_param_to_numpy_exception(self):
-        self.assertEqual(True, False, "Test not implemented yet")
 
 
 if __name__ == '__main__':

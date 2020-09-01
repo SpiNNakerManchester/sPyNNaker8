@@ -19,9 +19,10 @@ from p8_integration_tests.base_test_case import BaseTestCase
 
 
 class TestKernelConnector(BaseTestCase):
+    # pylint: disable=expression-not-assigned
 
-    def do_run(self, psh, psw, ksh, ksw, pre_start=[0, 0], post_start=[0, 0],
-               pre_step=[1, 1], post_step=[1, 1]):
+    def do_run(self, psh, psw, ksh, ksw, pre_start=(0, 0), post_start=(0, 0),
+               pre_step=(1, 1), post_step=(1, 1)):
         sim.setup(timestep=1.0)
 
         # determine population size and runtime from the kernel sizes
@@ -47,14 +48,13 @@ class TestKernelConnector(BaseTestCase):
         weight_kernel = np.asarray(weight_list)
         delay_kernel = np.asarray(delay_list)
 
-        kernel_connector = sim.KernelConnector(shape_pre, shape_post,
-                                               shape_kernel,
-                                               weight_kernel=weight_kernel,
-                                               delay_kernel=delay_kernel,
-                                               pre_sample_steps=pre_step,
-                                               post_sample_steps=post_step,
-                                               pre_start_coords=pre_start,
-                                               post_start_coords=post_start)
+        kernel_connector = sim.KernelConnector(
+            shape_pre, shape_post, shape_kernel,
+            weight_kernel=weight_kernel, delay_kernel=delay_kernel,
+            pre_sample_steps_in_post=pre_step,
+            post_sample_steps_in_pre=post_step,
+            pre_start_coords_in_post=pre_start,
+            post_start_coords_in_pre=post_start)
 
         c2 = sim.Projection(input_pop, pop, kernel_connector,
                             sim.StaticSynapse(weight=weights, delay=delays))
@@ -66,17 +66,13 @@ class TestKernelConnector(BaseTestCase):
         weightsdelays = sorted(c2.get(['weight', 'delay'], 'list'),
                                key=lambda x: x[1])
 
-        # Get data
-        spikes = pop.spinnaker_get_data('spikes')
-        v = pop.spinnaker_get_data('v')
-
         sim.end()
 
-        return v, spikes, weightsdelays
+        return weightsdelays
 
     def test_oddsquarek_run(self):
         (psh, psw, ksh, ksw) = (4, 4, 3, 3)
-        v, spikes, weightsdelays = self.do_run(psh, psw, ksh, ksw)
+        weightsdelays = self.do_run(psh, psw, ksh, ksw)
         # Checks go here
         self.assertEqual(25, len(weightsdelays))
         list10 = (1, 0, 5.0, 20.0)
@@ -87,41 +83,33 @@ class TestKernelConnector(BaseTestCase):
         #       with the following, but in 3.5 it generates a FutureWarning
 #         self.assertSequenceEqual(list10, weightsdelays[1])
 #         self.assertSequenceEqual(list11, weightsdelays[5])
-        self.assertEqual(59, len(spikes))
-        self.assertEqual(4320, len(v))
 
     def test_evensquarek_run(self):
         (psh, psw, ksh, ksw) = (4, 4, 2, 2)
-        v, spikes, weightsdelays = self.do_run(psh, psw, ksh, ksw)
+        weightsdelays = self.do_run(psh, psw, ksh, ksw)
         # Checks go here
         self.assertEqual(9, len(weightsdelays))
         list01 = (0, 1, 5.0, 20.0)
         list03 = (0, 3, 7.0, 10.0)
         [self.assertEqual(list01[i], weightsdelays[1][i]) for i in range(4)]
         [self.assertEqual(list03[i], weightsdelays[5][i]) for i in range(4)]
-        self.assertEqual(20, len(spikes))
-        self.assertEqual(4320, len(v))
 
     def test_nonsquarek_run(self):
         (psh, psw, ksh, ksw) = (4, 4, 1, 3)
-        v, spikes, weightsdelays = self.do_run(psh, psw, ksh, ksw)
+        weightsdelays = self.do_run(psh, psw, ksh, ksw)
         # Checks go here
         self.assertEqual(10, len(weightsdelays))
         list10 = (1, 0, 7.0, 10.0)
         list42 = (4, 2, 5.0, 20.0)
         [self.assertEqual(list10[i], weightsdelays[1][i]) for i in range(4)]
         [self.assertEqual(list42[i], weightsdelays[5][i]) for i in range(4)]
-        self.assertEqual(22, len(spikes))
-        self.assertEqual(4320, len(v))
 
     def test_bigger_nonsquarep_run(self):
         (psh, psw, ksh, ksw) = (32, 16, 3, 3)
-        v, spikes, weightsdelays = self.do_run(psh, psw, ksh, ksw)
+        weightsdelays = self.do_run(psh, psw, ksh, ksw)
         # Checks go here
         self.assertEqual(1081, len(weightsdelays))
         list10 = (1, 0, 5.0, 20.0)
         list11 = (1, 1, 7.0, 10.0)
         [self.assertEqual(list10[i], weightsdelays[1][i]) for i in range(4)]
         [self.assertEqual(list11[i], weightsdelays[5][i]) for i in range(4)]
-        self.assertEqual(2385, len(spikes))
-        self.assertEqual(455680, len(v))

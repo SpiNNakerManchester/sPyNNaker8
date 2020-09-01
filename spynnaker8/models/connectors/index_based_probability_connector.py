@@ -18,21 +18,35 @@ from spynnaker.pyNN.models.neural_projections.connectors import (
 
 
 class IndexBasedProbabilityConnector(CommonIndexBasedProbabilityConnector):
-    """
-    Create an index-based probability connector.
-    The index_expression must depend on the indices i, j of the populations.
-
-    :param index_expression: a function of the indices of the populations
-        An expression
-    :type index_expression: str
-    :param allow_self_connections: allow a neuron to connect to itself
-    :type allow_self_connections: bool
+    """ Create an index-based probability connector.
+        The `index_expression` must depend on the indices `i`, `j` of the\
+        populations.
     """
     __slots__ = []
 
     def __init__(
             self, index_expression, allow_self_connections=True, rng=None,
             safe=True, callback=None, verbose=False):
+        """
+        :param str `index_expression`: A function of the indices of the
+            populations, written as a Python expression; the indices will be
+            given as variables `i` and `j` when the expression is evaluated.
+        :param bool allow_self_connections:
+            allow a neuron to connect to itself
+        :param rng: random number generator
+        :type rng: ~pyNN.random.NumpyRNG or None
+        :param bool safe:
+            Whether to check that weights and delays have valid values.
+            If False, this check is skipped.
+        :param callable callback:
+            if given, a callable that display a progress bar on the terminal.
+
+            .. note::
+                Not supported by sPyNNaker.
+        :param bool verbose:
+            Whether to output extra information about the connectivity to a
+            CSV file
+        """
         # pylint: disable=too-many-arguments
         super(IndexBasedProbabilityConnector, self).__init__(
             index_expression=index_expression,

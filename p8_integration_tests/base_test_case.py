@@ -13,19 +13,61 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from lxml import etree
 import os
 import random
 import sys
+import time
 import unittest
 from unittest import SkipTest
+import numpy
+import sqlite3
 import spinn_utilities.conf_loader as conf_loader
 from spinnman.exceptions import SpinnmanException
 from spalloc.job import JobDestroyedError
 from spinn_front_end_common.utilities import globals_variables
 
-p8_integration_factor = float(os.environ.get('P8_INTEGRATION_FACTOR', "1"))
 random.seed(os.environ.get('P8_INTEGRATION_SEED', None))
+if os.environ.get('CONTINUOUS_INTEGRATION', 'false').lower() == 'true':
+    max_tries = 3
+else:
+    max_tries = 1
+
+
+def calculate_stdp_times(pre_spikes, post_spikes, plastic_delay):
+    # If no post spikes, no changes
+    if len(post_spikes) == 0:
+        return numpy.zeros(0), numpy.zeros(0)
+
+    # Get the spikes and time differences that will be considered by
+    # the simulation (as the last pre-spike will be considered differently)
+    last_pre_spike_delayed = pre_spikes[-1] - plastic_delay
+    considered_post_spikes = post_spikes[post_spikes < last_pre_spike_delayed]
+    if len(considered_post_spikes) == 0:
+        return numpy.zeros(0), numpy.zeros(0)
+    potentiation_time_diff = numpy.ravel(numpy.subtract.outer(
+        considered_post_spikes + plastic_delay, pre_spikes[:-1]))
+    potentiation_times = (
+        potentiation_time_diff[potentiation_time_diff > 0] * -1)
+    depression_time_diff = numpy.ravel(numpy.subtract.outer(
+        considered_post_spikes + plastic_delay, pre_spikes))
+    depression_times = depression_time_diff[depression_time_diff < 0]
+    return potentiation_times, depression_times
+
+
+def calculate_spike_pair_additive_stdp_weight(
+        pre_spikes, post_spikes, initial_weight, plastic_delay, max_weight,
+        a_plus, a_minus, tau_plus, tau_minus):
+    """ Calculates the expected stdp weight for SpikePair Additive STDP
+    """
+    potentiation_times, depression_times = calculate_stdp_times(
+        pre_spikes, post_spikes, plastic_delay)
+
+    # Work out the weight according to the rules
+    potentiations = max_weight * a_plus * numpy.exp(
+        (potentiation_times / tau_plus))
+    depressions = max_weight * a_minus * numpy.exp(
+        (depression_times / tau_minus))
+    return initial_weight + numpy.sum(potentiations) - numpy.sum(depressions)
 
 
 class BaseTestCase(unittest.TestCase):
@@ -34,12 +76,6 @@ class BaseTestCase(unittest.TestCase):
         # Remove random effect for testing
         # Set test_seed to None to allow random
         self._test_seed = 1
-
-        factor = random.random()
-        if factor > p8_integration_factor:
-            raise SkipTest("Test skipped by random number {} above "
-                           "P8_INTEGRATION_FACTOR {}".format(
-                               factor, p8_integration_factor))
 
         globals_variables.unset_simulator()
         class_file = sys.modules[self.__module__].__file__
@@ -50,7 +86,6 @@ class BaseTestCase(unittest.TestCase):
             self, log_records, sub_message, log_level='ERROR', count=1,
             allow_more=False):
         """ Tool to assert the log messages contain the sub-message
-
         :param log_records: list of log message
         :param sub_message: text to look for
         :param log_level: level to look for
@@ -87,31 +122,43 @@ class BaseTestCase(unittest.TestCase):
         test_dir = os.path.dirname(p8_integration_tests_directory)
         report_dir = os.path.join(test_dir, "reports")
         if not os.path.exists(report_dir):
-            os.makedirs(report_dir)
+            # It might now exist if run in parallel
+            try:
+                os.makedirs(report_dir)
+            except Exception:
+                pass
         report_path = os.path.join(report_dir, file_name)
         with open(report_path, "a") as report_file:
             report_file.write(message)
 
-    def get_provenance(self, main_name, detail_name):
+    def get_provenance(self, _main_name, detail_name):
         provenance_file_path = globals_variables.get_simulator() \
             ._provenance_file_path
-        xml_path = os.path.join(provenance_file_path, "pacman.xml")
-        xml_root = etree.parse(xml_path)
+        prov_file = os.path.join(provenance_file_path, "provenance.sqlite3")
+        prov_db = sqlite3.connect(prov_file)
+        prov_db.row_factory = sqlite3.Row
         results = []
-        for element in xml_root.findall("provenance_data_items"):
-            if main_name in element.get('name'):
-                for sub_element in element.findall("provenance_data_item"):
-                    if detail_name in sub_element.get('name'):
-                        results.append(sub_element.get('name'))
-                        results.append(": ")
-                        results.append(sub_element.text)
-                        results.append("\n")
+        for row in prov_db.execute(
+                "SELECT description_name AS description, the_value AS 'value' "
+                "FROM provenance_view WHERE source_name = 'pacman' AND "
+                "description_name LIKE ?", ("%" + detail_name, )):
+            results.append("{}: {}\n".format(row["description"], row["value"]))
         return "".join(results)
 
     def get_provenance_files(self):
-        provenance_file_path = globals_variables.get_simulator() \
-            ._provenance_file_path
+        provenance_file_path = (
+            globals_variables.get_simulator()._provenance_file_path)
         return os.listdir(provenance_file_path)
+
+    def get_system_iobuf_files(self):
+        system_iobuf_file_path = (
+            globals_variables.get_simulator()._system_provenance_file_path)
+        return os.listdir(system_iobuf_file_path)
+
+    def get_app_iobuf_files(self):
+        app_iobuf_file_path = (
+            globals_variables.get_simulator()._app_provenance_file_path)
+        return os.listdir(app_iobuf_file_path)
 
     def get_run_time_of_BufferExtractor(self):
         return self.get_provenance("Execution", "BufferExtractor")
@@ -130,13 +177,12 @@ class BaseTestCase(unittest.TestCase):
         test_dir = os.path.dirname(p8_integration_tests_directory)
         return os.path.join(test_dir, "JobDestroyedError.txt")
 
-    def runsafe(self, method):
+    def runsafe(self, method, retry_delay=3.0):
         retries = 0
-        last_error = None
-        while retries < 3:
+        while True:
             try:
                 method()
-                return
+                break
             except JobDestroyedError as ex:
                 class_file = sys.modules[self.__module__].__file__
                 with open(self.destory_path(), "a") as destroyed_file:
@@ -144,9 +190,10 @@ class BaseTestCase(unittest.TestCase):
                     destroyed_file.write("\n")
                     destroyed_file.write(str(ex))
                     destroyed_file.write("\n")
-                last_error = ex
                 retries += 1
                 globals_variables.unset_simulator()
+                if retries >= max_tries:
+                    raise
             except SpinnmanException as ex:
                 class_file = sys.modules[self.__module__].__file__
                 with open(self.spinnman_exception_path(), "a") as exc_file:
@@ -154,16 +201,18 @@ class BaseTestCase(unittest.TestCase):
                     exc_file.write("\n")
                     exc_file.write(str(ex))
                     exc_file.write("\n")
-                last_error = ex
                 retries += 1
                 globals_variables.unset_simulator()
+                if retries >= max_tries:
+                    raise
             print("")
             print("==========================================================")
-            print(" Will run {} again".format(method))
+            print(" Will run {} again in {} seconds".format(
+                method, retry_delay))
             print("retry: {}".format(retries))
             print("==========================================================")
             print("")
-        raise last_error
+            time.sleep(retry_delay)
 
     def get_placements(self, label):
         report_default_directory = globals_variables.get_simulator() \

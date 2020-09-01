@@ -31,7 +31,6 @@ from spynnaker.pyNN.utilities.constants import (
     SPIKES, MEMBRANE_POTENTIAL, GSYN_EXCIT, GSYN_INHIB)
 from spynnaker.pyNN.exceptions import InvalidParameterType
 from .data_cache import DataCache
-from spynnaker8.utilities.version_util import pynn8_syntax
 
 logger = FormatAdapter(logging.getLogger(__name__))
 
@@ -46,6 +45,10 @@ class Recorder(RecordingCommon):
     # pylint: disable=protected-access
 
     def __init__(self, population):
+        """
+        :param population: the population to record for
+        :type population: ~spynnaker8.models.populations.Population
+        """
         super(Recorder, self).__init__(population)
         self._recording_start_time = get_simulator().t
         self._data_cache = {}
@@ -58,6 +61,7 @@ class Recorder(RecordingCommon):
         :param clear: if the variables should be cleared after reading
         :param annotations: annotations to put on the Neo block
         :return: The Neo block
+        :rtype: ~neo.core.Block
         """
 
         block = neo.Block()
@@ -81,8 +85,7 @@ class Recorder(RecordingCommon):
     def _get_units(self, variable):
         """ Get units with some safety code if the population has trouble
 
-        :param variable: name of the variable
-        :type variable: str
+        :param str variable: name of the variable
         :return: type of the data
         :rtype: str
         """
@@ -156,7 +159,6 @@ class Recorder(RecordingCommon):
         return variables
 
     def _append_current_segment(self, block, variables, view_indexes, clear):
-
         # build segment for the current data to be gathered in
         segment = neo.Segment(
             name="segment{}".format(get_simulator().segment_counter),
@@ -290,27 +292,20 @@ class Recorder(RecordingCommon):
         return metadata
 
     def _clear_recording(self, variables):
+        sim = get_simulator()
         for variable in variables:
             if variable == SPIKES:
                 self._population._vertex.clear_spike_recording(
-                    get_simulator().buffer_manager,
-                    get_simulator().placements,
-                    get_simulator().graph_mapper)
+                    sim.buffer_manager, sim.placements)
             elif variable == MEMBRANE_POTENTIAL:
                 self._population._vertex.clear_v_recording(
-                    get_simulator().buffer_manager,
-                    get_simulator().placements,
-                    get_simulator().graph_mapper)
+                    sim.buffer_manager, sim.placements)
             elif variable == GSYN_EXCIT:
                 self._population._vertex.clear_gsyn_inhibitory_recording(
-                    get_simulator().buffer_manager,
-                    get_simulator().placements,
-                    get_simulator().graph_mapper)
+                    sim.buffer_manager, sim.placements)
             elif variable == GSYN_INHIB:
                 self._population._vertex.clear_gsyn_excitatory_recording(
-                    get_simulator().buffer_manager,
-                    get_simulator().placements,
-                    get_simulator().graph_mapper)
+                    sim.buffer_manager, sim.placements)
             else:
                 raise InvalidParameterType(
                     "The variable {} is not a recordable value".format(
@@ -321,19 +316,14 @@ class Recorder(RecordingCommon):
             sampling_interval, indexes, label):
         """ Converts the data into SpikeTrains and saves them to the segment.
 
-        :param segment: Segment to add spikes to
-        :type segment: neo.Segment
-        :param spikes: Spike data in raw sPyNNaker format
-        :type spikes: nparray
-        :param t: last simulation time
-        :type t: int
-        :param n_neurons: total number of neurons including ones not recording
-        :type n_neurons: int
-        :param recording_start_time: time recording started
-        :type  recording_start_time: int
-        :param sampling_interval: how often a neuron is recorded
-        :param label: recording elements label
-        :type label: str
+        :param ~neo.core.Segment segment: Segment to add spikes to
+        :param ~numpy.ndarray spikes: Spike data in raw sPyNNaker format
+        :param int t: last simulation time
+        :param int n_neurons:
+            total number of neurons including ones not recording
+        :param int recording_start_time: time recording started
+        :param int sampling_interval: how often a neuron is recorded
+        :param str label: recording elements label
         """
         # pylint: disable=too-many-arguments
         # Safety check in case spikes are an empty list
@@ -363,28 +353,27 @@ class Recorder(RecordingCommon):
         """ Reads in a data item that's not spikes (likely v, gsyn e, gsyn i)\
         and saves this data to the segment.
 
-        :param segment: Segment to add data to
-        :type segment: neo.Segment
-        :param block: neo block
-        :type block: neo.Block
-        :param signal_array: the raw signal data
-        :type signal_array: nparray
-        :param data_indexes: The indexes for the recorded data
-        :type data_indexes: list(int)
-        :param view_indexes: The indexes for which data should be returned.\
+        :param ~neo.core.Segment segment: Segment to add data to
+        :param ~neo.core.Block block: neo block
+        :param ~numpy.ndarray signal_array: the raw signal data
+        :param list(int) data_indexes: The indexes for the recorded data
+        :param view_indexes: The indexes for which data should be returned.
             If None all data (view_index = data_indexes)
-        :type view_indexes: list(int)
-        :param variable: the variable name
+        :type view_indexes: list(int) or None
+        :param str variable: the variable name
         :param recording_start_time: when recording started
+        :type recording_start_time: float or int
         :param sampling_interval: how often a neuron is recorded
+        :type sampling_interval: float or int
         :param units: the units of the recorded value
-        :param label: human readable label
+        :type units: quantities.quantity.Quantity or str
+        :param str label: human readable label
         """
-        # pylint: disable=too-many-arguments
+        # pylint: disable=too-many-arguments, no-member
         t_start = recording_start_time * quantities.ms
         sampling_period = sampling_interval * quantities.ms
         if view_indexes is None:
-            if not numpy.array_equal(data_indexes, self._all_ids):
+            if len(data_indexes) != self._population.size:
                 msg = "Warning getting data on a whole population when " \
                       "selective recording is active will result in only " \
                       "the requested neurons being returned in numerical " \
@@ -401,36 +390,22 @@ class Recorder(RecordingCommon):
             signal_array = signal_array[:, map_indexes]
 
         ids = list(map(self._population.index_to_id, indexes))
-        if pynn8_syntax:
-            data_array = neo.AnalogSignalArray(
-                signal_array,
-                units=units,
-                t_start=t_start,
-                sampling_period=sampling_period,
-                name=variable,
-                source_population=label,
-                channel_index=indexes,
-                source_ids=ids)
-            data_array.shape = (data_array.shape[0], data_array.shape[1])
-            segment.analogsignalarrays.append(data_array)
-        else:
-            data_array = neo.AnalogSignal(
-                signal_array,
-                units=units,
-                t_start=t_start,
-                sampling_period=sampling_period,
-                name=variable,
-                source_population=label,
-                source_ids=ids)
-            channel_index = _get_channel_index(indexes, block)
-            data_array.channel_index = channel_index
-            data_array.shape = (data_array.shape[0], data_array.shape[1])
-            segment.analogsignals.append(data_array)
-            channel_index.analogsignals.append(data_array)
+        data_array = neo.AnalogSignal(
+            signal_array,
+            units=units,
+            t_start=t_start,
+            sampling_period=sampling_period,
+            name=variable,
+            source_population=label,
+            source_ids=ids)
+        channel_index = _get_channel_index(indexes, block)
+        data_array.channel_index = channel_index
+        data_array.shape = (data_array.shape[0], data_array.shape[1])
+        segment.analogsignals.append(data_array)
+        channel_index.analogsignals.append(data_array)
 
 
 def _get_channel_index(ids, block):
-    # Note this code is only called if not pynn8_syntax
     for channel_index in block.channel_indexes:
         if numpy.array_equal(channel_index.index, ids):
             return channel_index
@@ -445,32 +420,11 @@ def _convert_extracted_data_into_neo_expected_format(
         signal_array, indexes):
     """ Converts data between sPyNNaker format and Neo format
 
-    :param signal_array: Draw data in sPyNNaker format
-    :type signal_array: nparray
-    :rtype nparray
+    :param ~numpy.ndarray signal_array: Draw data in sPyNNaker format
+    :rtype: ~numpy.ndarray
     """
     processed_data = [
         signal_array[:, 2][signal_array[:, 0] == index]
         for index in indexes]
     processed_data = numpy.vstack(processed_data).T
     return processed_data
-
-
-def _add_pynn9_signal_chunk(
-        segment, processed_data, units, t_start, sampling_period, variable,
-        label, ids, block):
-    # pylint: disable=too-many-arguments
-    source_ids = numpy.fromiter(ids, dtype=int)
-    data_array = neo.AnalogSignal(
-        processed_data,
-        units=units,
-        t_start=t_start,
-        sampling_period=sampling_period,
-        name=variable,
-        source_population=label,
-        source_ids=source_ids)
-    channel_index = _get_channel_index(ids, block)
-    data_array.channel_index = channel_index
-    data_array.shape = (data_array.shape[0], data_array.shape[1])
-    segment.analogsignals.append(data_array)
-    channel_index.analogsignals.append(data_array)
