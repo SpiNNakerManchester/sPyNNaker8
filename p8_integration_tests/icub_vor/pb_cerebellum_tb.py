@@ -1,26 +1,13 @@
-from __future__ import print_function  # for python3 printing in python2
-import socket
+from __future__ import print_function
 import spynnaker8 as sim
 import numpy as np
 # import logging
 import pylab as plt
 import matplotlib as mlib
 
-# from spynnaker8.utilities import DataHolder
-from pacman.model.constraints.key_allocator_constraints import FixedKeyAndMaskConstraint
-from pacman.model.graphs.application import ApplicationSpiNNakerLinkVertex
-from pacman.model.routing_info import BaseKeyAndMask
-from spinn_front_end_common.abstract_models.abstract_provides_n_keys_for_partition import \
-    AbstractProvidesNKeysForPartition
-from spinn_front_end_common.abstract_models.abstract_provides_outgoing_partition_constraints import \
-    AbstractProvidesOutgoingPartitionConstraints
-from spinn_utilities.overrides import overrides
-from pyNN.utility import Timer
+
 from pyNN.utility.plotting import Figure, Panel
 from pyNN.random import RandomDistribution, NumpyRNG
-
-from spynnaker.pyNN.models.neuron.plasticity.stdp.common \
-    import plasticity_helpers
 
 # PAB imports
 import traceback
