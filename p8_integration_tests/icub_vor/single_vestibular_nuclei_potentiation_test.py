@@ -7,7 +7,7 @@ from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt
 
 
-p.setup(1) # simulation timestep (ms)
+p.setup(1, min_delay=1, max_delay=15) # simulation timestep (ms)
 runtime = 1000
 
 # Post-synapse population
@@ -81,16 +81,18 @@ F = Figure(
     Panel(mossy_fibre_src_spikes.segments[0].spiketrains,
           yticks=True, markersize=2, xlim=(0, runtime)),
     Panel(vestibular_neuclei_data.segments[0].filter(name='v')[0],
-          ylabel="Membrane potential (mV)",
+          ylabel="VN membrane potential (mV)",
           data_labels=[vestibular_neuclei.label], yticks=True, xlim=(0, runtime)),
     Panel(vestibular_neuclei_data.segments[0].filter(name='gsyn_exc')[0],
-          ylabel="gsyn excitatory (mV)",
+          ylabel="VN excitatory current (mV)",
           data_labels=[vestibular_neuclei.label], yticks=True, xlim=(0, runtime)),
     Panel(vestibular_neuclei_data.segments[0].spiketrains,
+          xlabel="Time (ms)",
           yticks=True, markersize=2, xlim=(0, runtime)),
     )
 
 
+plt.savefig("single_vn_test.png", dpi=600)
 plt.show()
 p.end()
 

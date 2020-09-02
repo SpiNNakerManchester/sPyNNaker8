@@ -6,7 +6,7 @@ import unittest
 from pyNN.utility.plotting import Figure, Panel
 import matplotlib.pyplot as plt
 
-p.setup(1) # simulation timestep (ms)
+p.setup(1, min_delay=1, max_delay=15) # simulation timestep (ms)
 runtime = 500
 
 # Post-synapse population
@@ -88,16 +88,18 @@ F = Figure(
     Panel(climbing_fibre_spikes.segments[0].spiketrains,
           yticks=True, markersize=2, xlim=(0, runtime)),
     Panel(purkinje_data.segments[0].filter(name='v')[0],
-          ylabel="Membrane potential (mV)",
+          ylabel="PC membrane potential (mV)",
           data_labels=[purkinje_cell.label], yticks=True, xlim=(0, runtime)),
     Panel(purkinje_data.segments[0].filter(name='gsyn_exc')[0],
-          ylabel="gsyn excitatory (mV)",
+          ylabel="PC excitatory current (mV)",
           data_labels=[purkinje_cell.label], yticks=True, xlim=(0, runtime)),
     Panel(purkinje_data.segments[0].spiketrains,
+          ylabel="PC spikes",
+          xlabel="Time (ms)",
           yticks=True, markersize=2, xlim=(0, runtime)),
     )
 
-
+plt.savefig("single_pc_test.png", dpi=600)
 plt.show()
 p.end()
 
