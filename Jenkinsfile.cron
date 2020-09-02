@@ -139,35 +139,35 @@ pipeline {
         stage('Unit Tests') {
             steps {
                 run_pytest_single('SpiNNUtils/unittests', 1200, 'SpiNNUtils', 'unit')
-                //run_pytest_single('SpiNNStorageHandlers/tests', 1200, 'SpiNNStorageHandlers', 'unit')
-                //run_pytest_single('SpiNNMachine/unittests', 1200, 'SpiNNMachine', 'unit')
-                //run_pytest_single('SpiNNMan/unittests SpiNNMan/integration_tests', 1200, 'SpiNNMan', 'unit')
-                //run_pytest_single('PACMAN/unittests', 1200, 'PACMAN', 'unit')
-                //run_pytest_single('spalloc/tests', 1200, 'spalloc', 'unit')
-                //run_pytest_single('DataSpecification/unittests', 1200, 'DataSpecification', 'unit')
-                //run_pytest_single('SpiNNFrontEndCommon/unittests SpiNNFrontEndCommon/fec_integration_tests', 1200, 'SpiNNFrontEndCommon', 'unit')
-                //run_pytest_single('sPyNNaker/unittests', 1200, 'sPyNNaker', 'unit')
-                //run_pytest_single('sPyNNaker8/unittests', 1200, 'sPyNNaker8', 'unit')
+                run_pytest_single('SpiNNStorageHandlers/tests', 1200, 'SpiNNStorageHandlers', 'unit')
+                run_pytest_single('SpiNNMachine/unittests', 1200, 'SpiNNMachine', 'unit')
+                run_pytest_single('SpiNNMan/unittests SpiNNMan/integration_tests', 1200, 'SpiNNMan', 'unit')
+                run_pytest_single('PACMAN/unittests', 1200, 'PACMAN', 'unit')
+                run_pytest_single('spalloc/tests', 1200, 'spalloc', 'unit')
+                run_pytest_single('DataSpecification/unittests', 1200, 'DataSpecification', 'unit')
+                run_pytest_single('SpiNNFrontEndCommon/unittests SpiNNFrontEndCommon/fec_integration_tests', 1200, 'SpiNNFrontEndCommon', 'unit')
+                run_pytest_single('sPyNNaker/unittests', 1200, 'sPyNNaker', 'unit')
+                run_pytest_single('sPyNNaker8/unittests', 1200, 'sPyNNaker8', 'unit')
             }
         }
-        //stage('Test') {
-        //    steps {
-        //        run_pytest_single('sPyNNaker8/p8_integration_tests/quick_test/', 1200, 'sPyNNaker8_Integration', 'integration')
-        //        run_pytest_single('sPyNNaker8/p8_integration_tests/long_test/', 12000, 'sPyNNaker8_Integration_Long', 'integration')
-        //    }
-        //}
+        stage('Test') {
+            steps {
+                run_pytest_single('sPyNNaker8/p8_integration_tests/quick_test/', 1200, 'sPyNNaker8_Integration', 'integration')
+                run_pytest_single('sPyNNaker8/p8_integration_tests/long_test/', 12000, 'sPyNNaker8_Integration_Long', 'integration')
+            }
+        }
         stage('Run new Model Example') {
             steps {
                 run_pytest_single('sPyNNaker8/p8_integration_tests/test_new_model_templates', 1200, 'new_model_example', 'integration')
-                //run_pytest_single('sPyNNaker8NewModelTemplate/nmt_integration_tests', 1200, 'nmt_integration_tests', 'integration')
+                run_pytest_single('sPyNNaker8NewModelTemplate/nmt_integration_tests', 1200, 'nmt_integration_tests', 'integration')
             }
         }
-        //stage('Run scripts') {
-        //    steps {
-        //        sh 'python sPyNNaker8/p8_integration_tests/scripts_test/build_script.py'
-        //        run_pytest_single('sPyNNaker8/p8_integration_tests/scripts_test', 3600, 'sPyNNaker8Scripts', 'integration')
-        //    }
-        //}
+        stage('Run scripts') {
+            steps {
+                sh 'python sPyNNaker8/p8_integration_tests/scripts_test/build_script.py'
+                run_pytest_single('sPyNNaker8/p8_integration_tests/scripts_test', 3600, 'sPyNNaker8Scripts', 'integration')
+            }
+        }
         stage('Reports') {
             steps {
                 sh 'find . -maxdepth 3 -type f -wholename "*/reports/*" -print -exec cat \\{\\}  \\;'
