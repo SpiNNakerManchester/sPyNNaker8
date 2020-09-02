@@ -194,15 +194,14 @@ pipeline {
         }
         success {
             junit 'junit/*.xml'
-            cobertura coberturaReportFile: 'unit.xml', enableNewApi: true
-            cobertura coberturaReportFile: 'integration.xml', enableNewApi: true
+            cobertura coberturaReportFile: '*_cov.xml', enableNewApi: true
         }
     }
 }
 
 def run_pytest_single(String tests, int timeout, String results, String covfile) {
     sh 'echo "<testsuite tests="0"></testsuite>" > junit/' + results + '.xml'
-    sh 'py.test ' + tests + ' -rs --forked --show-progress --cov-config=.coveragerc --cov-branch --cov spynnaker8 --cov spynnaker --cov spinn_front_end_common --cov pacman --cov data_specification --cov spinnman --cov spinn_machine --cov spinn_storage_handlers --cov spalloc --cov spinn_utilities --junitxml junit/' + results + '.xml --cov-report xml:' + covfile + '.xml --cov-append --timeout ' + timeout
+    sh 'py.test ' + tests + ' -rs --forked --show-progress --cov-config=.coveragerc --cov-branch --cov spynnaker8 --cov spynnaker --cov spinn_front_end_common --cov pacman --cov data_specification --cov spinnman --cov spinn_machine --cov spinn_storage_handlers --cov spalloc --cov spinn_utilities --junitxml junit/' + results + '.xml --cov-report xml:' + covfile + '_cov.xml --cov-append --timeout ' + timeout
 }
 
 def getGitBranchName() {
