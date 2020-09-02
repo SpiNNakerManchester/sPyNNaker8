@@ -97,6 +97,14 @@ pipeline {
                 sh 'cd sPyNNaker8NewModelTemplate && python ./setup.py develop'
                 sh 'python -m spynnaker8.setup_pynn'
                 // Test requirements
+                sh 'pip install -r SpiNNMachine/requirements-test.txt'
+                sh 'pip install -r SpiNNStorageHandlers/requirements-test.txt'
+                sh 'pip install -r SpiNNMan/requirements-test.txt'
+                sh 'pip install -r PACMAN/requirements-test.txt'
+                sh 'pip install -r DataSpecification/requirements-test.txt'
+                sh 'pip install -r spalloc/requirements-test.txt'
+                sh 'pip install -r SpiNNFrontEndCommon/requirements-test.txt'
+                sh 'pip install -r sPyNNaker/requirements-test.txt'
                 sh 'pip install -r sPyNNaker8/requirements-test.txt'
                 // Additional requirements for testing here
                 sh 'pip install pytest-instafail'
