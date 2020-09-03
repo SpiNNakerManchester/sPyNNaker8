@@ -18,8 +18,8 @@ from spynnaker.pyNN.models.neuron.synapse_dynamics \
     import SynapseDynamicsStructuralSTDP as STDPStructuralBaseClass
 from spynnaker.pyNN.models.neuron.synapse_dynamics.\
     synapse_dynamics_structural_common import (
-    DEFAULT_F_REW, DEFAULT_INITIAL_WEIGHT, DEFAULT_INITIAL_DELAY,
-    DEFAULT_S_MAX)
+        DEFAULT_F_REW, DEFAULT_INITIAL_WEIGHT, DEFAULT_INITIAL_DELAY,
+        DEFAULT_S_MAX)
 from spinn_front_end_common.utilities import globals_variables
 
 
