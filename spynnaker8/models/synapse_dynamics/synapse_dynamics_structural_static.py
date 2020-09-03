@@ -17,8 +17,9 @@ from pyNN.standardmodels.synapses import StaticSynapse as PyNNStaticSynapse
 from spinn_front_end_common.utilities import globals_variables
 from spynnaker.pyNN.models.neuron.synapse_dynamics \
     import SynapseDynamicsStructuralStatic as StaticStructuralBaseClass
-from spynnaker.pyNN.models.neuron.synapse_dynamics \
-    import SynapseDynamicsStructuralCommon as CommonSP
+from spynnaker.pyNN.models.neuron.synapse_dynamics.\
+    synapse_dynamics_structural_common import (DEFAULT_F_REW,
+            DEFAULT_INITIAL_WEIGHT, DEFAULT_INITIAL_DELAY, DEFAULT_S_MAX)
 
 
 class SynapseDynamicsStructuralStatic(StaticStructuralBaseClass):
@@ -27,11 +28,10 @@ class SynapseDynamicsStructuralStatic(StaticStructuralBaseClass):
 
     def __init__(
             self, partner_selection, formation, elimination,
-            f_rew=CommonSP.DEFAULT_F_REW,
-            initial_weight=CommonSP.DEFAULT_INITIAL_WEIGHT,
-            initial_delay=CommonSP.DEFAULT_INITIAL_DELAY,
-            s_max=CommonSP.DEFAULT_S_MAX, seed=None,
-            weight=PyNNStaticSynapse.default_parameters['weight'], delay=None):
+            f_rew=DEFAULT_F_REW, initial_weight=DEFAULT_INITIAL_WEIGHT,
+            initial_delay=DEFAULT_INITIAL_DELAY, s_max=DEFAULT_S_MAX,
+            seed=None, weight=PyNNStaticSynapse.default_parameters['weight'],
+            delay=None):
         """
         :param partner_selection: The partner selection rule
         :type partner_selection:
