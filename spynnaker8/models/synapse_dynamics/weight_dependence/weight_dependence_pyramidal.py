@@ -13,12 +13,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from .weight_dependence_additive import WeightDependenceAdditive
-from .weight_dependence_multiplicative import WeightDependenceMultiplicative
-from .weight_dependence_additive_triplet import WeightDependenceAdditiveTriplet
-from .weight_dependence_multiplicative_multicomp_Bern import WeightDependenceMultiplicativeMulticompBern
-from .weight_dependence_pyramidal import WeightDependencePyramidal
+from spynnaker.pyNN.models.neuron.plasticity.stdp.weight_dependence import (
+    WeightDependencePyramidal as
+    _BaseClass)
 
-__all__ = ["WeightDependenceAdditive", "WeightDependenceMultiplicative",
-           "WeightDependenceAdditiveTriplet", "WeightDependenceMultiplicativeMulticompBern",
-           "WeightDependencePyramidal"]
+
+class WeightDependencePyramidal(_BaseClass):
+    def __init__(self, w_min=0.0, w_max=1.0, learning_rates=(1.0, 1.0, 1.0, 1.0)):
+        super(WeightDependencePyramidal, self).__init__(
+            w_max=w_max, w_min=w_min, learning_rates=learning_rates)
