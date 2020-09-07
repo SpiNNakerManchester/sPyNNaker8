@@ -18,7 +18,7 @@ Plotting tools to be used together with
 https://github.com/NeuralEnsemble/PyNN/blob/master/pyNN/utility/plotting.py
 """
 
-from neo import SpikeTrain, Block, Segment
+from neo import SpikeTrain, Block, Segment, AnalogSignal
 import numpy as np
 from quantities import ms
 try:
@@ -27,7 +27,6 @@ try:
     _matplotlib_missing = False
 except ImportError:
     _matplotlib_missing = True
-from neo import AnalogSignal as AnalogSignalType  # @Reimport
 
 
 def _handle_options(ax, options):
@@ -269,9 +268,9 @@ class SpynnakerPanel(object):
 
             if isinstance(datum, list):
                 self.__plot_list(axes, datum, label, properties)
-            # AnalogSignalArray / AnalogSignal is also a ndarray
-            # but data format different! We import them as a single name here
-            elif isinstance(datum, AnalogSignalType):
+            # AnalogSignal is also a ndarray, but data format different!
+            # We import them as a single name here
+            elif isinstance(datum, AnalogSignal):
                 heat_plot_neo(axes, datum, label=label, **properties)
             elif isinstance(datum, np.ndarray):
                 self.__plot_array(axes, datum, label, properties)

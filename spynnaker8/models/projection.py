@@ -142,7 +142,7 @@ class Projection(PyNNProjectionCommon):
             raise NotImplementedError(
                 "Projections over views only work on contiguous arrays, "
                 "e.g. view = pop[n:m], not view = pop[n,m]")
-        # Projection is compatible
+        # Projection is compatible with PopulationView
 
     def __len__(self):
         raise NotImplementedError
@@ -342,7 +342,7 @@ class Projection(PyNNProjectionCommon):
     def pre(self):
         """ The pre-population.
 
-        :rtype: ~spynnaker8.models.populations.PopulationBase
+        :rtype: PopulationBase
         """
         return self._synapse_information.pre_population
 
@@ -350,7 +350,7 @@ class Projection(PyNNProjectionCommon):
     def post(self):
         """ The post-population.
 
-        :rtype: ~spynnaker8.models.populations.PopulationBase
+        :rtype: PopulationBase
         """
         return self._synapse_information.post_population
 

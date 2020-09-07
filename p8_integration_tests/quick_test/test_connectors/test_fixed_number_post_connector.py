@@ -145,3 +145,18 @@ class TestFixedNumberPostConnector(BaseTestCase):
         sim.run(0)
         self.assertEqual(6, len(weights))
         sim.end()
+
+    def test_check_connection_estimates(self):
+        # Test that the estimates for connections per neuron/vertex work
+        sim.setup(timestep=1.0)
+        n_neurons = 25
+        pop1 = sim.Population(n_neurons, sim.IF_curr_exp(), label="pop_1")
+        pop2 = sim.Population(n_neurons, sim.IF_curr_exp(), label="pop_2")
+        projection = sim.Projection(
+            pop1, pop2, sim.FixedNumberPostConnector(n_neurons/2),
+            synapse_type=sim.StaticSynapse(weight=5, delay=1))
+        simtime = 10
+        sim.run(simtime)
+        weights = projection.get(["weight"], "list")
+        self.assertEqual(n_neurons*int(n_neurons/2), len(weights))
+        sim.end()

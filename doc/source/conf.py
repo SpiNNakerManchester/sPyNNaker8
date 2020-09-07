@@ -56,7 +56,7 @@ extensions = [
 _READTHEDOCS_PATTERN = 'https://{}.readthedocs.io/en/latest/'
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3.6', None),
-    'numpy': ("https://docs.scipy.org/doc/numpy/", None),
+    'numpy': ("https://numpy.org/doc/stable/", None),
     'maplotlib': ('https://matplotlib.org', None),
     'pynn': ("http://neuralensemble.org/docs/PyNN/", None),
     'neo': (_READTHEDOCS_PATTERN.format('neo'), None),
@@ -221,6 +221,9 @@ html_static_path = ['_static']
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'sPyNNaker8doc'
 
+# Where to get the mathjax javascript library from because the default is
+# horribly outdated in some versions of Sphinx.
+mathjax_path = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML'
 
 # -- Options for LaTeX output ---------------------------------------------
 

@@ -14,11 +14,21 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 language: python
-python:
-  - 2.7
-  - 3.6
-  - 3.7
-dist: xenial
+os: linux
+jobs:
+  include:
+    - name: Py3.6
+      python: 3.6
+      dist: bionic
+    - name: Py3.7
+      python: 3.7
+      dist: focal
+    - name: Py3.8
+      python: 3.8
+      dist: focal
+    - name: Py2.7 (legacy)
+      python: 2.7
+      dist: xenial
 cache: pip
 env:
   - MPLBACKEND=module://matplotlib.backends.backend_agg
@@ -51,7 +61,7 @@ before_install:
 
 install:
   - pip install -r requirements-test.txt
-  - pip install pylint python-coveralls 'coverage>=4.4,<5.0'
+  - pip install 'pylint<2.5' python-coveralls 'coverage>=4.4,<5.0'
   - python ./setup.py install
 
 before_script:
@@ -66,7 +76,7 @@ script:
   # Tests
   - py.test --cov-report= unittests --cov spynnaker8
   # Code quality checks
-  - flake8 spynnaker8 unittests p8_fga_tests p8_integration_tests
+  - flake8 spynnaker8 unittests p8_integration_tests
   - ( pylint --output-format=colorized --disable=R,C spynnaker8; exit $(($? & 35)) )
   # Copyright check
   - support/rat.sh run
