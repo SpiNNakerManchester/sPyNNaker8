@@ -71,7 +71,7 @@ class TestSetRecord(BaseTestCase):
                              additional_parameters={"seed": 1})
         if_curr.record("all")
         self.assertListEq(
-            ["spikes", "v", "gsyn_inh", "gsyn_exc", "packet_counts"],
+            ["spikes", "v", "gsyn_inh", "gsyn_exc", "packets-per-timestep"],
             if_curr._get_all_recording_variables())
         ssa.record("all")
         self.assertListEq(["spikes"], ssa._get_all_recording_variables())
@@ -149,7 +149,7 @@ class TestSetRecord(BaseTestCase):
             "gsyn_inh": DataType.S1615}
 
         recorder = NeuronRecorder(
-            ["v", "gsyn_exc", "gsyn_inh"], data_types, ["spikes"], 5)
+            ["v", "gsyn_exc", "gsyn_inh"], data_types, ["spikes"], 5, [], [])
         recorder.set_recording("spikes", True)
         self.assertListEq(["spikes"], recorder.recording_variables)
         recorder.set_recording("spikes", False, indexes=[2, 4])
