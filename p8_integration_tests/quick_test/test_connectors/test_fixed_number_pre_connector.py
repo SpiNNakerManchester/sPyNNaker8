@@ -162,8 +162,8 @@ class TestFixedNumberPreConnector(BaseTestCase):
         sim.run(30)
         # There are 100 connections, as there are 10 for each post-neuron
         assert(len(delays) == 100)
-        # If the delays are done right, all pre-spikes should arrive at the same time
-        # causing each neuron in the post-population to spike
+        # If the delays are done right, all pre-spikes should arrive at the
+        # same time causing each neuron in the post-population to spike
         spikes = pop2.get_data("spikes").segments[0].spiketrains
         for s in spikes:
             assert(len(s) == 1)
