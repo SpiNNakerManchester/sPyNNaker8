@@ -157,7 +157,8 @@ class TestFixedNumberPreConnector(BaseTestCase):
         # Choose to use delay extensions
         synapse_type = sim.StaticSynapse(weight=0.5, delay=17)
         conn = sim.FixedNumberPreConnector(10)
-        projection = sim.Projection(pop1, pop2, conn, synapse_type=synapse_type)
+        projection = sim.Projection(
+            pop1, pop2, conn, synapse_type=synapse_type)
         delays = projection.get(["delay"], "list")
         sim.run(30)
         # There are 100 connections, as there are 10 for each post-neuron
