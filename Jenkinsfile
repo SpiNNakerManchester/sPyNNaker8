@@ -21,7 +21,6 @@ pipeline {
     environment {
         // This is where 'pip install --user' puts things
         PATH = "$HOME/.local/bin:$PATH"
-        BINARY_LOGS_DIR = "${workspace}"
     }
     options {
         skipDefaultCheckout true
@@ -140,7 +139,6 @@ pipeline {
         stage('Unit Tests') {
             steps {
                 run_pytest('SpiNNUtils/unittests', 1200, 'SpiNNUtils', 'auto')
-                python -m spinn_utilities.executable_finder
                 run_pytest('SpiNNStorageHandlers/tests', 1200, 'SpiNNStorageHandlers', 'auto')
                 run_pytest('SpiNNMachine/unittests', 1200, 'SpiNNMachine', 'auto')
                 run_pytest('SpiNNMan/unittests SpiNNMan/integration_tests', 1200, 'SpiNNMan', 'auto')
@@ -174,7 +172,6 @@ pipeline {
         stage('Reports') {
             steps {
                 sh 'find . -maxdepth 3 -type f -wholename "*/reports/*" -print -exec cat \\{\\}  \\;'
-                python -m spinn_utilities.executable_finder
             }
         }
         stage('Check Destroyed') {
