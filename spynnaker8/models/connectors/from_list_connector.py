@@ -26,22 +26,30 @@ class FromListConnector(CommonFromListConnector):
             self, conn_list, safe=True, verbose=False, column_names=None,
             callback=None):
         """
-        :param conn_list: \
-            a list of tuples, one tuple for each connection. Each tuple\
-            should contain: `(pre_idx, post_idx, p1, p2, ..., pn)` where\
-            `pre_idx` is the index (i.e. order in the Population, not the ID)\
-            of the presynaptic neuron, `post_idx` is the index of the\
-            postsynaptic neuron, and `p1`, `p2`, etc. are the synaptic\
-            parameters (e.g., weight, delay, plasticity parameters).
-        :param column_names: \
-            the names of the parameters p1, p2, etc. If not provided, it is\
-            assumed the parameters are weight, delay (for\
-            backwards compatibility).
-        :param safe: \
-            if True, check that weights and delays have valid values. If\
-            False, this check is skipped.
-        :param callback: \
+        :param conn_list:
+            a list of tuples, one tuple for each connection. Each tuple should
+            contain: `(pre_idx, post_idx, p1, p2, ..., pn)` where `pre_idx` is
+            the index (i.e. order in the Population, not the ID) of the
+            presynaptic neuron, `post_idx` is the index of the postsynaptic
+            neuron, and `p1`, `p2`, etc. are the synaptic parameters (e.g.,
+            weight, delay, plasticity parameters).
+        :type conn_list: list(tuple(int,int,...)) or ~numpy.ndarray
+        :param bool safe:
+            if True, check that weights and delays have valid values.
+            If False, this check is skipped.
+        :param bool verbose:
+            Whether to output extra information about the connectivity to a
+            CSV file
+        :param column_names:
+            the names of the parameters `p1`, `p2`, etc. If not provided, it
+            is assumed the parameters are `weight, delay` (for backwards
+            compatibility).
+        :type column_names: tuple(str) or list(str) or None
+        :param callable callback:
             if given, a callable that display a progress bar on the terminal.
+
+            .. note::
+                Not supported by sPyNNaker.
         """
         CommonFromListConnector.__init__(
             self, conn_list=conn_list, safe=safe, verbose=verbose,

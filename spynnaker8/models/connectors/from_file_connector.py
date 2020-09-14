@@ -22,12 +22,48 @@ from pyNN.recording import files
 
 
 class FromFileConnector(FromListConnector, PyNNFromFileConnector):
+    """ Make connections according to a list read from a file.
+    """
     # pylint: disable=redefined-builtin
     __slots__ = ["_file"]
 
     def __init__(
             self, file,  # @ReservedAssignment
             distributed=False, safe=True, callback=None, verbose=False):
+        """
+        :param str file:
+            Either an open file object or the filename of a file containing a
+            list of connections, in the format required by
+            :py:class:`FromListConnector`.
+            Column headers, if included in the file, must be specified using
+            a list or tuple, e.g.::
+
+                # columns = ["i", "j", "weight", "delay", "U", "tau_rec"]
+
+            Note that the header requires `#` at the beginning of the line.
+        :type file: str or ~io.FileIO
+        :param bool distributed:
+            Basic pyNN says:
+
+                if this is True, then each node will read connections from a
+                file called `filename.x`, where `x` is the MPI rank. This
+                speeds up loading connections for distributed simulations.
+
+            .. note::
+                Always leave this as False with sPyNNaker, which is not
+                MPI-based.
+        :param bool safe:
+            Whether to check that weights and delays have valid values.
+            If False, this check is skipped.
+        :param callable callback:
+            if given, a callable that display a progress bar on the terminal.
+
+            .. note::
+                Not supported by sPyNNaker.
+        :param bool verbose:
+            Whether to output extra information about the connectivity to a
+            CSV file
+        """
         self._file = file
         if isinstance(file, string_types):
             real_file = self.get_reader(file)

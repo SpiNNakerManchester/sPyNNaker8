@@ -19,9 +19,10 @@ from p8_integration_tests.base_test_case import BaseTestCase
 
 
 class TestKernelConnector(BaseTestCase):
+    # pylint: disable=expression-not-assigned
 
-    def do_run(self, psh, psw, ksh, ksw, pre_start=[0, 0], post_start=[0, 0],
-               pre_step=[1, 1], post_step=[1, 1]):
+    def do_run(self, psh, psw, ksh, ksw, pre_start=(0, 0), post_start=(0, 0),
+               pre_step=(1, 1), post_step=(1, 1)):
         sim.setup(timestep=1.0)
 
         # determine population size and runtime from the kernel sizes
@@ -47,14 +48,13 @@ class TestKernelConnector(BaseTestCase):
         weight_kernel = np.asarray(weight_list)
         delay_kernel = np.asarray(delay_list)
 
-        kernel_connector = sim.KernelConnector(shape_pre, shape_post,
-                                               shape_kernel,
-                                               weight_kernel=weight_kernel,
-                                               delay_kernel=delay_kernel,
-                                               pre_sample_steps=pre_step,
-                                               post_sample_steps=post_step,
-                                               pre_start_coords=pre_start,
-                                               post_start_coords=post_start)
+        kernel_connector = sim.KernelConnector(
+            shape_pre, shape_post, shape_kernel,
+            weight_kernel=weight_kernel, delay_kernel=delay_kernel,
+            pre_sample_steps_in_post=pre_step,
+            post_sample_steps_in_pre=post_step,
+            pre_start_coords_in_post=pre_start,
+            post_start_coords_in_pre=post_start)
 
         c2 = sim.Projection(input_pop, pop, kernel_connector,
                             sim.StaticSynapse(weight=weights, delay=delays))

@@ -13,21 +13,24 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from lxml import etree
 import os
 import random
 import sys
 import time
 import unittest
 from unittest import SkipTest
+import numpy
+import sqlite3
 import spinn_utilities.conf_loader as conf_loader
 from spinnman.exceptions import SpinnmanException
 from spalloc.job import JobDestroyedError
 from spinn_front_end_common.utilities import globals_variables
-import numpy
 
-p8_integration_factor = float(os.environ.get('P8_INTEGRATION_FACTOR', "1"))
 random.seed(os.environ.get('P8_INTEGRATION_SEED', None))
+if os.environ.get('CONTINUOUS_INTEGRATION', 'false').lower() == 'true':
+    max_tries = 3
+else:
+    max_tries = 1
 
 
 def calculate_stdp_times(pre_spikes, post_spikes, plastic_delay):
@@ -74,12 +77,6 @@ class BaseTestCase(unittest.TestCase):
         # Set test_seed to None to allow random
         self._test_seed = 1
 
-        factor = random.random()
-        if factor > p8_integration_factor:
-            raise SkipTest("Test skipped by random number {} above "
-                           "P8_INTEGRATION_FACTOR {}".format(
-                               factor, p8_integration_factor))
-
         globals_variables.unset_simulator()
         class_file = sys.modules[self.__module__].__file__
         path = os.path.dirname(os.path.abspath(class_file))
@@ -89,7 +86,6 @@ class BaseTestCase(unittest.TestCase):
             self, log_records, sub_message, log_level='ERROR', count=1,
             allow_more=False):
         """ Tool to assert the log messages contain the sub-message
-
         :param log_records: list of log message
         :param sub_message: text to look for
         :param log_level: level to look for
@@ -126,31 +122,43 @@ class BaseTestCase(unittest.TestCase):
         test_dir = os.path.dirname(p8_integration_tests_directory)
         report_dir = os.path.join(test_dir, "reports")
         if not os.path.exists(report_dir):
-            os.makedirs(report_dir)
+            # It might now exist if run in parallel
+            try:
+                os.makedirs(report_dir)
+            except Exception:
+                pass
         report_path = os.path.join(report_dir, file_name)
         with open(report_path, "a") as report_file:
             report_file.write(message)
 
-    def get_provenance(self, main_name, detail_name):
+    def get_provenance(self, _main_name, detail_name):
         provenance_file_path = globals_variables.get_simulator() \
             ._provenance_file_path
-        xml_path = os.path.join(provenance_file_path, "pacman.xml")
-        xml_root = etree.parse(xml_path)
+        prov_file = os.path.join(provenance_file_path, "provenance.sqlite3")
+        prov_db = sqlite3.connect(prov_file)
+        prov_db.row_factory = sqlite3.Row
         results = []
-        for element in xml_root.findall("provenance_data_items"):
-            if main_name in element.get('name'):
-                for sub_element in element.findall("provenance_data_item"):
-                    if detail_name in sub_element.get('name'):
-                        results.append(sub_element.get('name'))
-                        results.append(": ")
-                        results.append(sub_element.text)
-                        results.append("\n")
+        for row in prov_db.execute(
+                "SELECT description_name AS description, the_value AS 'value' "
+                "FROM provenance_view WHERE source_name = 'pacman' AND "
+                "description_name LIKE ?", ("%" + detail_name, )):
+            results.append("{}: {}\n".format(row["description"], row["value"]))
         return "".join(results)
 
     def get_provenance_files(self):
-        provenance_file_path = globals_variables.get_simulator() \
-            ._provenance_file_path
+        provenance_file_path = (
+            globals_variables.get_simulator()._provenance_file_path)
         return os.listdir(provenance_file_path)
+
+    def get_system_iobuf_files(self):
+        system_iobuf_file_path = (
+            globals_variables.get_simulator()._system_provenance_file_path)
+        return os.listdir(system_iobuf_file_path)
+
+    def get_app_iobuf_files(self):
+        app_iobuf_file_path = (
+            globals_variables.get_simulator()._app_provenance_file_path)
+        return os.listdir(app_iobuf_file_path)
 
     def get_run_time_of_BufferExtractor(self):
         return self.get_provenance("Execution", "BufferExtractor")
@@ -184,8 +192,8 @@ class BaseTestCase(unittest.TestCase):
                     destroyed_file.write("\n")
                 retries += 1
                 globals_variables.unset_simulator()
-                if retries >= 3:
-                    raise ex
+                if retries >= max_tries:
+                    raise
             except SpinnmanException as ex:
                 class_file = sys.modules[self.__module__].__file__
                 with open(self.spinnman_exception_path(), "a") as exc_file:
@@ -195,8 +203,8 @@ class BaseTestCase(unittest.TestCase):
                     exc_file.write("\n")
                 retries += 1
                 globals_variables.unset_simulator()
-                if retries >= 3:
-                    raise ex
+                if retries >= max_tries:
+                    raise
             print("")
             print("==========================================================")
             print(" Will run {} again in {} seconds".format(

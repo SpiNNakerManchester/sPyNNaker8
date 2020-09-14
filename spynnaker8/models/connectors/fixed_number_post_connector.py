@@ -25,7 +25,7 @@ logger = logging.getLogger(__file__)
 class FixedNumberPostConnector(CommonFixedNumberPostConnector,
                                PyNNFixedNumberPostConnector):
     """ PyNN connector that puts a fixed number of connections on each of the\
-        post neurons
+        post neurons.
     """
     __slots__ = []
 
@@ -34,29 +34,29 @@ class FixedNumberPostConnector(CommonFixedNumberPostConnector,
             with_replacement=False, rng=None, callback=None):
         """
 
-        :param n: \
+        :param int n:
             number of random post-synaptic neurons connected to pre-neurons
-        :type n: int
-        :param allow_self_connections: \
-            if the connector is used to connect a Population to itself, this\
-            flag determines whether a neuron is allowed to connect to itself,\
+        :param bool allow_self_connections:
+            if the connector is used to connect a Population to itself, this
+            flag determines whether a neuron is allowed to connect to itself,
             or only to other neurons in the Population.
-        :type allow_self_connections: bool
-        :param safe: \
-            Whether to check that weights and delays have valid values;\
+        :param bool safe:
+            Whether to check that weights and delays have valid values;
             if False, this check is skipped.
-        :type safe: bool
-        :param verbose: \
-            Whether to output extra information about the connectivity to a\
+        :param bool verbose:
+            Whether to output extra information about the connectivity to a
             CSV file
-        :type verbose: bool
-        :param with_replacement: \
-            if False, once a connection is made, it can't be made again;\
-            if True, multiple connections between the same pair of neurons\
+        :param bool with_replacement:
+            if False, once a connection is made, it can't be made again;
+            if True, multiple connections between the same pair of neurons
             are allowed
-        :type with_replacement: bool
         :param rng: random number generator
-        :param callback: list of callbacks to run
+        :type rng: ~pyNN.random.NumpyRNG or None
+        :param callable callback:
+            if given, a callable that display a progress bar on the terminal.
+
+            .. note::
+                Not supported by sPyNNaker.
         """
         # pylint: disable=too-many-arguments
         super(FixedNumberPostConnector, self).__init__(

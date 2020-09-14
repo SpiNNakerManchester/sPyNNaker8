@@ -29,21 +29,26 @@ class AllToAllConnector(CommonAllToAllConnector, PyNNAllToAllConnector):
 
     def __init__(
             self, allow_self_connections=True, safe=True,
-            verbose=None, callbacks=None):
+            verbose=None, callback=None):
         """
-        :param allow_self_connections: \
-            if the connector is used to connect a Population to itself, this\
-            flag determines whether a neuron is allowed to connect to itself,\
+        :param bool allow_self_connections:
+            if the connector is used to connect a Population to itself, this
+            flag determines whether a neuron is allowed to connect to itself,
             or only to other neurons in the Population.
-        :type allow_self_connections: bool
-        :param safe: if True, check that weights and delays have valid\
+        :param bool safe: if True, check that weights and delays have valid
             values. If False, this check is skipped.
-        :param verbose:
-        :param callbacks:
+        :param bool verbose:
+            Whether to output extra information about the connectivity to a
+            CSV file
+        :param callable callback:
+            if given, a callable that display a progress bar on the terminal.
+
+            .. note::
+                Not supported by sPyNNaker.
         """
         CommonAllToAllConnector.__init__(
             self, allow_self_connections=allow_self_connections,
             safe=safe, verbose=verbose)
         PyNNAllToAllConnector.__init__(
             self, allow_self_connections=allow_self_connections, safe=safe,
-            callback=callbacks)
+            callback=callback)

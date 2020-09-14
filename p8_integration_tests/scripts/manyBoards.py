@@ -41,7 +41,7 @@ class ManyBoards(object):
             if "Failure to detect machine " in str(oops):
                 raise SkipTest("You Need at least {} boards to run this test"
                                .format(n_boards))
-            raise(oops)
+            raise
 
         input_spikes = list(range(0, simtime - 100, 10))
         self._expected_spikes = len(input_spikes)
