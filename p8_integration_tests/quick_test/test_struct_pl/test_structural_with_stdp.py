@@ -125,11 +125,6 @@ def structural_with_stdp():
 
 class TestStructuralWithSTDP(BaseTestCase):
 
-    @unittest.skip(
-        "has exposed a bug in plasticity where a post spike can affect "
-        "plasticity. master shows the same bug with the SSA to be "
-        "offset by 40 microseconds. Needs investigating and is discussed in "
-        "https://github.com/SpiNNakerManchester/sPyNNaker/issues/881.")
     def test_structural_with_stdp(self):
         self.runsafe(structural_with_stdp)
 
