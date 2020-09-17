@@ -120,6 +120,8 @@ pipeline {
                 sh 'echo "spalloc_server = 10.11.192.11" >> ~/.spynnaker.cfg'
                 sh 'echo "spalloc_user = Jenkins" >> ~/.spynnaker.cfg'
                 sh 'echo "enable_advanced_monitor_support = True" >> ~/.spynnaker.cfg'
+                // The chip 10:10 will fail to receive signals because its parent 9:9
+                sh 'echo "sick_boards = 10.11.223.65" >> ~/.spynnaker.cfg'
                 sh 'echo "[Java]" >> ~/.spynnaker.cfg'
                 sh 'echo "use_java = True" >> ~/.spynnaker.cfg'
                 sh 'echo "java_call=/usr/bin/java" >> ~/.spynnaker.cfg'
