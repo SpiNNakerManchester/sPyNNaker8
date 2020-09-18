@@ -21,6 +21,7 @@ pipeline {
     environment {
         // This is where 'pip install --user' puts things
         PATH = "$HOME/.local/bin:$PATH"
+        BINARY_LOGS_DIR = "${workspace}"
     }
     options {
         skipDefaultCheckout true
@@ -141,6 +142,7 @@ pipeline {
         stage('Reports') {
             steps {
                 sh 'find . -maxdepth 3 -type f -wholename "*/reports/*" -print -exec cat \\{\\}  \\;'
+                sh "python -m spinn_utilities.executable_finder"
             }
         }
         stage('Check Destroyed') {
