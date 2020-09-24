@@ -191,8 +191,14 @@ def variable_rate_reset():
     pop_2.record("spikes")
 
     p.run(1000)
+    spikes_pop_2_1 = pop_2.get_data("spikes")
+    nump = [s.magnitude for s in spikes_pop_2_1.segments[0].spiketrains]
+    numpy.savetxt("spikesp2_1.txt", nump[0])
     pop_2.set(rate=10)
     p.run(1000)
+    spikes_pop_2_2 = pop_2.get_data("spikes")
+    nump = [s.magnitude for s in spikes_pop_2_2.segments[0].spiketrains]
+    numpy.savetxt("spikesp2_2.txt", nump[0])
     pop_2.set(rate=100)
     p.run(1000)
     p.reset()
@@ -206,8 +212,11 @@ def variable_rate_reset():
     spikes_p_2 = [s.magnitude for s in spikes_pop_2.segments[0].spiketrains]
 
     print(spikes_1)
+    numpy.savetxt("spikes1.txt", spikes_1[0])
     print(spikes_2)
+    numpy.savetxt("spikes2.txt", spikes_2[0])
     print(spikes_p_2)
+    numpy.savetxt("spikesp2.txt", spikes_p_2[0])
 
     for s1, s2, s3 in zip(spikes_1, spikes_2, spikes_p_2):
         assert(numpy.array_equal(s1, s2))
