@@ -63,8 +63,6 @@ intersphinx_mapping = {
     # We don't link to quantities; their docs are too shit
     # 'quantities': (_READTHEDOCS_PATTERN.format('python-quantities'), None),
     'spinn_machine': (_READTHEDOCS_PATTERN.format('spinnmachine'), None),
-    'spinn_storage_handlers': (
-        _READTHEDOCS_PATTERN.format('spinnstoragehandlers'), None),
     'spinnman': (_READTHEDOCS_PATTERN.format('spinnman'), None),
     'pacman': (_READTHEDOCS_PATTERN.format('pacman'), None),
     'data_specification': (
