@@ -299,7 +299,6 @@ def get_projections_data(projection_data):
         projection_data)
 
 
-
 def setup(timestep=_pynn_control.DEFAULT_TIMESTEP,
           min_delay=_pynn_control.DEFAULT_MIN_DELAY,
           max_delay=_pynn_control.DEFAULT_MAX_DELAY,
