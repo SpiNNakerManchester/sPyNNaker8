@@ -26,7 +26,7 @@ n_neurons = 10  # number of neurons in each population
 n_pops = 630
 
 
-class Synfire6300n10pop10pc48chipsNoDelaysSpikeRecording(BaseTestCase):
+class TestBasicRoutingInfo(BaseTestCase):
 
     def test_run(self):
         self.assert_not_spin_three()
