@@ -33,7 +33,7 @@ class TestBasicRoutingInfo(BaseTestCase):
         results = synfire_npop_run.do_run(n_neurons, n_pops=n_pops,
                                           neurons_per_core=n_neurons)
         spikes = results
-        self.assertEqual(8333, len(spikes))
+        self.assertEqual(8335, len(spikes))
 
 
 if __name__ == '__main__':
