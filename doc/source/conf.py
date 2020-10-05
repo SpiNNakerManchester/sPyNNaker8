@@ -50,7 +50,7 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.autosummary',
     'sphinx.ext.intersphinx',
-    'sphinx.ext.mathjax'
+    'sphinx.ext.mathjax',
 ]
 
 _READTHEDOCS_PATTERN = 'https://{}.readthedocs.io/en/latest/'
@@ -62,6 +62,7 @@ intersphinx_mapping = {
     'neo': (_READTHEDOCS_PATTERN.format('neo'), None),
     # We don't link to quantities; their docs are too shit
     # 'quantities': (_READTHEDOCS_PATTERN.format('python-quantities'), None),
+    'spinn_utilities': (_READTHEDOCS_PATTERN.format('spinnutils'), None),
     'spinn_machine': (_READTHEDOCS_PATTERN.format('spinnmachine'), None),
     'spinnman': (_READTHEDOCS_PATTERN.format('spinnman'), None),
     'pacman': (_READTHEDOCS_PATTERN.format('pacman'), None),
@@ -240,8 +241,8 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  ('index', 'sPyNNaker8.tex',
-   u'sPyNNaker8 Documentation', u'', 'manual'),
+    ('index', 'sPyNNaker8.tex',
+     u'sPyNNaker8 Documentation', u'', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -285,9 +286,9 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'sPyNNaker8',
-   u'sPyNNaker8 Documentation', u'', 'sPyNNaker', '',
-   'Miscellaneous'),
+    ('index', 'sPyNNaker8',
+     u'sPyNNaker8 Documentation', u'', 'sPyNNaker', '',
+     'Miscellaneous'),
 ]
 
 # Documents to append as an appendix to all manuals.
