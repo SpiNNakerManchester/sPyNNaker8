@@ -33,7 +33,7 @@ class TestZonedRoutingInfo(BaseTestCase):
         results = synfire_npop_run.do_run(n_neurons, n_pops=n_pops,
                                           neurons_per_core=n_neurons)
         spikes = results
-        self.assertAlmostEqual(8335, len(spikes), 10)
+        self.assertAlmostEqual(8335, len(spikes), delta=10)
 
 
 if __name__ == '__main__':
