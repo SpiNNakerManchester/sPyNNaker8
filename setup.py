@@ -45,7 +45,6 @@ for dirname, dirnames, filenames in os.walk(main_package_dir):
 
 install_requires = [
     'SpiNNUtilities >= 1!5.1.1, < 1!6.0.0',
-    'SpiNNStorageHandlers >= 1!5.1.1, < 1!6.0.0',
     'SpiNNMachine >= 1!5.1.1, < 1!6.0.0',
     'SpiNNMan >= 1!5.1.1, < 1!6.0.0',
     'SpiNNaker_PACMAN >= 1!5.1.1, < 1!6.0.0',
