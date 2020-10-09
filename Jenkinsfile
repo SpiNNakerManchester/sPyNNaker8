@@ -49,7 +49,6 @@ pipeline {
                 // SpiNNakerManchester internal dependencies; development mode
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/SpiNNUtils.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/SpiNNMachine.git'
-                sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/SpiNNStorageHandlers.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/SpiNNMan.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/PACMAN.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/DataSpecification.git'
@@ -85,7 +84,6 @@ pipeline {
                 sh 'make -C sPyNNaker8NewModelTemplate/c_models'
                 // Python install
                 sh 'cd SpiNNMachine && python setup.py develop'
-                sh 'cd SpiNNStorageHandlers && python setup.py develop'
                 sh 'cd SpiNNMan && python setup.py develop'
                 sh 'cd PACMAN && python setup.py develop'
                 sh 'cd DataSpecification && python setup.py develop'
@@ -97,7 +95,6 @@ pipeline {
                 sh 'python -m spynnaker8.setup_pynn'
                 // Test requirements
                 sh 'pip install -r SpiNNMachine/requirements-test.txt'
-                sh 'pip install -r SpiNNStorageHandlers/requirements-test.txt'
                 sh 'pip install -r SpiNNMan/requirements-test.txt'
                 sh 'pip install -r PACMAN/requirements-test.txt'
                 sh 'pip install -r DataSpecification/requirements-test.txt'
@@ -140,7 +137,6 @@ pipeline {
         stage('Unit Tests') {
             steps {
                 run_pytest('SpiNNUtils/unittests', 1200, 'SpiNNUtils', 'auto')
-                run_pytest('SpiNNStorageHandlers/tests', 1200, 'SpiNNStorageHandlers', 'auto')
                 run_pytest('SpiNNMachine/unittests', 1200, 'SpiNNMachine', 'auto')
                 run_pytest('SpiNNMan/unittests SpiNNMan/integration_tests', 1200, 'SpiNNMan', 'auto')
                 run_pytest('PACMAN/unittests', 1200, 'PACMAN', 'auto')
