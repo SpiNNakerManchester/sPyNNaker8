@@ -33,3 +33,4 @@ __pycache__
 *.log
 JobDestroyedError.txt
 *.dat
+/venv/

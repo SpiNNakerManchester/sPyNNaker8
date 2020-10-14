@@ -288,7 +288,7 @@ class ConnectorsTest(BaseTestCase):
         sim.setup(timestep=1.0)
         in_pop = sim.Population(4, sim.SpikeSourceArray([0]), label="in_pop")
         pop = sim.Population(4, sim.IF_curr_exp(), label="pop")
-        rng = NumpyRNG(seed=1)
+        rng = NumpyRNG(seed=2)
         conn = sim.Projection(in_pop[0:3], pop[1:4],
                               sim.FixedNumberPreConnector(2, rng=rng),
                               sim.StaticSynapse(weight=0.5, delay=2))
@@ -296,8 +296,8 @@ class ConnectorsTest(BaseTestCase):
         weights = conn.get(['weight', 'delay'], 'list')
         sim.end()
         # The fixed seed means this gives the same answer each time
-        target = [(0, 1, 0.5, 2.0), (0, 2, 0.5, 2.0), (0, 3, 0.5, 2.0),
-                  (1, 2, 0.5, 2.0), (2, 1, 0.5, 2.0), (2, 3, 0.5, 2.0)]
+        target = [(0, 1, 0.5, 2.0), (1, 2, 0.5, 2.0), (1, 3, 0.5, 2.0),
+                  (2, 1, 0.5, 2.0), (2, 2, 0.5, 2.0), (2, 3, 0.5, 2.0)]
         self.assertEqual(weights.tolist(), target)
 
     def test_fixedpre_population_views(self):

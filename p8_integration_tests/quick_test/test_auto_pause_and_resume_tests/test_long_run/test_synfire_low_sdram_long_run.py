@@ -39,6 +39,7 @@ class TestVeryLow(BaseTestCase):
             synfire_run.do_run(n_neurons, neurons_per_core=neurons_per_core,
                                run_times=[runtime])
             spikes = synfire_run.get_output_pop_spikes_numpy()
+
             # CB Currently eight but could change
             # Needs to be larger than 1000 timesteps version
             self.assert_logs_messages(
