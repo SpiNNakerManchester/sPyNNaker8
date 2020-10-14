@@ -97,7 +97,6 @@ pipeline {
                 sh 'python -m spynnaker8.setup_pynn'
                 // Test requirements
                 sh 'pip install -r SpiNNMachine/requirements-test.txt'
-                sh 'pip install -r SpiNNStorageHandlers/requirements-test.txt'
                 sh 'pip install -r SpiNNMan/requirements-test.txt'
                 sh 'pip install -r PACMAN/requirements-test.txt'
                 sh 'pip install -r DataSpecification/requirements-test.txt'
@@ -140,7 +139,6 @@ pipeline {
         stage('Unit Tests') {
             steps {
                 run_pytest_single('SpiNNUtils/unittests', 1200, 'SpiNNUtils', 'unit')
-                run_pytest_single('SpiNNStorageHandlers/tests', 1200, 'SpiNNStorageHandlers', 'unit')
                 run_pytest_single('SpiNNMachine/unittests', 1200, 'SpiNNMachine', 'unit')
                 run_pytest_single('SpiNNMan/unittests SpiNNMan/integration_tests', 1200, 'SpiNNMan', 'unit')
                 run_pytest_single('PACMAN/unittests', 1200, 'PACMAN', 'unit')
