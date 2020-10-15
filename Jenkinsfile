@@ -49,7 +49,6 @@ pipeline {
                 // SpiNNakerManchester internal dependencies; development mode
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/SpiNNUtils.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/SpiNNMachine.git'
-                sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/SpiNNStorageHandlers.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/SpiNNMan.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/PACMAN.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/DataSpecification.git'
@@ -85,7 +84,6 @@ pipeline {
                 sh 'make -C sPyNNaker8NewModelTemplate/c_models'
                 // Python install
                 sh 'cd SpiNNMachine && python setup.py develop'
-                sh 'cd SpiNNStorageHandlers && python setup.py develop'
                 sh 'cd SpiNNMan && python setup.py develop'
                 sh 'cd PACMAN && python setup.py develop'
                 sh 'cd DataSpecification && python setup.py develop'
@@ -97,7 +95,6 @@ pipeline {
                 sh 'python -m spynnaker8.setup_pynn'
                 // Test requirements
                 sh 'pip install -r SpiNNMachine/requirements-test.txt'
-                sh 'pip install -r SpiNNStorageHandlers/requirements-test.txt'
                 sh 'pip install -r SpiNNMan/requirements-test.txt'
                 sh 'pip install -r PACMAN/requirements-test.txt'
                 sh 'pip install -r DataSpecification/requirements-test.txt'
@@ -140,7 +137,6 @@ pipeline {
         stage('Unit Tests') {
             steps {
                 run_pytest('SpiNNUtils/unittests', 1200, 'SpiNNUtils', 'auto')
-                run_pytest('SpiNNStorageHandlers/tests', 1200, 'SpiNNStorageHandlers', 'auto')
                 run_pytest('SpiNNMachine/unittests', 1200, 'SpiNNMachine', 'auto')
                 run_pytest('SpiNNMan/unittests SpiNNMan/integration_tests', 1200, 'SpiNNMan', 'auto')
                 run_pytest('PACMAN/unittests', 1200, 'PACMAN', 'auto')
@@ -209,5 +205,5 @@ pipeline {
 
 def run_pytest(String tests, int timeout, String results, String threads) {
     sh 'echo "<testsuite tests="0"></testsuite>" > junit/' + results + '.xml'
-    sh 'py.test ' + tests + ' -rs -n ' + threads + ' --forked --show-progress --cov-config=.coveragerc --cov-branch --cov spynnaker8 --cov spynnaker --cov spinn_front_end_common --cov pacman --cov data_specification --cov spinnman --cov spinn_machine --cov spinn_storage_handlers --cov spalloc --cov spinn_utilities --junitxml junit/' + results + '.xml --cov-report xml:coverage.xml --cov-append --timeout ' + timeout + ' --log-level=INFO '
+    sh 'py.test ' + tests + ' -rs -n ' + threads + ' --forked --show-progress --cov-config=.coveragerc --cov-branch --cov spynnaker8 --cov spynnaker --cov spinn_front_end_common --cov pacman --cov data_specification --cov spinnman --cov spinn_machine --cov spalloc --cov spinn_utilities --junitxml junit/' + results + '.xml --cov-report xml:coverage.xml --cov-append --timeout ' + timeout + ' --log-level=INFO '
 }
