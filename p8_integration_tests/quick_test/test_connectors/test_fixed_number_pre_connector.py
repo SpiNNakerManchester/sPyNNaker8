@@ -15,7 +15,6 @@
 from unittest import SkipTest
 
 import spynnaker8 as sim
-from spynnaker.pyNN.exceptions import SpynnakerException
 from p8_integration_tests.base_test_case import BaseTestCase
 
 SOURCES = 5
@@ -68,7 +67,6 @@ class TestFixedNumberPreConnector(BaseTestCase):
         self.check_weights(projection, connections, with_replacement,
                            allow_self_connections=True)
         sim.end()
-
 
     def test_with_delays(self):
         try:
