@@ -297,17 +297,20 @@ class Recorder(RecordingCommon):
                     get_simulator().placements,
                     get_simulator().graph_mapper)
             elif variable == MEMBRANE_POTENTIAL:
-                self._population._vertex.clear_v_recording(
+                self._population._vertex.clear_recording(
+                    variable,
                     get_simulator().buffer_manager,
                     get_simulator().placements,
                     get_simulator().graph_mapper)
             elif variable == GSYN_EXCIT:
-                self._population._vertex.clear_gsyn_inhibitory_recording(
+                self._population._vertex.clear_recording(
+                    variable,
                     get_simulator().buffer_manager,
                     get_simulator().placements,
                     get_simulator().graph_mapper)
             elif variable == GSYN_INHIB:
-                self._population._vertex.clear_gsyn_excitatory_recording(
+                self._population._vertex.clear_recording(
+                    variable,
                     get_simulator().buffer_manager,
                     get_simulator().placements,
                     get_simulator().graph_mapper)
