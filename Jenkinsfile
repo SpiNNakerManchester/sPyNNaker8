@@ -164,6 +164,7 @@ pipeline {
                 sh 'python sPyNNaker8/p8_integration_tests/scripts_test/build_script.py shorter'
                 run_pytest('sPyNNaker8/p8_integration_tests/scripts_test/examples_auto_test.py', 1200, 'sPyNNaker8Scripts', 'auto')
                 run_pytest('sPyNNaker8/p8_integration_tests/scripts_test/intro_labs_auto_test.py', 1200, 'sPyNNaker8Scripts', '1')
+                run_pytest('sPyNNaker8/p8_integration_tests/scripts_test/test_microcircuit.py', 3600, 'sPyNNaker8Scripts', '1')
                 // Not sPyNNaker8/p8_integration_tests/scripts_test/test_microcircuit.py as it takes 1558  seconds
             }
         }
