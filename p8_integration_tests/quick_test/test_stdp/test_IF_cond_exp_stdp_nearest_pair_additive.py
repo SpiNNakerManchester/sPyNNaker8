@@ -14,8 +14,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import spynnaker8 as p
-from p8_integration_tests.base_test_case import BaseTestCase,\
-    calculate_spike_pair_additive_stdp_weight
 import numpy
 import unittest
 
