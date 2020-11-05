@@ -94,6 +94,10 @@ jobs:
       run: python setup.py install
       working-directory: SpiNNFrontEndCommon
 
+    - name: Install sPyNNaker requirements
+      run: pip install -r requirements.txt
+      working-directory: sPyNNaker
+
     - name: Install sPyNNaker
       run: python setup.py install
       working-directory: sPyNNaker
