@@ -126,14 +126,14 @@ jobs:
       run: |
         pytest unittests --cov spynnaker
       env:
-         MPLBACKEND=module://matplotlib.backends.backend_agg
+         MPLBACKEND: module://matplotlib.backends.backend_agg
 
     - name: Test with pytest
       if: matrix.python-version != 3.6
       run: |
         pytest unittests
       env:
-         MPLBACKEND=module://matplotlib.backends.backend_agg
+         MPLBACKEND: module://matplotlib.backends.backend_agg
 
     - name: Lint with flake8
       run: |
