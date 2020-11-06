@@ -13,11 +13,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from quantities import ms
+from quantities import millisecond
 import numpy as np
 
 
-def convert_analog_signal(signal_array, time_unit=ms):
+def convert_analog_signal(signal_array, time_unit=millisecond):
     """ Converts part of a NEO object into told spynnaker7 format
 
     :param ~neo.core.AnalogSignal signal_array: Extended Quantities object
@@ -131,8 +131,8 @@ def convert_gsyn(gsyn_exc, gsyn_inh):
                 len(ids), len(ids2)))
     if not np.allclose(ids, ids2):
         raise ValueError("IDs in gsyn_exc and gsyn_inh do not match")
-    times = exc.times.rescale(ms)
-    times2 = inh.times.rescale(ms)
+    times = exc.times.rescale(millisecond)
+    times2 = inh.times.rescale(millisecond)
     if len(times) != len(times2):
         raise ValueError(
             "Found {} times in gsyn_exc but {} in  gsyn_inh".format(
