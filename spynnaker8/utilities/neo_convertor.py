@@ -27,7 +27,7 @@ def convert_analog_signal(signal_array, time_unit=millisecond):
     """
     ids = signal_array.channel_index.index.astype(int)
     xs = range(len(ids))
-    if time_unit == ms:
+    if time_unit == millisecond:
         times = signal_array.times.magnitude
     else:
         times = signal_array.times.rescale(time_unit).magnitude
