@@ -49,7 +49,7 @@ class TestScripts(BaseTestCase):
     def check_directory(self, path):
         directory = os.path.join(self._introlab_dir, path)
         for a_script in os.listdir(directory):
-            if a_script.endswith(".py"):
+            if a_script.endswith(".py") and a_script != "__init__.py":
                 globals_variables.unset_simulator()
                 script = os.path.join(directory, a_script)
                 try:
