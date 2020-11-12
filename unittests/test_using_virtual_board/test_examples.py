@@ -78,11 +78,8 @@ class TestScripts(BaseTestCase):
                         raise
 
     def examples(self):
-        # TODO is stdp_example_izk....py fixable
         self.check_directory(
-            "examples", broken=["synfire_if_curr_exp_large_array.py",
-                                "stdp_example_izk.py",
-                                "stdp_example_izk_cond.py"])
+            "examples", broken=["synfire_if_curr_exp_large_array.py"])
 
     def test_examples(self):
         self.runsafe(self.examples)
