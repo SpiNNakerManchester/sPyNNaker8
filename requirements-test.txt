@@ -23,3 +23,5 @@ pytest-forked
 pytest-progress
 sphinx==1.5.3
 testfixtures
+statistics
+mock

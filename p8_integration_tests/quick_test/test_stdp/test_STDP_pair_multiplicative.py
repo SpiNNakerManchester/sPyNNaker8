@@ -15,7 +15,7 @@
 
 import spynnaker8 as p
 from p8_integration_tests.base_test_case import BaseTestCase,\
-    calculate_spike_pair_additive_stdp_weight
+    calculate_spike_pair_multiplicative_stdp_weight
 import numpy
 
 
@@ -45,7 +45,7 @@ def post_spike_same_time():
             timing_dependence=p.SpikePairRule(
                 tau_plus=tau_plus, tau_minus=tau_minus,
                 A_plus=a_plus, A_minus=a_minus),
-            weight_dependence=p.AdditiveWeightDependence(
+            weight_dependence=p.MultiplicativeWeightDependence(
                 w_min=min_weight, w_max=max_weight),
             weight=initial_weight, delay=plastic_delay)
     conn = p.OneToOneConnector()
@@ -65,9 +65,9 @@ def post_spike_same_time():
 
     p.end()
 
-    new_weight_exact = calculate_spike_pair_additive_stdp_weight(
-        pre_spikes, post_spikes, initial_weight, plastic_delay, max_weight,
-        a_plus, a_minus, tau_plus, tau_minus)
+    new_weight_exact = calculate_spike_pair_multiplicative_stdp_weight(
+        pre_spikes, post_spikes, initial_weight, plastic_delay, min_weight,
+        max_weight, a_plus, a_minus, tau_plus, tau_minus)
 
     print(weights_1)
     print(weights_2)
@@ -128,8 +128,8 @@ def potentiation_and_depression():
         timing_dependence=p.SpikePairRule(tau_plus=tau_plus,
                                           tau_minus=tau_minus,
                                           A_plus=a_plus, A_minus=a_minus),
-        weight_dependence=p.AdditiveWeightDependence(w_min=min_weight,
-                                                     w_max=max_weight),
+        weight_dependence=p.MultiplicativeWeightDependence(w_min=min_weight,
+                                                           w_max=max_weight),
         weight=initial_weight, delay=plastic_delay)
 
     plastic_synapse = p.Projection(pre_pop, post_pop,
@@ -155,9 +155,9 @@ def potentiation_and_depression():
     # End the simulation as all information gathered
     p.end()
 
-    new_weight_exact = calculate_spike_pair_additive_stdp_weight(
-        pre_spikes, post_spikes, initial_weight, plastic_delay, max_weight,
-        a_plus, a_minus, tau_plus, tau_minus)
+    new_weight_exact = calculate_spike_pair_multiplicative_stdp_weight(
+        pre_spikes, post_spikes, initial_weight, plastic_delay, min_weight,
+        max_weight, a_plus, a_minus, tau_plus, tau_minus)
 
     print("Pre neuron spikes at: {}".format(pre_spikes))
     print("Post-neuron spikes at: {}".format(post_spikes))
