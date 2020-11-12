@@ -12,7 +12,9 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import spynnaker8 as sim
+from spynnaker.pyNN.exceptions import SpynnakerException
 from p8_integration_tests.base_test_case import BaseTestCase
 
 SOURCES = 5
@@ -64,6 +66,85 @@ class TestFixedNumberPreConnector(BaseTestCase):
         sim.run(0)
         self.check_weights(projection, connections, with_replacement,
                            allow_self_connections=True)
+        sim.end()
+
+    def test_replace_self(self):
+        with_replacement = True
+        allow_self_connections = True
+        self.check_self_connect(
+            DESTINATIONS-2, with_replacement, allow_self_connections)
+
+    def test_replace_no_self(self):
+        with_replacement = True
+        allow_self_connections = False
+        self.check_self_connect(
+            DESTINATIONS-2, with_replacement, allow_self_connections)
+
+    def test_no_replace_self(self):
+        with_replacement = True
+        allow_self_connections = True
+        self.check_self_connect(
+            DESTINATIONS-2, with_replacement, allow_self_connections)
+
+    def test_no_replace_no_self(self):
+        with_replacement = True
+        allow_self_connections = False
+        self.check_self_connect(
+            SOURCES-2, with_replacement, allow_self_connections)
+
+    def test_with_many_replace_self(self):
+        with_replacement = True
+        allow_self_connections = True
+        self.check_self_connect(
+            DESTINATIONS+2, with_replacement, allow_self_connections)
+
+    def test_all_no_replace_self(self):
+        with_replacement = False
+        allow_self_connections = True
+        self.check_self_connect(
+            SOURCES, with_replacement, allow_self_connections)
+
+    def test_all_no_replace_no_self(self):
+        with_replacement = False
+        allow_self_connections = False
+        with self.assertRaises(SpynnakerException):
+            self.check_self_connect(
+                DESTINATIONS, with_replacement, allow_self_connections)
+
+    def test_all_replace_no_self(self):
+        with_replacement = False
+        allow_self_connections = True
+        self.check_self_connect(
+            DESTINATIONS, with_replacement, allow_self_connections)
+
+    def test_replace_other(self):
+        with_replacement = True
+        self.check_other_connect(SOURCES-2, with_replacement)
+
+    def test_no_replace_other(self):
+        with_replacement = False
+        self.check_other_connect(SOURCES-2, with_replacement)
+
+    def test_replace_other_many(self):
+        with_replacement = True
+        self.check_other_connect(SOURCES+3, with_replacement)
+
+    def test_no_replace_other_too_many(self):
+        with_replacement = False
+        with self.assertRaises(SpynnakerException):
+            self.check_other_connect(SOURCES+3, with_replacement)
+
+    def test_get_before_run(self):
+        sim.setup(1.0)
+        pop1 = sim.Population(3, sim.IF_curr_exp(), label="pop1")
+        pop2 = sim.Population(3, sim.IF_curr_exp(), label="pop2")
+        synapse_type = sim.StaticSynapse(weight=5, delay=1)
+        projection = sim.Projection(
+            pop1, pop2, sim.FixedNumberPreConnector(2),
+            synapse_type=synapse_type)
+        weights = projection.get(["weight"], "list")
+        sim.run(0)
+        self.assertEqual(6, len(weights))
         sim.end()
 
     def test_with_delays(self):
