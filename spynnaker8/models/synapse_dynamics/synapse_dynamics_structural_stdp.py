@@ -16,8 +16,10 @@
 from pyNN.standardmodels.synapses import StaticSynapse as PyNNStaticSynapse
 from spynnaker.pyNN.models.neuron.synapse_dynamics \
     import SynapseDynamicsStructuralSTDP as STDPStructuralBaseClass
-from spynnaker.pyNN.models.neuron.synapse_dynamics \
-    import SynapseDynamicsStructuralCommon as CommonSP
+from spynnaker.pyNN.models.neuron.synapse_dynamics.\
+    synapse_dynamics_structural_common import (
+        DEFAULT_F_REW, DEFAULT_INITIAL_WEIGHT, DEFAULT_INITIAL_DELAY,
+        DEFAULT_S_MAX)
 from spinn_front_end_common.utilities import globals_variables
 
 
@@ -29,12 +31,10 @@ class SynapseDynamicsStructuralSTDP(STDPStructuralBaseClass):
             self, partner_selection, formation, elimination,
             timing_dependence=None, weight_dependence=None,
             voltage_dependence=None, dendritic_delay_fraction=1.0,
-            f_rew=CommonSP.DEFAULT_F_REW,
-            initial_weight=CommonSP.DEFAULT_INITIAL_WEIGHT,
-            initial_delay=CommonSP.DEFAULT_INITIAL_DELAY,
-            s_max=CommonSP.DEFAULT_S_MAX, seed=None,
-            weight=PyNNStaticSynapse.default_parameters['weight'], delay=None,
-            backprop_delay=True, neuromodulation=False):
+            f_rew=DEFAULT_F_REW, initial_weight=DEFAULT_INITIAL_WEIGHT,
+            initial_delay=DEFAULT_INITIAL_DELAY, s_max=DEFAULT_S_MAX,
+            seed=None, weight=PyNNStaticSynapse.default_parameters['weight'],
+            delay=None, backprop_delay=True, neuromodulation=False):
         """
         :param partner_selection: The partner selection rule
         :type partner_selection:
@@ -70,7 +70,7 @@ class SynapseDynamicsStructuralSTDP(STDPStructuralBaseClass):
         :param delay: The delay of connections formed by the connector
         :type delay: float or None
         :param bool backprop_delay:
-        :param bool neuromodulation:
+        :param bool neuromodulation: Flag for neuromodulated STDP
         """
 
         # move data from timing to weight dependence over as needed to reflect

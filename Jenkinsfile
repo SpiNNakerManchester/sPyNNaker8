@@ -21,6 +21,7 @@ pipeline {
     environment {
         // This is where 'pip install --user' puts things
         PATH = "$HOME/.local/bin:$PATH"
+        BINARY_LOGS_DIR = "${workspace}"
     }
     options {
         skipDefaultCheckout true
@@ -42,13 +43,12 @@ pipeline {
             steps {
                 // remove all directories left if Jenkins ended badly
                 sh 'git clone https://github.com/SpiNNakerManchester/SupportScripts.git support'
-                sh 'pip3 install --upgrade setuptools wheel'
+                sh 'pip3 install --upgrade "setuptools < 50.0.0" wheel'
                 sh 'pip install --user --upgrade pip'
                 sh 'pip install --user --only-binary=numpy,scipy,matplotlib numpy scipy matplotlib'
                 // SpiNNakerManchester internal dependencies; development mode
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/SpiNNUtils.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/SpiNNMachine.git'
-                sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/SpiNNStorageHandlers.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/SpiNNMan.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/PACMAN.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/DataSpecification.git'
@@ -84,7 +84,6 @@ pipeline {
                 sh 'make -C sPyNNaker8NewModelTemplate/c_models'
                 // Python install
                 sh 'cd SpiNNMachine && python setup.py develop'
-                sh 'cd SpiNNStorageHandlers && python setup.py develop'
                 sh 'cd SpiNNMan && python setup.py develop'
                 sh 'cd PACMAN && python setup.py develop'
                 sh 'cd DataSpecification && python setup.py develop'
@@ -96,7 +95,6 @@ pipeline {
                 sh 'python -m spynnaker8.setup_pynn'
                 // Test requirements
                 sh 'pip install -r SpiNNMachine/requirements-test.txt'
-                sh 'pip install -r SpiNNStorageHandlers/requirements-test.txt'
                 sh 'pip install -r SpiNNMan/requirements-test.txt'
                 sh 'pip install -r PACMAN/requirements-test.txt'
                 sh 'pip install -r DataSpecification/requirements-test.txt'
@@ -139,7 +137,6 @@ pipeline {
         stage('Unit Tests') {
             steps {
                 run_pytest('SpiNNUtils/unittests', 1200, 'SpiNNUtils', 'auto')
-                run_pytest('SpiNNStorageHandlers/tests', 1200, 'SpiNNStorageHandlers', 'auto')
                 run_pytest('SpiNNMachine/unittests', 1200, 'SpiNNMachine', 'auto')
                 run_pytest('SpiNNMan/unittests SpiNNMan/integration_tests', 1200, 'SpiNNMan', 'auto')
                 run_pytest('PACMAN/unittests', 1200, 'PACMAN', 'auto')
@@ -148,6 +145,7 @@ pipeline {
                 run_pytest('SpiNNFrontEndCommon/unittests SpiNNFrontEndCommon/fec_integration_tests', 1200, 'SpiNNFrontEndCommon', 'auto')
                 run_pytest('sPyNNaker/unittests', 1200, 'sPyNNaker', 'auto')
                 run_pytest('sPyNNaker8/unittests', 1200, 'sPyNNaker8', 'auto')
+                sh "python -m spinn_utilities.executable_finder"
             }
         }
         stage('Test') {
@@ -172,6 +170,7 @@ pipeline {
         stage('Reports') {
             steps {
                 sh 'find . -maxdepth 3 -type f -wholename "*/reports/*" -print -exec cat \\{\\}  \\;'
+                sh "python -m spinn_utilities.executable_finder"
             }
         }
         stage('Check Destroyed') {
@@ -206,5 +205,5 @@ pipeline {
 
 def run_pytest(String tests, int timeout, String results, String threads) {
     sh 'echo "<testsuite tests="0"></testsuite>" > junit/' + results + '.xml'
-    sh 'py.test ' + tests + ' -rs -n ' + threads + ' --forked --show-progress --cov-config=.coveragerc --cov-branch --cov spynnaker8 --cov spynnaker --cov spinn_front_end_common --cov pacman --cov data_specification --cov spinnman --cov spinn_machine --cov spinn_storage_handlers --cov spalloc --cov spinn_utilities --junitxml junit/' + results + '.xml --cov-report xml:coverage.xml --cov-append --timeout ' + timeout
+    sh 'py.test ' + tests + ' -rs -n ' + threads + ' --forked --show-progress --cov-config=.coveragerc --cov-branch --cov spynnaker8 --cov spynnaker --cov spinn_front_end_common --cov pacman --cov data_specification --cov spinnman --cov spinn_machine --cov spalloc --cov spinn_utilities --junitxml junit/' + results + '.xml --cov-report xml:coverage.xml --cov-append --timeout ' + timeout + ' --log-level=INFO '
 }

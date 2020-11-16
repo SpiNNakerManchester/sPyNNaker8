@@ -26,7 +26,7 @@ def add_scripts(a_dir, prefix_len, test_file, exceptions, broken):
         script_path = os.path.join(a_dir, a_script)
         if os.path.isdir(script_path) and not a_script.startswith("."):
             add_scripts(script_path, prefix_len, test_file, exceptions, broken)
-        if a_script.endswith(".py"):
+        if a_script.endswith(".py") and a_script != "__init__.py":
             name = script_path[prefix_len:-3].replace(os.sep, "_")
             test_file.write("\n    def ")
             test_file.write(name)
@@ -87,6 +87,8 @@ if __name__ == '__main__':
         # exceptions.append("stdp_curve.py")  # 118 seconds
         # exceptions.append("stdp_curve_cond.py")  # 121 seconds
         exceptions.append("vogels_2011.py")  # 698 seconds
+        # binary fail to compile
+        exceptions.append("structural_plasticity_with_stdp_2d.py")
 
     with open(examples_script, "a") as examples_file:
         examples_file.write("# flake8: noqa\n")

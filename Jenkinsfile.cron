@@ -21,6 +21,7 @@ pipeline {
     environment {
         // This is where 'pip install --user' puts things
         PATH = "$HOME/.local/bin:$PATH"
+        BINARY_LOGS_DIR = "${workspace}"
     }
     options {
         skipDefaultCheckout true
@@ -44,13 +45,12 @@ pipeline {
                 sh 'echo "Branch is $TRAVIS_BRANCH"'
                 // remove all directories left if Jenkins ended badly
                 sh 'git clone https://github.com/SpiNNakerManchester/SupportScripts.git support'
-                sh 'pip3 install --upgrade setuptools wheel'
+                sh 'pip3 install --upgrade "setuptools < 50.0.0" wheel'
                 sh 'pip install --user --upgrade pip'
                 sh 'pip install --user --only-binary=numpy,scipy,matplotlib numpy scipy matplotlib'
                 // SpiNNakerManchester internal dependencies; development mode
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/SpiNNUtils.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/SpiNNMachine.git'
-                sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/SpiNNStorageHandlers.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/SpiNNMan.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/PACMAN.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/DataSpecification.git'
@@ -86,7 +86,6 @@ pipeline {
                 sh 'make -C sPyNNaker8NewModelTemplate/c_models'
                 // Python install
                 sh 'cd SpiNNMachine && python setup.py install'
-                sh 'cd SpiNNStorageHandlers && python setup.py install'
                 sh 'cd SpiNNMan && python setup.py install'
                 sh 'cd PACMAN && python setup.py install'
                 sh 'cd DataSpecification && python setup.py install'
@@ -141,6 +140,7 @@ pipeline {
         stage('Reports') {
             steps {
                 sh 'find . -maxdepth 3 -type f -wholename "*/reports/*" -print -exec cat \\{\\}  \\;'
+                sh "python -m spinn_utilities.executable_finder"
             }
         }
         stage('Check Destroyed') {
