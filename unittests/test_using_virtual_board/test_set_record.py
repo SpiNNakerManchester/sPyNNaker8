@@ -82,7 +82,7 @@ class TestSetRecord(BaseTestCase):
     def test_set_spikes_interval(self):
         sim.setup(timestep=1)
         if_curr = sim.Population(1, sim.IF_curr_exp())
-        recorder = if_curr._vertex._neuron_recorder
+        recorder = if_curr._vertex.neuron_recorder
         self.assertListEq([], if_curr._get_all_recording_variables())
         ssa = sim.Population(
             1, sim.SpikeSourceArray(spike_times=[0]))
@@ -97,7 +97,7 @@ class TestSetRecord(BaseTestCase):
     def test_set_spikes_interval2(self):
         sim.setup(timestep=0.5)
         if_curr = sim.Population(1, sim.IF_curr_exp())
-        recorder = if_curr._vertex._neuron_recorder
+        recorder = if_curr._vertex.neuron_recorder
         self.assertListEq([], if_curr._get_all_recording_variables())
         if_curr.record("spikes", sampling_interval=2.5)
         self.assertListEq(["spikes"], if_curr._get_all_recording_variables())
@@ -106,7 +106,7 @@ class TestSetRecord(BaseTestCase):
     def test_set_spikes_indexes(self):
         sim.setup(timestep=1)
         if_curr = sim.Population(5, sim.IF_curr_exp())
-        recorder = if_curr._vertex._neuron_recorder
+        recorder = if_curr._vertex.neuron_recorder
         ssa = sim.Population(
             5, sim.SpikeSourceArray(spike_times=[0]))
         ssp = sim.Population(5, sim.SpikeSourcePoisson(rate=100.0),
@@ -120,7 +120,7 @@ class TestSetRecord(BaseTestCase):
     def test_set_spikes_indexes2(self):
         sim.setup(timestep=1)
         if_curr = sim.Population(5, sim.IF_curr_exp())
-        recorder = if_curr._vertex._neuron_recorder
+        recorder = if_curr._vertex.neuron_recorder
         if_curr.record("spikes", indexes=[1, 2, 4])
         if_curr.record("spikes", indexes=[1, 3])
         self.assertListEq(["spikes"], if_curr._get_all_recording_variables())
