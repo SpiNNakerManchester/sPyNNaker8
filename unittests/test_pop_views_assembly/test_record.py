@@ -39,12 +39,12 @@ class TestPopulation(BaseTestCase):
         target = {"spikes", "v"}
         assert target == set(pop._get_all_recording_variables())
         target1 = [2, 3, 4]
-        assert target1 == pop._vertex._neuron_recorder._indexes["v"]
+        assert target1 == pop._vertex.neuron_recorder._indexes["v"]
         view2 = pop[4:7]
         view2.record("v")
         target2 = [2, 3, 4, 5, 6]
-        assert target2 == pop._vertex._neuron_recorder._indexes["v"]
-        assert target1 == pop._vertex._neuron_recorder._indexes["spikes"]
+        assert target2 == pop._vertex.neuron_recorder._indexes["v"]
+        assert target1 == pop._vertex.neuron_recorder._indexes["spikes"]
         sim.end()
 
     def test_same_rates(self):
@@ -55,12 +55,12 @@ class TestPopulation(BaseTestCase):
         target = {"spikes", "v"}
         assert target == set(pop._get_all_recording_variables())
         target1 = [2, 3, 4]
-        assert target1 == pop._vertex._neuron_recorder._indexes["v"]
+        assert target1 == pop._vertex.neuron_recorder._indexes["v"]
         view2 = pop[4:7]
         view2.record("v", sampling_interval=2)
         target2 = [2, 3, 4, 5, 6]
-        assert target2 == pop._vertex._neuron_recorder._indexes["v"]
-        assert target1 == pop._vertex._neuron_recorder._indexes["spikes"]
+        assert target2 == pop._vertex.neuron_recorder._indexes["v"]
+        assert target1 == pop._vertex.neuron_recorder._indexes["spikes"]
         sim.end()
 
     def test_different_rates(self):
@@ -90,11 +90,11 @@ class TestPopulation(BaseTestCase):
         target = {"v"}
         assert target == set(pop._get_all_recording_variables())
         target1 = [2, 3, 4]
-        assert target1 == pop._vertex._neuron_recorder._indexes["v"]
+        assert target1 == pop._vertex.neuron_recorder._indexes["v"]
         view2 = pop[4:7]
         view2.record(None)
         target2 = [2, 3]
-        assert target2 == pop._vertex._neuron_recorder._indexes["v"]
+        assert target2 == pop._vertex.neuron_recorder._indexes["v"]
         sim.end()
 
     def test_record_all_of_by_indexes(self):
@@ -104,11 +104,11 @@ class TestPopulation(BaseTestCase):
         assert {"v"} == set(pop._get_all_recording_variables())
         view1 = pop[0:3]
         view1.record(None)
-        assert [3, 4] == pop._vertex._neuron_recorder._indexes["v"]
+        assert [3, 4] == pop._vertex.neuron_recorder._indexes["v"]
         assert {"v"} == set(pop._get_all_recording_variables())
         view2 = pop[3:]
         view2.record(None)
-        assert pop._vertex._neuron_recorder._indexes["v"] is None
+        assert pop._vertex.neuron_recorder._indexes["v"] is None
         assert len(pop._get_all_recording_variables()) == 0
         sim.end()
 
