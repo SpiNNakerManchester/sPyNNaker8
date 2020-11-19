@@ -679,9 +679,7 @@ def rank():
 
     :return: MPI rank
     """
-    if not globals_variables.has_simulator():
-        raise ConfigurationException(FAILED_STATE_MSG)
-    return __pynn["rank"]()
+    return 0
 
 
 def record(variables, source, filename, sampling_interval=None,
