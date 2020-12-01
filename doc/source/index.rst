@@ -22,11 +22,12 @@ sPyNNaker8
 ==========
 
 .. automodule:: spynnaker8
+	:noindex:
 
 Contents:
 
 .. toctree::
-   modules
+	modules
 
 
 Indices and tables
