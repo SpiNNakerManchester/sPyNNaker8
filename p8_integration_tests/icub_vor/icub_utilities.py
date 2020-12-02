@@ -1,3 +1,4 @@
+ICUB_VOR_VENV_POP_SIZE = 2
 
 # Examples of get functions for variables
 def get_error(icub_vor_env_pop, simulator):
