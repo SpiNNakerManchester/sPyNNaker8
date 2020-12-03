@@ -30,7 +30,6 @@
 import mock
 import os
 import sys
-from sphinx import apidoc
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -387,16 +386,38 @@ for f in os.listdir("."):
     if (os.path.isfile(f) and f.endswith(
             ".rst") and f != "index.rst" and f != "modules.rst"):
         os.remove(f)
-apidoc.main([None, '-o', ".", "../../spynnaker8",
-             "../../spynnaker8/models/connectors/[a-z]*.py",
-             "../../spynnaker8/models/[drv]*.py",
-             "../../spynnaker8/models/populations/[a-z]*.py",
-             "../../spynnaker8/models/projection.py",
-             "../../spynnaker8/models/synapse_dynamics/s*.py",
-             "../../spynnaker8/models/synapse_dynamics/*/[a-z]*.py",
-             "../../spynnaker8/utilities/random_stats/[a-z]*.py",
-             "../../spynnaker8/utilities/id.py",
-             "../../spynnaker8/setup_pynn.py",
-             "../../spynnaker8/spinnaker.py",
-             "../../spynnaker8/spynnaker8_simulation_interface.py",
-             ])
+
+
+def filtered_files(base, excludes=None):
+    if not excludes:
+        excludes = []
+    for root, _dirs, files in os.walk(base):
+        for filename in files:
+            if filename.endswith(".py") and not filename.startswith("_"):
+                full = root + "/" + filename
+                if full not in excludes:
+                    yield full
+
+
+# UGH!
+output_dir = os.path.abspath(".")
+os.chdir("../..")
+
+# We only document __init__.py files... except for these special cases.
+# Use the unix full pathname from the root of the checked out repo
+explicit_wanted_files = [
+    "spynnaker8/spynnaker8_simulator_interface.py",
+    "spynnaker8/spynnaker_plotting.py",
+    "spynnaker8/utilities/exceptions.py",
+    "spynnaker8/utilities/neo_convertor.py",
+    "spynnaker8/utilities/neo_compare.py"]
+options = ['-o', output_dir, "spynnaker8"]
+options.extend(filtered_files("spynnaker8", explicit_wanted_files))
+try:
+    # Old style API; Python 2.7
+    from sphinx import apidoc
+    options = [None] + options
+except ImportError:
+    # New style API; Python 3.6 onwards
+    from sphinx.ext import apidoc
+apidoc.main(options)
