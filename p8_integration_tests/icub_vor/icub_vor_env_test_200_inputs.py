@@ -15,32 +15,16 @@ input_size = 200  # neurons
 output_size = 200  # neurons
 
 input_spike_times = [[] for _ in range(input_size)]
-# spike_dt = runtime / input_size
-# for i in range(input_size):
-#     for j in range(i):
-#         if i < input_size // 2 and i % 2 == 0:
-#             input_spike_times[i].append(spike_dt*j)
-#         elif i >= input_size // 2 and i % 2 == 1:
-#             input_spike_times[i].append(spike_dt*j)
 
 for i in range(5):
-    input_spike_times[i*2] = [250+(10 * 2 *  i) for _ in range(10+i)]
-    input_spike_times[2*i+1] = [500+(10 * (2 * i+1)) for _ in range(10+i)]
-    input_spike_times[50 + i*2] = [750+(10 * 2 *  i) for _ in range(10+i)]
-    input_spike_times[100 + 2*i+1] = [1000+(10 * (2 * i+1)) for _ in range(10+i)]
-# get head_positions and head_velocities from file (1000 samples)
-base_dir = "./"
-head_pos = np.loadtxt(os.path.join(
-    base_dir, "normalised_head_positions_1000.csv"))
-head_vel = np.loadtxt(os.path.join(
-    base_dir, "normalised_head_velocities_1000.csv"))
+    input_spike_times[i*2] = [250+(10 * 2 *  i) for _ in range(1)]
+    input_spike_times[2*i+1] = [500+(10 * (2 * i+1)) for _ in range(1)]
+    input_spike_times[50 + i*2] = [750+(10 * 2 *  i) for _ in range(100+i)]
+    input_spike_times[100 + 2*i+1] = [1000+(10 * (2 * i+1)) for _ in range(100+i)]
+    input_spike_times[150 + i*2] = [1250+(10 * 2 *  i) for _ in range(1000+i)]
+    input_spike_times[150 + 2*i+1] = [1500+(10 * (2 * i+1)) for _ in range(1000+i)]
 
-# The values in the files are [0,1] when we really want [-1,1]; obtain this
-# by multiplying by 2 and subtracting 1
-
-head_pos = (head_pos * 2.0) - 1.0
-head_vel = (head_vel * 2.0) - 1.0
-
+head_pos, head_vel = generate_head_position_and_velocity(1)
 
 # perfect eye positions and velocities are exactly out of phase with head
 perfect_eye_pos = np.concatenate((head_pos[500:], head_pos[:500]))
@@ -51,7 +35,8 @@ error_window_size = 10  # ms
 
 # Setup
 p.setup(timestep=1.0)
-
+p.set_number_of_neurons_per_core(p.SpikeSourcePoisson, 50)
+p.set_number_of_neurons_per_core(p.SpikeSourceArray, 50)
 input_pop = p.Population(input_size, p.SpikeSourceArray(spike_times=input_spike_times))
 
 

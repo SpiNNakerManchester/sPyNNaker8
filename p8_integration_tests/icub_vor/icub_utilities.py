@@ -1,4 +1,7 @@
+import numpy as np
+
 ICUB_VOR_VENV_POP_SIZE = 2
+POS_TO_VEL = 2 * np.pi * 0.001
 
 # Examples of get functions for variables
 def get_error(icub_vor_env_pop, simulator):
@@ -39,3 +42,9 @@ def get_head_vel(icub_vor_env_pop, simulator):
         'head_vel', simulator.no_machine_time_steps, simulator.placements,
         simulator.buffer_manager, simulator.machine_time_step)
     return head_velocities.tolist()
+
+def generate_head_position_and_velocity(time, dt=0.001):
+    i = np.arange(0, time, dt)
+    pos = -np.sin(i * 2 * np.pi)
+    vel = -np.cos(i * 2 * np.pi)
+    return pos, vel
