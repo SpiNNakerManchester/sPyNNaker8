@@ -20,7 +20,6 @@ head_pos, head_vel = generate_head_position_and_velocity(1)
 perfect_eye_pos = np.concatenate((head_pos[500:], head_pos[:500]))
 perfect_eye_vel = np.concatenate((head_vel[500:], head_vel[:500]))
 
-
 input_spike_times = [[] for _ in range(input_size)]
 # the constant number (0.000031) is the effect of a single spike on the head position
 # assert (np.isclose(np.abs(np.diff(head_pos)[0]), no_required_spikes_per_chunk * 0.000031), 0.001)
@@ -33,20 +32,19 @@ no_required_spikes_per_chunk = np.ceil(np.abs(sub_head_pos[0]) / head_movement_p
 
 # build ICubVorEnv model pop
 error_window_size = 10  # ms
+npc_limit = 25
+no_input_cores = int(input_size/npc_limit)
 for ts in range(runtime - 1):
     spikes_during_chunk = np.ceil(sub_eye_pos[ts] / head_movement_per_spike)
     for i in range(int(np.abs(spikes_during_chunk))):
-        if spikes_during_chunk <= 0:
-            input_spike_times[101].append(ts)
-        else:
-            input_spike_times[0].append(ts)
+        x = int(spikes_during_chunk <= 0)
+        input_spike_times[(i % no_input_cores)*npc_limit+x].append(ts)
 
 # Setup
 p.setup(timestep=1.0)
 p.set_number_of_neurons_per_core(p.SpikeSourcePoisson, 50)
-p.set_number_of_neurons_per_core(p.SpikeSourceArray, 100)
+p.set_number_of_neurons_per_core(p.SpikeSourceArray, npc_limit)
 input_pop = p.Population(input_size, p.SpikeSourceArray(spike_times=input_spike_times))
-
 
 output_pop = p.Population(output_size, p.SpikeSourcePoisson(rate=0))
 
