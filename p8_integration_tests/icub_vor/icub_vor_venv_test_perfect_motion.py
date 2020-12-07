@@ -26,19 +26,23 @@ input_spike_times = [[] for _ in range(input_size)]
 # assert (np.isclose(np.abs(np.diff(head_pos)[0]), no_required_spikes_per_chunk * 0.000031), 0.001)
 sub_head_pos = np.diff(head_pos)
 head_movement_per_spike = 2 ** (-15) * gain
-sub_eye_pos = np.concatenate(([0], np.diff(perfect_eye_pos)))
+sub_eye_pos = np.diff(np.concatenate((perfect_eye_pos, [perfect_eye_pos[0]])))
 
 # no_required_spikes_per_chunk = 200
 no_required_spikes_per_chunk = np.ceil(np.abs(sub_head_pos[0]) / head_movement_per_spike)
 
-# build ICubVorEnv model pop
+# build ICubVorEnv model
 error_window_size = 10  # ms
-npc_limit = 25
+npc_limit = 200 # 25
 no_input_cores = int(input_size / npc_limit)
+input_spike_times = [[] for _ in range(input_size)]
 for ts in range(runtime - 1):
-    spikes_during_chunk = np.ceil(sub_eye_pos[ts % 1000] / head_movement_per_spike)
-    for i in range(int(np.abs(spikes_during_chunk))):
-        x = int(spikes_during_chunk <= 0)
+    # if 1000 <= ts < 2000:
+    #     continue
+    sgn = np.sign(sub_eye_pos[ts % 1000])
+    spikes_during_chunk = np.ceil(np.abs(sub_eye_pos[ts % 1000]) / head_movement_per_spike)
+    for i in range(int(spikes_during_chunk)):
+        x = int(sgn <= 0)
         input_spike_times[(i % no_input_cores) * npc_limit + x].append(ts)
 
 # Setup
@@ -72,65 +76,32 @@ simulator = get_simulator()
 p.run(runtime)
 
 # Get the data from the ICubVorEnv pop
-errors = np.asarray(get_error(icub_vor_env_pop=icub_vor_env_pop, simulator=simulator))
-l_counts = get_l_count(icub_vor_env_pop=icub_vor_env_pop, simulator=simulator)
-r_counts = get_r_count(icub_vor_env_pop=icub_vor_env_pop, simulator=simulator)
-rec_head_pos = np.asarray(get_head_pos(
-    icub_vor_env_pop=icub_vor_env_pop, simulator=simulator))
-rec_head_vel = np.asarray(get_head_vel(
-    icub_vor_env_pop=icub_vor_env_pop, simulator=simulator))
+results = retrieve_and_package_results(icub_vor_env_pop, simulator)
 
-# get the spike data from input and output and plot
-# spikes_in = input_pop.get_data('spikes').segments[0].spiketrains
-# spikes_out = output_pop.get_data('spikes').segments[0].spiketrains
-# Figure(
-#     Panel(spikes_in, xlabel="Time (ms)", ylabel="nID",
-#           xticks=True, yticks=True),
-#     Panel(spikes_out, xlabel="Time (ms)", ylabel="nID",
-#           xticks=True, yticks=True)
-# )
-# plt.show()
-
+# get the spike data from input and output
 spikes_in_spin = input_pop.spinnaker_get_data('spikes')
 spikes_out_spin = output_pop.spinnaker_get_data('spikes')
 
 # end simulation
 p.end()
 
+remapped_vn_spikes = remap_odd_even(spikes_in_spin, input_size)
+remapped_cf_spikes = remap_second_half_descending(spikes_out_spin, output_size)
+
+simulation_parameters = {
+    'runtime': runtime,
+    'error_window_size': error_window_size,
+    'vn_spikes': remapped_vn_spikes,
+    'cf_spikes': remapped_cf_spikes,
+    'perfect_eye_pos': perfect_eye_pos,
+    'perfect_eye_vel': perfect_eye_vel,
+    'vn_size': input_size,
+    'cf_size': output_size,
+    'gain': gain
+}
+
 # plot the data from the ICubVorEnv pop
-x_plot = [(n) for n in range(0, runtime, error_window_size)]
-plt.figure(figsize=(15, 11), dpi=300)
-plt.subplot(5, 1, 1)
-plt.scatter(
-    [i[1] for i in spikes_in_spin], [i[0] for i in spikes_in_spin], s=1)
-plt.legend(loc="best")
-plt.xlim([0, runtime])
-plt.subplot(5, 1, 2)
-plt.plot(x_plot, l_counts, 'bo', label="l_counts")
-plt.plot(x_plot, r_counts, 'ro', label="r_counts")
-plt.legend(loc="best")
-plt.xlim([0, runtime])
-plt.subplot(5, 1, 3)
-plt.plot(x_plot, rec_head_pos, label="rec. eye position")
-plt.plot(x_plot, rec_head_vel, label="rec. eye velocity")
-plt.plot(np.tile(perfect_eye_pos, runtime // 1000), label="eye position", ls=':')
-plt.plot(np.tile(perfect_eye_vel, runtime // 1000), label="eye velocity", ls=':')
-plt.legend(loc="best")
-plt.xlim([0, runtime])
-plt.subplot(5, 1, 4)
-plt.plot(x_plot, errors, label="rec. error")
-plt.plot(x_plot, np.tile(perfect_eye_pos[::error_window_size], runtime // 1000) - rec_head_pos.ravel(),
-         label="eye position diff")
-plt.plot(x_plot, np.tile(perfect_eye_vel[::error_window_size], runtime // 1000) - rec_head_vel.ravel(),
-         label="eye velocity diff")
-plt.legend(loc="best")
-plt.xlim([0, runtime])
-plt.subplot(5, 1, 5)
-plt.scatter(
-    [i[1] for i in spikes_out_spin], [i[0] for i in spikes_out_spin], s=1)
-plt.legend(loc="best")
-plt.xlim([0, runtime])
-plt.savefig("spinngym_icub_vor_test_perfect.png")
-# plt.show()
+plot_results(results_dict=results, simulation_parameters=simulation_parameters,
+             name="spinngym_icub_vor_test_perfect")
 
 print("Done")
