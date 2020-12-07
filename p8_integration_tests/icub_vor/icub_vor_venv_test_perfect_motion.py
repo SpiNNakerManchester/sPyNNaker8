@@ -9,10 +9,11 @@ from spinn_front_end_common.utilities.globals_variables import get_simulator
 from icub_utilities import *
 
 # Parameter definition
-runtime = 1000
+runtime = 3000
 # Build input SSP and output population
 input_size = 200  # neurons
 output_size = 200  # neurons
+gain = 20.0
 
 head_pos, head_vel = generate_head_position_and_velocity(1)
 
@@ -24,8 +25,8 @@ input_spike_times = [[] for _ in range(input_size)]
 # the constant number (0.000031) is the effect of a single spike on the head position
 # assert (np.isclose(np.abs(np.diff(head_pos)[0]), no_required_spikes_per_chunk * 0.000031), 0.001)
 sub_head_pos = np.diff(head_pos)
-head_movement_per_spike = 0.000031
-sub_eye_pos = np.diff(perfect_eye_pos)
+head_movement_per_spike = 2 ** (-15) * gain
+sub_eye_pos = np.concatenate(([0], np.diff(perfect_eye_pos)))
 
 # no_required_spikes_per_chunk = 200
 no_required_spikes_per_chunk = np.ceil(np.abs(sub_head_pos[0]) / head_movement_per_spike)
@@ -33,12 +34,12 @@ no_required_spikes_per_chunk = np.ceil(np.abs(sub_head_pos[0]) / head_movement_p
 # build ICubVorEnv model pop
 error_window_size = 10  # ms
 npc_limit = 25
-no_input_cores = int(input_size/npc_limit)
+no_input_cores = int(input_size / npc_limit)
 for ts in range(runtime - 1):
-    spikes_during_chunk = np.ceil(sub_eye_pos[ts] / head_movement_per_spike)
+    spikes_during_chunk = np.ceil(sub_eye_pos[ts % 1000] / head_movement_per_spike)
     for i in range(int(np.abs(spikes_during_chunk))):
         x = int(spikes_during_chunk <= 0)
-        input_spike_times[(i % no_input_cores)*npc_limit+x].append(ts)
+        input_spike_times[(i % no_input_cores) * npc_limit + x].append(ts)
 
 # Setup
 p.setup(timestep=1.0)
@@ -112,14 +113,16 @@ plt.xlim([0, runtime])
 plt.subplot(5, 1, 3)
 plt.plot(x_plot, rec_head_pos, label="rec. eye position")
 plt.plot(x_plot, rec_head_vel, label="rec. eye velocity")
-plt.plot(perfect_eye_pos, label="eye position", ls=':')
-plt.plot(perfect_eye_vel, label="eye velocity", ls=':')
+plt.plot(np.tile(perfect_eye_pos, runtime // 1000), label="eye position", ls=':')
+plt.plot(np.tile(perfect_eye_vel, runtime // 1000), label="eye velocity", ls=':')
 plt.legend(loc="best")
 plt.xlim([0, runtime])
 plt.subplot(5, 1, 4)
 plt.plot(x_plot, errors, label="rec. error")
-plt.plot(x_plot, perfect_eye_pos[::error_window_size] - rec_head_pos.ravel(), label="eye position diff")
-plt.plot(x_plot, perfect_eye_vel[::error_window_size] - rec_head_vel.ravel(), label="eye velocity diff")
+plt.plot(x_plot, np.tile(perfect_eye_pos[::error_window_size], runtime // 1000) - rec_head_pos.ravel(),
+         label="eye position diff")
+plt.plot(x_plot, np.tile(perfect_eye_vel[::error_window_size], runtime // 1000) - rec_head_vel.ravel(),
+         label="eye velocity diff")
 plt.legend(loc="best")
 plt.xlim([0, runtime])
 plt.subplot(5, 1, 5)
