@@ -55,7 +55,7 @@ extensions = [
 _READTHEDOCS_PATTERN = 'https://{}.readthedocs.io/en/latest/'
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3.6', None),
-    'numpy': ("https://numpy.org/doc/stable/", None),
+    'numpy': ("https://numpy.org/doc/1.19/", None),
     'maplotlib': ('https://matplotlib.org', None),
     'pynn': ("http://neuralensemble.org/docs/PyNN/", None),
     'neo': (_READTHEDOCS_PATTERN.format('neo'), None),
