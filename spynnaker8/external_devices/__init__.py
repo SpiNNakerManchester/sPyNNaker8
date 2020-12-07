@@ -112,13 +112,32 @@ __all__ = [
 ]
 
 
-def run_forever():
+def run_forever(sync_time=0):
     """ Supports running forever in PyNN 0.8/0.9 format
 
+    :param sync_time:
+        The time in milliseconds after which to pause before the host must
+        continue the simulation
     :return: returns when the application has started running on the\
         SpiNNaker platform.
     """
-    AbstractSpiNNakerCommon.run(globals_variables.get_simulator(), None)
+    globals_variables.get_simulator().run(None, sync_time)
+
+
+def run_sync(run_time, sync_time):
+    """ Run in steps of the given number of milliseconds pausing between
+        for a signal to be sent from the host
+
+    :param float run_time: The time in milliseconds to run the simulation for
+    :param float sync_time: The time in milliseconds to pause before allowing
+    """
+    globals_variables.get_simulator().run(run_time, sync_time)
+
+
+def continue_simulation():
+    """ Continue a synchronised simulation
+    """
+    globals_variables.get_simulator().continue_simulation()
 
 
 def request_stop():
