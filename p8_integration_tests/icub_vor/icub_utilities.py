@@ -115,7 +115,7 @@ def plot_results(results_dict, simulation_parameters, name):
     # Spike raster plot
     ax = plt.subplot(5, 1, 1)
     highlight_area(ax, runtime, vn_size // 2, vn_size)
-    first_half_filter = np.argwhere(vn_spikes[:, 0] < vn_size // 2)
+    first_half_filter = vn_spikes[:, 0] < vn_size // 2
     second_half_filter = ~first_half_filter
     plt.scatter(
         vn_spikes[second_half_filter, 1], vn_spikes[second_half_filter, 0],
@@ -158,7 +158,7 @@ def plot_results(results_dict, simulation_parameters, name):
     # Error spikes
     ax2 = plt.subplot(5, 1, 5)
     highlight_area(ax2, runtime, cf_size // 2, cf_size)
-    first_half_filter = np.argwhere(cf_spikes[:, 0] < cf_size // 2)
+    first_half_filter = cf_spikes[:, 0] < cf_size // 2
     second_half_filter = ~first_half_filter
     plt.scatter(
         cf_spikes[second_half_filter, 1], cf_spikes[second_half_filter, 0],
