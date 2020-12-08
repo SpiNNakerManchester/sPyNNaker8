@@ -135,7 +135,7 @@ pipeline {
         }
         stage('HostBasedBitFieldRouterCompressor') {
             steps {
-                run_pytest('sPyNNaker8/quick_test/test_onchip_compressor/test_host_bit_field/', 36000, 'HostBasedBitFieldRouterCompressor', 1)
+                run_pytest('sPyNNaker8/p8_integration_tests/quick_test/test_onchip_compressor/test_host_bit_field', 36000, 'HostBasedBitFieldRouterCompressor', 1)
             }
         }
         stage('Unit Tests') {
