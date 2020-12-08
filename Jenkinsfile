@@ -147,6 +147,11 @@ pipeline {
                 sh "python -m spinn_utilities.executable_finder"
             }
         }
+        stage('HostBasedBitFieldRouterCompressor') {
+                run_pytest_single('sPyNNaker8/quick_test/test_onchip_compressor/test_host_bit_field/', 36000, 'HostBasedBitFieldRouterCompressor')
+            }
+        }
+
         stage('Test') {
             steps {
                 run_pytest('sPyNNaker8/p8_integration_tests/quick_test/', 1200, 'sPyNNaker8_Integration', 'auto')
