@@ -133,6 +133,11 @@ pipeline {
                 sh 'mkdir junit/'
             }
         }
+        stage('HostBasedBitFieldRouterCompressor') {
+            steps {
+                run_pytest('sPyNNaker8/quick_test/test_onchip_compressor/test_host_bit_field/', 36000, 'HostBasedBitFieldRouterCompressor', 1)
+            }
+        }
         stage('Unit Tests') {
             steps {
                 run_pytest('SpiNNUtils/unittests', 1200, 'SpiNNUtils', 'auto')
@@ -145,11 +150,6 @@ pipeline {
                 run_pytest('sPyNNaker/unittests', 1200, 'sPyNNaker', 'auto')
                 run_pytest('sPyNNaker8/unittests', 1200, 'sPyNNaker8', 'auto')
                 sh "python -m spinn_utilities.executable_finder"
-            }
-        }
-        stage('HostBasedBitFieldRouterCompressor') {
-            steps {
-                run_pytest_single('sPyNNaker8/quick_test/test_onchip_compressor/test_host_bit_field/', 36000, 'HostBasedBitFieldRouterCompressor')
             }
         }
 
