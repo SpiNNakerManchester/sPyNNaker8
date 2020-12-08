@@ -142,10 +142,16 @@ def plot_results(results_dict, simulation_parameters, name):
     plt.xlim([0, runtime])
     # Errors
     plt.subplot(5, 1, 4)
-    plt.plot(x_plot, errors, label="rec. error")
-    plt.plot(x_plot, np.tile(perfect_eye_pos[::error_window_size], runtime // 1000) - rec_eye_pos.ravel(),
+    plt.plot(x_plot, errors, label="recorded error")
+
+    eye_pos_diff = np.tile(perfect_eye_pos[::error_window_size], runtime // 1000) - rec_eye_pos.ravel()
+    eye_vel_diff = np.tile(perfect_eye_vel[::error_window_size], runtime // 1000) - rec_eye_vel.ravel()
+    reconstructed_error = eye_pos_diff + eye_vel_diff
+
+    plt.plot(x_plot, reconstructed_error, color='k', ls=":", label="reconstructed error")
+    plt.plot(x_plot, eye_pos_diff,
              label="eye position diff")
-    plt.plot(x_plot, np.tile(perfect_eye_vel[::error_window_size], runtime // 1000) - rec_eye_vel.ravel(),
+    plt.plot(x_plot, eye_vel_diff,
              label="eye velocity diff")
     plt.legend(loc="best")
     plt.xlim([0, runtime])
