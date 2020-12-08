@@ -133,14 +133,10 @@ pipeline {
                 sh 'mkdir junit/'
             }
         }
-        stage('HostBasedBitFieldRouterCompressor') {
-            steps {
-                run_pytest('sPyNNaker8/p8_integration_tests/quick_test/test_onchip_compressor/test_host_bit_field', 36000, 'HostBasedBitFieldRouterCompressor', 1)
-            }
-        }
         stage('Unit Tests') {
             steps {
                 run_pytest('SpiNNUtils/unittests', 1200, 'SpiNNUtils', 'auto')
+                run_pytest('sPyNNaker8/p8_integration_tests/quick_test/test_onchip_compressor/test_host_bit_field', 36000, 'HostBasedBitFieldRouterCompressor', 1)
                 run_pytest('SpiNNMachine/unittests', 1200, 'SpiNNMachine', 'auto')
                 run_pytest('SpiNNMan/unittests SpiNNMan/integration_tests', 1200, 'SpiNNMan', 'auto')
                 run_pytest('PACMAN/unittests', 1200, 'PACMAN', 'auto')
@@ -152,7 +148,6 @@ pipeline {
                 sh "python -m spinn_utilities.executable_finder"
             }
         }
-
         stage('Test') {
             steps {
                 run_pytest('sPyNNaker8/p8_integration_tests/quick_test/', 1200, 'sPyNNaker8_Integration', 'auto')
