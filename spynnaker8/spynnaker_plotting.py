@@ -20,7 +20,7 @@ https://github.com/NeuralEnsemble/PyNN/blob/master/pyNN/utility/plotting.py
 
 from neo import SpikeTrain, Block, Segment, AnalogSignal
 import numpy as np
-from quantities import ms
+import quantities
 try:
     from pyNN.utility.plotting import repeat
     import matplotlib.pyplot as plt
@@ -85,7 +85,7 @@ def plot_spiketrains(ax, spiketrains, label='', **options):
     :param str label: Label for the graph
     :param options: plotting options
     """
-    ax.set_xlim(0, spiketrains[0].t_stop / ms)
+    ax.set_xlim(0, spiketrains[0].t_stop / quantities.ms)
     _handle_options(ax, options)
     neurons = np.concatenate(
         [np.repeat(x.annotations['source_index'], len(x))

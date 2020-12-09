@@ -122,8 +122,7 @@ class Projection(PyNNProjectionCommon):
             postpop_is_view=isinstance(post_synaptic_population,
                                        PopulationView),
             rng=rng, machine_time_step=self.__simulator.machine_time_step,
-            user_max_delay=self.__simulator.max_delay, label=label,
-            time_scale_factor=self.__simulator.time_scale_factor)
+            label=label, time_scale_factor=self.__simulator.time_scale_factor)
 
     def _check_population_param(self, param, connector):
         if isinstance(param, Population):
