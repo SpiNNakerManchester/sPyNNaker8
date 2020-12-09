@@ -105,14 +105,14 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
             time_scale_factor=time_scale_factor,
             front_end_versions=front_end_versions)
 
-    def run(self, run_time):
+    def run(self, run_time, sync_time=0.0):
         """ Run the simulation for a span of simulation time.
 
         :param run_time: the time to run for, in milliseconds
         :return: None
         """
 
-        self._run_wait(run_time)
+        self._run_wait(run_time, sync_time)
 
     def run_until(self, tstop):
         """ Run the simulation until the given simulation time.
@@ -143,14 +143,14 @@ class SpiNNaker(AbstractSpiNNakerCommon, pynn_control.BaseState,
 
         AbstractSpiNNakerCommon.reset(self)
 
-    def _run_wait(self, duration_ms):
+    def _run_wait(self, duration_ms, sync_time=0.0):
         """ Run the simulation for a length of simulation time.
 
         :param duration_ms: The run duration, in milliseconds
         :type duration_ms: int or float
         """
 
-        super(SpiNNaker, self).run(duration_ms)
+        super(SpiNNaker, self).run(duration_ms, sync_time)
 
     @property
     def state(self):
