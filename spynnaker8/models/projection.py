@@ -19,6 +19,7 @@ import numpy
 from six import string_types
 from pyNN import common as pynn_common, recording
 from pyNN.space import Space as PyNNSpace
+from spinn_utilities.log import FormatAdapter
 from spinn_utilities.logger_utils import warn_once
 from spinn_front_end_common.utilities import globals_variables
 from spinn_front_end_common.utilities.exceptions import ConfigurationException
@@ -33,7 +34,7 @@ from spynnaker.pyNN.models.pynn_projection_common import PyNNProjectionCommon
 from spynnaker8.models.populations import Population, PopulationView
 from spynnaker8._version import __version__
 
-logger = logging.getLogger(__name__)
+logger = FormatAdapter(logging.getLogger(__name__))
 
 
 class Projection(PyNNProjectionCommon):

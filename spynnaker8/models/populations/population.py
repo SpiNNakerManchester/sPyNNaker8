@@ -20,6 +20,7 @@ import inspect
 from six import iteritems, string_types
 from pyNN import descriptions
 from pyNN.random import NumpyRNG
+from spinn_utilities.log import FormatAdapter
 from spinn_utilities.logger_utils import warn_once
 from spinn_utilities.overrides import overrides
 from spinn_front_end_common.utilities import globals_variables
@@ -32,7 +33,7 @@ from .population_base import PopulationBase
 from .population_view import PopulationView
 from spynnaker8.models.recorder import Recorder
 
-logger = logging.getLogger(__name__)
+logger = FormatAdapter(logging.getLogger(__name__))
 
 
 class Population(PyNNPopulationCommon, Recorder, PopulationBase):

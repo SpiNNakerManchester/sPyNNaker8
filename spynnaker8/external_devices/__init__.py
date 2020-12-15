@@ -20,6 +20,7 @@ and implementation for the PyNN High-level API
 """
 import logging
 import os
+from spinn_utilities.log import FormatAdapter
 from spinn_utilities.socket_address import SocketAddress
 from spinnman.messages.eieio import EIEIOType
 from spinn_front_end_common.abstract_models import (
@@ -69,7 +70,7 @@ activate_live_output_to = Plugins.activate_live_output_to
 activate_live_output_for = Plugins.activate_live_output_for
 add_poisson_live_rate_control = Plugins.add_poisson_live_rate_control
 
-logger = logging.getLogger(__name__)
+logger = FormatAdapter(logging.getLogger(__name__))
 
 AbstractSpiNNakerCommon.register_binary_search_path(
     os.path.dirname(model_binaries.__file__))
