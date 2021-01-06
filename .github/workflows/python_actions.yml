@@ -54,10 +54,6 @@ jobs:
           SpiNNFrontEndCommon sPyNNaker
         install: true
         preinstall: ${{ matrix.python-version == 2.7 }}
-    - name: Setup
-      uses: ./support/actions/run-setup
-      with:
-        preinstall: ${{ matrix.python-version == 2.7 }}
     - name: Checkout Spinnaker Test Cases
       uses: ./support/actions/checkout-spinn-deps
       with:
@@ -70,18 +66,14 @@ jobs:
     - name: Test with pytest
       uses: ./support/actions/pytest
       with:
-        tests: unittests
+        tests: spynnaker/unittests
         coverage: ${{ matrix.python-version == env.BLESSED_PY }}
-        cover-packages: spynnaker8
+        cover-packages: spynnaker spynnaker8
         coveralls-token: ${{ secrets.COVERALLS_REPO_TOKEN }}
 
   validate:
     runs-on: ubuntu-latest
     steps:
-    - name: Set up Python ${{ env.BLESSED_PY }}
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ env.BLESSED_PY }}
     - name: Checkout
       uses: actions/checkout@v2
     - name: Checkout SupportScripts
@@ -90,30 +82,5 @@ jobs:
         repository: SpiNNakerManchester/SupportScripts
         path: support
 
-    - name: Install pip, etc
-      uses: ./support/actions/python-tools
-    - name: Install Spinnaker Dependencies
-      uses: ./support/actions/checkout-spinn-deps
-      with:
-        repositories: >
-          SpiNNUtils SpiNNMachine SpiNNMan PACMAN DataSpecification spalloc 
-          SpiNNFrontEndCommon sPyNNaker
-        install: true
-    - name: Setup
-      uses: ./support/actions/run-setup
-
-    - name: Lint with flake8
-      run: flake8 spynnaker8 unittests
-    - name: Lint with pylint
-      uses: ./support/actions/pylint
-      with:
-        package: spynnaker8
-
     - name: Run rat copyright enforcement
-      if: matrix.python-version == env.BLESSED_PY
       uses: ./support/actions/check-copyrights
-    - name: Build documentation with sphinx
-      if: matrix.python-version == env.BLESSED_PY
-      uses: ./support/actions/sphinx
-      with:
-        directory: doc/source
