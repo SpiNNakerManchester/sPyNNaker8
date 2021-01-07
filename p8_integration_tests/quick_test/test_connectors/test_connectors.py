@@ -27,6 +27,9 @@ OVERFLOW = 6
 
 class ConnectorsTest(BaseTestCase):
 
+    def test_onetoone_multicore_population_views(self):
+        self.runsafe(self.onetoone_multicore_population_views)
+
     def spike_received_count(self, v_line):
         counts = []
         for v in v_line:
@@ -253,7 +256,7 @@ class ConnectorsTest(BaseTestCase):
         weights = conn.get(['weight', 'delay'], 'list')
         machine_graph = globals_variables.get_simulator()._machine_graph
         projection_edges = [edge for edge in machine_graph.edges if (
-            edge.label == 'machine_edge_fortest')]
+            edge.label == 'machine_edge_for_test')]
         sim.end()
         # Check the connections are correct
         target = [(6, 9, 0.5, 2.), (7, 10, 0.5, 2.), (8, 11, 0.5, 2.),
@@ -262,9 +265,6 @@ class ConnectorsTest(BaseTestCase):
         # In this instance there should be three MachineEdges: one of the four
         # possible at the start should have been filtered out
         self.assertEqual(len(projection_edges), 3)
-
-    def test_onetoone_multicore_population_views(self):
-        self.runsafe(self.onetoone_multicore_population_views)
 
     def fixedprob_population_views(self):
         sim.setup(timestep=1.0)
