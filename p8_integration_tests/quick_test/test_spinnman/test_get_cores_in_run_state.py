@@ -47,18 +47,35 @@ class TestGetCoresInRunState(unittest.TestCase):
 
     def test_with_bmp(self):
         bmp_connection_data = [BMPConnectionData(
-            0, 0, "spinn-4c.cs.man.ac.uk", [0], None)]
-        txrx = create_transceiver_from_hostname(
-            "spinn-4.cs.man.ac.uk", 5,
-            bmp_connection_data=bmp_connection_data)
-        txrx.ensure_board_is_ready()
+            0, 0, "spinn-4.cs.man.ac.uk", [0], None)]
+        try:
+            txrx = create_transceiver_from_hostname(
+                "spinn-4.cs.man.ac.uk", 5,
+                bmp_connection_data=bmp_connection_data)
+            txrx.ensure_board_is_ready()
+        except Exception:
+            self.skipTest("Skipping as spinn-4 not reachable")
 
-        # run GetCoresInRunState with host
-        main(["spinn-4.cs.man.ac.uk"])
+        try:
+            # run GetCoresInRunState with host
+            main(["spinn-4.cs.man.ac.uk"])
 
-        # run GetCoresInRunState with cfg
-        main([])
-        txrx.close()
+            # run GetCoresInRunState with cfg
+            main([])
+        except Exception as ex:
+            try:
+                # check if the baord is still ok
+                txrx.ensure_board_is_ready()
+            except Exception:
+                # Ok board not main that is the issue
+                self.skipTest("Skipping as spinn-4 now unreachable")
+            # Ok ok main failed NOT good!
+            raise ex
+
+        try:
+            txrx.close()
+        except Exception:
+            self.skipTest("Skipping as spinn-4 close failed")
 
 
 if __name__ == '__main__':
