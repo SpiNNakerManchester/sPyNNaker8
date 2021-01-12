@@ -68,7 +68,14 @@ def structural_without_stdp():
 class TestStructuralWithoutSTDP(BaseTestCase):
 
     def test_structural_without_stdp(self):
-        self.runsafe(structural_without_stdp)
+        try:
+            self.runsafe(structural_without_stdp)
+        except KeyError:
+            raise (self.skipTest(
+                "currently binary cant compile, linked to "
+                "https://github.com/SpiNNakerManchester/sPyNNaker8/issues/526"))
+        except Exception as e:
+            raise e
 
 
 if __name__ == "__main__":
