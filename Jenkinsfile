@@ -147,14 +147,14 @@ pipeline {
                 sh "python -m spinn_utilities.executable_finder"
             }
         }
-        stage('Test') {
-            steps {
-                run_pytest('sPyNNaker8/p8_integration_tests/quick_test/', 1200, 'sPyNNaker8_Integration', 1)
-            }
-        }
         stage('Test Mundy') {
             steps {
                 run_pytest('sPyNNaker8/p8_integration_tests/quick_test/est_onchip_compressor/test_mundy/test_mundy_compressor.py', 1200, 'sPyNNaker8_Integration', '1')
+            }
+        }
+        stage('Test') {
+            steps {
+                run_pytest('sPyNNaker8/p8_integration_tests/quick_test/', 1200, 'sPyNNaker8_Integration', '1')
             }
         }
         stage('Run new Model Example') {
