@@ -133,6 +133,11 @@ pipeline {
                 sh 'mkdir junit/'
             }
         }
+        stage('Test unordered') {
+            steps {
+                run_pytest('sPyNNaker8/p8_integration_tests/quick_test/test_onchip_compressor/test_unordered/test_unordered_compressor.py', 1200, 'sPyNNaker8_Integration', '1')
+            }
+        }
         stage('Unit Tests') {
             steps {
                 run_pytest('SpiNNUtils/unittests', 1200, 'SpiNNUtils', 'auto')
@@ -145,11 +150,6 @@ pipeline {
                 run_pytest('sPyNNaker/unittests', 1200, 'sPyNNaker', 'auto')
                 run_pytest('sPyNNaker8/unittests', 1200, 'sPyNNaker8', 'auto')
                 sh "python -m spinn_utilities.executable_finder"
-            }
-        }
-        stage('Test Mundy') {
-            steps {
-                run_pytest('sPyNNaker8/p8_integration_tests/quick_test/test_onchip_compressor/test_mundy/test_mundy_compressor.py', 1200, 'sPyNNaker8_Integration', '1')
             }
         }
         stage('Test') {
