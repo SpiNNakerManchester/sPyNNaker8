@@ -133,37 +133,9 @@ pipeline {
                 sh 'mkdir junit/'
             }
         }
-        stage('Unit Tests') {
+        stage('Test compressor') {
             steps {
-                run_pytest('SpiNNUtils/unittests', 1200, 'SpiNNUtils', 'auto')
-                run_pytest('SpiNNMachine/unittests', 1200, 'SpiNNMachine', 'auto')
-                run_pytest('SpiNNMan/unittests', 1200, 'SpiNNMan', 'auto')
-                run_pytest('PACMAN/unittests', 1200, 'PACMAN', 'auto')
-                run_pytest('spalloc/tests', 1200, 'spalloc', '1')
-                run_pytest('DataSpecification/unittests', 1200, 'DataSpecification', 'auto')
-                run_pytest('SpiNNFrontEndCommon/unittests SpiNNFrontEndCommon/fec_integration_tests', 1200, 'SpiNNFrontEndCommon', 'auto')
-                run_pytest('sPyNNaker/unittests', 1200, 'sPyNNaker', 'auto')
-                run_pytest('sPyNNaker8/unittests', 1200, 'sPyNNaker8', 'auto')
-                sh "python -m spinn_utilities.executable_finder"
-            }
-        }
-        stage('Test') {
-            steps {
-                run_pytest('sPyNNaker8/p8_integration_tests/quick_test/', 1200, 'sPyNNaker8_Integration', 'auto')
-            }
-        }
-        stage('Run new Model Example') {
-            steps {
-                run_pytest('sPyNNaker8/p8_integration_tests/test_new_model_templates', 1200, 'new_model_example', 'auto')
-                run_pytest('sPyNNaker8NewModelTemplate/nmt_integration_tests', 1200, 'nmt_integration_tests', 'auto')
-            }
-        }
-        stage('Run example scripts') {
-            steps {
-                sh 'python sPyNNaker8/p8_integration_tests/scripts_test/build_script.py shorter'
-                run_pytest('sPyNNaker8/p8_integration_tests/scripts_test/examples_auto_test.py', 1200, 'sPyNNaker8Scripts', 'auto')
-                run_pytest('sPyNNaker8/p8_integration_tests/scripts_test/intro_labs_auto_test.py', 1200, 'sPyNNaker8Scripts', '1')
-                // Not sPyNNaker8/p8_integration_tests/scripts_test/test_microcircuit.py as it takes 1558  seconds
+                run_pytest('sPyNNaker8/p8_integration_tests/quick_test/test_onchip_compressor', 1200, 'sPyNNaker8_Integration', '1')
             }
         }
         stage('Reports') {
