@@ -34,7 +34,7 @@ def find_good_chip(machine, n_target):
 
 
 def do_run():
-    n_source = 1700  # This is the max that all compressors can handle
+    n_source = 1500  # This is the max that all compressors can handle
     n_target = 16
     n_neurons = 1
     n_boards = math.ceil((n_source + n_target) / 16 / 48)
