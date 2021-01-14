@@ -133,9 +133,9 @@ pipeline {
                 sh 'mkdir junit/'
             }
         }
-        stage('Test unordered') {
+        stage('Test pair') {
             steps {
-                run_pytest('sPyNNaker8/p8_integration_tests/quick_test/test_onchip_compressor/test_unordered/test_unordered_compressor.py', 1200, 'sPyNNaker8_Integration', '1')
+                run_pytest('sPyNNaker8/p8_integration_tests/quick_test/test_onchip_compressor/test_pair/test_pair_compressor.py', 1200, 'sPyNNaker8_Integration', '1')
             }
         }
         stage('Unit Tests') {
