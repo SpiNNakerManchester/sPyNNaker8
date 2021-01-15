@@ -16,9 +16,14 @@
 from p8_integration_tests.base_test_case import BaseTestCase
 from p8_integration_tests.quick_test.test_onchip_compressor.many_routes \
     import do_run
+from p8_integration_tests.quick_test.test_onchip_compressor.one_route \
+    import do_one_run
 
 
 class TestPairCompressor(BaseTestCase):
 
     def test_do_run(self):
         self.runsafe(do_run)
+
+    def test_do_one_run(self):
+        self.runsafe(do_one_run)
