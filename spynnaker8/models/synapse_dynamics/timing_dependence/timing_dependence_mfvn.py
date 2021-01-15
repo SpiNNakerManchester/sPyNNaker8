@@ -15,9 +15,10 @@ class TimingDependenceMFVN(_BaseClass):
 
     def __init__(
             self, tau_plus=20.0, tau_minus=20.0, A_plus=0.01, A_minus=0.01,
-            beta=10, sigma=200):
+            beta=10, sigma=200, alpha=1.0):
         super(TimingDependenceMFVN, self).__init__(
-            tau_plus=tau_plus, tau_minus=tau_minus, beta=beta, sigma=sigma)
+            tau_plus=tau_plus, tau_minus=tau_minus, beta=beta, sigma=sigma,
+            kernel_scaling=alpha)
         self._a_plus = A_plus
         self._a_minus = A_minus
 
