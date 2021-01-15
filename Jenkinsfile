@@ -43,9 +43,8 @@ pipeline {
             steps {
                 // remove all directories left if Jenkins ended badly
                 sh 'git clone https://github.com/SpiNNakerManchester/SupportScripts.git support'
-                sh 'pip3 install --upgrade "setuptools < 50.0.0" wheel'
+                sh 'pip3 install --upgrade setuptools wheel'
                 sh 'pip install --user --upgrade pip'
-                sh 'pip install --user --only-binary=numpy,scipy,matplotlib numpy scipy matplotlib'
                 // SpiNNakerManchester internal dependencies; development mode
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/SpiNNUtils.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/SpiNNMachine.git'
@@ -138,7 +137,7 @@ pipeline {
             steps {
                 run_pytest('SpiNNUtils/unittests', 1200, 'SpiNNUtils', 'auto')
                 run_pytest('SpiNNMachine/unittests', 1200, 'SpiNNMachine', 'auto')
-                run_pytest('SpiNNMan/unittests SpiNNMan/integration_tests', 1200, 'SpiNNMan', 'auto')
+                run_pytest('SpiNNMan/unittests', 1200, 'SpiNNMan', 'auto')
                 run_pytest('PACMAN/unittests', 1200, 'PACMAN', 'auto')
                 run_pytest('spalloc/tests', 1200, 'spalloc', '1')
                 run_pytest('DataSpecification/unittests', 1200, 'DataSpecification', 'auto')

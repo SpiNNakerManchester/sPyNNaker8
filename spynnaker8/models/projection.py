@@ -122,8 +122,7 @@ class Projection(PyNNProjectionCommon):
             postpop_is_view=isinstance(post_synaptic_population,
                                        PopulationView),
             rng=rng, machine_time_step=self.__simulator.machine_time_step,
-            user_max_delay=self.__simulator.max_delay, label=label,
-            time_scale_factor=self.__simulator.time_scale_factor)
+            label=label, time_scale_factor=self.__simulator.time_scale_factor)
 
     def _check_population_param(self, param, connector):
         if isinstance(param, Population):
@@ -310,8 +309,8 @@ class Projection(PyNNProjectionCommon):
 
         :param attribute_names:
         :type attribute_names: str or list(str)
-        :param file:
-        :type file: str or file
+        :param file: filename or open handle (which will be closed)
+        :type file: str or pyNN.recording.files.BaseFile
         :param str format:
         :param bool gather: Ignored
 

@@ -88,7 +88,6 @@ def test_connector(
                                         MockPopulation(10, "Post"),
                                         weights, delays)
     block = connector.create_synaptic_block(
-        [pre_slice], [post_slice], pre_slice,
-        post_slice, 1, mock_synapse_info)
+        [pre_slice], [post_slice], pre_slice, post_slice, 1, mock_synapse_info)
     assert(numpy.array_equal(block["weight"], numpy.array(expected_weights)))
     assert(numpy.array_equal(block["delay"], numpy.array(expected_delays)))
