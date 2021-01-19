@@ -69,9 +69,9 @@ def post_spike_same_time():
         pre_spikes, post_spikes, initial_weight, plastic_delay, min_weight,
         max_weight, a_plus, a_minus, tau_plus, tau_minus)
 
-    print(weights_1)
-    print(weights_2)
-    print(new_weight_exact)
+    # print(weights_1)
+    # print(weights_2)
+    # print(new_weight_exact)
 
     assert(len(weights_1) == 1)
     assert(len(weights_2) == 1)
@@ -161,7 +161,7 @@ def potentiation_and_depression():
 
     print("Pre neuron spikes at: {}".format(pre_spikes))
     print("Post-neuron spikes at: {}".format(post_spikes))
-    target_spikes = [1014,  1032, 1053]
+    target_spikes = [1014, 1032, 1053]
     assert(all(s1 == s2
                for s1, s2 in zip(list(post_spikes), target_spikes)))
     print("New weight exact: {}".format(new_weight_exact))
