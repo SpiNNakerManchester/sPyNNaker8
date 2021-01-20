@@ -154,7 +154,7 @@ pipeline {
         }
         stage('Test') {
             steps {
-                run_pytest('sPyNNaker8/p8_integration_tests/quick_test/', 1200, 'sPyNNaker8_Integration', '1')
+                run_pytest('sPyNNaker8/p8_integration_tests/quick_test/', 1200, 'sPyNNaker8_Integration', 'auto')
             }
         }
         stage('Run new Model Example') {
