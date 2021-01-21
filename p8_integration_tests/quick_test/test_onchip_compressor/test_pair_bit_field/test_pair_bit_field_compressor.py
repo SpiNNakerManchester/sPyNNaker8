@@ -24,11 +24,11 @@ from p8_integration_tests.quick_test.test_onchip_compressor.one_route import (
 
 class TestPairBitFieldCompressor(BaseTestCase):
 
-    def test_do_run(self):
+    def test_do_bitfield_run(self):
         self.runsafe(do_bitfield_run)
 
     def test_do_run(self):
         self.runsafe(do_run)
 
-    def test_do_run(self):
+    def test_do_one_run(self):
         self.runsafe(do_one_run)
