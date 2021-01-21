@@ -22,9 +22,3 @@ class TestPairBitFieldCompressorWithSettings(BaseTestCase):
 
     def test_do_run(self):
         self.runsafe(do_bitfield_run)
-
-    def test_do_run(self):
-        self.runsafe(do_run)
-
-    def test_do_run(self):
-        self.runsafe(do_one_run)
