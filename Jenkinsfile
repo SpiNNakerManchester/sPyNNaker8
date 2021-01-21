@@ -133,6 +133,11 @@ pipeline {
                 sh 'mkdir junit/'
             }
         }
+        stage('compressor Test') {
+            steps {
+                run_pytest('sPyNNaker8/p8_integration_tests/quick_test/test_onchip_compressor/', 1200, 'sPyNNaker8_Integration', 'auto')
+            }
+        }
         stage('Unit Tests') {
             steps {
                 run_pytest('SpiNNUtils/unittests', 1200, 'SpiNNUtils', 'auto')
