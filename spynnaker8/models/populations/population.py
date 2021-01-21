@@ -39,7 +39,8 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
     def __init__(
             self, size, cellclass, cellparams=None, structure=None,
             initial_values=None, label=None, constraints=None,
-            additional_parameters=None):
+            additional_parameters=None, in_partitions=None,
+            out_partitions=None):
         # pylint: disable=too-many-arguments
 
         # hard code initial values as required
@@ -65,7 +66,8 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
             spinnaker_control=globals_variables.get_simulator(),
             size=size, label=label, constraints=constraints,
             model=model, structure=structure, initial_values=initial_values,
-            additional_parameters=additional_parameters)
+            additional_parameters=additional_parameters,
+            in_partitions=in_partitions, out_partitions=out_partitions)
         Recorder.__init__(self, population=self)
 
         # annotations used by neo objects
@@ -217,7 +219,7 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         If `template` is None, then a dictionary containing the template\
         context will be returned.
         """
-        vertex_context = self._vertex.describe()
+        vertex_context = self._vertex[0].describe()
 
         context = {
             "label": self.label,
@@ -275,6 +277,8 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
                 logger, "sPyNNaker only supports gather=True. We will run "
                 "as if gather was set to True.")
 
+        if variables == 'synapse':
+            return self._extract_non_neo_block(variables, None, clear, annotations)
         return self._extract_neo_block(variables, None, clear, annotations)
 
     def get_data_by_indexes(
@@ -361,7 +365,7 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         if not self._vertex_population_initializable:
             raise KeyError(
                 "Population does not support the initialisation")
-        return self._vertex.initial_values
+        return self._vertex[0].initial_values
 
     # NON-PYNN API CALL
     def get_initial_value(self, variable, selector=None):
@@ -371,7 +375,7 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
             raise KeyError(
                 "Population does not support the initialisation of {}".format(
                     variable))
-        return self._vertex.get_initial_value(variable, selector)
+        return self._vertex[0].get_initial_value(variable, selector)
 
     # NON-PYNN API CALL
     def set_initial_value(self, variable, value, selector=None):
@@ -384,7 +388,7 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         if globals_variables.get_not_running_simulator().has_ran \
                 and not self._vertex_changeable_after_run:
             raise Exception("Population does not support changes after run")
-        self._vertex.set_initial_value(variable, value, selector)
+        self._vertex[0].set_initial_value(variable, value, selector)
 
     # NON-PYNN API CALL
     def get_initial_values(self, selector=None):
@@ -392,7 +396,7 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         """
         if not self._vertex_population_initializable:
             raise KeyError("Population does not support the initialisation")
-        return self._vertex.get_initial_values(selector)
+        return self._vertex[0].get_initial_values(selector)
 
     def get(self, parameter_names, gather=False, simplify=True):
         if simplify is not True:

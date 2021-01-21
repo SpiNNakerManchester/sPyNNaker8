@@ -168,7 +168,7 @@ def EthernetControlPopulation(
     """
     # pylint: disable=protected-access, too-many-arguments, too-many-locals
     population = Population(n_neurons, model, label=label)
-    vertex = population._get_vertex
+    vertex = population._get_neuron_vertex
     if not isinstance(vertex, AbstractEthernetController):
         raise Exception(
             "Vertex must be an instance of AbstractEthernetController")
