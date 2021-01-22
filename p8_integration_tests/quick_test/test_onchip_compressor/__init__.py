@@ -1,4 +1,4 @@
- # Copyright (c) 2017-2019 The University of Manchester
+# Copyright (c) 2017-2021 The University of Manchester
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -12,13 +12,3 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-from p8_integration_tests.base_test_case import BaseTestCase
-from p8_integration_tests.quick_test.test_onchip_compressor.many_routes \
-    import do_run
-
-
-class TestUnorderedBitFieldCompressor(BaseTestCase):
-
-    def test_do_run(self):
-        self.runsafe(do_run)
