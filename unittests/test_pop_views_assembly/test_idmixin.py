@@ -16,6 +16,7 @@
 import pytest
 import spynnaker8 as sim
 from p8_integration_tests.base_test_case import BaseTestCase
+import numpy
 
 N_NEURONS = 4
 LABEL = "pop_1"
@@ -104,3 +105,19 @@ class TestIDMixin(BaseTestCase):
         pop = sim.Population(4, sim.IF_curr_exp(), label=LABEL)
         cell = pop[2]
         cell.as_view()
+
+    def test_ssa_spike_times(self):
+        n_atoms = 10
+        set_id = 1
+        set_value = [5]
+        sim.setup(timestep=1.0)
+        pop = sim.Population(n_atoms, sim.SpikeSourceArray([]))
+        pop[set_id].set_parameters(spike_times=set_value)
+        result = pop.get("spike_times")
+        result_should_be = []
+        for atom in range(n_atoms):
+            if atom == set_id:
+                result_should_be.append(numpy.array(set_value))
+            else:
+                result_should_be.append([])
+        self.assertEqual(result, result_should_be)
