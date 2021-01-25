@@ -97,8 +97,10 @@ class TestPopulation(BaseTestCase):
 
     def test_model_fail_to_set_neuron_param_function(self):
         n_neurons = 5
+
         def _silly_funct():
             return 5
+
         value = _silly_funct()
         label = "pop_1"
         sim.setup(timestep=1.0)
