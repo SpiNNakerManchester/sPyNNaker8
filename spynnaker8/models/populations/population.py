@@ -407,10 +407,7 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
         :param parameters: The parameters to set.
         """
         for parameter, value in iteritems(parameters):
-            try:
-                super(Population, self).set(parameter, value)
-            except InvalidParameterType:
-                super(Population, self)._initialize(parameter, value)
+            super(Population, self).set(parameter, value)
 
     @overrides(PopulationBase.tset)
     def tset(self, **kwargs):
