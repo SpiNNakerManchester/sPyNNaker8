@@ -29,7 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [2.7, 3.6, 3.7, 3.8]
+        python-version: [3.6, 3.7, 3.8]
 
     steps:
     - name: Set up Python ${{ matrix.python-version }}
@@ -53,11 +53,8 @@ jobs:
           SpiNNUtils SpiNNMachine SpiNNMan PACMAN DataSpecification spalloc 
           SpiNNFrontEndCommon sPyNNaker
         install: true
-        preinstall: ${{ matrix.python-version == 2.7 }}
     - name: Setup
       uses: ./support/actions/run-setup
-      with:
-        preinstall: ${{ matrix.python-version == 2.7 }}
     - name: Checkout Spinnaker Test Cases
       uses: ./support/actions/checkout-spinn-deps
       with:
