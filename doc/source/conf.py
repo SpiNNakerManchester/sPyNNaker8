@@ -30,6 +30,7 @@
 import mock
 import os
 import sys
+from sphinx.ext import apidoc
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -413,11 +414,4 @@ explicit_wanted_files = [
     "spynnaker8/utilities/neo_compare.py"]
 options = ['-o', output_dir, "spynnaker8"]
 options.extend(filtered_files("spynnaker8", explicit_wanted_files))
-try:
-    # Old style API; Python 2.7
-    from sphinx import apidoc
-    options = [None] + options
-except ImportError:
-    # New style API; Python 3.6 onwards
-    from sphinx.ext import apidoc
 apidoc.main(options)
