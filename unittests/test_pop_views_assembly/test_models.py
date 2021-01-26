@@ -27,11 +27,8 @@ class TestPopulation(BaseTestCase):
         model = sim.IF_curr_exp(tau_syn_I=value)
         pop_1 = sim.Population(n_neurons, model, label=label)
         self.assertEqual(model._model['tau_syn_I'], value)
-        try:
+        with self.assertRaises(TypeError):
             model._model['tau_syn_I'] = 6
-            raise Exception("fail")
-        except TypeError:
-            pass
         self.assertEqual(
             pop_1.get('tau_syn_I'), [value, value, value, value, value])
 
@@ -43,11 +40,8 @@ class TestPopulation(BaseTestCase):
         model = sim.IF_curr_exp(i_offset=value)
         pop_1 = sim.Population(n_neurons, model, label=label)
         self.assertEqual(model._model['i_offset'], value)
-        try:
+        with self.assertRaises(TypeError):
             model._model['i_offset'] = 6
-            raise Exception("fail")
-        except TypeError:
-            pass
         self.assertEqual(
             pop_1.get('i_offset'), [value, value, value, value, value])
 
@@ -61,12 +55,9 @@ class TestPopulation(BaseTestCase):
         pop_1 = sim.Population(n_neurons, model, label=label)
         self.assertEqual(
             model._model['i_offset'], [value, value, value, value, value])
-        try:
+        with self.assertRaises(TypeError):
             model._model['i_offset'] = [
                 new_value, new_value, new_value, new_value, new_value]
-            raise Exception("fail")
-        except TypeError:
-            pass
         self.assertEqual(
             pop_1.get('i_offset'), [value, value, value, value, value])
 
@@ -76,12 +67,10 @@ class TestPopulation(BaseTestCase):
         label = "pop_1"
         sim.setup(timestep=1.0)
         model = sim.IF_curr_exp(i_offset=[value, value, value, value])
-        try:
+        with self.assertRaises(Exception):
             sim.Population(n_neurons, model, label=label)
-        except Exception:
-            pass
 
-    def test_model_fail_to_set_neuron_param_random_distribution(self):
+    def test_model_set_neuron_param_random_distribution(self):
         n_neurons = 5
         range_low = -70
         range_high = -50
@@ -95,7 +84,7 @@ class TestPopulation(BaseTestCase):
             self.assertGreater(value, range_low)
             self.assertLess(value, range_high)
 
-    def test_model_fail_to_set_neuron_param_function(self):
+    def test_model_set_neuron_param_function(self):
         n_neurons = 5
 
         def _silly_funct():
