@@ -78,7 +78,7 @@ class IDMixin(object):
             ei = sys.exc_info()
             try:
                 # try initialisable variable
-                return self.__population.get_initial_value(
+                return self.__population._get_initial_value(
                     selector=self.__id, variable=name)[0]
             except Exception:
                 # that failed too so raise the better original exception
@@ -95,7 +95,7 @@ class IDMixin(object):
                 ei = sys.exc_info()
                 try:
                     # try initialisable variable
-                    return self.__population.set_initial_value(
+                    return self.__population.initalize(
                         selector=self.__id, variable=name, value=value)
                 except Exception:
                     # that failed too so raise the better original exception
@@ -172,15 +172,15 @@ class IDMixin(object):
         :param str variable: The name of the variable
         :rtype: float
         """
-        return self.__population.get_initial_value(variable, self.__id)
+        return self.__population._get_initial_value(variable, self.__id)
 
-    def set_initial_value(self, variable, value):
+    def initialize(self, variable, value):
         """ Set the initial value of a state variable of the cell.
 
         :param str variable: The name of the variable
         :param float value: The value of the variable
         """
-        self.__population.set_initial_value(variable, value, self.__id)
+        self.__population.initialize(variable, value, self.__id)
 
     def as_view(self):
         """ Return a PopulationView containing just this cell.

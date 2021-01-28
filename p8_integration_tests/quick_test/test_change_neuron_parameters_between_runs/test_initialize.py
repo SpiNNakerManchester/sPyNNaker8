@@ -17,14 +17,15 @@ import spynnaker8 as p
 from p8_integration_tests.base_test_case import BaseTestCase
 
 
-class TestSetInitialValue(BaseTestCase):
+class TestInitialize(BaseTestCase):
 
     # pop.set_inital_value is not a standard PyNN call, but
     # we allow it on SpiNNaker, so we should test it (between runs)
 
-    def set_initial_value_between_runs(self):
-        runtime1 = 50
-        runtime2 = 200
+    def set_initialize_between_runs(self):
+        runtime1 = 5
+        runtime2 = 5
+        runtime3 = 5
 
         p.setup(timestep=1.0)
 
@@ -37,9 +38,8 @@ class TestSetInitialValue(BaseTestCase):
         pop2[0].record(['v'])
 
         p.run(runtime1)
-        pop2.set_initial_value(variable="v", value=-65)
+        pop2._initialise("v", -64, None)
         p.run(runtime2)
-
         v = pop2.get_data('v')
 
         p.end()
@@ -47,4 +47,4 @@ class TestSetInitialValue(BaseTestCase):
         assert v.segments[0].filter(name='v')[0][runtime1] == -65.0
 
     def test_set_initial_value_between_runs(self):
-        self.runsafe(self.set_initial_value_between_runs)
+        self.runsafe(self.set_initialize_between_runs)

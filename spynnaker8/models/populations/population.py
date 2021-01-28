@@ -459,15 +459,21 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
     def get_initial_value(self, variable, selector=None):
         """ See :py:meth:`AbstractPopulationInitializable.get_initial_value`
         """
+        raise NotImplementedError("use initial_values property")
+
+    def _get_initial_value(self, variable, selector):
         if not self._vertex_population_initializable:
             raise KeyError(
                 "Population does not support the initialisation of {}".format(
                     variable))
         return self._vertex.get_initial_value(variable, selector)
 
-    # NON-PYNN API CALL
     def set_initial_value(self, variable, value, selector=None):
-        """ See :py:meth:`AbstractPopulationInitializable.set_initial_value`
+        raise NotImplementedError("use initialize method")
+
+    def _initialise(self, variable, value, selector):
+        """
+           See :py:meth:`AbstractPopulationInitializable.initialise`
         """
         if not self._vertex_population_initializable:
             raise KeyError(
@@ -477,15 +483,16 @@ class Population(PyNNPopulationCommon, Recorder, PopulationBase):
                 and not self._vertex_changeable_after_run:
             raise Exception("Population does not support changes after run")
         self._read_parameters_before_set()
-        self._vertex.set_initial_value(variable, value, selector)
+        self._vertex.initialize(variable, value, selector)
 
-    # NON-PYNN API CALL
-    def get_initial_values(self, selector=None):
+    def _get_initial_values(self, selector=None):
         """ See :py:meth:`AbstractPopulationInitializable.get_initial_values`
         """
         if not self._vertex_population_initializable:
             raise KeyError("Population does not support the initialisation")
-        return self._vertex.get_initial_values(selector)
+        if selector is None:
+            raise NotImplementedError()
+        return self._vertex._get_initial_values(selector)
 
     @property
     def positions(self):

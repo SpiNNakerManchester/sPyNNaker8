@@ -115,7 +115,7 @@ class PopulationView(PopulationBase):
 
         :rtype: dict(str, ...)
         """
-        return self.__population.get_initial_values(selector=self.__indexes)
+        return self.__population._get_initial_values(selector=self.__indexes)
 
     @property
     def parent(self):
@@ -363,7 +363,7 @@ class PopulationView(PopulationBase):
             p.initialize(v=lambda i: -65 + i / 10.0)
         """
         for variable, value in initial_values.items():
-            self.__population.set_initial_value(
+            self.__population._initialise(
                 variable, value, self.__indexes)
 
     def record(self, variables,  # pylint: disable=arguments-differ
