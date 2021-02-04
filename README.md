@@ -1,4 +1,4 @@
-This repository is no longer in use.in
+This repository is no longer in use.
 
 All code including test scripts has been moved to https://github.com/SpiNNakerManchester/sPyNNaker
 
