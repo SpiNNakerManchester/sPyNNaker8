@@ -91,11 +91,10 @@ pipeline {
                 sh 'cd spalloc && python setup.py install'
                 sh 'cd SpiNNFrontEndCommon && python setup.py install'
                 sh 'cd sPyNNaker && python setup.py install'
-                sh 'cd sPyNNaker8 && python ./setup.py develop'
                 sh 'cd sPyNNaker8NewModelTemplate && python ./setup.py develop'
                 sh 'python -m spynnaker8.setup_pynn'
                 // Test requirements
-                sh 'pip install -r sPyNNaker8/requirements-test.txt'
+                sh 'pip install -r sPyNNaker/requirements-test.txt'
                 // Additional requirements for testing here
                 sh 'pip install pytest-instafail'
                 // Java install
@@ -120,20 +119,20 @@ pipeline {
         }
         stage('Test') {
             steps {
-                run_pytest_single('sPyNNaker8/p8_integration_tests/quick_test/', 1200, 'sPyNNaker8_Integration')
-                run_pytest_single('sPyNNaker8/p8_integration_tests/long_test/', 12000, 'sPyNNaker8_Integration_Long')
+                run_pytest_single('sPyNNaker/p8_integration_tests/quick_test/', 1200, 'sPyNNaker_Integration')
+                run_pytest_single('sPyNNaker/p8_integration_tests/long_test/', 12000, 'sPyNNaker_Integration_Long')
             }
         }
         stage('Run new Model Example') {
             steps {
-                run_pytest_single('sPyNNaker8/p8_integration_tests/test_new_model_templates', 1200, 'new_model_example')
+                run_pytest_single('sPyNNaker/p8_integration_tests/test_new_model_templates', 1200, 'new_model_example')
                 run_pytest_single('sPyNNaker8NewModelTemplate/nmt_integration_tests', 1200, 'nmt_integration_tests')
             }
         }
         stage('Run scripts') {
             steps {
-                sh 'python sPyNNaker8/p8_integration_tests/scripts_test/build_script.py'
-                run_pytest_single('sPyNNaker8/p8_integration_tests/scripts_test', 3600, 'sPyNNaker8Scripts')
+                sh 'python sPyNNaker/p8_integration_tests/scripts_test/build_script.py'
+                run_pytest_single('sPyNNaker/p8_integration_tests/scripts_test', 3600, 'sPyNNakerScripts')
             }
         }
         stage('Reports') {
@@ -144,7 +143,7 @@ pipeline {
         }
         stage('Check Destroyed') {
             steps {
-                sh 'py.test sPyNNaker8/p8_integration_tests/destroyed_checker_test --forked --instafail --timeout 120'
+                sh 'py.test sPyNNaker/p8_integration_tests/destroyed_checker_test --forked --instafail --timeout 120'
             }
         }
     }
