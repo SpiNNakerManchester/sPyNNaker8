@@ -43,13 +43,11 @@ pipeline {
             steps {
                 // remove all directories left if Jenkins ended badly
                 sh 'git clone https://github.com/SpiNNakerManchester/SupportScripts.git support'
-                sh 'pip3 install --upgrade "setuptools < 50.0.0" wheel'
+                sh 'pip3 install --upgrade setuptools wheel'
                 sh 'pip install --user --upgrade pip'
-                sh 'pip install --user --only-binary=numpy,scipy,matplotlib numpy scipy matplotlib'
                 // SpiNNakerManchester internal dependencies; development mode
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/SpiNNUtils.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/SpiNNMachine.git'
-                sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/SpiNNStorageHandlers.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/SpiNNMan.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/PACMAN.git'
                 sh 'support/gitclone.sh https://github.com/SpiNNakerManchester/DataSpecification.git'
@@ -85,26 +83,22 @@ pipeline {
                 sh 'make -C sPyNNaker8NewModelTemplate/c_models'
                 // Python install
                 sh 'cd SpiNNMachine && python setup.py develop'
-                sh 'cd SpiNNStorageHandlers && python setup.py develop'
                 sh 'cd SpiNNMan && python setup.py develop'
                 sh 'cd PACMAN && python setup.py develop'
                 sh 'cd DataSpecification && python setup.py develop'
                 sh 'cd spalloc && python setup.py develop'
                 sh 'cd SpiNNFrontEndCommon && python setup.py develop'
                 sh 'cd sPyNNaker && python setup.py develop'
-                sh 'cd sPyNNaker8 && python ./setup.py develop'
                 sh 'cd sPyNNaker8NewModelTemplate && python ./setup.py develop'
                 sh 'python -m spynnaker8.setup_pynn'
                 // Test requirements
                 sh 'pip install -r SpiNNMachine/requirements-test.txt'
-                sh 'pip install -r SpiNNStorageHandlers/requirements-test.txt'
                 sh 'pip install -r SpiNNMan/requirements-test.txt'
                 sh 'pip install -r PACMAN/requirements-test.txt'
                 sh 'pip install -r DataSpecification/requirements-test.txt'
                 sh 'pip install -r spalloc/requirements-test.txt'
                 sh 'pip install -r SpiNNFrontEndCommon/requirements-test.txt'
                 sh 'pip install -r sPyNNaker/requirements-test.txt'
-                sh 'pip install -r sPyNNaker8/requirements-test.txt'
                 // Additional requirements for testing here
                 // coverage version capped due to https://github.com/nedbat/coveragepy/issues/883
                 sh 'pip install python-coveralls "coverage>=5.0.0"'
@@ -140,34 +134,32 @@ pipeline {
         stage('Unit Tests') {
             steps {
                 run_pytest('SpiNNUtils/unittests', 1200, 'SpiNNUtils', 'auto')
-                run_pytest('SpiNNStorageHandlers/tests', 1200, 'SpiNNStorageHandlers', 'auto')
                 run_pytest('SpiNNMachine/unittests', 1200, 'SpiNNMachine', 'auto')
-                run_pytest('SpiNNMan/unittests SpiNNMan/integration_tests', 1200, 'SpiNNMan', 'auto')
+                run_pytest('SpiNNMan/unittests', 1200, 'SpiNNMan', 'auto')
                 run_pytest('PACMAN/unittests', 1200, 'PACMAN', 'auto')
                 run_pytest('spalloc/tests', 1200, 'spalloc', '1')
                 run_pytest('DataSpecification/unittests', 1200, 'DataSpecification', 'auto')
                 run_pytest('SpiNNFrontEndCommon/unittests SpiNNFrontEndCommon/fec_integration_tests', 1200, 'SpiNNFrontEndCommon', 'auto')
                 run_pytest('sPyNNaker/unittests', 1200, 'sPyNNaker', 'auto')
-                run_pytest('sPyNNaker8/unittests', 1200, 'sPyNNaker8', 'auto')
                 sh "python -m spinn_utilities.executable_finder"
             }
         }
         stage('Test') {
             steps {
-                run_pytest('sPyNNaker8/p8_integration_tests/quick_test/', 1200, 'sPyNNaker8_Integration', 'auto')
+                run_pytest('sPyNNaker/p8_integration_tests/quick_test/', 1200, 'sPyNNaker_Integration', 'auto')
             }
         }
         stage('Run new Model Example') {
             steps {
-                run_pytest('sPyNNaker8/p8_integration_tests/test_new_model_templates', 1200, 'new_model_example', 'auto')
+                run_pytest('sPyNNaker/p8_integration_tests/test_new_model_templates', 1200, 'new_model_example', 'auto')
                 run_pytest('sPyNNaker8NewModelTemplate/nmt_integration_tests', 1200, 'nmt_integration_tests', 'auto')
             }
         }
         stage('Run example scripts') {
             steps {
-                sh 'python sPyNNaker8/p8_integration_tests/scripts_test/build_script.py shorter'
-                run_pytest('sPyNNaker8/p8_integration_tests/scripts_test/examples_auto_test.py', 1200, 'sPyNNaker8Scripts', 'auto')
-                run_pytest('sPyNNaker8/p8_integration_tests/scripts_test/intro_labs_auto_test.py', 1200, 'sPyNNaker8Scripts', '1')
+                sh 'python sPyNNaker/p8_integration_tests/scripts_test/build_script.py shorter'
+                run_pytest('sPyNNaker/p8_integration_tests/scripts_test/examples_auto_test.py', 1200, 'sPyNNaker8Scripts', 'auto')
+                run_pytest('sPyNNaker/p8_integration_tests/scripts_test/intro_labs_auto_test.py', 1200, 'sPyNNaker8Scripts', '1')
                 // Not sPyNNaker8/p8_integration_tests/scripts_test/test_microcircuit.py as it takes 1558  seconds
             }
         }
@@ -179,7 +171,7 @@ pipeline {
         }
         stage('Check Destroyed') {
             steps {
-                sh 'py.test sPyNNaker8/p8_integration_tests/destroyed_checker_test --forked --instafail --timeout 120'
+                sh 'py.test sPyNNaker/p8_integration_tests/destroyed_checker_test --forked --instafail --timeout 120'
             }
         }
     }
@@ -209,5 +201,5 @@ pipeline {
 
 def run_pytest(String tests, int timeout, String results, String threads) {
     sh 'echo "<testsuite tests="0"></testsuite>" > junit/' + results + '.xml'
-    sh 'py.test ' + tests + ' -rs -n ' + threads + ' --forked --show-progress --cov-config=.coveragerc --cov-branch --cov spynnaker8 --cov spynnaker --cov spinn_front_end_common --cov pacman --cov data_specification --cov spinnman --cov spinn_machine --cov spinn_storage_handlers --cov spalloc --cov spinn_utilities --junitxml junit/' + results + '.xml --cov-report xml:coverage.xml --cov-append --timeout ' + timeout + ' --log-level=INFO '
+    sh 'py.test ' + tests + ' -rs -n ' + threads + ' --forked --show-progress --cov-config=.coveragerc --cov-branch --cov spynnaker8 --cov spynnaker --cov spinn_front_end_common --cov pacman --cov data_specification --cov spinnman --cov spinn_machine --cov spalloc --cov spinn_utilities --junitxml junit/' + results + '.xml --cov-report xml:coverage.xml --cov-append --timeout ' + timeout + ' --log-level=INFO '
 }
