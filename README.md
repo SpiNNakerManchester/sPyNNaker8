@@ -1,11 +1,9 @@
-[![Build Status](https://github.com/SpiNNakerManchester/sPyNNaker8/workflows/Python%20Actions/badge.svg?branch=master)](https://github.com/SpiNNakerManchester/sPyNNaker8/actions?query=workflow%3A%22Python+Actions%22+branch%3Amaster)
-[![Documentation Status](https://readthedocs.org/projects/spynnaker8/badge/?version=master)](https://spynnaker8.readthedocs.io/en/master/?badge=master)
-[![Coverage Status](https://coveralls.io/repos/github/SpiNNakerManchester/sPyNNaker8/badge.svg?branch=master)](https://coveralls.io/github/SpiNNakerManchester/sPyNNaker8?branch=master)
+This repository is no longer in use.
 
-Tools for simulating neural models generated using PyNN 0.9 on the SpiNNaker platform
+All code including test scripts has been moved to https://github.com/SpiNNakerManchester/sPyNNaker
 
-Documentation
-=============
-[sPyNNaker8 python documentation](http://spynnaker8.readthedocs.io/en/latest/)
-<br>
-[Combined python documentation](http://spinnaker8manchester.readthedocs.io)
+The running of the Integration Tests is now done in https://github.com/SpiNNakerManchester/IntegrationTests
+
+The state before the merged has been tagged pre_merge
+
+See: https://github.com/SpiNNakerManchester/sPyNNaker8/tree/pre_merge
