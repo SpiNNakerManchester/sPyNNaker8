@@ -112,7 +112,12 @@ from spynnaker.pyNN.models.spike_source.spike_source_poisson \
 # noinspection PyUnresolvedReferences
 from spynnaker.pyNN.models.spike_source.rate_source_array \
     import RateSourceArray
-
+# noinspection PyUnresolvedReferences
+from spynnaker.pyNN.models.spike_source.rate_source_live \
+    import RateSourceLive
+# noinspection PyUnresolvedReferences
+from spynnaker.pyNN.models.spike_source.rate_live_teacher \
+    import RateLiveTeacher
 # pops
 # noinspection PyUnresolvedReferences
 from spynnaker8.models.populations.assembly import Assembly
@@ -157,6 +162,7 @@ __all__ = [
     # neuron stuff
     'IF_cond_exp', 'IF_curr_exp', "IF_curr_alpha",
     'Izhikevich', 'SpikeSourceArray', 'SpikeSourcePoisson',
+    'RateSourceArray', 'RateSourceLive', 'RateLiveTeacher',
     # pops
     'Assembly', 'Population', 'PopulationView',
     # projection

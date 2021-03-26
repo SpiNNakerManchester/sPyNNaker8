@@ -28,7 +28,7 @@ class OneToOneConnector(CommonOneToOneConnector, PyNNOneToOneConnector):
     """
     __slots__ = []
 
-    def __init__(self, safe=True, callback=None):
+    def __init__(self, safe=True, callback=None, random_weight_matrix=False):
         """
         :param safe: if True, check that weights and delays have valid values.\
             If False, this check is skipped.
@@ -37,5 +37,6 @@ class OneToOneConnector(CommonOneToOneConnector, PyNNOneToOneConnector):
             progress_bar.set_level.
         """
         CommonOneToOneConnector.__init__(
-            self, safe=safe, random_number_class=RandomDistribution)
+            self, safe=safe, random_number_class=RandomDistribution,
+            random_weight_matrix=random_weight_matrix)
         PyNNOneToOneConnector.__init__(self, safe=safe, callback=callback)

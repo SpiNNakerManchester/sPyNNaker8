@@ -29,7 +29,7 @@ class AllToAllConnector(CommonAllToAllConnector, PyNNAllToAllConnector):
 
     def __init__(
             self, allow_self_connections=True, safe=True,
-            verbose=None, callbacks=None):
+            verbose=None, callbacks=None, random_weight_matrix=False):
         """
         :param allow_self_connections: \
             if the connector is used to connect a Population to itself, this\
@@ -43,7 +43,7 @@ class AllToAllConnector(CommonAllToAllConnector, PyNNAllToAllConnector):
         """
         CommonAllToAllConnector.__init__(
             self, allow_self_connections=allow_self_connections,
-            safe=safe, verbose=verbose)
+            safe=safe, verbose=verbose, random_weight_matrix=random_weight_matrix)
         PyNNAllToAllConnector.__init__(
             self, allow_self_connections=allow_self_connections, safe=safe,
             callback=callbacks)
