@@ -118,6 +118,9 @@ from spynnaker.pyNN.models.spike_source.rate_source_live \
 # noinspection PyUnresolvedReferences
 from spynnaker.pyNN.models.spike_source.rate_live_teacher \
     import RateLiveTeacher
+# noinspection PyUnresolvedReferences
+from spynnaker.pyNN.models.spike_source.rate_source_multiple \
+    import RateSourceMultiple
 # pops
 # noinspection PyUnresolvedReferences
 from spynnaker8.models.populations.assembly import Assembly
@@ -163,6 +166,7 @@ __all__ = [
     'IF_cond_exp', 'IF_curr_exp', "IF_curr_alpha",
     'Izhikevich', 'SpikeSourceArray', 'SpikeSourcePoisson',
     'RateSourceArray', 'RateSourceLive', 'RateLiveTeacher',
+    'RateSourceMultiple',
     # pops
     'Assembly', 'Population', 'PopulationView',
     # projection
