@@ -1,11 +1,9 @@
+This repository is no longer in use.
 
-[![Build Status](https://travis-ci.org/SpiNNakerManchester/sPyNNaker8.svg?branch=master)](https://travis-ci.org/SpiNNakerManchester/sPyNNaker8)
-[![Coverage Status](https://coveralls.io/repos/github/SpiNNakerManchester/sPyNNaker8/badge.svg?branch=master)](https://coveralls.io/github/SpiNNakerManchester/sPyNNaker8?branch=master)
+All code including test scripts has been moved to https://github.com/SpiNNakerManchester/sPyNNaker
 
-Tools for simulating neural models generated using PyNN 0.9 on the SpiNNaker platform
+The running of the Integration Tests is now done in https://github.com/SpiNNakerManchester/IntegrationTests
 
-Documentation
-=============
-[sPyNNaker8 python documentation](http://spynnaker8.readthedocs.io/en/latest/)
+The state before the merged has been tagged pre_merge
 
-[Combined python documentation](http://spinnaker8manchester.readthedocs.io)
+See: https://github.com/SpiNNakerManchester/sPyNNaker8/tree/pre_merge
